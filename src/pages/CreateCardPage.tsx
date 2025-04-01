@@ -8,7 +8,7 @@ const CreateCardPage = () => {
   const { type } = useParams<{ type: string }>();
   const cardType = (type === 'food' || type === 'entertainment') ? type : 'food';
   
-  const title = cardType === 'food' ? 'Add Bite' : 'Add Entertainment Experience';
+  const title = cardType === 'food' ? 'Add Bite' : 'Add Blockbuster';
   
   return (
     <GridLayout title={title}>

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue 
 } from "@/components/ui/select";
-import { CardType, CatalogCard, FoodCard, EntertainmentCard, FoodCategory, FoodStatus } from "@/lib/types";
+import { CardType, CatalogCard, FoodCard, EntertainmentCard, FoodCategory, FoodStatus, EntertainmentStatus } from "@/lib/types";
 import { addCard } from "@/lib/data";
 import { toast } from "@/components/ui/use-toast";
 import { Plus, Minus, Calendar, Link } from "lucide-react";
@@ -35,7 +34,6 @@ const CardForm = ({ type }: CardFormProps) => {
     cuisine: '',
     location: '',
     category: 'cafe' as FoodCategory,
-    status: 'Visited: Tried this bite' as FoodStatus,
     visitCount: 1,
     url: '',
     tags: '',
@@ -43,8 +41,7 @@ const CardForm = ({ type }: CardFormProps) => {
     genre: '',
     medium: 'Netflix',
     entertainmentCategory: 'movies',
-    status: isFoodCard ? 'Visited: Tried this bite' : 'Watched',
-    releaseYear: new Date().getFullYear().toString(),
+    status: isFoodCard ? 'Visited: Tried this bite' as FoodStatus : 'Watched' as EntertainmentStatus,
   });
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -87,7 +84,7 @@ const CardForm = ({ type }: CardFormProps) => {
           cuisine: formData.cuisine,
           location: formData.location,
           category: formData.category,
-          status: formData.status,
+          status: formData.status as FoodStatus,
           visitCount: formData.visitCount,
           url: formData.url,
           tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()) : [],
@@ -98,7 +95,7 @@ const CardForm = ({ type }: CardFormProps) => {
           genre: formData.genre,
           medium: formData.medium,
           entertainmentCategory: formData.entertainmentCategory,
-          status: formData.status,
+          status: formData.status as EntertainmentStatus,
         } as Omit<EntertainmentCard, 'id'>;
       }
       

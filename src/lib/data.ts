@@ -27,8 +27,9 @@ const mockCards: CatalogCard[] = [
     rating: 5,
     notes: 'Mind-blowing special effects and a thought-provoking plot.',
     genre: 'Sci-Fi',
-    medium: 'Movie',
-    releaseYear: '1999',
+    medium: 'Netflix',
+    entertainmentCategory: 'movies',
+    status: 'Watched',
   } as EntertainmentCard,
   {
     id: '3',
@@ -54,8 +55,9 @@ const mockCards: CatalogCard[] = [
     rating: 4,
     notes: 'Great nostalgic 80s vibes with compelling characters.',
     genre: 'Sci-Fi/Horror',
-    medium: 'TV Show',
-    releaseYear: '2016',
+    medium: 'Netflix',
+    entertainmentCategory: 'tv shows',
+    status: 'Highly Recommend',
   } as EntertainmentCard,
 ];
 
