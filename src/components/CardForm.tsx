@@ -188,7 +188,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
         {isFoodCard ? (
           <>
             <div>
-              <Label htmlFor="title" className="text-base">Name</Label>
+              <Label htmlFor="title" className="text-base">Name <span className="text-red-500">*</span></Label>
               <p className="text-xs italic mb-1">Name of Establishment</p>
               <Input
                 id="title"
@@ -214,10 +214,11 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
             </div>
             
             <div>
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category">Category <span className="text-red-500">*</span></Label>
               <Select
                 value={formData.category}
                 onValueChange={(value) => handleSelectChange('category', value)}
+                required
               >
                 <SelectTrigger className="catalog-input">
                   <SelectValue placeholder="Select a category" />
