@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { User, CollectionIcon, Sparkles, PlusCircle } from "lucide-react";
+import { User, Folder, Sparkles, PlusCircle } from "lucide-react";
 
 const NavBar = () => {
   const location = useLocation();
@@ -15,7 +15,7 @@ const NavBar = () => {
     },
     {
       name: "Collections",
-      icon: CollectionIcon,
+      icon: Folder,
       path: "/collections",
       color: "#D3E4FD" // Soft Blue
     },
