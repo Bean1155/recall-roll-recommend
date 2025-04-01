@@ -40,8 +40,8 @@ const Index = () => {
                 <div className="flex items-center justify-center p-1 relative">
                   <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
                     <Link to="/bites" className="flex items-center justify-center relative">
-                      <span className="font-script text-3xl -rotate-12 text-[#0EA5E9] pl-7">
-                        <Search size={18} className="text-[#0EA5E9] absolute left-2 top-1/2 -translate-y-1/2" />
+                      <span className="font-script text-4xl -rotate-12 text-[#000080] pl-7">
+                        <Search size={22} className="text-[#000080] absolute left-2 top-1/2 -translate-y-1/2" />
                         Browse
                       </span>
                     </Link>
@@ -51,8 +51,8 @@ const Index = () => {
                 <div className="flex items-center justify-center p-1">
                   <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
                     <Link to="/create/food" className="flex items-center justify-center relative">
-                      <span className="font-script text-3xl -rotate-12 text-[#0EA5E9] relative">
-                        <PlusCircle size={18} className="text-[#0EA5E9] absolute -left-5 top-1/2 -translate-y-1/2" />
+                      <span className="font-script text-4xl -rotate-12 text-[#000080] relative">
+                        <PlusCircle size={22} className="text-[#000080] absolute -left-5 top-1/2 -translate-y-1/2" />
                         Add New
                       </span>
                     </Link>
@@ -81,8 +81,8 @@ const Index = () => {
                 <div className="flex items-center justify-center p-1 relative">
                   <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
                     <Link to="/blockbusters" className="flex items-center justify-center relative">
-                      <span className="font-script text-3xl -rotate-12 text-[#0EA5E9] pl-7">
-                        <Search size={18} className="text-[#0EA5E9] absolute left-2 top-1/2 -translate-y-1/2" />
+                      <span className="font-script text-4xl -rotate-12 text-[#000080] pl-7">
+                        <Search size={22} className="text-[#000080] absolute left-2 top-1/2 -translate-y-1/2" />
                         Browse
                       </span>
                     </Link>
@@ -92,8 +92,8 @@ const Index = () => {
                 <div className="flex items-center justify-center p-1">
                   <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
                     <Link to="/create/entertainment" className="flex items-center justify-center relative">
-                      <span className="font-script text-3xl -rotate-12 text-[#0EA5E9] relative">
-                        <PlusCircle size={18} className="text-[#0EA5E9] absolute -left-5 top-1/2 -translate-y-1/2" />
+                      <span className="font-script text-4xl -rotate-12 text-[#000080] relative">
+                        <PlusCircle size={22} className="text-[#000080] absolute -left-5 top-1/2 -translate-y-1/2" />
                         Add New
                       </span>
                     </Link>
