@@ -9,7 +9,7 @@ const CreateCardPage = () => {
   const cardType = (type === 'food' || type === 'entertainment') ? type : 'food';
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col font-typewriter">
       <Header />
       
       <main className="flex-1 container mx-auto px-4 py-8">

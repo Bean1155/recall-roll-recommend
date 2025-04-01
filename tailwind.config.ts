@@ -19,6 +19,11 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['American Typewriter', 'Courier New', 'monospace'],
+				serif: ['American Typewriter', 'Georgia', 'Times New Roman', 'serif'],
+				typewriter: ['American Typewriter', 'Courier New', 'monospace'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -75,10 +80,6 @@ export default {
 					gridLine: '#ACC8E5',
 					softBrown: '#9E8979'
 				}
-			},
-			fontFamily: {
-				serif: ['Georgia', 'Times New Roman', 'serif'],
-				typewriter: ['Courier New', 'monospace'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

@@ -1,6 +1,4 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -43,7 +41,7 @@
   }
 
   body {
-    @apply bg-catalog-cream text-foreground;
+    @apply bg-catalog-cream text-foreground font-sans;
     background-image: 
       linear-gradient(rgba(172, 200, 229, 0.3) 1px, transparent 1px),
       linear-gradient(90deg, rgba(172, 200, 229, 0.3) 1px, transparent 1px);
@@ -55,7 +53,7 @@
   /* Card styling */
   .catalog-card {
     @apply relative bg-catalog-cream border border-catalog-softBrown rounded-sm p-4 shadow-md;
-    font-family: 'Special Elite', cursive;
+    font-family: 'American Typewriter', 'Courier New', monospace;
   }
   
   .catalog-card-food {
@@ -90,12 +88,12 @@
   
   /* Header typography */
   .catalog-title {
-    font-family: 'Special Elite', cursive;
+    font-family: 'American Typewriter', 'Courier New', monospace;
     @apply text-4xl font-bold tracking-tight;
   }
   
   .catalog-subtitle {
-    font-family: 'Special Elite', cursive;
+    font-family: 'American Typewriter', 'Courier New', monospace;
     @apply text-xl font-semibold tracking-tight;
   }
   
