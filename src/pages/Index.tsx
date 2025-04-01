@@ -31,7 +31,7 @@ const Index = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <div>
-            <Envelope label="FOOD EXPERIENCES" className="h-64" labelColor="#A52A2A">
+            <Envelope className="h-64">
               <div 
                 className={`catalog-card catalog-card-food h-48 flex flex-col items-center justify-center transition-all duration-300 ${activeCard === 'bites' ? 'transform scale-105 shadow-lg' : ''}`}
                 onMouseEnter={() => handleMouseEnter('bites')}
@@ -57,7 +57,7 @@ const Index = () => {
           </div>
           
           <div>
-            <Envelope label="ENTERTAINMENT EXPERIENCES" className="h-64" labelColor="#A52A2A">
+            <Envelope className="h-64">
               <div 
                 className={`catalog-card catalog-card-entertainment h-48 flex flex-col items-center justify-center transition-all duration-300 ${activeCard === 'blockbusters' ? 'transform scale-105 shadow-lg' : ''}`}
                 onMouseEnter={() => handleMouseEnter('blockbusters')}

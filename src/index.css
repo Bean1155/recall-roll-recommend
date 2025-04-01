@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -82,11 +81,7 @@
   }
   
   .envelope-flap {
-    @apply absolute top-0 left-0 w-full h-8 bg-catalog-manila border-b border-catalog-softBrown transform origin-bottom transition-transform duration-300;
-  }
-  
-  .envelope:hover .envelope-flap {
-    @apply -rotate-6;
+    @apply absolute top-0 left-0 w-full h-8 bg-catalog-manila border-b border-catalog-softBrown;
   }
   
   /* Header typography */
