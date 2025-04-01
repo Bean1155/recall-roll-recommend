@@ -14,6 +14,7 @@ import RecommendPage from "./pages/RecommendPage";
 import CollectionsPage from "./pages/CollectionsPage";
 import ProfilePage from "./pages/ProfilePage";
 import SearchPage from "./pages/SearchPage";
+import SettingsPage from "./pages/SettingsPage";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/recommend" element={<RecommendPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/search" element={<SearchPage />} />
+            <Route path="/settings" element={<ProfilePage />} /> {/* Temporarily point to ProfilePage */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

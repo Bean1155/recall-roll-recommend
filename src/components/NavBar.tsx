@@ -1,8 +1,13 @@
 
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { User, Folder, Sparkles, PlusCircle, Menu, Home, Search } from "lucide-react";
+import { User, Folder, Sparkles, PlusCircle, Menu, Home, Search, Settings } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { 
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const NavBar = () => {
   const location = useLocation();
@@ -33,12 +38,6 @@ const NavBar = () => {
       icon: Sparkles,
       path: "/recommend",
       color: "#FEF7CD" // Soft Yellow
-    },
-    {
-      name: "Profile",
-      icon: User,
-      path: "/profile",
-      color: "#FDE1D3" // Soft Peach
     }
   ];
 
@@ -48,6 +47,14 @@ const NavBar = () => {
     icon: Search,
     path: "/search",
     color: "#E1F5FE" // Soft Light Blue
+  };
+
+  // Profile with settings popover
+  const profileItem = {
+    name: "Profile",
+    icon: User,
+    path: "/profile",
+    color: "#FDE1D3" // Soft Peach
   };
 
   const toggleNavbar = () => {
@@ -68,7 +75,7 @@ const NavBar = () => {
                 <Link 
                   key={item.name} 
                   to={item.path}
-                  className={`flex flex-col items-center ${isMiddle ? 'order-0' : ''} ${item.name === 'Profile' ? 'order-last' : ''}`}
+                  className={`flex flex-col items-center ${isMiddle ? 'order-0' : ''}`}
                   onClick={() => setIsExpanded(false)}
                 >
                   <div 
@@ -125,6 +132,52 @@ const NavBar = () => {
                 Quick search your catalog items
               </HoverCardContent>
             </HoverCard>
+
+            {/* Profile with settings popover */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className="flex flex-col items-center order-last cursor-pointer">
+                  <div 
+                    className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-all ${
+                      location.pathname === profileItem.path ? "shadow-md" : ""
+                    }`}
+                    style={{ backgroundColor: profileItem.color }}
+                  >
+                    <profileItem.icon 
+                      size={22} 
+                      className={`transition-colors ${
+                        location.pathname === profileItem.path ? "text-catalog-teal" : "text-catalog-softBrown"
+                      }`}
+                    />
+                  </div>
+                  <span className={`text-xs font-medium ${
+                    location.pathname === profileItem.path ? "text-catalog-teal" : "text-catalog-softBrown"
+                  }`}>
+                    {profileItem.name}
+                  </span>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-48 p-0 bg-white shadow-lg rounded-lg border border-catalog-softBrown/20">
+                <div className="flex flex-col">
+                  <Link 
+                    to="/profile" 
+                    className="flex items-center gap-2 p-3 hover:bg-gray-50"
+                    onClick={() => setIsExpanded(false)}
+                  >
+                    <User size={18} className="text-catalog-softBrown" />
+                    <span className="text-sm">Profile</span>
+                  </Link>
+                  <Link 
+                    to="/settings" 
+                    className="flex items-center gap-2 p-3 hover:bg-gray-50 border-t border-catalog-softBrown/10"
+                    onClick={() => setIsExpanded(false)}
+                  >
+                    <Settings size={18} className="text-catalog-softBrown" />
+                    <span className="text-sm">Settings</span>
+                  </Link>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         ) : (
           <div className="flex justify-center py-2">

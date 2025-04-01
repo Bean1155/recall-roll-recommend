@@ -2,7 +2,6 @@
 import { Link } from "react-router-dom";
 import { FileText, Utensils, Clapperboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import SettingsMenu from "@/components/SettingsMenu";
 
 const Header = () => {
   return (
@@ -16,9 +15,6 @@ const Header = () => {
               className="h-16 w-16 rounded-full object-cover"
             />
           </Link>
-          <div className="ml-3">
-            <SettingsMenu />
-          </div>
         </div>
         
         <nav className="flex gap-2">
