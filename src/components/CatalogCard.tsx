@@ -52,7 +52,7 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
           <>
             <p><span className="font-bold">Genre:</span> {entertainmentCard.genre}</p>
             <p><span className="font-bold">Medium:</span> {entertainmentCard.medium}</p>
-            <p><span className="font-bold">Year:</span> {entertainmentCard.releaseYear}</p>
+            <p><span className="font-bold">Category:</span> {entertainmentCard.entertainmentCategory}</p>
           </>
         )}
         <p><span className="font-bold">Date Experienced:</span> {new Date(card.date).toLocaleDateString()}</p>
@@ -64,6 +64,27 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
       <div className="mb-4 bg-white bg-opacity-50 p-2 rounded border border-catalog-softBrown">
         <p className="text-sm italic">{card.notes}</p>
       </div>
+      
+      {(isFoodCard && foodCard.tags && foodCard.tags.length > 0) || 
+       (!isFoodCard && entertainmentCard.tags && entertainmentCard.tags.length > 0) ? (
+        <div className="mb-4">
+          <p className="text-xs font-bold mb-1">Tags:</p>
+          <div className="flex flex-wrap gap-1">
+            {isFoodCard && foodCard.tags ? 
+              foodCard.tags.map((tag, index) => (
+                <span key={index} className="text-xs bg-catalog-softBrown/30 px-2 py-1 rounded-full">
+                  {tag}
+                </span>
+              )) :
+              entertainmentCard.tags && entertainmentCard.tags.map((tag, index) => (
+                <span key={index} className="text-xs bg-catalog-softBrown/30 px-2 py-1 rounded-full">
+                  {tag}
+                </span>
+              ))
+            }
+          </div>
+        </div>
+      ) : null}
       
       {showActions && (
         <div className="flex justify-end">

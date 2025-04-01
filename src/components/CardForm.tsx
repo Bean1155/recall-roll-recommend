@@ -14,7 +14,7 @@ import {
 import { CardType, CatalogCard, FoodCard, EntertainmentCard, FoodCategory, FoodStatus, EntertainmentStatus } from "@/lib/types";
 import { addCard } from "@/lib/data";
 import { toast } from "@/components/ui/use-toast";
-import { Plus, Minus, Calendar, Link } from "lucide-react";
+import { Plus, Minus, Calendar, Link, Tag } from "lucide-react";
 
 interface CardFormProps {
   type: CardType;
@@ -96,6 +96,8 @@ const CardForm = ({ type }: CardFormProps) => {
           medium: formData.medium,
           entertainmentCategory: formData.entertainmentCategory,
           status: formData.status as EntertainmentStatus,
+          url: formData.url,
+          tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()) : [],
         } as Omit<EntertainmentCard, 'id'>;
       }
       
@@ -350,6 +352,37 @@ const CardForm = ({ type }: CardFormProps) => {
                   <SelectItem value="Favorite">Favorite</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="url" className="flex items-center">
+                <Link className="w-4 h-4 mr-2" />
+                URL
+              </Label>
+              <Input
+                id="url"
+                name="url"
+                value={formData.url}
+                onChange={handleChange}
+                className="catalog-input"
+                placeholder="Website or streaming link"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="tags" className="flex items-center">
+                <Tag className="w-4 h-4 mr-2" />
+                Tags
+              </Label>
+              <Input
+                id="tags"
+                name="tags"
+                value={formData.tags}
+                onChange={handleChange}
+                className="catalog-input"
+                placeholder="comedy, sci-fi, 90s, etc. (comma separated)"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Separate tags with commas</p>
             </div>
           </>
         )}

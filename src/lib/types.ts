@@ -33,4 +33,6 @@ export interface EntertainmentCard extends CatalogCard {
   medium: string; // streaming platform
   entertainmentCategory: string; // movies, tv shows, etc.
   status: EntertainmentStatus;
+  url?: string;
+  tags?: string[];
 }
