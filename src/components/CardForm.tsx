@@ -243,6 +243,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                   <SelectItem value="bakeries">Bakeries</SelectItem>
                   <SelectItem value="bars">Bars</SelectItem>
                   <SelectItem value="food trucks">Food Trucks</SelectItem>
+                  <SelectItem value="restaurant">Restaurant</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
