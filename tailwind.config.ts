@@ -77,7 +77,7 @@ export default {
 					green: '#D8E4C8',
 					pink: '#FDE1D3',
 					blue: '#D6E5F0',
-					gridLine: '#ACC8E5',
+					gridLine: '#F5F1E6',
 					softBrown: '#9E8979'
 				}
 			},
