@@ -51,23 +51,6 @@ const RecommendPage = () => {
     return <div>Loading...</div>;
   }
   
-  // Create the title element to render in the UI
-  const titleElement = (
-    <div className="flex items-center gap-2">
-      <span>{`Recommend This ${card.type === 'food' ? 'Food' : 'Entertainment'}`}</span>
-      {card.recommendationBadge && (
-        <Badge 
-          className={card.recommendationBadge === 'Highly Recommend' 
-            ? 'bg-catalog-teal' 
-            : 'bg-catalog-pink text-black'
-          }
-        >
-          {card.recommendationBadge}
-        </Badge>
-      )}
-    </div>
-  );
-  
   return (
     <GridLayout title={`Recommend This ${card.type === 'food' ? 'Food' : 'Entertainment'}`}>
       <div className="max-w-md mx-auto mb-8">
