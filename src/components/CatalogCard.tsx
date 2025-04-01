@@ -1,11 +1,8 @@
-
 import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Star, Send, Edit, Share2 } from "lucide-react";
+import { Edit, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { shareCard } from "@/lib/data";
-import { toast } from "@/components/ui/use-toast";
 
 interface CatalogCardProps {
   card: CatalogCardType;
@@ -16,24 +13,6 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
   const isFoodCard = card.type === 'food';
   const foodCard = card as FoodCard;
   const entertainmentCard = card as EntertainmentCard;
-  
-  const handleShare = async () => {
-    try {
-      // Pass 'internal' mode to indicate sharing within the app (full information)
-      await shareCard(card, 'internal');
-      toast({
-        title: "App Share",
-        description: "Card has been shared with full details to app users.",
-      });
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to share";
-      toast({
-        title: "Share failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    }
-  };
 
   return (
     <div 
@@ -108,15 +87,6 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
       
       {showActions && (
         <div className="flex justify-end space-x-2">
-          <Button 
-            variant="outline" 
-            size="sm"
-            className="bg-white border-catalog-softBrown text-catalog-teal"
-            onClick={handleShare}
-          >
-            <Share2 size={16} className="mr-2" />
-            Share to App Users
-          </Button>
           <Button 
             variant="outline" 
             size="sm"

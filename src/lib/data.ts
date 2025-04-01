@@ -1,3 +1,4 @@
+
 import { CatalogCard, FoodCard, EntertainmentCard, FoodStatus, RecommendationBadge } from './types';
 
 // Mock data
@@ -158,7 +159,7 @@ export const isRecommendedToUser = (cardId: string, userId: string): boolean => 
 };
 
 // Add a new function to share card
-export const shareCard = async (card: CatalogCard): Promise<void> => {
+export const shareCard = async (card: CatalogCard, mode: 'internal' | 'external' = 'internal'): Promise<void> => {
   // Create a share text based on the card type and properties
   const title = card.title;
   const creator = card.creator;
@@ -174,12 +175,18 @@ export const shareCard = async (card: CatalogCard): Promise<void> => {
     shareText += ` ${entertainmentCard.genre} ${entertainmentCard.entertainmentCategory} on ${entertainmentCard.medium}.`;
   }
   
-  if (card.notes) {
+  // Add notes only for internal sharing
+  if (mode === 'internal' && card.notes) {
     shareText += `\n\nNotes: ${card.notes}`;
   }
   
   if (card.recommendationBadge) {
     shareText += `\n\n${card.recommendationBadge}!`;
+  }
+  
+  // For external sharing, add a prompt to download the app
+  if (mode === 'external') {
+    shareText += '\n\nDownload our app to see full details and more recommendations!';
   }
   
   // Try Web Share API first (modern browsers and mobile)
