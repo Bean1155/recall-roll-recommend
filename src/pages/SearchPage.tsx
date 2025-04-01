@@ -17,6 +17,7 @@ import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard } from "@/l
 import { getAllCards } from "@/lib/data";
 import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,6 +26,7 @@ const SearchPage = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [allCards, setAllCards] = useState<CatalogCardType[]>([]);
   const [filteredCards, setFilteredCards] = useState<CatalogCardType[]>([]);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     // Load all cards
@@ -125,21 +127,40 @@ const SearchPage = () => {
         </form>
 
         <Tabs defaultValue="all" className="mb-6" onValueChange={setActiveFilter}>
-          <TabsList className="grid grid-cols-6 mb-4">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="favorites" className="flex items-center gap-1">
-              <Heart size={14} /> Favorites
+          <TabsList className={`${isMobile ? 'grid grid-cols-3 gap-1 mb-4' : 'grid grid-cols-6 mb-4'}`}>
+            <TabsTrigger value="all" className="text-sm">All</TabsTrigger>
+            <TabsTrigger value="favorites" className="flex items-center gap-1 text-sm">
+              <Heart size={14} /> {!isMobile && "Favorites"}
             </TabsTrigger>
-            <TabsTrigger value="topRated" className="flex items-center gap-1">
-              <Star size={14} /> Top Rated
+            <TabsTrigger value="topRated" className="flex items-center gap-1 text-sm">
+              <Star size={14} /> {!isMobile && "Top Rated"}
             </TabsTrigger>
-            <TabsTrigger value="location" className="flex items-center gap-1">
-              <MapPin size={14} /> Location
-            </TabsTrigger>
-            <TabsTrigger value="keywords">Keywords</TabsTrigger>
-            <TabsTrigger value="topReferrals" className="flex items-center gap-1">
-              <TrendingUp size={14} /> Top Referrals
-            </TabsTrigger>
+            {isMobile && (
+              <TabsTrigger value="location" className="flex items-center gap-1 text-sm col-span-1">
+                <MapPin size={14} />
+              </TabsTrigger>
+            )}
+            {isMobile && (
+              <TabsTrigger value="keywords" className="text-sm col-span-1">Keywords</TabsTrigger>
+            )}
+            {isMobile && (
+              <TabsTrigger value="topReferrals" className="flex items-center gap-1 text-sm col-span-1">
+                <TrendingUp size={14} />
+              </TabsTrigger>
+            )}
+            {!isMobile && (
+              <TabsTrigger value="location" className="flex items-center gap-1">
+                <MapPin size={14} /> Location
+              </TabsTrigger>
+            )}
+            {!isMobile && (
+              <TabsTrigger value="keywords">Keywords</TabsTrigger>
+            )}
+            {!isMobile && (
+              <TabsTrigger value="topReferrals" className="flex items-center gap-1">
+                <TrendingUp size={14} /> Top Referrals
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="all" className="mt-0">
