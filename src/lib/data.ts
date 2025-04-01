@@ -1,3 +1,4 @@
+
 import { CatalogCard, FoodCard, EntertainmentCard, FoodStatus, RecommendationBadge } from './types';
 
 // Mock data
@@ -113,16 +114,17 @@ export const deleteCard = (id: string): void => {
 };
 
 // Add a recommendation to a card
-export const addRecommendation = (cardId: string, recommendedTo: string, badge: string | null = null): void => {
+export const addRecommendation = (cardId: string, userId: string, badge: string | null = null): void => {
   const cards = getAllCards();
   const cardIndex = cards.findIndex(c => c.id === cardId);
   
   if (cardIndex !== -1) {
     const card = cards[cardIndex];
+    // Store user IDs instead of names
     const recommendedToList = card.recommendedTo || [];
     
     // Only add if it doesn't already exist
-    if (!recommendedToList.includes(recommendedTo)) {
+    if (!recommendedToList.includes(userId)) {
       // Convert the badge string to the proper RecommendationBadge type
       let typedBadge: RecommendationBadge = null;
       if (badge === "Highly Recommend") {
@@ -135,11 +137,23 @@ export const addRecommendation = (cardId: string, recommendedTo: string, badge: 
       
       cards[cardIndex] = {
         ...card,
-        recommendedTo: [...recommendedToList, recommendedTo],
+        recommendedTo: [...recommendedToList, userId],
         recommendationBadge: typedBadge
       };
       
       localStorage.setItem('catalogCards', JSON.stringify(cards));
     }
   }
+};
+
+// New function to get users who received a recommendation
+export const getRecommendedUsers = (cardId: string): string[] => {
+  const card = getCardById(cardId);
+  return card?.recommendedTo || [];
+};
+
+// New function to check if a user already received a recommendation
+export const isRecommendedToUser = (cardId: string, userId: string): boolean => {
+  const recommendedUsers = getRecommendedUsers(cardId);
+  return recommendedUsers.includes(userId);
 };

@@ -2,13 +2,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { CatalogCard } from "@/lib/types";
 import { addRecommendation } from "@/lib/data";
 import { toast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { useUser } from "@/contexts/UserContext";
+import UserSelect from "./UserSelect";
 import { 
   Select,
   SelectContent,
@@ -23,20 +24,33 @@ interface RecommendFormProps {
 
 const RecommendForm = ({ card }: RecommendFormProps) => {
   const navigate = useNavigate();
-  const [recipient, setRecipient] = useState('');
+  const { users } = useUser();
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [message, setMessage] = useState('');
   const [badge, setBadge] = useState<string | null>(null);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!selectedUserId) {
+      toast({
+        title: "Selection Required",
+        description: "Please select an app user to recommend to.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     try {
       // Add recommendation to card
-      addRecommendation(card.id, recipient, badge);
+      addRecommendation(card.id, selectedUserId, badge);
+      
+      // Find the user's name to display in toast
+      const selectedUser = users.find(user => user.id === selectedUserId);
       
       toast({
         title: "Recommendation Sent!",
-        description: `Your recommendation has been sent to ${recipient}.`,
+        description: `Your recommendation has been sent to ${selectedUser?.name || 'user'}.`,
       });
       
       // In a real app, this would send an email or notification
@@ -55,17 +69,11 @@ const RecommendForm = ({ card }: RecommendFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="catalog-card max-w-md mx-auto">
       <div className="space-y-4">
-        <div>
-          <Label htmlFor="recipient">Recipient's Name</Label>
-          <Input
-            id="recipient"
-            value={recipient}
-            onChange={(e) => setRecipient(e.target.value)}
-            required
-            className="catalog-input"
-            placeholder="Who are you recommending this to?"
-          />
-        </div>
+        <UserSelect 
+          cardId={card.id}
+          onUserSelect={setSelectedUserId}
+          selectedUserId={selectedUserId}
+        />
         
         <div>
           <Label htmlFor="badge">Add a Recommendation Badge (Optional)</Label>
@@ -134,6 +142,7 @@ const RecommendForm = ({ card }: RecommendFormProps) => {
           <Button
             type="submit"
             className="bg-catalog-teal hover:bg-catalog-darkTeal"
+            disabled={!selectedUserId}
           >
             Send Recommendation
           </Button>
