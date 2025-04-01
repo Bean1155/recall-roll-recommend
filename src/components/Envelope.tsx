@@ -30,23 +30,6 @@ const Envelope: React.FC<EnvelopeProps> = ({
       className={`envelope relative cursor-pointer ${className}`}
       onClick={handleClick}
     >
-      {label && (
-        <div 
-          className="mx-auto max-w-max bg-[#E6D7B8] border border-[#9E8979] rounded-t-md mb-[-1px] z-10 relative"
-          style={{ 
-            color: '#3B3B3B', 
-            fontWeight: 'bold', 
-            textTransform: 'uppercase', 
-            fontSize: '14px',
-            letterSpacing: '0.5px',
-            padding: '6px 12px',
-            boxShadow: '0 -2px 4px rgba(0,0,0,0.05)'
-          }}
-        >
-          {label}
-        </div>
-      )}
-      
       <div 
         className={`envelope-pocket relative transition-all duration-300 ease-in-out ${isOpen ? 'translate-y-6' : ''}`}
         style={{
@@ -55,12 +38,28 @@ const Envelope: React.FC<EnvelopeProps> = ({
           boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
           padding: '12px 12px 32px 12px',
           border: '1px solid #9E8979',
-          borderTop: label ? '1px solid #9E8979' : 'none',
+          borderTop: 'none',
           minHeight: '80px',
           width: '100%',
           zIndex: 1
         }}
       >
+        {label && (
+          <div 
+            className="absolute bottom-0 left-0 right-0 text-center py-1 mx-auto max-w-max bg-[#E6D7B8] border-t border-x border-[#9E8979] rounded-t-md"
+            style={{ 
+              color: '#3B3B3B', 
+              fontWeight: 'bold', 
+              textTransform: 'uppercase', 
+              fontSize: '14px',
+              letterSpacing: '0.5px',
+              transform: 'translateY(100%)',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+            }}
+          >
+            {label}
+          </div>
+        )}
       </div>
       
       <div 
