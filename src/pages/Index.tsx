@@ -12,7 +12,7 @@ const Index = () => {
       
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="text-center mb-10">
-          <h1 className="catalog-title text-4xl md:text-6xl mb-4">TOTAL RECALL CATALOG</h1>
+          <h1 className="catalog-title text-4xl md:text-6xl mb-4 text-[#3B3B3B]">TOTAL RECALL CATALOG</h1>
           <p className="catalog-subtitle text-lg md:text-xl text-catalog-softBrown">
             Tracking Every Bite and Blockbuster
           </p>
