@@ -81,7 +81,32 @@
   }
   
   .envelope-flap {
-    @apply absolute top-0 left-0 w-full h-8 bg-catalog-manila border-b border-catalog-softBrown;
+    @apply absolute top-0 left-0 w-full h-8 bg-catalog-manila border-b border-catalog-softBrown transition-transform duration-500;
+    transform-origin: top;
+  }
+  
+  .envelope-flap-open {
+    @apply -translate-y-full opacity-0;
+  }
+  
+  .envelope-closed {
+    @apply bg-catalog-manila before:content-[''] before:absolute before:left-0 before:bottom-0 before:right-0 before:h-1/2 before:bg-catalog-manila/80 before:z-20 before:transition-opacity before:duration-500;
+  }
+  
+  .envelope-open {
+    @apply before:opacity-0;
+  }
+  
+  .envelope-content {
+    @apply transition-all duration-500;
+  }
+  
+  .envelope-closed .envelope-content {
+    @apply opacity-80;
+  }
+  
+  .envelope:hover {
+    @apply shadow-lg;
   }
   
   /* Header typography */

@@ -8,6 +8,10 @@ import { useState } from "react";
 
 const Index = () => {
   const [activeCard, setActiveCard] = useState<string | null>(null);
+  const [openEnvelopes, setOpenEnvelopes] = useState<Record<string, boolean>>({
+    bites: false,
+    blockbusters: false
+  });
 
   const handleMouseEnter = (cardId: string) => {
     setActiveCard(cardId);
@@ -15,6 +19,13 @@ const Index = () => {
 
   const handleMouseLeave = () => {
     setActiveCard(null);
+  };
+
+  const toggleEnvelope = (id: string) => {
+    setOpenEnvelopes(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
   };
 
   return (
@@ -31,54 +42,80 @@ const Index = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <div>
-            <Envelope className="h-64">
-              <div 
-                className={`catalog-card catalog-card-food h-48 flex flex-col items-center justify-center transition-all duration-300 ${activeCard === 'bites' ? 'transform scale-105 shadow-lg' : ''}`}
-                onMouseEnter={() => handleMouseEnter('bites')}
-                onMouseLeave={handleMouseLeave}
-                style={{ 
-                  background: activeCard === 'bites' ? 'linear-gradient(135deg, #FDE1D3 0%, #FFBCA4 100%)' : '', 
-                  boxShadow: activeCard === 'bites' ? '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)' : ''
-                }}
-              >
-                <Utensils 
-                  size={48} 
-                  className={`mb-4 transition-all duration-300 ${activeCard === 'bites' ? 'text-catalog-teal scale-110' : 'text-catalog-softBrown'}`} 
-                />
-                <h2 className="catalog-subtitle mb-4">Bites</h2>
-                <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-                  <Link to="/bites">View Collection</Link>
-                </Button>
-                <Button asChild variant="link" className="mt-2 text-catalog-softBrown">
-                  <Link to="/create/food">+ Add New</Link>
-                </Button>
-              </div>
+            <Envelope 
+              className="h-64 cursor-pointer" 
+              isOpen={openEnvelopes.bites}
+              onClick={() => toggleEnvelope('bites')}
+            >
+              {openEnvelopes.bites && (
+                <div 
+                  className={`catalog-card catalog-card-food h-48 flex flex-col items-center justify-center transition-all duration-300 ${activeCard === 'bites' ? 'transform scale-105 shadow-lg' : ''}`}
+                  onMouseEnter={() => handleMouseEnter('bites')}
+                  onMouseLeave={handleMouseLeave}
+                  style={{ 
+                    background: activeCard === 'bites' ? 'linear-gradient(135deg, #FDE1D3 0%, #FFBCA4 100%)' : '', 
+                    boxShadow: activeCard === 'bites' ? '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)' : ''
+                  }}
+                >
+                  <Utensils 
+                    size={48} 
+                    className={`mb-4 transition-all duration-300 ${activeCard === 'bites' ? 'text-catalog-teal scale-110' : 'text-catalog-softBrown'}`} 
+                  />
+                  <h2 className="catalog-subtitle mb-4">Bites</h2>
+                  <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+                    <Link to="/bites">View Collection</Link>
+                  </Button>
+                  <Button asChild variant="link" className="mt-2 text-catalog-softBrown">
+                    <Link to="/create/food">+ Add New</Link>
+                  </Button>
+                </div>
+              )}
+              {!openEnvelopes.bites && (
+                <div className="flex flex-col items-center justify-center h-full">
+                  <Utensils size={32} className="text-catalog-softBrown mb-2" />
+                  <p className="catalog-subtitle text-[#A52A2A]">Bites</p>
+                  <p className="text-sm mt-2 text-gray-500">Click to open</p>
+                </div>
+              )}
             </Envelope>
           </div>
           
           <div>
-            <Envelope className="h-64">
-              <div 
-                className={`catalog-card catalog-card-entertainment h-48 flex flex-col items-center justify-center transition-all duration-300 ${activeCard === 'blockbusters' ? 'transform scale-105 shadow-lg' : ''}`}
-                onMouseEnter={() => handleMouseEnter('blockbusters')}
-                onMouseLeave={handleMouseLeave}
-                style={{ 
-                  background: activeCard === 'blockbusters' ? 'linear-gradient(135deg, #D6E5F0 0%, #A7C7E7 100%)' : '', 
-                  boxShadow: activeCard === 'blockbusters' ? '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)' : ''
-                }}
-              >
-                <Clapperboard 
-                  size={48} 
-                  className={`mb-4 transition-all duration-300 ${activeCard === 'blockbusters' ? 'text-catalog-teal scale-110' : 'text-catalog-softBrown'}`}
-                />
-                <h2 className="catalog-subtitle mb-4">Blockbusters</h2>
-                <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-                  <Link to="/blockbusters">View Collection</Link>
-                </Button>
-                <Button asChild variant="link" className="mt-2 text-catalog-softBrown">
-                  <Link to="/create/entertainment">+ Add New</Link>
-                </Button>
-              </div>
+            <Envelope 
+              className="h-64 cursor-pointer"
+              isOpen={openEnvelopes.blockbusters}
+              onClick={() => toggleEnvelope('blockbusters')}
+            >
+              {openEnvelopes.blockbusters && (
+                <div 
+                  className={`catalog-card catalog-card-entertainment h-48 flex flex-col items-center justify-center transition-all duration-300 ${activeCard === 'blockbusters' ? 'transform scale-105 shadow-lg' : ''}`}
+                  onMouseEnter={() => handleMouseEnter('blockbusters')}
+                  onMouseLeave={handleMouseLeave}
+                  style={{ 
+                    background: activeCard === 'blockbusters' ? 'linear-gradient(135deg, #D6E5F0 0%, #A7C7E7 100%)' : '', 
+                    boxShadow: activeCard === 'blockbusters' ? '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)' : ''
+                  }}
+                >
+                  <Clapperboard 
+                    size={48} 
+                    className={`mb-4 transition-all duration-300 ${activeCard === 'blockbusters' ? 'text-catalog-teal scale-110' : 'text-catalog-softBrown'}`}
+                  />
+                  <h2 className="catalog-subtitle mb-4">Blockbusters</h2>
+                  <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+                    <Link to="/blockbusters">View Collection</Link>
+                  </Button>
+                  <Button asChild variant="link" className="mt-2 text-catalog-softBrown">
+                    <Link to="/create/entertainment">+ Add New</Link>
+                  </Button>
+                </div>
+              )}
+              {!openEnvelopes.blockbusters && (
+                <div className="flex flex-col items-center justify-center h-full">
+                  <Clapperboard size={32} className="text-catalog-softBrown mb-2" />
+                  <p className="catalog-subtitle text-[#A52A2A]">Blockbusters</p>
+                  <p className="text-sm mt-2 text-gray-500">Click to open</p>
+                </div>
+              )}
             </Envelope>
           </div>
         </div>
