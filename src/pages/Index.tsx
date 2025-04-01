@@ -85,11 +85,9 @@ const Index = () => {
                 </div>
               </div>
               
-              <div className="border-t border-dashed border-catalog-softBrown w-full pt-3 mt-6">
-                <p className="text-catalog-softBrown text-sm text-center">
-                  {foodLastUpdated}
-                </p>
-              </div>
+              <p className="text-catalog-softBrown text-sm text-center mt-6">
+                {foodLastUpdated}
+              </p>
             </div>
           </Envelope>
         </div>
@@ -126,11 +124,9 @@ const Index = () => {
                 </div>
               </div>
               
-              <div className="border-t border-dashed border-catalog-softBrown w-full pt-3 mt-6">
-                <p className="text-catalog-softBrown text-sm text-center">
-                  {entertainmentLastUpdated}
-                </p>
-              </div>
+              <p className="text-catalog-softBrown text-sm text-center mt-6">
+                {entertainmentLastUpdated}
+              </p>
             </div>
           </Envelope>
         </div>
