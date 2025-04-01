@@ -13,8 +13,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({ children, title }) => {
       className="min-h-screen flex flex-col font-typewriter"
       style={{
         backgroundImage: `
-          linear-gradient(to right, rgba(173, 200, 229, 0.3) 1px, transparent 1px),
-          linear-gradient(to bottom, rgba(173, 200, 229, 0.3) 1px, transparent 1px)
+          linear-gradient(to bottom, rgba(173, 200, 229, 0.5) 1px, transparent 1px)
         `,
         backgroundSize: '40px 40px',
         backgroundColor: '#F5F1E6'
