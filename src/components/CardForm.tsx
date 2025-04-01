@@ -225,7 +225,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
             </div>
             
             <div>
-              <Label htmlFor="category">Category <span className="text-red-500">*</span></Label>
+              <Label htmlFor="category">Category <span className="text-red-500">*</span> <span className="text-xs text-muted-foreground">(Select from menu)</span></Label>
               <Select
                 value={formData.category}
                 onValueChange={(value) => handleSelectChange('category', value)}
@@ -274,13 +274,13 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
             </div>
             
             <div>
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status">Status <span className="text-xs text-muted-foreground">(Select from menu)</span></Label>
               <Select
                 value={formData.status}
                 onValueChange={(value) => handleSelectChange('status', value)}
               >
                 <SelectTrigger className="catalog-input">
-                  <SelectValue placeholder="Select a status" />
+                  <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Visited: Tried this bite">Visited: Tried this bite</SelectItem>
@@ -395,7 +395,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
             </div>
             
             <div>
-              <Label htmlFor="entertainmentCategory">Entertainment Category <span className="text-red-500">*</span></Label>
+              <Label htmlFor="entertainmentCategory">Entertainment Category <span className="text-red-500">*</span> <span className="text-xs text-muted-foreground">(Select from menu)</span></Label>
               <Select
                 value={formData.entertainmentCategory}
                 onValueChange={(value) => handleSelectChange('entertainmentCategory', value)}
@@ -456,7 +456,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
             </div>
             
             <div>
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status">Status <span className="text-xs text-muted-foreground">(Select from menu)</span></Label>
               <Select
                 value={formData.status}
                 onValueChange={(value) => handleSelectChange('status', value)}
