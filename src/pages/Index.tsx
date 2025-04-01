@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Envelope from "@/components/Envelope";
@@ -35,7 +34,6 @@ const Index = () => {
                 size={48} 
                 className="mb-4 text-catalog-teal" 
               />
-              <h2 className="catalog-subtitle mb-4 text-xl font-semibold">Food Collection</h2>
               
               <div className="grid grid-cols-2 gap-4 w-full mt-2">
                 <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex items-center justify-center">
@@ -69,7 +67,6 @@ const Index = () => {
                 size={48} 
                 className="mb-4 text-catalog-teal"
               />
-              <h2 className="catalog-subtitle mb-4 text-xl font-semibold">Entertainment Collection</h2>
               
               <div className="grid grid-cols-2 gap-4 w-full mt-2">
                 <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex items-center justify-center">
