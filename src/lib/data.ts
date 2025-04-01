@@ -56,7 +56,8 @@ const mockCards: CatalogCard[] = [
     genre: 'Sci-Fi/Horror',
     medium: 'Netflix',
     entertainmentCategory: 'tv shows',
-    status: 'Highly Recommend',
+    status: 'Watched',
+    recommendationBadge: 'Highly Recommend' as RecommendationBadge,
   } as EntertainmentCard,
 ];
 
