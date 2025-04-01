@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Envelope from "@/components/Envelope";
-import { FileText, Utensils, Clapperboard } from "lucide-react";
+import { FileText, Utensils, Clapperboard, PlusCircle } from "lucide-react";
 import { useState } from "react";
 import GridLayout from "@/components/GridLayout";
 
@@ -46,8 +46,14 @@ const Index = () => {
               <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
                 <Link to="/bites">View Collection</Link>
               </Button>
-              <Button asChild variant="link" className="mt-2 text-catalog-softBrown">
-                <Link to="/create/food">+ Add New</Link>
+              <Button 
+                asChild 
+                className="mt-4 bg-[#F97316] hover:bg-[#EA580C] text-white shadow-md transform hover:scale-105 transition-all duration-300 flex items-center px-6"
+              >
+                <Link to="/create/food">
+                  <PlusCircle size={18} className="mr-2" />
+                  Add New Bite
+                </Link>
               </Button>
             </div>
           </Envelope>
@@ -72,8 +78,14 @@ const Index = () => {
               <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
                 <Link to="/blockbusters">View Collection</Link>
               </Button>
-              <Button asChild variant="link" className="mt-2 text-catalog-softBrown">
-                <Link to="/create/entertainment">+ Add New</Link>
+              <Button 
+                asChild 
+                className="mt-4 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white shadow-md transform hover:scale-105 transition-all duration-300 flex items-center px-6"
+              >
+                <Link to="/create/entertainment">
+                  <PlusCircle size={18} className="mr-2" />
+                  Add New Blockbuster
+                </Link>
               </Button>
             </div>
           </Envelope>
