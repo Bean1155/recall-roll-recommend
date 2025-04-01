@@ -3,12 +3,37 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Envelope from "@/components/Envelope";
 import { Utensils, Clapperboard, PlusCircle, Search } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Card, CardContent } from "@/components/ui/card";
+import { getCardsByType } from "@/lib/data";
 
 const Index = () => {
   const [activeCard, setActiveCard] = useState<string | null>(null);
+  const [foodLastUpdated, setFoodLastUpdated] = useState<string>("No entries yet");
+  const [entertainmentLastUpdated, setEntertainmentLastUpdated] = useState<string>("No entries yet");
+  
+  useEffect(() => {
+    // Get food cards and find the most recent date
+    const foodCards = getCardsByType('food');
+    if (foodCards.length > 0) {
+      const sortedFoodCards = [...foodCards].sort((a, b) => 
+        new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+      const latestFoodDate = new Date(sortedFoodCards[0].date);
+      setFoodLastUpdated(`Last updated: ${latestFoodDate.toLocaleDateString()}`);
+    }
+    
+    // Get entertainment cards and find the most recent date
+    const entertainmentCards = getCardsByType('entertainment');
+    if (entertainmentCards.length > 0) {
+      const sortedEntCards = [...entertainmentCards].sort((a, b) => 
+        new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+      const latestEntDate = new Date(sortedEntCards[0].date);
+      setEntertainmentLastUpdated(`Last updated: ${latestEntDate.toLocaleDateString()}`);
+    }
+  }, []);
   
   const handleMouseEnter = (cardId: string) => {
     setActiveCard(cardId);
@@ -62,7 +87,7 @@ const Index = () => {
               
               <div className="border-t border-dashed border-catalog-softBrown w-full pt-3 mt-6">
                 <p className="text-catalog-softBrown text-sm text-center">
-                  {new Date().toLocaleDateString()} • Your Food Memories
+                  {foodLastUpdated}
                 </p>
               </div>
             </div>
@@ -103,7 +128,7 @@ const Index = () => {
               
               <div className="border-t border-dashed border-catalog-softBrown w-full pt-3 mt-6">
                 <p className="text-catalog-softBrown text-sm text-center">
-                  {new Date().toLocaleDateString()} • Your Entertainment Memories
+                  {entertainmentLastUpdated}
                 </p>
               </div>
             </div>
