@@ -135,39 +135,62 @@ const SearchPage = () => {
     }
   };
 
+  // Get placeholder text based on active filter
+  const getSearchPlaceholder = () => {
+    if (activeFilter === "location") {
+      return "Search by location...";
+    } else if (activeFilter === "keywords") {
+      return "Search by keywords...";
+    } else {
+      return "Search by title, creator...";
+    }
+  };
+
   return (
     <GridLayout title="Browse Catalog">
       <div className="max-w-5xl mx-auto">
         <form 
           onSubmit={handleSearch} 
-          className="flex mb-6"
+          className={`flex flex-col md:flex-row mb-6 ${isMobile ? 'gap-2' : ''}`}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          <Input
-            type="text"
-            placeholder={activeFilter === "location" 
-              ? "Search by location..." 
-              : "Search by title, creator, or keywords..."}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={`border-catalog-softBrown transition-all duration-300 ${isHovered ? 'border-catalog-teal shadow-sm' : ''}`}
-          />
-          <Button 
-            type="submit" 
-            className={`ml-2 transition-all duration-300 ${isHovered ? 'bg-catalog-darkTeal scale-105' : 'bg-catalog-teal'}`}
-          >
-            <Search size={18} />
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={toggleSortOrder}
-            className="ml-2 border-catalog-softBrown"
-            title={sortOrder === "desc" ? "Highest to Lowest" : "Lowest to Highest"}
-          >
-            {sortOrder === "desc" ? <ArrowDown size={18} /> : <ArrowUp size={18} />}
-          </Button>
+          <div className={`flex-1 relative ${isMobile ? 'mb-2' : ''}`}>
+            <Input
+              type="text"
+              placeholder={getSearchPlaceholder()}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={`w-full border-catalog-softBrown transition-all duration-300 ${isHovered ? 'border-catalog-teal shadow-sm' : ''}`}
+            />
+            {searchTerm && (
+              <Button 
+                type="button" 
+                variant="ghost" 
+                className="absolute right-10 top-0 h-full p-2"
+                onClick={() => setSearchTerm("")}
+              >
+                ×
+              </Button>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button 
+              type="submit" 
+              className={`transition-all duration-300 ${isHovered ? 'bg-catalog-darkTeal scale-105' : 'bg-catalog-teal'}`}
+            >
+              <Search size={18} />
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={toggleSortOrder}
+              className="border-catalog-softBrown"
+              title={sortOrder === "desc" ? "Highest to Lowest" : "Lowest to Highest"}
+            >
+              {sortOrder === "desc" ? <ArrowDown size={18} /> : <ArrowUp size={18} />}
+            </Button>
+          </div>
         </form>
 
         <Tabs defaultValue="all" className="mb-6" onValueChange={handleTabChange}>
@@ -219,27 +242,40 @@ const SearchPage = () => {
             )}
           </TabsList>
 
+          {/* Show active filter name in mobile view */}
+          {isMobile && (
+            <div className="text-sm font-medium mb-2 text-catalog-teal">
+              {activeFilter === "all" && "All Items"}
+              {activeFilter === "favorites" && "Favorites"}
+              {activeFilter === "topRated" && "Top Rated"}
+              {activeFilter === "location" && "By Location"}
+              {activeFilter === "byStatus" && "By Status"}
+              {activeFilter === "keywords" && "By Keywords"}
+              {activeFilter === "topReferrals" && "Most Referred"}
+            </div>
+          )}
+
           <TabsContent value="all" className="mt-0">
-            <h2 className="text-xl font-bold mb-4">All Items</h2>
+            {!isMobile && <h2 className="text-xl font-bold mb-4">All Items</h2>}
           </TabsContent>
           <TabsContent value="favorites" className="mt-0">
-            <h2 className="text-xl font-bold mb-4">Favorite Items</h2>
+            {!isMobile && <h2 className="text-xl font-bold mb-4">Favorite Items</h2>}
           </TabsContent>
           <TabsContent value="topRated" className="mt-0">
-            <h2 className="text-xl font-bold mb-4">Top Rated Items (4-5 Stars)</h2>
+            {!isMobile && <h2 className="text-xl font-bold mb-4">Top Rated Items (4-5 Stars)</h2>}
           </TabsContent>
           <TabsContent value="location" className="mt-0">
-            <h2 className="text-xl font-bold mb-4">Browse by Location</h2>
+            {!isMobile && <h2 className="text-xl font-bold mb-4">Browse by Location</h2>}
           </TabsContent>
           <TabsContent value="keywords" className="mt-0">
-            <h2 className="text-xl font-bold mb-4">Search by Keywords</h2>
+            {!isMobile && <h2 className="text-xl font-bold mb-4">Search by Keywords</h2>}
           </TabsContent>
           <TabsContent value="topReferrals" className="mt-0">
-            <h2 className="text-xl font-bold mb-4">Most Recommended Items</h2>
+            {!isMobile && <h2 className="text-xl font-bold mb-4">Most Recommended Items</h2>}
           </TabsContent>
           <TabsContent value="byStatus" className="mt-0">
             <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4">
-              <h2 className="text-xl font-bold">Browse by Status</h2>
+              {!isMobile && <h2 className="text-xl font-bold">Browse by Status</h2>}
               <Select
                 value={selectedStatus}
                 onValueChange={setSelectedStatus}
