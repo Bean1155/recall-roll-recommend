@@ -35,7 +35,7 @@ const App = () => (
             <Route path="/recommend" element={<RecommendPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/search" element={<SearchPage />} />
-            <Route path="/settings" element={<ProfilePage />} /> {/* Temporarily point to ProfilePage */}
+            <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

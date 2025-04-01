@@ -9,7 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-const NavBar = () => {
+export const NavBar = () => {
   const location = useLocation();
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -49,12 +49,12 @@ const NavBar = () => {
     color: "#E1F5FE" // Soft Light Blue
   };
 
-  // Profile with settings popover
+  // Profile with settings popover - updated with darker vintage color
   const profileItem = {
     name: "Profile",
     icon: User,
     path: "/profile",
-    color: "#FDE1D3" // Soft Peach
+    color: "#D2B48C" // Darker vintage color (soft brown)
   };
 
   const toggleNavbar = () => {
@@ -66,7 +66,7 @@ const NavBar = () => {
       <div className="container mx-auto max-w-md">
         {isExpanded ? (
           <div className="flex justify-around items-center py-2 animate-fade-in">
-            {/* Regular navigation items */}
+            {/* Regular navigation items with hover effect */}
             {navItems.map((item, index) => {
               const isActive = location.pathname === item.path;
               const isMiddle = index === Math.floor(navItems.length / 2);
@@ -81,7 +81,7 @@ const NavBar = () => {
                   <div 
                     className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-all ${
                       isActive ? "shadow-md" : ""
-                    }`}
+                    } hover:scale-110 hover:shadow-md`}
                     style={{ backgroundColor: item.color }}
                   >
                     <item.icon 
@@ -100,7 +100,7 @@ const NavBar = () => {
               );
             })}
 
-            {/* Search with hover card */}
+            {/* Search with hover card and hover effect */}
             <HoverCard>
               <HoverCardTrigger asChild>
                 <Link 
@@ -133,20 +133,20 @@ const NavBar = () => {
               </HoverCardContent>
             </HoverCard>
 
-            {/* Profile with settings popover */}
+            {/* Profile with settings popover and hover effect */}
             <Popover>
               <PopoverTrigger asChild>
                 <div className="flex flex-col items-center order-last cursor-pointer">
                   <div 
                     className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-all ${
                       location.pathname === profileItem.path ? "shadow-md" : ""
-                    }`}
+                    } hover:scale-110 hover:shadow-md`}
                     style={{ backgroundColor: profileItem.color }}
                   >
                     <profileItem.icon 
                       size={22} 
                       className={`transition-colors ${
-                        location.pathname === profileItem.path ? "text-catalog-teal" : "text-catalog-softBrown"
+                        location.pathname === profileItem.path ? "text-catalog-teal" : "text-white"
                       }`}
                     />
                   </div>
@@ -183,7 +183,7 @@ const NavBar = () => {
           <div className="flex justify-center py-2">
             <button
               onClick={toggleNavbar}
-              className="w-12 h-12 rounded-full bg-catalog-teal flex items-center justify-center shadow-md text-white"
+              className="w-12 h-12 rounded-full bg-catalog-teal flex items-center justify-center shadow-md text-white hover:bg-catalog-darkTeal transition-colors duration-200"
             >
               <Menu size={24} />
             </button>
