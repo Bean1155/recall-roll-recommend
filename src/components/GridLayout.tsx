@@ -1,6 +1,7 @@
 
 import React from "react";
 import Header from "@/components/Header";
+import NavBar from "@/components/NavBar";
 
 interface GridLayoutProps {
   children: React.ReactNode;
@@ -26,7 +27,9 @@ const GridLayout: React.FC<GridLayoutProps> = ({ children, title }) => {
         {children}
       </main>
       
-      <footer className="bg-catalog-manila border-t border-catalog-softBrown py-4 text-center text-sm text-catalog-softBrown mt-16">
+      <NavBar />
+      
+      <footer className="bg-catalog-manila border-t border-catalog-softBrown py-4 text-center text-sm text-catalog-softBrown mt-16 pb-20">
         <p>© {new Date().getFullYear()} TOTAL RECALL CATALOG • Tracking Every Bite and Blockbuster™</p>
       </footer>
     </div>

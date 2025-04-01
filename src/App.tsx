@@ -12,6 +12,7 @@ import BlockbustersPage from "./pages/BlockbustersPage";
 import CreateCardPage from "./pages/CreateCardPage";
 import RecommendPage from "./pages/RecommendPage";
 import CollectionsPage from "./pages/CollectionsPage";
+import ProfilePage from "./pages/ProfilePage";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/recommend/:id" element={<RecommendPage />} />
             <Route path="/collections" element={<CollectionsPage />} />
             <Route path="/recommend" element={<RecommendPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
