@@ -46,7 +46,7 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
           <>
             <p><span className="font-bold">Cuisine:</span> {foodCard.cuisine}</p>
             <p><span className="font-bold">Location:</span> {foodCard.location}</p>
-            <p><span className="font-bold">Dish:</span> {foodCard.dish}</p>
+            <p><span className="font-bold">Category:</span> {foodCard.category}</p>
           </>
         ) : (
           <>
