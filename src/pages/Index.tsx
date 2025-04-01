@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import Envelope from "@/components/Envelope";
-import { Book, Utensils, Clapperboard } from "lucide-react";
+import { FileText, Utensils, Clapperboard } from "lucide-react";
 
 const Index = () => {
   return (

@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Book, Utensils, Clapperboard } from "lucide-react";
+import { FileText, Utensils, Clapperboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Header = () => {
@@ -18,7 +18,7 @@ const Header = () => {
         <nav className="flex gap-2">
           <Button asChild variant="outline" className="bg-catalog-cream border-catalog-softBrown">
             <Link to="/">
-              <Book className="mr-2 h-4 w-4" />
+              <FileText className="mr-2 h-4 w-4" />
               Home
             </Link>
           </Button>
