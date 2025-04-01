@@ -20,7 +20,7 @@ const Envelope: React.FC<EnvelopeProps> = ({
 }) => {
   return (
     <div 
-      className={`envelope ${isOpen ? 'envelope-open' : 'envelope-closed'} ${className}`}
+      className={`envelope ${className}`}
       onClick={onClick}
     >
       {label && (
@@ -28,8 +28,7 @@ const Envelope: React.FC<EnvelopeProps> = ({
           <span className="text-xs font-bold" style={{ color: labelColor }}>{label}</span>
         </div>
       )}
-      <div className={`envelope-flap ${isOpen ? 'envelope-flap-open' : ''}`}></div>
-      <div className={`envelope-content p-3 relative z-10 ${isOpen ? 'envelope-content-open' : ''}`}>
+      <div className="p-3 relative z-10">
         {children}
       </div>
     </div>
