@@ -2,107 +2,137 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+ 
 @layer base {
   :root {
-    --background: 38 33% 94%;
-    --foreground: 20 14% 20%;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
 
-    --card: 38 33% 94%;
-    --card-foreground: 20 14% 20%;
-
-    --popover: 38 33% 94%;
-    --popover-foreground: 20 14% 20%;
-
-    --primary: 194 65% 30%;
-    --primary-foreground: 38 33% 94%;
-
-    --secondary: 165 65% 30%;
-    --secondary-foreground: 38 33% 94%;
-
-    --muted: 38 15% 84%;
-    --muted-foreground: 20 14% 35%;
-
-    --accent: 38 43% 75%;
-    --accent-foreground: 20 14% 20%;
-
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+ 
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+ 
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+ 
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+ 
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+ 
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+ 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 38 33% 94%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 20 14% 75%;
-    --input: 20 14% 75%;
-    --ring: 194 65% 30%;
-
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+ 
     --radius: 0.5rem;
   }
-
+ 
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+ 
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+ 
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+ 
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+ 
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+ 
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+ 
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+ 
+@layer base {
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-catalog-manila text-foreground font-sans;
-    background-image: 
-      linear-gradient(90deg, transparent, transparent calc(100% - 1px), rgba(172, 200, 229, 0.5) calc(100% - 1px)),
-      linear-gradient(0deg, transparent, transparent calc(100% - 1px), rgba(172, 200, 229, 0.5) calc(100% - 1px)),
-      linear-gradient(90deg, rgba(172, 200, 229, 0.5) 1px, transparent 1px),
-      linear-gradient(0deg, rgba(172, 200, 229, 0.5) 1px, transparent 1px);
-    background-size: 100% 1.5rem, 33.33% 100%, 33.33% 100%, 100% 1.5rem;
-    background-position: 0 0, 0 0, 0 0, 0 0;
+    @apply bg-background text-foreground;
   }
 }
 
 @layer components {
-  /* Card styling */
-  .catalog-card {
-    @apply relative bg-catalog-manila border border-catalog-softBrown rounded-sm p-4 shadow-md;
-    font-family: 'American Typewriter', 'Courier New', monospace;
-  }
-  
-  .catalog-card-food {
-    @apply bg-catalog-pink;
-  }
-  
-  .catalog-card-entertainment {
-    @apply bg-catalog-blue;
-  }
-  
-  /* Line styling for cards */
-  .catalog-line {
-    @apply w-full h-px bg-black/30 my-2;
-  }
-  
-  /* Envelope styling */
-  .envelope {
-    @apply relative bg-catalog-manila border border-catalog-softBrown rounded-sm p-1 shadow-md overflow-hidden;
-  }
-  
-  .envelope-tab {
-    @apply absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-catalog-manila border border-b-0 border-catalog-softBrown rounded-t-sm -translate-y-3/4;
-  }
-  
-  .envelope:hover {
-    @apply shadow-lg;
-  }
-  
-  /* Header typography */
   .catalog-title {
-    font-family: 'American Typewriter', 'Courier New', monospace;
-    @apply text-4xl font-bold tracking-tight;
+    @apply text-catalog-teal font-semibold;
   }
   
-  .catalog-subtitle {
-    font-family: 'American Typewriter', 'Courier New', monospace;
-    @apply text-xl font-semibold tracking-tight;
+  .catalog-card {
+    @apply bg-catalog-cream p-6 rounded-lg border border-catalog-softBrown shadow-md;
   }
   
-  /* Input fields with vintage look */
   .catalog-input {
-    @apply bg-transparent border-b border-catalog-softBrown focus:outline-none focus:border-catalog-teal px-2 py-1 w-full font-typewriter;
+    @apply bg-white border-catalog-softBrown focus:ring-catalog-teal focus:border-catalog-teal;
   }
   
-  /* Library pocket styling */
-  .library-pocket {
-    @apply relative bg-catalog-manila border border-catalog-softBrown rounded-sm p-1 shadow-md overflow-hidden;
+  .catalog-line {
+    @apply h-0.5 w-full bg-catalog-softBrown/30 my-2;
+  }
+  
+  .font-typewriter {
+    font-family: 'Courier New', Courier, monospace;
+  }
+}
+
+/* TailwindCSS doesn't have these colors by default */
+@layer utilities {
+  .bg-catalog-manila {
+    background-color: #f5f5dc;
+  }
+  
+  .bg-catalog-cream {
+    background-color: #fffdd0;
+  }
+  
+  .bg-catalog-pink {
+    background-color: #fadadd;
+  }
+  
+  .bg-catalog-blue {
+    background-color: #add8e6;
+  }
+  
+  .text-catalog-teal {
+    color: #008080;
+  }
+  
+  .bg-catalog-teal {
+    background-color: #008080;
+  }
+  
+  .bg-catalog-darkTeal {
+    background-color: #006666;
+  }
+  
+  .border-catalog-softBrown {
+    border-color: #d2b48c;
+  }
+  
+  .text-catalog-softBrown {
+    color: #d2b48c;
   }
 }

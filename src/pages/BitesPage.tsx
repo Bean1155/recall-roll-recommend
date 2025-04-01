@@ -7,10 +7,12 @@ import Envelope from "@/components/Envelope";
 import { Button } from "@/components/ui/button";
 import { FoodCard } from "@/lib/types";
 import { getCardsByType } from "@/lib/data";
+import { useUser } from "@/contexts/UserContext";
 import { PlusCircle } from "lucide-react";
 
 const BitesPage = () => {
   const [foodCards, setFoodCards] = useState<FoodCard[]>([]);
+  const { userName } = useUser();
   
   useEffect(() => {
     const cards = getCardsByType('food') as FoodCard[];
@@ -23,7 +25,9 @@ const BitesPage = () => {
       
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="catalog-title text-3xl">Food Experiences</h1>
+          <h1 className="catalog-title text-3xl">
+            From the Library of <span className="font-typewriter font-bold text-black">{userName}</span>
+          </h1>
           <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
             <Link to="/create/food">
               <PlusCircle size={18} className="mr-2" />
