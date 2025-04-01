@@ -168,7 +168,6 @@ const CardForm = ({ type }: CardFormProps) => {
                 name="cuisine"
                 value={formData.cuisine}
                 onChange={handleChange}
-                required
                 className="catalog-input"
                 placeholder="Italian, Mexican, etc."
               />
@@ -181,7 +180,6 @@ const CardForm = ({ type }: CardFormProps) => {
                 name="location"
                 value={formData.location}
                 onChange={handleChange}
-                required
                 className="catalog-input"
                 placeholder="Restaurant Location"
               />
@@ -199,7 +197,6 @@ const CardForm = ({ type }: CardFormProps) => {
                   type="date"
                   value={formData.date}
                   onChange={handleChange}
-                  required
                   className="catalog-input flex-1"
                 />
                 <div className="flex items-center border border-catalog-softBrown rounded-md">
@@ -275,6 +272,18 @@ const CardForm = ({ type }: CardFormProps) => {
             </div>
             
             <div>
+              <Label htmlFor="creator">{isFoodCard ? 'Chef/Restaurant' : 'Creator/Author'}</Label>
+              <Input
+                id="creator"
+                name="creator"
+                value={formData.creator}
+                onChange={handleChange}
+                className="catalog-input"
+                placeholder={isFoodCard ? "Chef or Restaurant name" : "Director, Author, Studio, etc."}
+              />
+            </div>
+            
+            <div>
               <Label htmlFor="entertainmentCategory">Entertainment Category</Label>
               <Select
                 value={formData.entertainmentCategory}
@@ -303,7 +312,6 @@ const CardForm = ({ type }: CardFormProps) => {
                 name="genre"
                 value={formData.genre}
                 onChange={handleChange}
-                required
                 className="catalog-input"
                 placeholder="Drama, Comedy, etc."
               />
@@ -354,6 +362,21 @@ const CardForm = ({ type }: CardFormProps) => {
               </Select>
             </div>
 
+            <div className="space-y-1">
+              <Label htmlFor="date" className="flex items-center">
+                <Calendar className="w-4 h-4 mr-2" />
+                Date Experienced
+              </Label>
+              <Input
+                id="date"
+                name="date"
+                type="date"
+                value={formData.date}
+                onChange={handleChange}
+                className="catalog-input"
+              />
+            </div>
+
             <div>
               <Label htmlFor="url" className="flex items-center">
                 <Link className="w-4 h-4 mr-2" />
@@ -366,6 +389,18 @@ const CardForm = ({ type }: CardFormProps) => {
                 onChange={handleChange}
                 className="catalog-input"
                 placeholder="Website or streaming link"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="notes">Notes</Label>
+              <Textarea
+                id="notes"
+                name="notes"
+                value={formData.notes}
+                onChange={handleChange}
+                className="catalog-input h-20"
+                placeholder="Your thoughts, impressions, and memorable details..."
               />
             </div>
 
@@ -387,96 +422,4 @@ const CardForm = ({ type }: CardFormProps) => {
           </>
         )}
         
-        <div className="space-y-1">
-          <Label htmlFor="date" className="flex items-center">
-            <Calendar className="w-4 h-4 mr-2" />
-            Date Experienced
-          </Label>
-          <Input
-            id="date"
-            name="date"
-            type="date"
-            value={formData.date}
-            onChange={handleChange}
-            required
-            className="catalog-input"
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="creator">{isFoodCard ? 'Chef/Restaurant' : 'Creator/Studio'}</Label>
-          <Input
-            id="creator"
-            name="creator"
-            value={formData.creator}
-            onChange={handleChange}
-            required
-            className="catalog-input"
-            placeholder={isFoodCard ? "Chef or Restaurant name" : "Director, Author, Studio, etc."}
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="rating">Rating (1-5)</Label>
-          <Input
-            id="rating"
-            name="rating"
-            type="number"
-            min="1"
-            max="5"
-            value={formData.rating}
-            onChange={handleChange}
-            required
-            className="catalog-input"
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="notes">Notes</Label>
-          <Textarea
-            id="notes"
-            name="notes"
-            value={formData.notes}
-            onChange={handleChange}
-            className="catalog-input h-20"
-            placeholder="Your thoughts, impressions, and memorable details..."
-          />
-        </div>
-
         {isFoodCard && (
-          <div>
-            <Label htmlFor="tags">Tags</Label>
-            <Input
-              id="tags"
-              name="tags"
-              value={formData.tags}
-              onChange={handleChange}
-              className="catalog-input"
-              placeholder="comfort food, spicy, vegan, etc. (comma separated)"
-            />
-            <p className="text-xs text-muted-foreground mt-1">Separate tags with commas</p>
-          </div>
-        )}
-        
-        <div className="flex justify-end space-x-2 pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            className="bg-white border-catalog-softBrown"
-            onClick={() => navigate(-1)}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            className="bg-catalog-teal hover:bg-catalog-darkTeal"
-          >
-            Create Card
-          </Button>
-        </div>
-      </div>
-    </form>
-  );
-};
-
-export default CardForm;
