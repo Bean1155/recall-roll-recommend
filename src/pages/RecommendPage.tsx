@@ -6,6 +6,7 @@ import RecommendForm from "@/components/RecommendForm";
 import { CatalogCard as CatalogCardType } from "@/lib/types";
 import { getCardById } from "@/lib/data";
 import GridLayout from "@/components/GridLayout";
+import { Badge } from "@/components/ui/badge";
 
 const RecommendPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,7 +28,21 @@ const RecommendPage = () => {
     return <div>Loading...</div>;
   }
   
-  const title = `Recommend This ${card.type === 'food' ? 'Food' : 'Entertainment'}`;
+  const title = (
+    <div className="flex items-center gap-2">
+      <span>{`Recommend This ${card.type === 'food' ? 'Food' : 'Entertainment'}`}</span>
+      {card.recommendationBadge && (
+        <Badge 
+          className={card.recommendationBadge === 'Highly Recommend' 
+            ? 'bg-catalog-teal' 
+            : 'bg-catalog-pink text-black'
+          }
+        >
+          {card.recommendationBadge}
+        </Badge>
+      )}
+    </div>
+  );
   
   return (
     <GridLayout title={title}>

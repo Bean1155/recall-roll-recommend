@@ -1,5 +1,5 @@
 
-import { CatalogCard, FoodCard, EntertainmentCard } from './types';
+import { CatalogCard, FoodCard, EntertainmentCard, FoodStatus } from './types';
 
 // Mock data
 const mockCards: CatalogCard[] = [
@@ -14,7 +14,7 @@ const mockCards: CatalogCard[] = [
     cuisine: 'Italian',
     location: 'Downtown',
     category: 'fine dining',
-    status: 'Highly Recommend',
+    status: 'Visited: Tried this bite' as FoodStatus,
     visitCount: 2,
     tags: ['pasta', 'italian', 'date night'],
   } as FoodCard,
@@ -42,7 +42,7 @@ const mockCards: CatalogCard[] = [
     cuisine: 'Mexican',
     location: 'East Side',
     category: 'food trucks',
-    status: 'Favorite',
+    status: 'Visited: Tried this bite' as FoodStatus,
     visitCount: 3,
     tags: ['tacos', 'spicy', 'mexican'],
   } as FoodCard,
@@ -113,7 +113,7 @@ export const deleteCard = (id: string): void => {
 };
 
 // Add a recommendation to a card
-export const addRecommendation = (cardId: string, recommendedTo: string): void => {
+export const addRecommendation = (cardId: string, recommendedTo: string, badge: string | null = null): void => {
   const cards = getAllCards();
   const cardIndex = cards.findIndex(c => c.id === cardId);
   
@@ -125,7 +125,8 @@ export const addRecommendation = (cardId: string, recommendedTo: string): void =
     if (!recommendedToList.includes(recommendedTo)) {
       cards[cardIndex] = {
         ...card,
-        recommendedTo: [...recommendedToList, recommendedTo]
+        recommendedTo: [...recommendedToList, recommendedTo],
+        recommendationBadge: badge
       };
       
       localStorage.setItem('catalogCards', JSON.stringify(cards));

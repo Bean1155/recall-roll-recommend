@@ -8,6 +8,14 @@ import { Label } from "@/components/ui/label";
 import { CatalogCard } from "@/lib/types";
 import { addRecommendation } from "@/lib/data";
 import { toast } from "@/components/ui/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 
 interface RecommendFormProps {
   card: CatalogCard;
@@ -17,13 +25,14 @@ const RecommendForm = ({ card }: RecommendFormProps) => {
   const navigate = useNavigate();
   const [recipient, setRecipient] = useState('');
   const [message, setMessage] = useState('');
+  const [badge, setBadge] = useState<string | null>(null);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
       // Add recommendation to card
-      addRecommendation(card.id, recipient);
+      addRecommendation(card.id, recipient, badge);
       
       toast({
         title: "Recommendation Sent!",
@@ -59,6 +68,33 @@ const RecommendForm = ({ card }: RecommendFormProps) => {
         </div>
         
         <div>
+          <Label htmlFor="badge">Add a Recommendation Badge (Optional)</Label>
+          <Select
+            value={badge || ""}
+            onValueChange={(value) => setBadge(value === "" ? null : value)}
+          >
+            <SelectTrigger className="catalog-input">
+              <SelectValue placeholder="No badge" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">No badge</SelectItem>
+              <SelectItem value="Highly Recommend">
+                <div className="flex items-center">
+                  <Badge className="bg-catalog-teal mr-2">Highly Recommend</Badge>
+                  <span>Highly Recommend</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="Favorite">
+                <div className="flex items-center">
+                  <Badge className="bg-catalog-pink text-black mr-2">Favorite</Badge>
+                  <span>Favorite</span>
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div>
           <Label htmlFor="message">Personal Message (Optional)</Label>
           <Textarea
             id="message"
@@ -68,6 +104,23 @@ const RecommendForm = ({ card }: RecommendFormProps) => {
             placeholder="Add a personal note about why you're recommending this..."
           />
         </div>
+        
+        {badge && (
+          <div className="p-3 bg-catalog-cream/50 rounded-md border border-catalog-softBrown">
+            <p className="text-sm font-medium mb-2">Preview:</p>
+            <div className="flex items-center">
+              <Badge 
+                className={badge === "Highly Recommend" 
+                  ? "bg-catalog-teal mr-2" 
+                  : "bg-catalog-pink text-black mr-2"
+                }
+              >
+                {badge}
+              </Badge>
+              <span className="text-sm">{card.title}</span>
+            </div>
+          </div>
+        )}
         
         <div className="flex justify-end space-x-2 pt-4">
           <Button
