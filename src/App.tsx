@@ -11,6 +11,7 @@ import BitesPage from "./pages/BitesPage";
 import BlockbustersPage from "./pages/BlockbustersPage";
 import CreateCardPage from "./pages/CreateCardPage";
 import RecommendPage from "./pages/RecommendPage";
+import CollectionsPage from "./pages/CollectionsPage";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,8 @@ const App = () => (
             <Route path="/blockbusters" element={<BlockbustersPage />} />
             <Route path="/create/:type" element={<CreateCardPage />} />
             <Route path="/recommend/:id" element={<RecommendPage />} />
+            <Route path="/collections" element={<CollectionsPage />} />
+            <Route path="/recommend" element={<RecommendPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
