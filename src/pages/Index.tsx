@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Envelope from "@/components/Envelope";
@@ -14,7 +13,6 @@ const Index = () => {
   const [entertainmentLastUpdated, setEntertainmentLastUpdated] = useState<{ label: string, date: string }>({ label: "Last updated:", date: "No entries yet" });
   
   useEffect(() => {
-    // Get food cards and find the most recent date
     const foodCards = getCardsByType('food');
     if (foodCards.length > 0) {
       const sortedFoodCards = [...foodCards].sort((a, b) => 
@@ -27,7 +25,6 @@ const Index = () => {
       });
     }
     
-    // Get entertainment cards and find the most recent date
     const entertainmentCards = getCardsByType('entertainment');
     if (entertainmentCards.length > 0) {
       const sortedEntCards = [...entertainmentCards].sort((a, b) => 
@@ -159,6 +156,10 @@ const Index = () => {
             <li className="flex gap-2">
               <span className="font-bold">4.</span>
               <span>Track who recommended what to you and who you've shared with.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="font-bold">5.</span>
+              <span>Collect and track points for sharing your cards and become a top Total Recall Catalog Sharer!</span>
             </li>
           </ol>
         </div>
