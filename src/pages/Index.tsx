@@ -10,8 +10,8 @@ import { getCardsByType } from "@/lib/data";
 
 const Index = () => {
   const [activeCard, setActiveCard] = useState<string | null>(null);
-  const [foodLastUpdated, setFoodLastUpdated] = useState<string>("No entries yet");
-  const [entertainmentLastUpdated, setEntertainmentLastUpdated] = useState<string>("No entries yet");
+  const [foodLastUpdated, setFoodLastUpdated] = useState<{ label: string, date: string }>({ label: "Last updated:", date: "No entries yet" });
+  const [entertainmentLastUpdated, setEntertainmentLastUpdated] = useState<{ label: string, date: string }>({ label: "Last updated:", date: "No entries yet" });
   
   useEffect(() => {
     // Get food cards and find the most recent date
@@ -21,7 +21,10 @@ const Index = () => {
         new Date(b.date).getTime() - new Date(a.date).getTime()
       );
       const latestFoodDate = new Date(sortedFoodCards[0].date);
-      setFoodLastUpdated(`Last updated: ${latestFoodDate.toLocaleDateString()}`);
+      setFoodLastUpdated({ 
+        label: "Last updated:", 
+        date: latestFoodDate.toLocaleDateString() 
+      });
     }
     
     // Get entertainment cards and find the most recent date
@@ -31,7 +34,10 @@ const Index = () => {
         new Date(b.date).getTime() - new Date(a.date).getTime()
       );
       const latestEntDate = new Date(sortedEntCards[0].date);
-      setEntertainmentLastUpdated(`Last updated: ${latestEntDate.toLocaleDateString()}`);
+      setEntertainmentLastUpdated({ 
+        label: "Last updated:", 
+        date: latestEntDate.toLocaleDateString() 
+      });
     }
   }, []);
   
@@ -85,9 +91,10 @@ const Index = () => {
                 </div>
               </div>
               
-              <p className="text-catalog-softBrown text-sm text-center mt-6">
-                {foodLastUpdated}
-              </p>
+              <div className="text-[#555555] text-sm text-center mt-6 flex flex-col">
+                <span className="mb-1">{foodLastUpdated.label}</span>
+                <span>{foodLastUpdated.date}</span>
+              </div>
             </div>
           </Envelope>
         </div>
@@ -124,9 +131,10 @@ const Index = () => {
                 </div>
               </div>
               
-              <p className="text-catalog-softBrown text-sm text-center mt-6">
-                {entertainmentLastUpdated}
-              </p>
+              <div className="text-[#555555] text-sm text-center mt-6 flex flex-col">
+                <span className="mb-1">{entertainmentLastUpdated.label}</span>
+                <span>{entertainmentLastUpdated.date}</span>
+              </div>
             </div>
           </Envelope>
         </div>
