@@ -2,9 +2,10 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Envelope from "@/components/Envelope";
-import { FileText, Utensils, Clapperboard } from "lucide-react";
+import { Utensils, Clapperboard, PlusCircle, Search } from "lucide-react";
 import { useState } from "react";
 import GridLayout from "@/components/GridLayout";
+import { Card, CardContent } from "@/components/ui/card";
 
 const Index = () => {
   const [activeCard, setActiveCard] = useState<string | null>(null);
@@ -28,53 +29,69 @@ const Index = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         <div>
-          <Envelope className="h-64">
-            <div 
-              className={`catalog-card catalog-card-food h-48 flex flex-col items-center justify-center transition-all duration-300 ${activeCard === 'bites' ? 'transform scale-105 shadow-lg' : ''}`}
-              onMouseEnter={() => handleMouseEnter('bites')}
-              onMouseLeave={handleMouseLeave}
-              style={{ 
-                background: activeCard === 'bites' ? 'linear-gradient(135deg, #FDE1D3 0%, #FFBCA4 100%)' : '', 
-                boxShadow: activeCard === 'bites' ? '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)' : ''
-              }}
-            >
+          <Envelope label="BITES" className="h-auto transform hover:scale-[1.02] transition-transform duration-300">
+            <div className="p-4 flex flex-col items-center justify-center min-h-[200px]">
               <Utensils 
                 size={48} 
-                className={`mb-4 transition-all duration-300 ${activeCard === 'bites' ? 'text-catalog-teal scale-110' : 'text-catalog-softBrown'}`} 
+                className="mb-4 text-catalog-teal" 
               />
-              <h2 className="catalog-subtitle mb-4">Bites</h2>
-              <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-                <Link to="/bites">View Collection</Link>
-              </Button>
-              <Button asChild variant="link" className="mt-2 text-catalog-softBrown">
-                <Link to="/create/food">+ Add New</Link>
-              </Button>
+              <h2 className="catalog-subtitle mb-4 text-xl font-semibold">Food Collection</h2>
+              
+              <div className="grid grid-cols-2 gap-4 w-full mt-2">
+                <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex items-center justify-center">
+                  <Link to="/bites">
+                    <Search size={18} className="mr-2" />
+                    Browse
+                  </Link>
+                </Button>
+                
+                <Button asChild className="bg-[#F97316] hover:bg-[#EA580C] text-white flex items-center justify-center">
+                  <Link to="/create/food">
+                    <PlusCircle size={18} className="mr-2" />
+                    Add New
+                  </Link>
+                </Button>
+              </div>
+              
+              <div className="border-t border-dashed border-catalog-softBrown w-full mt-4 pt-3">
+                <p className="text-catalog-softBrown text-sm text-center">
+                  {new Date().toLocaleDateString()} • Your Food Memories
+                </p>
+              </div>
             </div>
           </Envelope>
         </div>
         
         <div>
-          <Envelope className="h-64">
-            <div 
-              className={`catalog-card catalog-card-entertainment h-48 flex flex-col items-center justify-center transition-all duration-300 ${activeCard === 'blockbusters' ? 'transform scale-105 shadow-lg' : ''}`}
-              onMouseEnter={() => handleMouseEnter('blockbusters')}
-              onMouseLeave={handleMouseLeave}
-              style={{ 
-                background: activeCard === 'blockbusters' ? 'linear-gradient(135deg, #D6E5F0 0%, #A7C7E7 100%)' : '', 
-                boxShadow: activeCard === 'blockbusters' ? '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)' : ''
-              }}
-            >
+          <Envelope label="BLOCKBUSTERS" className="h-auto transform hover:scale-[1.02] transition-transform duration-300">
+            <div className="p-4 flex flex-col items-center justify-center min-h-[200px]">
               <Clapperboard 
                 size={48} 
-                className={`mb-4 transition-all duration-300 ${activeCard === 'blockbusters' ? 'text-catalog-teal scale-110' : 'text-catalog-softBrown'}`}
+                className="mb-4 text-catalog-teal"
               />
-              <h2 className="catalog-subtitle mb-4">Blockbusters</h2>
-              <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-                <Link to="/blockbusters">View Collection</Link>
-              </Button>
-              <Button asChild variant="link" className="mt-2 text-catalog-softBrown">
-                <Link to="/create/entertainment">+ Add New</Link>
-              </Button>
+              <h2 className="catalog-subtitle mb-4 text-xl font-semibold">Entertainment Collection</h2>
+              
+              <div className="grid grid-cols-2 gap-4 w-full mt-2">
+                <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex items-center justify-center">
+                  <Link to="/blockbusters">
+                    <Search size={18} className="mr-2" />
+                    Browse
+                  </Link>
+                </Button>
+                
+                <Button asChild className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white flex items-center justify-center">
+                  <Link to="/create/entertainment">
+                    <PlusCircle size={18} className="mr-2" />
+                    Add New
+                  </Link>
+                </Button>
+              </div>
+              
+              <div className="border-t border-dashed border-catalog-softBrown w-full mt-4 pt-3">
+                <p className="text-catalog-softBrown text-sm text-center">
+                  {new Date().toLocaleDateString()} • Your Entertainment Memories
+                </p>
+              </div>
             </div>
           </Envelope>
         </div>
