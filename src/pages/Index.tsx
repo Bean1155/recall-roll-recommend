@@ -39,9 +39,11 @@ const Index = () => {
               <div className="grid grid-cols-2 gap-4 w-full mt-6 mb-8">
                 <div className="flex items-center justify-center p-1 relative">
                   <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
-                    <Link to="/bites" className="flex items-center">
-                      <Search size={20} className="text-catalog-softBrown absolute left-0 top-1/2 -translate-y-1/2" />
-                      <span className="font-script text-3xl -rotate-12 text-[#A52A2A] ml-7">Browse</span>
+                    <Link to="/bites" className="flex items-center justify-center relative">
+                      <span className="font-script text-3xl -rotate-12 text-[#0EA5E9] pl-7">
+                        <Search size={18} className="text-[#0EA5E9] absolute left-2 top-1/2 -translate-y-1/2" />
+                        Browse
+                      </span>
                     </Link>
                   </Button>
                 </div>
@@ -76,9 +78,11 @@ const Index = () => {
               <div className="grid grid-cols-2 gap-4 w-full mt-6 mb-8">
                 <div className="flex items-center justify-center p-1 relative">
                   <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
-                    <Link to="/blockbusters" className="flex items-center">
-                      <Search size={20} className="text-catalog-softBrown absolute left-0 top-1/2 -translate-y-1/2" />
-                      <span className="font-script text-3xl -rotate-12 text-[#7C3AED] ml-7">Browse</span>
+                    <Link to="/blockbusters" className="flex items-center justify-center relative">
+                      <span className="font-script text-3xl -rotate-12 text-[#0EA5E9] pl-7">
+                        <Search size={18} className="text-[#0EA5E9] absolute left-2 top-1/2 -translate-y-1/2" />
+                        Browse
+                      </span>
                     </Link>
                   </Button>
                 </div>
