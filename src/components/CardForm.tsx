@@ -298,6 +298,24 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
               <p className="text-xs text-muted-foreground">Visit count: {formData.visitCount}</p>
             </div>
 
+            <div>
+              <Label htmlFor="status">Status</Label>
+              <Select
+                value={formData.status}
+                onValueChange={(value) => handleSelectChange('status', value)}
+              >
+                <SelectTrigger className="catalog-input">
+                  <SelectValue placeholder="Select a status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Visited: Tried this bite">Visited: Tried this bite</SelectItem>
+                  <SelectItem value="Interested: Want a bite">Interested: Want a bite</SelectItem>
+                  <SelectItem value="Highly Recommend">Highly Recommend</SelectItem>
+                  <SelectItem value="Favorite">Favorite</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
             <div className="space-y-1">
               <Label htmlFor="rating" className="flex items-center">
                 <Star className="w-4 h-4 mr-2" />
@@ -318,24 +336,6 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                 <span className="text-xs">Poor</span>
                 <span className="text-xs">Excellent</span>
               </div>
-            </div>
-
-            <div>
-              <Label htmlFor="status">Status</Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => handleSelectChange('status', value)}
-              >
-                <SelectTrigger className="catalog-input">
-                  <SelectValue placeholder="Select a status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Visited: Tried this bite">Visited: Tried this bite</SelectItem>
-                  <SelectItem value="Interested: Want a bite">Interested: Want a bite</SelectItem>
-                  <SelectItem value="Highly Recommend">Highly Recommend</SelectItem>
-                  <SelectItem value="Favorite">Favorite</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
 
             <div>
@@ -474,6 +474,28 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                 onChange={handleChange}
                 className="catalog-input"
               />
+            </div>
+            
+            <div className="space-y-1">
+              <Label htmlFor="rating" className="flex items-center">
+                <Star className="w-4 h-4 mr-2" />
+                Rating
+              </Label>
+              <div className="flex items-center space-x-2 py-4">
+                <Slider
+                  id="rating"
+                  min={1}
+                  max={5}
+                  step={1}
+                  value={[formData.rating]}
+                  onValueChange={handleRatingChange}
+                />
+                <span className="w-8 text-center font-semibold">{formData.rating}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-xs">Poor</span>
+                <span className="text-xs">Excellent</span>
+              </div>
             </div>
 
             <div>
