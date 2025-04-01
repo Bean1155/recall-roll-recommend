@@ -4,12 +4,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
 import RecommendForm from "@/components/RecommendForm";
 import { CatalogCard as CatalogCardType } from "@/lib/types";
-import { getCardById, shareCard } from "@/lib/data";
+import { getCardById } from "@/lib/data";
 import GridLayout from "@/components/GridLayout";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Share2 } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
+import ShareOptions from "@/components/ShareOptions";
 
 const RecommendPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,26 +25,6 @@ const RecommendPage = () => {
     }
   }, [id, navigate]);
   
-  const handleExternalShare = async () => {
-    if (!card) return;
-    
-    try {
-      // Pass 'external' mode to indicate sharing externally (limited information)
-      await shareCard(card, 'external');
-      toast({
-        title: "External Share",
-        description: "Basic card information has been shared. Note: External users will only see limited information.",
-      });
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to share";
-      toast({
-        title: "Share failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    }
-  };
-  
   if (!card) {
     return <div>Loading...</div>;
   }
@@ -57,14 +35,11 @@ const RecommendPage = () => {
         <CatalogCard card={card} showActions={false} />
         
         <div className="flex justify-center mt-4">
-          <Button 
-            variant="outline"
-            className="bg-white border-catalog-softBrown text-catalog-teal"
-            onClick={handleExternalShare}
-          >
-            <Share2 size={16} className="mr-2" />
-            Share Externally (Limited Info)
-          </Button>
+          <ShareOptions 
+            card={card} 
+            mode="external" 
+            variant="dialog"
+          />
         </div>
       </div>
       
