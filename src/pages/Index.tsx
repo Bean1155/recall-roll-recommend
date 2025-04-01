@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Envelope from "@/components/Envelope";
@@ -32,23 +33,27 @@ const Index = () => {
             <div className="p-4 flex flex-col items-center justify-center min-h-[200px]">
               <Utensils 
                 size={48} 
-                className="mb-4 text-catalog-teal" 
+                className="mb-4 text-black" 
               />
               
               <div className="grid grid-cols-2 gap-4 w-full mt-6 mb-8">
-                <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex items-center justify-center">
-                  <Link to="/bites">
-                    <Search size={18} className="mr-2" />
-                    Browse
-                  </Link>
-                </Button>
+                <div className="border border-catalog-softBrown rounded-md flex items-center justify-center p-1">
+                  <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex items-center justify-center h-full w-full">
+                    <Link to="/bites">
+                      <Search size={18} />
+                      <span className="ml-2">Browse</span>
+                    </Link>
+                  </Button>
+                </div>
                 
-                <Button asChild className="bg-[#F97316] hover:bg-[#EA580C] text-white flex items-center justify-center">
-                  <Link to="/create/food">
-                    <PlusCircle size={18} className="mr-2" />
-                    Add New
-                  </Link>
-                </Button>
+                <div className="border border-catalog-softBrown rounded-md flex items-center justify-center p-1">
+                  <Button asChild className="bg-[#F97316] hover:bg-[#EA580C] text-white flex items-center justify-center h-full w-full">
+                    <Link to="/create/food">
+                      <PlusCircle size={18} />
+                      <span className="ml-2">Add New</span>
+                    </Link>
+                  </Button>
+                </div>
               </div>
               
               <div className="border-t border-dashed border-catalog-softBrown w-full pt-3">
@@ -69,19 +74,23 @@ const Index = () => {
               />
               
               <div className="grid grid-cols-2 gap-4 w-full mt-6 mb-8">
-                <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex items-center justify-center">
-                  <Link to="/blockbusters">
-                    <Search size={18} className="mr-2" />
-                    Browse
-                  </Link>
-                </Button>
+                <div className="border border-catalog-softBrown rounded-md flex items-center justify-center p-1">
+                  <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex items-center justify-center h-full w-full">
+                    <Link to="/blockbusters">
+                      <Search size={18} />
+                      <span className="ml-2">Browse</span>
+                    </Link>
+                  </Button>
+                </div>
                 
-                <Button asChild className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white flex items-center justify-center">
-                  <Link to="/create/entertainment">
-                    <PlusCircle size={18} className="mr-2" />
-                    Add New
-                  </Link>
-                </Button>
+                <div className="border border-catalog-softBrown rounded-md flex items-center justify-center p-1">
+                  <Button asChild className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white flex items-center justify-center h-full w-full">
+                    <Link to="/create/entertainment">
+                      <PlusCircle size={18} />
+                      <span className="ml-2">Add New</span>
+                    </Link>
+                  </Button>
+                </div>
               </div>
               
               <div className="border-t border-dashed border-catalog-softBrown w-full pt-3">
