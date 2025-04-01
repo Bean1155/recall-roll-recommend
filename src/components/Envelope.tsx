@@ -52,7 +52,18 @@ const Envelope: React.FC<EnvelopeProps> = ({
           zIndex: 2,
           marginTop: '-20px',
           padding: '12px',
-          borderRadius: '4px'
+          borderRadius: '4px',
+          backgroundImage: `
+            linear-gradient(#9E8979 1px, transparent 1px),
+            linear-gradient(90deg, #9E8979 1px, transparent 1px)
+          `,
+          backgroundSize: '100% 28px, 33.33% 100%',
+          backgroundPosition: '0 0',
+          backgroundRepeat: 'repeat-y, repeat-x',
+          borderWidth: '1px',
+          borderColor: '#9E8979',
+          borderStyle: 'solid',
+          position: 'relative'
         }}
       >
         {label && (
@@ -71,7 +82,9 @@ const Envelope: React.FC<EnvelopeProps> = ({
             {label}
           </div>
         )}
-        {children}
+        <div className="relative z-10">
+          {children}
+        </div>
       </div>
     </div>
   );

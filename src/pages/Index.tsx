@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Envelope from "@/components/Envelope";
@@ -35,7 +36,7 @@ const Index = () => {
                 className="mb-4 text-catalog-teal" 
               />
               
-              <div className="grid grid-cols-2 gap-4 w-full mt-2">
+              <div className="grid grid-cols-2 gap-4 w-full mt-6 mb-8">
                 <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex items-center justify-center">
                   <Link to="/bites">
                     <Search size={18} className="mr-2" />
@@ -51,7 +52,7 @@ const Index = () => {
                 </Button>
               </div>
               
-              <div className="border-t border-dashed border-catalog-softBrown w-full mt-4 pt-3">
+              <div className="border-t border-dashed border-catalog-softBrown w-full pt-3">
                 <p className="text-catalog-softBrown text-sm text-center">
                   {new Date().toLocaleDateString()} • Your Food Memories
                 </p>
@@ -68,7 +69,7 @@ const Index = () => {
                 className="mb-4 text-catalog-teal"
               />
               
-              <div className="grid grid-cols-2 gap-4 w-full mt-2">
+              <div className="grid grid-cols-2 gap-4 w-full mt-6 mb-8">
                 <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex items-center justify-center">
                   <Link to="/blockbusters">
                     <Search size={18} className="mr-2" />
@@ -84,7 +85,7 @@ const Index = () => {
                 </Button>
               </div>
               
-              <div className="border-t border-dashed border-catalog-softBrown w-full mt-4 pt-3">
+              <div className="border-t border-dashed border-catalog-softBrown w-full pt-3">
                 <p className="text-catalog-softBrown text-sm text-center">
                   {new Date().toLocaleDateString()} • Your Entertainment Memories
                 </p>
