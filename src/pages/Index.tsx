@@ -38,10 +38,10 @@ const Index = () => {
               
               <div className="grid grid-cols-2 gap-4 w-full mt-6 mb-8">
                 <div className="border border-catalog-softBrown rounded-md flex items-center justify-center p-1 overflow-hidden">
-                  <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex items-center justify-center h-full w-full">
+                  <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
                     <Link to="/bites" className="flex flex-col items-center">
                       <Search size={18} className="absolute opacity-20 -z-10 transform scale-[2.5]" />
-                      <span>Browse</span>
+                      <span className="font-script">Browse</span>
                     </Link>
                   </Button>
                 </div>
@@ -75,10 +75,10 @@ const Index = () => {
               
               <div className="grid grid-cols-2 gap-4 w-full mt-6 mb-8">
                 <div className="border border-catalog-softBrown rounded-md flex items-center justify-center p-1 overflow-hidden">
-                  <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex items-center justify-center h-full w-full">
+                  <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
                     <Link to="/blockbusters" className="flex flex-col items-center">
                       <Search size={18} className="absolute opacity-20 -z-10 transform scale-[2.5]" />
-                      <span>Browse</span>
+                      <span className="font-script">Browse</span>
                     </Link>
                   </Button>
                 </div>

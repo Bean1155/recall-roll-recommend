@@ -23,6 +23,7 @@ export default {
 				sans: ['American Typewriter', 'Courier New', 'monospace'],
 				serif: ['American Typewriter', 'Georgia', 'Times New Roman', 'serif'],
 				typewriter: ['American Typewriter', 'Courier New', 'monospace'],
+				script: ['Brush Script MT', 'cursive'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
