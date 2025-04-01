@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
@@ -8,9 +7,11 @@ import { EntertainmentCard } from "@/lib/types";
 import { getCardsByType } from "@/lib/data";
 import { PlusCircle } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
+import { useUser } from "@/contexts/UserContext";
 
 const BlockbustersPage = () => {
   const [entertainmentCards, setEntertainmentCards] = useState<EntertainmentCard[]>([]);
+  const { userName } = useUser();
   
   useEffect(() => {
     const cards = getCardsByType('entertainment') as EntertainmentCard[];
@@ -20,7 +21,7 @@ const BlockbustersPage = () => {
   return (
     <GridLayout>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="catalog-title text-3xl">Entertainment Experiences</h1>
+        <h1 className="catalog-title text-3xl">From the Library of {userName}</h1>
         <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
           <Link to="/create/entertainment">
             <PlusCircle size={18} className="mr-2" />
