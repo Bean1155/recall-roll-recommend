@@ -2,6 +2,7 @@
 export type CardType = 'food' | 'entertainment';
 export type FoodCategory = 'cafe' | 'diner' | 'specialty foods' | 'fine dining' | 'take out' | 'bakeries' | 'bars' | 'food trucks' | 'other';
 export type FoodStatus = 'Visited: Tried this bite' | 'Interested: Want a bite' | 'Highly Recommend' | 'Favorite';
+export type EntertainmentStatus = 'Watched' | 'Want to Watch' | 'Currently Watching' | 'Highly Recommend' | 'Favorite';
 
 export interface CatalogCard {
   id: string;
@@ -29,6 +30,7 @@ export interface FoodCard extends CatalogCard {
 export interface EntertainmentCard extends CatalogCard {
   type: 'entertainment';
   genre: string;
-  medium: string; // movie, tv show, book, etc.
-  releaseYear: string;
+  medium: string; // streaming platform
+  entertainmentCategory: string; // movies, tv shows, etc.
+  status: EntertainmentStatus;
 }

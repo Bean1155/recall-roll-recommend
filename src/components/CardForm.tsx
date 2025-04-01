@@ -41,7 +41,9 @@ const CardForm = ({ type }: CardFormProps) => {
     tags: '',
     // Entertainment specific fields
     genre: '',
-    medium: '',
+    medium: 'Netflix',
+    entertainmentCategory: 'movies',
+    status: isFoodCard ? 'Visited: Tried this bite' : 'Watched',
     releaseYear: new Date().getFullYear().toString(),
   });
   
@@ -95,7 +97,8 @@ const CardForm = ({ type }: CardFormProps) => {
           ...baseCard,
           genre: formData.genre,
           medium: formData.medium,
-          releaseYear: formData.releaseYear,
+          entertainmentCategory: formData.entertainmentCategory,
+          status: formData.status,
         } as Omit<EntertainmentCard, 'id'>;
       }
       
@@ -259,6 +262,42 @@ const CardForm = ({ type }: CardFormProps) => {
         ) : (
           <>
             <div>
+              <Label htmlFor="title" className="text-base">Title</Label>
+              <p className="text-xs italic mb-1">Name of show, performance, etc.</p>
+              <Input
+                id="title"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                required
+                className="catalog-input"
+                placeholder="Title of entertainment"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="entertainmentCategory">Entertainment Category</Label>
+              <Select
+                value={formData.entertainmentCategory}
+                onValueChange={(value) => handleSelectChange('entertainmentCategory', value)}
+              >
+                <SelectTrigger className="catalog-input">
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="movies">Movies</SelectItem>
+                  <SelectItem value="tv shows">TV Shows</SelectItem>
+                  <SelectItem value="comedies">Comedies</SelectItem>
+                  <SelectItem value="live performances">Live Performances</SelectItem>
+                  <SelectItem value="podcasts">Podcasts</SelectItem>
+                  <SelectItem value="books">Books</SelectItem>
+                  <SelectItem value="games">Games</SelectItem>
+                  <SelectItem value="events">Events</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
               <Label htmlFor="genre">Genre</Label>
               <Input
                 id="genre"
@@ -270,32 +309,82 @@ const CardForm = ({ type }: CardFormProps) => {
                 placeholder="Drama, Comedy, etc."
               />
             </div>
+            
             <div>
               <Label htmlFor="medium">Medium</Label>
-              <Input
-                id="medium"
-                name="medium"
+              <Select
                 value={formData.medium}
-                onChange={handleChange}
-                required
-                className="catalog-input"
-                placeholder="Movie, TV Show, Book, etc."
-              />
+                onValueChange={(value) => handleSelectChange('medium', value)}
+              >
+                <SelectTrigger className="catalog-input">
+                  <SelectValue placeholder="Select a streaming service" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Netflix">Netflix</SelectItem>
+                  <SelectItem value="Hulu">Hulu</SelectItem>
+                  <SelectItem value="Apple TV+">Apple TV+</SelectItem>
+                  <SelectItem value="Disney+">Disney+</SelectItem>
+                  <SelectItem value="Amazon Prime">Amazon Prime</SelectItem>
+                  <SelectItem value="HBO Max">HBO Max</SelectItem>
+                  <SelectItem value="Peacock">Peacock</SelectItem>
+                  <SelectItem value="Paramount+">Paramount+</SelectItem>
+                  <SelectItem value="YouTube">YouTube</SelectItem>
+                  <SelectItem value="Theater">Theater</SelectItem>
+                  <SelectItem value="Physical Media">Physical Media</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
+            
             <div>
-              <Label htmlFor="releaseYear">Release Year</Label>
-              <Input
-                id="releaseYear"
-                name="releaseYear"
-                value={formData.releaseYear}
-                onChange={handleChange}
-                required
-                className="catalog-input"
-                placeholder="Year of Release"
-              />
+              <Label htmlFor="status">Status</Label>
+              <Select
+                value={formData.status}
+                onValueChange={(value) => handleSelectChange('status', value)}
+              >
+                <SelectTrigger className="catalog-input">
+                  <SelectValue placeholder="Select a status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Watched">Watched</SelectItem>
+                  <SelectItem value="Want to Watch">Want to Watch</SelectItem>
+                  <SelectItem value="Currently Watching">Currently Watching</SelectItem>
+                  <SelectItem value="Highly Recommend">Highly Recommend</SelectItem>
+                  <SelectItem value="Favorite">Favorite</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </>
         )}
+        
+        <div className="space-y-1">
+          <Label htmlFor="date" className="flex items-center">
+            <Calendar className="w-4 h-4 mr-2" />
+            Date Experienced
+          </Label>
+          <Input
+            id="date"
+            name="date"
+            type="date"
+            value={formData.date}
+            onChange={handleChange}
+            required
+            className="catalog-input"
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="creator">{isFoodCard ? 'Chef/Restaurant' : 'Creator/Studio'}</Label>
+          <Input
+            id="creator"
+            name="creator"
+            value={formData.creator}
+            onChange={handleChange}
+            required
+            className="catalog-input"
+            placeholder={isFoodCard ? "Chef or Restaurant name" : "Director, Author, Studio, etc."}
+          />
+        </div>
         
         <div>
           <Label htmlFor="rating">Rating (1-5)</Label>
