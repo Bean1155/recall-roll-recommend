@@ -11,13 +11,22 @@ import {
   MapPin, 
   TrendingUp,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  Clock,
+  Check
 } from "lucide-react";
 import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
 import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,6 +35,7 @@ const SearchPage = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [allCards, setAllCards] = useState<CatalogCardType[]>([]);
   const [filteredCards, setFilteredCards] = useState<CatalogCardType[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -70,6 +80,18 @@ const SearchPage = () => {
           const bCount = b.recommendedTo?.length || 0;
           return sortOrder === "desc" ? bCount - aCount : aCount - bCount;
         });
+    } else if (activeFilter === "byStatus") {
+      // Apply status filtering
+      if (selectedStatus !== "all") {
+        results = results.filter(card => {
+          if (card.type === 'food') {
+            return (card as FoodCard).status === selectedStatus;
+          } else if (card.type === 'entertainment') {
+            return (card as EntertainmentCard).status === selectedStatus;
+          }
+          return false;
+        });
+      }
     }
 
     // Apply sorting if not already sorted by referrals
@@ -80,7 +102,7 @@ const SearchPage = () => {
     }
 
     setFilteredCards(results);
-  }, [searchTerm, activeFilter, sortOrder, allCards]);
+  }, [searchTerm, activeFilter, sortOrder, allCards, selectedStatus]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,6 +111,28 @@ const SearchPage = () => {
 
   const toggleSortOrder = () => {
     setSortOrder(prevOrder => prevOrder === "desc" ? "asc" : "desc");
+  };
+
+  // Get unique status values from all cards
+  const getStatusOptions = () => {
+    const statusSet = new Set<string>();
+    
+    allCards.forEach(card => {
+      if (card.type === 'food') {
+        statusSet.add((card as FoodCard).status);
+      } else if (card.type === 'entertainment') {
+        statusSet.add((card as EntertainmentCard).status);
+      }
+    });
+    
+    return Array.from(statusSet);
+  };
+
+  const handleTabChange = (value: string) => {
+    setActiveFilter(value);
+    if (value !== "byStatus") {
+      setSelectedStatus("all");
+    }
   };
 
   return (
@@ -126,8 +170,8 @@ const SearchPage = () => {
           </Button>
         </form>
 
-        <Tabs defaultValue="all" className="mb-6" onValueChange={setActiveFilter}>
-          <TabsList className={`${isMobile ? 'grid grid-cols-3 gap-1 mb-4' : 'grid grid-cols-6 mb-4'}`}>
+        <Tabs defaultValue="all" className="mb-6" onValueChange={handleTabChange}>
+          <TabsList className={`${isMobile ? 'grid grid-cols-4 gap-1 mb-4' : 'grid grid-cols-8 mb-4'}`}>
             <TabsTrigger value="all" className="text-sm">All</TabsTrigger>
             <TabsTrigger value="favorites" className="flex items-center gap-1 text-sm">
               <Heart size={14} /> {!isMobile && "Favorites"}
@@ -136,15 +180,22 @@ const SearchPage = () => {
               <Star size={14} /> {!isMobile && "Top Rated"}
             </TabsTrigger>
             {isMobile && (
-              <TabsTrigger value="location" className="flex items-center gap-1 text-sm col-span-1">
+              <TabsTrigger value="location" className="flex items-center gap-1 text-sm">
                 <MapPin size={14} />
               </TabsTrigger>
             )}
             {isMobile && (
-              <TabsTrigger value="keywords" className="text-sm col-span-1">Keywords</TabsTrigger>
+              <TabsTrigger value="byStatus" className="flex items-center gap-1 text-sm">
+                <Clock size={14} />
+              </TabsTrigger>
             )}
             {isMobile && (
-              <TabsTrigger value="topReferrals" className="flex items-center gap-1 text-sm col-span-1">
+              <TabsTrigger value="keywords" className="text-sm">
+                <Search size={14} />
+              </TabsTrigger>
+            )}
+            {isMobile && (
+              <TabsTrigger value="topReferrals" className="flex items-center gap-1 text-sm">
                 <TrendingUp size={14} />
               </TabsTrigger>
             )}
@@ -154,11 +205,16 @@ const SearchPage = () => {
               </TabsTrigger>
             )}
             {!isMobile && (
+              <TabsTrigger value="byStatus" className="flex items-center gap-1">
+                <Clock size={14} /> By Status
+              </TabsTrigger>
+            )}
+            {!isMobile && (
               <TabsTrigger value="keywords">Keywords</TabsTrigger>
             )}
             {!isMobile && (
               <TabsTrigger value="topReferrals" className="flex items-center gap-1">
-                <TrendingUp size={14} /> Top Referrals
+                <TrendingUp size={14} /> Most Referred
               </TabsTrigger>
             )}
           </TabsList>
@@ -180,6 +236,27 @@ const SearchPage = () => {
           </TabsContent>
           <TabsContent value="topReferrals" className="mt-0">
             <h2 className="text-xl font-bold mb-4">Most Recommended Items</h2>
+          </TabsContent>
+          <TabsContent value="byStatus" className="mt-0">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4">
+              <h2 className="text-xl font-bold">Browse by Status</h2>
+              <Select
+                value={selectedStatus}
+                onValueChange={setSelectedStatus}
+              >
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  {getStatusOptions().map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {status}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </TabsContent>
 
           {filteredCards.length === 0 ? (
