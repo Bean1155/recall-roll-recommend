@@ -44,22 +44,6 @@ const Envelope: React.FC<EnvelopeProps> = ({
           zIndex: 1
         }}
       >
-        {label && (
-          <div 
-            className="absolute bottom-0 left-0 right-0 text-center py-1 mx-auto max-w-max bg-[#E6D7B8] border-t border-x border-[#9E8979] rounded-t-md"
-            style={{ 
-              color: '#3B3B3B', 
-              fontWeight: 'bold', 
-              textTransform: 'uppercase', 
-              fontSize: '14px',
-              letterSpacing: '0.5px',
-              transform: 'translateY(100%)',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-            }}
-          >
-            {label}
-          </div>
-        )}
       </div>
       
       <div 
@@ -71,6 +55,22 @@ const Envelope: React.FC<EnvelopeProps> = ({
           borderRadius: '4px'
         }}
       >
+        {label && (
+          <div 
+            className="bg-[#E6D7B8] border border-[#9E8979] rounded-t-md absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-[calc(100%-1px)] z-10"
+            style={{ 
+              color: '#3B3B3B', 
+              fontWeight: 'bold', 
+              textTransform: 'uppercase', 
+              fontSize: '14px',
+              letterSpacing: '0.5px',
+              padding: '6px 12px',
+              boxShadow: '0 -2px 4px rgba(0,0,0,0.05)'
+            }}
+          >
+            {label}
+          </div>
+        )}
         {children}
       </div>
     </div>
