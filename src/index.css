@@ -41,7 +41,13 @@
 
   body {
     @apply bg-catalog-manila text-foreground font-sans;
-    background-image: none;
+    background-image: 
+      linear-gradient(90deg, transparent, transparent calc(100% - 1px), rgba(158, 137, 121, 0.3) calc(100% - 1px)),
+      linear-gradient(0deg, transparent, transparent calc(100% - 1px), rgba(158, 137, 121, 0.3) calc(100% - 1px)),
+      linear-gradient(90deg, rgba(158, 137, 121, 0.3) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(158, 137, 121, 0.3) 1px, transparent 1px);
+    background-size: 100% 1.5rem, 33.33% 100%, 33.33% 100%, 100% 1.5rem;
+    background-position: 0 0, 0 0, 0 0, 0 0;
   }
 }
 
@@ -50,35 +56,14 @@
   .catalog-card {
     @apply relative bg-catalog-manila border border-catalog-softBrown rounded-sm p-4 shadow-md;
     font-family: 'American Typewriter', 'Courier New', monospace;
-    background-image: 
-      linear-gradient(90deg, transparent, transparent calc(100% - 1px), rgba(158, 137, 121, 0.3) calc(100% - 1px)),
-      linear-gradient(0deg, transparent, transparent calc(100% - 1px), rgba(158, 137, 121, 0.3) calc(100% - 1px)),
-      linear-gradient(90deg, rgba(158, 137, 121, 0.3) 1px, transparent 1px),
-      linear-gradient(0deg, rgba(158, 137, 121, 0.3) 1px, transparent 1px);
-    background-size: 100% 1.5rem, 33.33% 100%, 33.33% 100%, 100% 1.5rem;
-    background-position: 0 0, 0 0, 0 0, 0 0;
   }
   
   .catalog-card-food {
     @apply bg-catalog-pink;
-    background-image: 
-      linear-gradient(90deg, transparent, transparent calc(100% - 1px), rgba(158, 137, 121, 0.3) calc(100% - 1px)),
-      linear-gradient(0deg, transparent, transparent calc(100% - 1px), rgba(158, 137, 121, 0.3) calc(100% - 1px)),
-      linear-gradient(90deg, rgba(158, 137, 121, 0.3) 1px, transparent 1px),
-      linear-gradient(0deg, rgba(158, 137, 121, 0.3) 1px, transparent 1px);
-    background-size: 100% 1.5rem, 33.33% 100%, 33.33% 100%, 100% 1.5rem;
-    background-position: 0 0, 0 0, 0 0, 0 0;
   }
   
   .catalog-card-entertainment {
     @apply bg-catalog-blue;
-    background-image: 
-      linear-gradient(90deg, transparent, transparent calc(100% - 1px), rgba(158, 137, 121, 0.3) calc(100% - 1px)),
-      linear-gradient(0deg, transparent, transparent calc(100% - 1px), rgba(158, 137, 121, 0.3) calc(100% - 1px)),
-      linear-gradient(90deg, rgba(158, 137, 121, 0.3) 1px, transparent 1px),
-      linear-gradient(0deg, rgba(158, 137, 121, 0.3) 1px, transparent 1px);
-    background-size: 100% 1.5rem, 33.33% 100%, 33.33% 100%, 100% 1.5rem;
-    background-position: 0 0, 0 0, 0 0, 0 0;
   }
   
   /* Line styling for cards */
