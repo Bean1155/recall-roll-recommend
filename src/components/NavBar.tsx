@@ -1,13 +1,25 @@
 
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { User, Folder, Sparkles, PlusCircle, Menu } from "lucide-react";
+import { User, Folder, Sparkles, PlusCircle, Menu, Home, Search } from "lucide-react";
 
 const NavBar = () => {
   const location = useLocation();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const navItems = [
+    {
+      name: "Home",
+      icon: Home,
+      path: "/",
+      color: "#FFECB3" // Soft Yellow/Gold
+    },
+    {
+      name: "Search",
+      icon: Search,
+      path: "/search",
+      color: "#E1F5FE" // Soft Light Blue
+    },
     {
       name: "Profile",
       icon: User,
