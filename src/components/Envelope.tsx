@@ -29,7 +29,7 @@ const Envelope: React.FC<EnvelopeProps> = ({
         </div>
       )}
       <div className={`envelope-flap ${isOpen ? 'envelope-flap-open' : ''}`}></div>
-      <div className="envelope-content p-3 relative z-10">
+      <div className={`envelope-content p-3 relative z-10 ${isOpen ? 'envelope-content-open' : ''}`}>
         {children}
       </div>
     </div>

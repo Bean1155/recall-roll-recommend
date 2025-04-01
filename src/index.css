@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -99,6 +100,11 @@
   
   .envelope-content {
     @apply transition-all duration-500;
+  }
+  
+  .envelope-content-open {
+    @apply transform -translate-y-4 scale-105;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
   
   .envelope-closed .envelope-content {
