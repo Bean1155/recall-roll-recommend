@@ -48,11 +48,13 @@ const Index = () => {
                   </Button>
                 </div>
                 
-                <div className="border border-catalog-softBrown rounded-md flex items-center justify-center p-1">
-                  <Button asChild className="bg-[#F97316] hover:bg-[#EA580C] text-white flex items-center justify-center h-full w-full">
-                    <Link to="/create/food">
-                      <PlusCircle size={18} />
-                      <span className="ml-2">Add New</span>
+                <div className="flex items-center justify-center p-1">
+                  <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
+                    <Link to="/create/food" className="flex items-center justify-center relative">
+                      <span className="font-script text-3xl -rotate-12 text-[#0EA5E9] relative">
+                        <PlusCircle size={18} className="text-[#0EA5E9] absolute -left-5 top-1/2 -translate-y-1/2" />
+                        Add New
+                      </span>
                     </Link>
                   </Button>
                 </div>
@@ -87,11 +89,13 @@ const Index = () => {
                   </Button>
                 </div>
                 
-                <div className="border border-catalog-softBrown rounded-md flex items-center justify-center p-1">
-                  <Button asChild className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white flex items-center justify-center h-full w-full">
-                    <Link to="/create/entertainment">
-                      <PlusCircle size={18} />
-                      <span className="ml-2">Add New</span>
+                <div className="flex items-center justify-center p-1">
+                  <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
+                    <Link to="/create/entertainment" className="flex items-center justify-center relative">
+                      <span className="font-script text-3xl -rotate-12 text-[#0EA5E9] relative">
+                        <PlusCircle size={18} className="text-[#0EA5E9] absolute -left-5 top-1/2 -translate-y-1/2" />
+                        Add New
+                      </span>
                     </Link>
                   </Button>
                 </div>
