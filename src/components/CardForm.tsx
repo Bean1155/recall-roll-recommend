@@ -272,6 +272,22 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                 placeholder="Restaurant Location"
               />
             </div>
+            
+            <div>
+              <Label htmlFor="status">Status</Label>
+              <Select
+                value={formData.status}
+                onValueChange={(value) => handleSelectChange('status', value)}
+              >
+                <SelectTrigger className="catalog-input">
+                  <SelectValue placeholder="Select a status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Visited: Tried this bite">Visited: Tried this bite</SelectItem>
+                  <SelectItem value="Interested: Want a bite">Interested: Want a bite</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
             <div className="space-y-1">
               <Label htmlFor="date" className="flex items-center">
@@ -310,24 +326,6 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
               <p className="text-xs text-muted-foreground">Visit count: {formData.visitCount}</p>
             </div>
 
-            <div>
-              <Label htmlFor="status">Status</Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => handleSelectChange('status', value)}
-              >
-                <SelectTrigger className="catalog-input">
-                  <SelectValue placeholder="Select a status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Visited: Tried this bite">Visited: Tried this bite</SelectItem>
-                  <SelectItem value="Interested: Want a bite">Interested: Want a bite</SelectItem>
-                  <SelectItem value="Highly Recommend">Highly Recommend</SelectItem>
-                  <SelectItem value="Favorite">Favorite</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
             <div className="space-y-1">
               <Label htmlFor="rating" className="flex items-center">
                 <Star className="w-4 h-4 mr-2" />
