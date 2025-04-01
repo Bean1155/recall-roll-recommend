@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Envelope from "@/components/Envelope";
@@ -74,7 +73,7 @@ const Index = () => {
             <div className="p-4 flex flex-col items-center justify-center min-h-[200px]">
               <Clapperboard 
                 size={48} 
-                className="mb-4 text-catalog-teal"
+                className="mb-4 text-black"
               />
               
               <div className="grid grid-cols-2 gap-4 w-full mt-6 mb-8">
