@@ -1,5 +1,4 @@
-
-import { CatalogCard, FoodCard, EntertainmentCard, FoodStatus } from './types';
+import { CatalogCard, FoodCard, EntertainmentCard, FoodStatus, RecommendationBadge } from './types';
 
 // Mock data
 const mockCards: CatalogCard[] = [
@@ -123,10 +122,18 @@ export const addRecommendation = (cardId: string, recommendedTo: string, badge: 
     
     // Only add if it doesn't already exist
     if (!recommendedToList.includes(recommendedTo)) {
+      // Convert the badge string to the proper RecommendationBadge type
+      let typedBadge: RecommendationBadge = null;
+      if (badge === "Highly Recommend") {
+        typedBadge = "Highly Recommend";
+      } else if (badge === "Favorite") {
+        typedBadge = "Favorite";
+      }
+      
       cards[cardIndex] = {
         ...card,
         recommendedTo: [...recommendedToList, recommendedTo],
-        recommendationBadge: badge
+        recommendationBadge: typedBadge
       };
       
       localStorage.setItem('catalogCards', JSON.stringify(cards));

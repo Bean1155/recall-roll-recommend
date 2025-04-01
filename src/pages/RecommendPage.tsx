@@ -28,7 +28,8 @@ const RecommendPage = () => {
     return <div>Loading...</div>;
   }
   
-  const title = (
+  // Create the title element to render in the UI
+  const titleElement = (
     <div className="flex items-center gap-2">
       <span>{`Recommend This ${card.type === 'food' ? 'Food' : 'Entertainment'}`}</span>
       {card.recommendationBadge && (
@@ -44,11 +45,26 @@ const RecommendPage = () => {
     </div>
   );
   
+  // Pass a string title to GridLayout for standard text, or render custom element
   return (
-    <GridLayout title={title}>
+    <GridLayout title={`Recommend This ${card.type === 'food' ? 'Food' : 'Entertainment'}`}>
       <div className="max-w-md mx-auto mb-8">
         <CatalogCard card={card} showActions={false} />
       </div>
+      
+      {/* Render the badge separately if needed */}
+      {card.recommendationBadge && (
+        <div className="flex justify-center mb-4">
+          <Badge 
+            className={card.recommendationBadge === 'Highly Recommend' 
+              ? 'bg-catalog-teal' 
+              : 'bg-catalog-pink text-black'
+            }
+          >
+            {card.recommendationBadge}
+          </Badge>
+        </div>
+      )}
       
       <RecommendForm card={card} />
     </GridLayout>

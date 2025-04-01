@@ -5,7 +5,7 @@ import NavBar from "@/components/NavBar";
 
 interface GridLayoutProps {
   children: React.ReactNode;
-  title?: string;
+  title?: React.ReactNode;  // Changed from string to ReactNode to accept both strings and elements
 }
 
 const GridLayout: React.FC<GridLayoutProps> = ({ children, title }) => {
