@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import BitesPage from "./pages/BitesPage";
 import BlockbustersPage from "./pages/BlockbustersPage";
 import CreateCardPage from "./pages/CreateCardPage";
+import EditCardPage from "./pages/EditCardPage";
 import RecommendPage from "./pages/RecommendPage";
 import CollectionsPage from "./pages/CollectionsPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/bites" element={<BitesPage />} />
             <Route path="/blockbusters" element={<BlockbustersPage />} />
             <Route path="/create/:type" element={<CreateCardPage />} />
+            <Route path="/edit/:id" element={<EditCardPage />} />
             <Route path="/recommend/:id" element={<RecommendPage />} />
             <Route path="/collections" element={<CollectionsPage />} />
             <Route path="/recommend" element={<RecommendPage />} />

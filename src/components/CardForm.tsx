@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,17 +13,19 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { CardType, CatalogCard, FoodCard, EntertainmentCard, FoodCategory, FoodStatus, EntertainmentStatus } from "@/lib/types";
-import { addCard } from "@/lib/data";
+import { addCard, updateCard, getCardById } from "@/lib/data";
 import { toast } from "@/components/ui/use-toast";
 import { Plus, Minus, Calendar, Link, Tag } from "lucide-react";
 
 interface CardFormProps {
   type: CardType;
+  cardId?: string;
 }
 
-const CardForm = ({ type }: CardFormProps) => {
+const CardForm = ({ type, cardId }: CardFormProps) => {
   const navigate = useNavigate();
   const isFoodCard = type === 'food';
+  const isEditMode = !!cardId;
   
   const [formData, setFormData] = useState({
     title: '',
@@ -44,6 +46,52 @@ const CardForm = ({ type }: CardFormProps) => {
     entertainmentCategory: 'movies',
     status: isFoodCard ? 'Visited: Tried this bite' as FoodStatus : 'Watched' as EntertainmentStatus,
   });
+  
+  useEffect(() => {
+    if (isEditMode && cardId) {
+      const card = getCardById(cardId);
+      if (card) {
+        const initialData = {
+          title: card.title,
+          creator: card.creator,
+          date: card.date,
+          rating: card.rating,
+          notes: card.notes,
+          cuisine: '',
+          location: '',
+          category: 'cafe' as FoodCategory,
+          visitCount: 1,
+          url: '',
+          tags: '',
+          genre: '',
+          medium: 'Netflix',
+          entertainmentCategory: 'movies',
+          status: isFoodCard ? 'Visited: Tried this bite' as FoodStatus : 'Watched' as EntertainmentStatus,
+        };
+        
+        if (card.type === 'food') {
+          const foodCard = card as FoodCard;
+          initialData.cuisine = foodCard.cuisine;
+          initialData.location = foodCard.location;
+          initialData.category = foodCard.category;
+          initialData.visitCount = foodCard.visitCount;
+          initialData.status = foodCard.status;
+          initialData.url = foodCard.url || '';
+          initialData.tags = foodCard.tags ? foodCard.tags.join(', ') : '';
+        } else {
+          const entertainmentCard = card as EntertainmentCard;
+          initialData.genre = entertainmentCard.genre;
+          initialData.medium = entertainmentCard.medium;
+          initialData.entertainmentCategory = entertainmentCard.entertainmentCategory;
+          initialData.status = entertainmentCard.status;
+          initialData.url = entertainmentCard.url || '';
+          initialData.tags = entertainmentCard.tags ? entertainmentCard.tags.join(', ') : '';
+        }
+        
+        setFormData(initialData);
+      }
+    }
+  }, [cardId, isEditMode, isFoodCard]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -102,19 +150,33 @@ const CardForm = ({ type }: CardFormProps) => {
         } as Omit<EntertainmentCard, 'id'>;
       }
       
-      addCard(card);
-      
-      toast({
-        title: "Card Created",
-        description: "Your catalog card has been created successfully!",
-      });
+      if (isEditMode && cardId) {
+        // Update existing card
+        updateCard({
+          ...card,
+          id: cardId,
+        } as CatalogCard);
+        
+        toast({
+          title: "Card Updated",
+          description: "Your catalog card has been updated successfully!",
+        });
+      } else {
+        // Add new card
+        addCard(card);
+        
+        toast({
+          title: "Card Created",
+          description: "Your catalog card has been created successfully!",
+        });
+      }
       
       navigate(isFoodCard ? '/bites' : '/blockbusters');
     } catch (error) {
-      console.error('Error creating card:', error);
+      console.error('Error processing card:', error);
       toast({
         title: "Error",
-        description: "There was an error creating your card. Please try again.",
+        description: "There was an error processing your card. Please try again.",
         variant: "destructive",
       });
     }
@@ -136,6 +198,18 @@ const CardForm = ({ type }: CardFormProps) => {
                 required
                 className="catalog-input"
                 placeholder="Establishment Name"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="creator">Chef/Restaurant</Label>
+              <Input
+                id="creator"
+                name="creator"
+                value={formData.creator}
+                onChange={handleChange}
+                className="catalog-input"
+                placeholder="Chef or Restaurant name"
               />
             </div>
             
@@ -460,7 +534,9 @@ const CardForm = ({ type }: CardFormProps) => {
             type="submit"
             className="w-full bg-catalog-softBrown hover:bg-catalog-darkBrown text-white"
           >
-            {isFoodCard ? 'Save Bite' : 'Save Blockbuster'}
+            {isEditMode 
+              ? (isFoodCard ? 'Update Bite' : 'Update Blockbuster') 
+              : (isFoodCard ? 'Save Bite' : 'Save Blockbuster')}
           </Button>
         </div>
       </div>

@@ -2,7 +2,7 @@
 import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Star, Send } from "lucide-react";
+import { Star, Send, Edit } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CatalogCardProps {
@@ -87,7 +87,18 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
       ) : null}
       
       {showActions && (
-        <div className="flex justify-end">
+        <div className="flex justify-end space-x-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="bg-white border-catalog-softBrown text-catalog-teal"
+            asChild
+          >
+            <Link to={`/edit/${card.id}`}>
+              <Edit size={16} className="mr-2" />
+              Edit
+            </Link>
+          </Button>
           <Button 
             variant="outline" 
             size="sm"
