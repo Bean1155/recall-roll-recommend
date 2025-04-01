@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Envelope from "@/components/Envelope";
@@ -35,12 +36,12 @@ const Index = () => {
                 className="mb-4 text-black" 
               />
               
-              <div className="grid grid-cols-2 gap-4 w-full mt-6 mb-8">
+              <div className="flex flex-col gap-4 w-full items-center mt-2">
                 <div className="flex items-center justify-center p-1 relative">
                   <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
                     <Link to="/bites" className="flex items-center justify-center relative">
-                      <span className="font-script text-4xl -rotate-12 text-[#4169E1] pl-7">
-                        <Search size={22} className="text-[#4169E1] absolute left-2 top-1/2 -translate-y-1/2" />
+                      <Search size={22} className="text-[#4169E1] absolute -left-5 top-1/2 -translate-y-1/2" />
+                      <span className="font-script text-4xl -rotate-12 text-[#4169E1]">
                         Browse
                       </span>
                     </Link>
@@ -50,8 +51,8 @@ const Index = () => {
                 <div className="flex items-center justify-center p-1">
                   <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
                     <Link to="/create/food" className="flex items-center justify-center relative">
-                      <span className="font-script text-4xl -rotate-12 text-[#4169E1] relative">
-                        <PlusCircle size={22} className="text-[#4169E1] absolute -left-5 top-1/2 -translate-y-1/2" />
+                      <PlusCircle size={22} className="text-[#4169E1] absolute -left-5 top-1/2 -translate-y-1/2" />
+                      <span className="font-script text-4xl -rotate-12 text-[#4169E1]">
                         Add New
                       </span>
                     </Link>
@@ -59,7 +60,7 @@ const Index = () => {
                 </div>
               </div>
               
-              <div className="border-t border-dashed border-catalog-softBrown w-full pt-3">
+              <div className="border-t border-dashed border-catalog-softBrown w-full pt-3 mt-6">
                 <p className="text-catalog-softBrown text-sm text-center">
                   {new Date().toLocaleDateString()} • Your Food Memories
                 </p>
@@ -76,12 +77,12 @@ const Index = () => {
                 className="mb-4 text-black"
               />
               
-              <div className="grid grid-cols-2 gap-4 w-full mt-6 mb-8">
+              <div className="flex flex-col gap-4 w-full items-center mt-2">
                 <div className="flex items-center justify-center p-1 relative">
                   <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
                     <Link to="/blockbusters" className="flex items-center justify-center relative">
-                      <span className="font-script text-4xl -rotate-12 text-[#4169E1] pl-7">
-                        <Search size={22} className="text-[#4169E1] absolute left-2 top-1/2 -translate-y-1/2" />
+                      <Search size={22} className="text-[#4169E1] absolute -left-5 top-1/2 -translate-y-1/2" />
+                      <span className="font-script text-4xl -rotate-12 text-[#4169E1]">
                         Browse
                       </span>
                     </Link>
@@ -91,8 +92,8 @@ const Index = () => {
                 <div className="flex items-center justify-center p-1">
                   <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
                     <Link to="/create/entertainment" className="flex items-center justify-center relative">
-                      <span className="font-script text-4xl -rotate-12 text-[#4169E1] relative">
-                        <PlusCircle size={22} className="text-[#4169E1] absolute -left-5 top-1/2 -translate-y-1/2" />
+                      <PlusCircle size={22} className="text-[#4169E1] absolute -left-5 top-1/2 -translate-y-1/2" />
+                      <span className="font-script text-4xl -rotate-12 text-[#4169E1]">
                         Add New
                       </span>
                     </Link>
@@ -100,7 +101,7 @@ const Index = () => {
                 </div>
               </div>
               
-              <div className="border-t border-dashed border-catalog-softBrown w-full pt-3">
+              <div className="border-t border-dashed border-catalog-softBrown w-full pt-3 mt-6">
                 <p className="text-catalog-softBrown text-sm text-center">
                   {new Date().toLocaleDateString()} • Your Entertainment Memories
                 </p>
