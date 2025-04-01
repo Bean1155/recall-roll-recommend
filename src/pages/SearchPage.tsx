@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Input } from "@/components/ui/input";
@@ -39,17 +38,14 @@ const SearchPage = () => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    // Load all cards
     const cards = getAllCards();
     setAllCards(cards);
     setFilteredCards(cards);
   }, []);
 
   useEffect(() => {
-    // Apply filters and search whenever the filter, sort order or search term changes
     let results = allCards;
 
-    // Apply search term filtering
     if (searchTerm) {
       results = results.filter(card => 
         card.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -60,20 +56,17 @@ const SearchPage = () => {
       );
     }
 
-    // Apply category filters
     if (activeFilter === "favorites") {
       results = results.filter(card => card.recommendationBadge === "Favorite");
     } else if (activeFilter === "topRated") {
       results = results.filter(card => card.rating >= 4);
     } else if (activeFilter === "location") {
-      // Filter by location for food cards
       if (searchTerm) {
         results = results.filter(card => 
           card.type === 'food' && (card as FoodCard).location.toLowerCase().includes(searchTerm.toLowerCase())
         );
       }
     } else if (activeFilter === "topReferrals") {
-      // Cards with the most recommendations
       results = results.filter(card => card.recommendedTo && card.recommendedTo.length > 0)
         .sort((a, b) => {
           const aCount = a.recommendedTo?.length || 0;
@@ -81,7 +74,6 @@ const SearchPage = () => {
           return sortOrder === "desc" ? bCount - aCount : aCount - bCount;
         });
     } else if (activeFilter === "byStatus") {
-      // Apply status filtering
       if (selectedStatus !== "all") {
         results = results.filter(card => {
           if (card.type === 'food') {
@@ -94,7 +86,6 @@ const SearchPage = () => {
       }
     }
 
-    // Apply sorting if not already sorted by referrals
     if (activeFilter !== "topReferrals") {
       results = results.sort((a, b) => {
         return sortOrder === "desc" ? b.rating - a.rating : a.rating - b.rating;
@@ -106,14 +97,12 @@ const SearchPage = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Search is applied in the useEffect
   };
 
   const toggleSortOrder = () => {
     setSortOrder(prevOrder => prevOrder === "desc" ? "asc" : "desc");
   };
 
-  // Get unique status values from all cards
   const getStatusOptions = () => {
     const statusSet = new Set<string>();
     
@@ -135,7 +124,6 @@ const SearchPage = () => {
     }
   };
 
-  // Get placeholder text based on active filter
   const getSearchPlaceholder = () => {
     if (activeFilter === "location") {
       return "Search by location...";
@@ -242,7 +230,6 @@ const SearchPage = () => {
             )}
           </TabsList>
 
-          {/* Show active filter name in mobile view */}
           {isMobile && (
             <div className="text-sm font-medium mb-2 text-catalog-teal">
               {activeFilter === "all" && "All Items"}
@@ -286,8 +273,8 @@ const SearchPage = () => {
                 <SelectContent>
                   <SelectItem value="all">All Statuses</SelectItem>
                   {getStatusOptions().map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
+                    <SelectItem key={status} value={status || "unknown"}>
+                      {status || "Unknown Status"}
                     </SelectItem>
                   ))}
                 </SelectContent>
