@@ -27,14 +27,15 @@ const RecommendPage = () => {
     }
   }, [id, navigate]);
   
-  const handleShare = async () => {
+  const handleExternalShare = async () => {
     if (!card) return;
     
     try {
-      await shareCard(card);
+      // Pass 'external' mode to indicate sharing externally (limited information)
+      await shareCard(card, 'external');
       toast({
-        title: "Share successful",
-        description: "Card has been shared successfully",
+        title: "External Share",
+        description: "Basic card information has been shared. Note: External users will only see limited information.",
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to share";
@@ -76,10 +77,10 @@ const RecommendPage = () => {
           <Button 
             variant="outline"
             className="bg-white border-catalog-softBrown text-catalog-teal"
-            onClick={handleShare}
+            onClick={handleExternalShare}
           >
             <Share2 size={16} className="mr-2" />
-            Share Externally
+            Share Externally (Limited Info)
           </Button>
         </div>
       </div>

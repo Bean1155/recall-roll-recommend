@@ -19,10 +19,11 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
   
   const handleShare = async () => {
     try {
-      await shareCard(card);
+      // Pass 'internal' mode to indicate sharing within the app (full information)
+      await shareCard(card, 'internal');
       toast({
-        title: "Share successful",
-        description: "Card has been shared successfully",
+        title: "App Share",
+        description: "Card has been shared with full details to app users.",
       });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to share";
@@ -114,7 +115,7 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
             onClick={handleShare}
           >
             <Share2 size={16} className="mr-2" />
-            Share
+            Share to App Users
           </Button>
           <Button 
             variant="outline" 
