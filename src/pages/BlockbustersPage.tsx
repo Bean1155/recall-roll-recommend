@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
@@ -17,6 +18,27 @@ const BlockbustersPage = () => {
     const cards = getCardsByType('entertainment') as EntertainmentCard[];
     setEntertainmentCards(cards);
   }, []);
+  
+  // Group entertainment cards by their entertainment category
+  const groupedEntertainmentCards = entertainmentCards.reduce<Record<string, EntertainmentCard[]>>((acc, card) => {
+    const category = card.entertainmentCategory || 'other';
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(card);
+    return acc;
+  }, {});
+
+  // Convert category names to title case
+  const formatCategoryName = (category: string): string => {
+    return category
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  // Sort categories alphabetically
+  const sortedCategories = Object.keys(groupedEntertainmentCards).sort();
   
   return (
     <GridLayout>
@@ -41,11 +63,20 @@ const BlockbustersPage = () => {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {entertainmentCards.map((card) => (
-            <Envelope key={card.id} label={card.medium}>
-              <CatalogCard card={card} />
-            </Envelope>
+        <div className="space-y-10">
+          {sortedCategories.map((category) => (
+            <div key={category} className="space-y-4">
+              <h2 className="text-2xl font-bold text-catalog-teal border-b border-catalog-softBrown pb-2">
+                {formatCategoryName(category)}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {groupedEntertainmentCards[category].map((card) => (
+                  <Envelope key={card.id} label={card.medium}>
+                    <CatalogCard card={card} />
+                  </Envelope>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       )}

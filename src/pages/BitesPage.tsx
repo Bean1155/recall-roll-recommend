@@ -18,6 +18,27 @@ const BitesPage = () => {
     const cards = getCardsByType('food') as FoodCard[];
     setFoodCards(cards);
   }, []);
+
+  // Group food cards by category
+  const groupedFoodCards = foodCards.reduce<Record<string, FoodCard[]>>((acc, card) => {
+    const category = card.category || 'other';
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(card);
+    return acc;
+  }, {});
+  
+  // Convert category names to title case
+  const formatCategoryName = (category: string): string => {
+    return category
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  // Sort categories alphabetically
+  const sortedCategories = Object.keys(groupedFoodCards).sort();
   
   return (
     <GridLayout>
@@ -44,11 +65,20 @@ const BitesPage = () => {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {foodCards.map((card) => (
-            <Envelope key={card.id} label={card.cuisine}>
-              <CatalogCard card={card} />
-            </Envelope>
+        <div className="space-y-10">
+          {sortedCategories.map((category) => (
+            <div key={category} className="space-y-4">
+              <h2 className="text-2xl font-bold text-catalog-teal border-b border-catalog-softBrown pb-2">
+                {formatCategoryName(category)}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {groupedFoodCards[category].map((card) => (
+                  <Envelope key={card.id} label={card.cuisine}>
+                    <CatalogCard card={card} />
+                  </Envelope>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       )}
