@@ -70,14 +70,14 @@ const RecommendForm = ({ card }: RecommendFormProps) => {
         <div>
           <Label htmlFor="badge">Add a Recommendation Badge (Optional)</Label>
           <Select
-            value={badge || ""}
-            onValueChange={(value) => setBadge(value === "" ? null : value)}
+            value={badge || undefined}
+            onValueChange={(value) => setBadge(value || null)}
           >
             <SelectTrigger className="catalog-input">
               <SelectValue placeholder="No badge" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">No badge</SelectItem>
+              <SelectItem value="none">No badge</SelectItem>
               <SelectItem value="Highly Recommend">
                 <div className="flex items-center">
                   <Badge className="bg-catalog-teal mr-2">Highly Recommend</Badge>
@@ -105,7 +105,7 @@ const RecommendForm = ({ card }: RecommendFormProps) => {
           />
         </div>
         
-        {badge && (
+        {badge && badge !== "none" && (
           <div className="p-3 bg-catalog-cream/50 rounded-md border border-catalog-softBrown">
             <p className="text-sm font-medium mb-2">Preview:</p>
             <div className="flex items-center">

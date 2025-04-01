@@ -128,6 +128,8 @@ export const addRecommendation = (cardId: string, recommendedTo: string, badge: 
         typedBadge = "Highly Recommend";
       } else if (badge === "Favorite") {
         typedBadge = "Favorite";
+      } else if (badge === "none") {
+        typedBadge = null;
       }
       
       cards[cardIndex] = {
