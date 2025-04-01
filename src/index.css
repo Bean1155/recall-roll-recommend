@@ -78,7 +78,7 @@
   }
   
   .envelope-tab {
-    @apply absolute top-0 left-1/2 -translate-x-1/2 w-16 h-4 bg-catalog-manila border border-b-0 border-catalog-softBrown rounded-t-sm transform -translate-y-full;
+    @apply absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-catalog-manila border border-b-0 border-catalog-softBrown rounded-t-sm -translate-y-3/4;
   }
   
   .envelope-flap {
