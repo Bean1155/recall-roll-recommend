@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CatalogCard } from "@/lib/types";
@@ -10,7 +9,8 @@ import {
   Twitter, 
   Linkedin, 
   Copy, 
-  Check 
+  Check,
+  UserPlus
 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { 
@@ -31,6 +31,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useUser } from "@/contexts/UserContext";
 
 interface ShareOptionsProps {
   card: CatalogCard;
@@ -46,6 +47,7 @@ const ShareOptions = ({
   buttonClassName 
 }: ShareOptionsProps) => {
   const [isCopied, setIsCopied] = useState(false);
+  const { users } = useUser();
   
   const generateShareText = () => {
     const title = card.title;
@@ -89,7 +91,6 @@ const ShareOptions = ({
   
   const handleShareMessage = () => {
     const text = encodeURIComponent(generateShareText());
-    // SMS link (works on mobile)
     window.open(`sms:?body=${text}`);
     toast({
       title: "Message App Opened",
@@ -149,17 +150,27 @@ const ShareOptions = ({
     }
   };
   
+  const handleShareWithUser = (userId: string) => {
+    const user = users.find(u => u.id === userId);
+    if (user) {
+      toast({
+        title: `Shared with ${user.name}`,
+        description: `${card.title} has been recommended to ${user.name}.`,
+      });
+    }
+  };
+  
   const ShareButton = () => (
     <Button 
       variant="outline"
       className={buttonClassName || "bg-white border-catalog-softBrown text-catalog-teal"}
     >
       <Share2 size={16} className="mr-2" />
-      Share {mode === 'external' ? 'Externally' : 'Internally'}
+      Share Recommendation
     </Button>
   );
   
-  const ShareContent = () => (
+  const ExternalShareContent = () => (
     <div className="flex flex-col gap-2 w-full">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         <Button 
@@ -220,6 +231,28 @@ const ShareOptions = ({
     </div>
   );
   
+  const InternalShareContent = () => (
+    <div className="flex flex-col gap-2 w-full">
+      {users.length > 0 ? (
+        <div className="grid grid-cols-1 gap-2">
+          {users.map(user => (
+            <Button 
+              key={user.id}
+              variant="outline" 
+              className="flex items-center justify-start py-2 h-auto" 
+              onClick={() => handleShareWithUser(user.id)}
+            >
+              <UserPlus className="h-4 w-4 mr-2" />
+              <span>{user.name}</span>
+            </Button>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-center p-2">No app users available</p>
+      )}
+    </div>
+  );
+  
   if (variant === 'dropdown') {
     return (
       <DropdownMenu>
@@ -229,34 +262,49 @@ const ShareOptions = ({
             className={buttonClassName || "bg-white border-catalog-softBrown text-catalog-teal"}
           >
             <Share2 size={16} className="mr-2" />
-            Share {mode === 'external' ? 'Externally' : 'Internally'}
+            Share Recommendation
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 p-2">
-          <DropdownMenuItem onClick={handleShareEmail} className="cursor-pointer">
-            <Mail className="mr-2 h-4 w-4" />
-            <span>Email</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleShareMessage} className="cursor-pointer">
-            <MessageSquare className="mr-2 h-4 w-4" />
-            <span>Message</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handleShareSocial('facebook')} className="cursor-pointer">
-            <Facebook className="mr-2 h-4 w-4" />
-            <span>Facebook</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handleShareSocial('twitter')} className="cursor-pointer">
-            <Twitter className="mr-2 h-4 w-4" />
-            <span>Twitter</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handleShareSocial('linkedin')} className="cursor-pointer">
-            <Linkedin className="mr-2 h-4 w-4" />
-            <span>LinkedIn</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={copyToClipboard} className="cursor-pointer">
-            {isCopied ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
-            <span>{isCopied ? 'Copied!' : 'Copy to clipboard'}</span>
-          </DropdownMenuItem>
+          {mode === 'external' ? (
+            <>
+              <DropdownMenuItem onClick={handleShareEmail} className="cursor-pointer">
+                <Mail className="mr-2 h-4 w-4" />
+                <span>Email</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleShareMessage} className="cursor-pointer">
+                <MessageSquare className="mr-2 h-4 w-4" />
+                <span>Message</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleShareSocial('facebook')} className="cursor-pointer">
+                <Facebook className="mr-2 h-4 w-4" />
+                <span>Facebook</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleShareSocial('twitter')} className="cursor-pointer">
+                <Twitter className="mr-2 h-4 w-4" />
+                <span>Twitter</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleShareSocial('linkedin')} className="cursor-pointer">
+                <Linkedin className="mr-2 h-4 w-4" />
+                <span>LinkedIn</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={copyToClipboard} className="cursor-pointer">
+                {isCopied ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
+                <span>{isCopied ? 'Copied!' : 'Copy to clipboard'}</span>
+              </DropdownMenuItem>
+            </>
+          ) : (
+            users.map(user => (
+              <DropdownMenuItem 
+                key={user.id} 
+                onClick={() => handleShareWithUser(user.id)} 
+                className="cursor-pointer"
+              >
+                <UserPlus className="mr-2 h-4 w-4" />
+                <span>{user.name}</span>
+              </DropdownMenuItem>
+            ))
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     );
@@ -271,7 +319,7 @@ const ShareOptions = ({
             className={buttonClassName || "bg-white border-catalog-softBrown text-catalog-teal"}
           >
             <Share2 size={16} className="mr-2" />
-            Share {mode === 'external' ? 'Externally' : 'Internally'}
+            Share Recommendation
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">
@@ -279,7 +327,7 @@ const ShareOptions = ({
             <DialogTitle>Share {card.title}</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <ShareContent />
+            {mode === 'external' ? <ExternalShareContent /> : <InternalShareContent />}
           </div>
         </DialogContent>
       </Dialog>
@@ -295,12 +343,12 @@ const ShareOptions = ({
             className={buttonClassName || "bg-white border-catalog-softBrown text-catalog-teal"}
           >
             <Share2 size={16} className="mr-2" />
-            Share {mode === 'external' ? 'Externally' : 'Internally'}
+            Share Recommendation
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-80">
           <h3 className="font-medium mb-2">Share {card.title}</h3>
-          <ShareContent />
+          {mode === 'external' ? <ExternalShareContent /> : <InternalShareContent />}
         </PopoverContent>
       </Popover>
     );

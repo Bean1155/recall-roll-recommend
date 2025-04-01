@@ -25,12 +25,6 @@ const RecommendForm = ({ card }: RecommendFormProps) => {
   return (
     <form onSubmit={handleSubmit} className="catalog-card max-w-md mx-auto">
       <div className="space-y-4">
-        <div className="p-3 bg-catalog-cream/50 rounded-md border border-catalog-softBrown">
-          <p className="text-sm text-center">
-            Use the share options above to recommend this {card.type === 'food' ? 'food' : 'entertainment'} to others!
-          </p>
-        </div>
-        
         <div className="flex justify-end space-x-2 pt-4">
           <Button
             type="button"
