@@ -1,7 +1,8 @@
+
 import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Edit, Send } from "lucide-react";
+import { Edit, Send, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CatalogCardProps {
