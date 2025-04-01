@@ -14,7 +14,8 @@ import {
 import { CardType, CatalogCard, FoodCard, EntertainmentCard, FoodCategory, FoodStatus, EntertainmentStatus } from "@/lib/types";
 import { addCard, updateCard, getCardById } from "@/lib/data";
 import { toast } from "@/components/ui/use-toast";
-import { Plus, Minus, Calendar, Link, Tag } from "lucide-react";
+import { Plus, Minus, Calendar, Link, Tag, Star } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 
 interface CardFormProps {
   type: CardType;
@@ -32,14 +33,12 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
     date: new Date().toISOString().split('T')[0],
     rating: 3,
     notes: '',
-    // Food specific fields
     cuisine: '',
     location: '',
     category: 'cafe' as FoodCategory,
     visitCount: 1,
     url: '',
     tags: '',
-    // Entertainment specific fields
     genre: '',
     medium: 'Netflix',
     entertainmentCategory: 'movies',
@@ -109,6 +108,10 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
     if (formData.visitCount > 1) {
       setFormData(prev => ({ ...prev, visitCount: prev.visitCount - 1 }));
     }
+  };
+  
+  const handleRatingChange = (value: number[]) => {
+    setFormData(prev => ({ ...prev, rating: value[0] }));
   };
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -293,6 +296,28 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                 </div>
               </div>
               <p className="text-xs text-muted-foreground">Visit count: {formData.visitCount}</p>
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="rating" className="flex items-center">
+                <Star className="w-4 h-4 mr-2" />
+                Rating
+              </Label>
+              <div className="flex items-center space-x-2 py-4">
+                <Slider
+                  id="rating"
+                  min={1}
+                  max={5}
+                  step={1}
+                  value={[formData.rating]}
+                  onValueChange={handleRatingChange}
+                />
+                <span className="w-8 text-center font-semibold">{formData.rating}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-xs">Poor</span>
+                <span className="text-xs">Excellent</span>
+              </div>
             </div>
 
             <div>
