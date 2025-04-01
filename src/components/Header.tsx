@@ -9,9 +9,9 @@ const Header = () => {
       <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
         <Link to="/" className="flex items-center mb-4 md:mb-0">
           <img 
-            src="/lovable-uploads/b1c69d28-6949-4945-8501-dcc72236d701.png" 
+            src="/lovable-uploads/fafe4c18-7a01-4f90-8483-06834c0e1170.png" 
             alt="Total Recall Catalog Logo" 
-            className="h-16 w-auto"
+            className="h-16 w-16 rounded-full object-cover"
           />
         </Link>
         
