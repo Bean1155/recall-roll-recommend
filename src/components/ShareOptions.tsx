@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CatalogCard } from "@/lib/types";
 import { 
@@ -119,7 +118,7 @@ const ShareOptions = ({
     }
     
     if (shareUrl) {
-      window.open(shareUrl, '_blank', 'width=600,height=400');
+      window.open(shareUrl, '_blank');
       toast({
         title: `Sharing to ${platform}`,
         description: `Opening ${platform} sharing dialog`,
@@ -154,7 +153,6 @@ const ShareOptions = ({
     <Button 
       variant="outline"
       className={buttonClassName || "bg-white border-catalog-softBrown text-catalog-teal"}
-      onClick={(e) => e.preventDefault()}
     >
       <Share2 size={16} className="mr-2" />
       Share {mode === 'external' ? 'Externally' : 'Internally'}
@@ -226,7 +224,13 @@ const ShareOptions = ({
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <ShareButton />
+          <Button 
+            variant="outline"
+            className={buttonClassName || "bg-white border-catalog-softBrown text-catalog-teal"}
+          >
+            <Share2 size={16} className="mr-2" />
+            Share {mode === 'external' ? 'Externally' : 'Internally'}
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 p-2">
           <DropdownMenuItem onClick={handleShareEmail} className="cursor-pointer">
@@ -262,7 +266,13 @@ const ShareOptions = ({
     return (
       <Dialog>
         <DialogTrigger asChild>
-          <ShareButton />
+          <Button 
+            variant="outline"
+            className={buttonClassName || "bg-white border-catalog-softBrown text-catalog-teal"}
+          >
+            <Share2 size={16} className="mr-2" />
+            Share {mode === 'external' ? 'Externally' : 'Internally'}
+          </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -280,7 +290,13 @@ const ShareOptions = ({
     return (
       <Popover>
         <PopoverTrigger asChild>
-          <ShareButton />
+          <Button 
+            variant="outline"
+            className={buttonClassName || "bg-white border-catalog-softBrown text-catalog-teal"}
+          >
+            <Share2 size={16} className="mr-2" />
+            Share {mode === 'external' ? 'Externally' : 'Internally'}
+          </Button>
         </PopoverTrigger>
         <PopoverContent className="w-80">
           <h3 className="font-medium mb-2">Share {card.title}</h3>
