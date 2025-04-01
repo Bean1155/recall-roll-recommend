@@ -46,8 +46,15 @@ const Envelope: React.FC<EnvelopeProps> = ({
       >
         {label && (
           <div 
-            className="absolute bottom-2 left-0 right-0 text-center"
-            style={{ color: labelColor, fontWeight: 'bold', textTransform: 'uppercase', fontSize: '14px' }}
+            className="absolute bottom-2 left-0 right-0 text-center px-2 py-1 mx-auto max-w-max bg-[#E6D7B8] border-t border-x border-[#9E8979] rounded-t-md"
+            style={{ 
+              color: '#3B3B3B', 
+              fontWeight: 'bold', 
+              textTransform: 'uppercase', 
+              fontSize: '14px',
+              letterSpacing: '0.5px',
+              boxShadow: '0 -2px 4px rgba(0,0,0,0.05)'
+            }}
           >
             {label}
           </div>
