@@ -4,9 +4,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
 import RecommendForm from "@/components/RecommendForm";
 import { CatalogCard as CatalogCardType } from "@/lib/types";
-import { getCardById } from "@/lib/data";
+import { getCardById, shareCard } from "@/lib/data";
 import GridLayout from "@/components/GridLayout";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Share2 } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 const RecommendPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -23,6 +26,25 @@ const RecommendPage = () => {
       }
     }
   }, [id, navigate]);
+  
+  const handleShare = async () => {
+    if (!card) return;
+    
+    try {
+      await shareCard(card);
+      toast({
+        title: "Share successful",
+        description: "Card has been shared successfully",
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to share";
+      toast({
+        title: "Share failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  };
   
   if (!card) {
     return <div>Loading...</div>;
@@ -45,11 +67,21 @@ const RecommendPage = () => {
     </div>
   );
   
-  // Pass a string title to GridLayout for standard text, or render custom element
   return (
     <GridLayout title={`Recommend This ${card.type === 'food' ? 'Food' : 'Entertainment'}`}>
       <div className="max-w-md mx-auto mb-8">
         <CatalogCard card={card} showActions={false} />
+        
+        <div className="flex justify-center mt-4">
+          <Button 
+            variant="outline"
+            className="bg-white border-catalog-softBrown text-catalog-teal"
+            onClick={handleShare}
+          >
+            <Share2 size={16} className="mr-2" />
+            Share Externally
+          </Button>
+        </div>
       </div>
       
       {/* Render the badge separately if needed */}

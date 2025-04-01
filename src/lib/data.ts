@@ -1,4 +1,3 @@
-
 import { CatalogCard, FoodCard, EntertainmentCard, FoodStatus, RecommendationBadge } from './types';
 
 // Mock data
@@ -156,4 +155,60 @@ export const getRecommendedUsers = (cardId: string): string[] => {
 export const isRecommendedToUser = (cardId: string, userId: string): boolean => {
   const recommendedUsers = getRecommendedUsers(cardId);
   return recommendedUsers.includes(userId);
+};
+
+// Add a new function to share card
+export const shareCard = async (card: CatalogCard): Promise<void> => {
+  // Create a share text based on the card type and properties
+  const title = card.title;
+  const creator = card.creator;
+  const rating = "★".repeat(card.rating) + "☆".repeat(5 - card.rating);
+  
+  let shareText = `Check out ${title} by ${creator} (${rating})!`;
+  
+  if (card.type === 'food') {
+    const foodCard = card as FoodCard;
+    shareText += ` ${foodCard.cuisine} cuisine at ${foodCard.location}.`;
+  } else {
+    const entertainmentCard = card as EntertainmentCard;
+    shareText += ` ${entertainmentCard.genre} ${entertainmentCard.entertainmentCategory} on ${entertainmentCard.medium}.`;
+  }
+  
+  if (card.notes) {
+    shareText += `\n\nNotes: ${card.notes}`;
+  }
+  
+  if (card.recommendationBadge) {
+    shareText += `\n\n${card.recommendationBadge}!`;
+  }
+  
+  // Try Web Share API first (modern browsers and mobile)
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: `${title} by ${creator}`,
+        text: shareText,
+        // In a real app, this would be a public URL to the card
+        url: window.location.origin + `/view/${card.id}`,
+      });
+      return;
+    } catch (error) {
+      if ((error as Error).name !== 'AbortError') {
+        // If it's not just the user canceling, try fallback
+        console.error('Web Share API error:', error);
+      } else {
+        // User cancelled the share, no need for fallback
+        return;
+      }
+    }
+  }
+
+  // Fallback for browsers without Web Share API
+  try {
+    await navigator.clipboard.writeText(shareText);
+    return;
+  } catch (error) {
+    console.error('Clipboard API error:', error);
+    throw new Error('Unable to share - your browser does not support sharing');
+  }
 };

@@ -2,8 +2,10 @@
 import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Star, Send, Edit } from "lucide-react";
+import { Star, Send, Edit, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { shareCard } from "@/lib/data";
+import { toast } from "@/components/ui/use-toast";
 
 interface CatalogCardProps {
   card: CatalogCardType;
@@ -15,6 +17,23 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
   const foodCard = card as FoodCard;
   const entertainmentCard = card as EntertainmentCard;
   
+  const handleShare = async () => {
+    try {
+      await shareCard(card);
+      toast({
+        title: "Share successful",
+        description: "Card has been shared successfully",
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to share";
+      toast({
+        title: "Share failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div 
       className={cn(
@@ -88,6 +107,15 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
       
       {showActions && (
         <div className="flex justify-end space-x-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="bg-white border-catalog-softBrown text-catalog-teal"
+            onClick={handleShare}
+          >
+            <Share2 size={16} className="mr-2" />
+            Share
+          </Button>
           <Button 
             variant="outline" 
             size="sm"
