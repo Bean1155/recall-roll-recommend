@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Envelope from "@/components/Envelope";
@@ -29,7 +28,7 @@ const Index = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         <div>
-          <Envelope label="BITES" className="h-auto transform hover:scale-[1.02] transition-transform duration-300" backgroundColor="#F97316">
+          <Envelope label="BITES" className="h-auto transform hover:scale-[1.02] transition-transform duration-300" backgroundColor="#FDE1D3">
             <div className="p-4 flex flex-col items-center justify-center min-h-[200px]">
               <Utensils 
                 size={48} 
