@@ -2,11 +2,13 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { User, Folder, Sparkles, PlusCircle, Menu, Home, Search } from "lucide-react";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 const NavBar = () => {
   const location = useLocation();
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Reordering navigation items
   const navItems = [
     {
       name: "Home",
@@ -15,22 +17,16 @@ const NavBar = () => {
       color: "#FFECB3" // Soft Yellow/Gold
     },
     {
-      name: "Search",
-      icon: Search,
-      path: "/search",
-      color: "#E1F5FE" // Soft Light Blue
-    },
-    {
-      name: "Profile",
-      icon: User,
-      path: "/profile",
-      color: "#FDE1D3" // Soft Peach
-    },
-    {
       name: "Collections",
       icon: Folder,
       path: "/collections",
       color: "#D3E4FD" // Soft Blue
+    },
+    {
+      name: "Add",
+      icon: PlusCircle,
+      path: "/create/food",
+      color: "#E5DEFF" // Soft Purple
     },
     {
       name: "Recommend",
@@ -39,12 +35,20 @@ const NavBar = () => {
       color: "#FEF7CD" // Soft Yellow
     },
     {
-      name: "Add",
-      icon: PlusCircle,
-      path: "/create/food",
-      color: "#E5DEFF" // Soft Purple
+      name: "Profile",
+      icon: User,
+      path: "/profile",
+      color: "#FDE1D3" // Soft Peach
     }
   ];
+
+  // Special handling for search to add hover card
+  const searchItem = {
+    name: "Search",
+    icon: Search,
+    path: "/search",
+    color: "#E1F5FE" // Soft Light Blue
+  };
 
   const toggleNavbar = () => {
     setIsExpanded(!isExpanded);
@@ -55,13 +59,16 @@ const NavBar = () => {
       <div className="container mx-auto max-w-md">
         {isExpanded ? (
           <div className="flex justify-around items-center py-2 animate-fade-in">
-            {navItems.map((item) => {
+            {/* Regular navigation items */}
+            {navItems.map((item, index) => {
               const isActive = location.pathname === item.path;
+              const isMiddle = index === Math.floor(navItems.length / 2);
+              
               return (
                 <Link 
                   key={item.name} 
                   to={item.path}
-                  className="flex flex-col items-center"
+                  className={`flex flex-col items-center ${isMiddle ? 'order-0' : ''} ${item.name === 'Profile' ? 'order-last' : ''}`}
                   onClick={() => setIsExpanded(false)}
                 >
                   <div 
@@ -85,6 +92,39 @@ const NavBar = () => {
                 </Link>
               );
             })}
+
+            {/* Search with hover card */}
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Link 
+                  to={searchItem.path}
+                  className="flex flex-col items-center order-first"
+                  onClick={() => setIsExpanded(false)}
+                >
+                  <div 
+                    className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-all ${
+                      location.pathname === searchItem.path ? "shadow-md" : ""
+                    } hover:scale-110 hover:shadow-md`}
+                    style={{ backgroundColor: searchItem.color }}
+                  >
+                    <searchItem.icon 
+                      size={22} 
+                      className={`transition-colors ${
+                        location.pathname === searchItem.path ? "text-catalog-teal" : "text-catalog-softBrown"
+                      }`}
+                    />
+                  </div>
+                  <span className={`text-xs font-medium ${
+                    location.pathname === searchItem.path ? "text-catalog-teal" : "text-catalog-softBrown"
+                  }`}>
+                    {searchItem.name}
+                  </span>
+                </Link>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-48 bg-white p-2 text-sm text-catalog-softBrown">
+                Quick search your catalog items
+              </HoverCardContent>
+            </HoverCard>
           </div>
         ) : (
           <div className="flex justify-center py-2">
