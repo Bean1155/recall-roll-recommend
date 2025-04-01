@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import Envelope from "@/components/Envelope";
-import { Archive, Bookmark } from "lucide-react";
+import { Book, Utensils, Clapperboard } from "lucide-react";
 
 const Index = () => {
   return (
@@ -22,7 +22,7 @@ const Index = () => {
           <div>
             <Envelope label="FOOD EXPERIENCES" className="h-64">
               <div className="catalog-card catalog-card-food h-48 flex flex-col items-center justify-center">
-                <Archive size={48} className="mb-4 text-catalog-softBrown" />
+                <Utensils size={48} className="mb-4 text-catalog-softBrown" />
                 <h2 className="catalog-subtitle mb-4">Bites</h2>
                 <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
                   <Link to="/bites">View Collection</Link>
@@ -37,7 +37,7 @@ const Index = () => {
           <div>
             <Envelope label="ENTERTAINMENT EXPERIENCES" className="h-64">
               <div className="catalog-card catalog-card-entertainment h-48 flex flex-col items-center justify-center">
-                <Bookmark size={48} className="mb-4 text-catalog-softBrown" />
+                <Clapperboard size={48} className="mb-4 text-catalog-softBrown" />
                 <h2 className="catalog-subtitle mb-4">Blockbusters</h2>
                 <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
                   <Link to="/blockbusters">View Collection</Link>
