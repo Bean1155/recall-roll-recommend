@@ -113,6 +113,17 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
   const handleRatingChange = (value: number[]) => {
     setFormData(prev => ({ ...prev, rating: value[0] }));
   };
+
+  const getRatingLabel = (rating: number): string => {
+    switch(rating) {
+      case 1: return "Yikes";
+      case 2: return "Meh";
+      case 3: return "Decent";
+      case 4: return "Impressive";
+      case 5: return "Amazing";
+      default: return "";
+    }
+  };
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -330,11 +341,14 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                   value={[formData.rating]}
                   onValueChange={handleRatingChange}
                 />
-                <span className="w-8 text-center font-semibold">{formData.rating}</span>
+                <div className="w-24 text-center">
+                  <span className="font-semibold">{formData.rating}</span>
+                  <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-xs">Poor</span>
-                <span className="text-xs">Excellent</span>
+              <div className="flex justify-between text-xs">
+                <span>1 - Yikes</span>
+                <span>5 - Amazing</span>
               </div>
             </div>
 
@@ -490,11 +504,14 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                   value={[formData.rating]}
                   onValueChange={handleRatingChange}
                 />
-                <span className="w-8 text-center font-semibold">{formData.rating}</span>
+                <div className="w-24 text-center">
+                  <span className="font-semibold">{formData.rating}</span>
+                  <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-xs">Poor</span>
-                <span className="text-xs">Excellent</span>
+              <div className="flex justify-between text-xs">
+                <span>1 - Yikes</span>
+                <span>5 - Amazing</span>
               </div>
             </div>
 
