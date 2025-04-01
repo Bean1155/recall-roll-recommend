@@ -30,7 +30,7 @@ const RecommendPage = () => {
   }
   
   return (
-    <GridLayout title={`Recommend This ${card.type === 'food' ? 'Food' : 'Entertainment'}`}>
+    <GridLayout title={`Share This ${card.type === 'food' ? 'Food' : 'Entertainment'}`}>
       <div className="max-w-md mx-auto mb-8">
         <CatalogCard card={card} showActions={false} />
         
@@ -39,23 +39,24 @@ const RecommendPage = () => {
             card={card} 
             mode="external" 
             variant="dialog"
+            buttonClassName="w-full justify-center bg-catalog-teal hover:bg-catalog-darkTeal text-white"
           />
         </div>
+        
+        {/* Render the badge separately if needed */}
+        {card.recommendationBadge && (
+          <div className="flex justify-center mt-4">
+            <Badge 
+              className={card.recommendationBadge === 'Highly Recommend' 
+                ? 'bg-catalog-teal' 
+                : 'bg-catalog-pink text-black'
+              }
+            >
+              {card.recommendationBadge}
+            </Badge>
+          </div>
+        )}
       </div>
-      
-      {/* Render the badge separately if needed */}
-      {card.recommendationBadge && (
-        <div className="flex justify-center mb-4">
-          <Badge 
-            className={card.recommendationBadge === 'Highly Recommend' 
-              ? 'bg-catalog-teal' 
-              : 'bg-catalog-pink text-black'
-            }
-          >
-            {card.recommendationBadge}
-          </Badge>
-        </div>
-      )}
       
       <RecommendForm card={card} />
     </GridLayout>
