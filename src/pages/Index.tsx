@@ -29,7 +29,7 @@ const Index = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         <div>
-          <Envelope label="BITES" className="h-auto transform hover:scale-[1.02] transition-transform duration-300">
+          <Envelope label="BITES" className="h-auto transform hover:scale-[1.02] transition-transform duration-300" backgroundColor="#F97316">
             <div className="p-4 flex flex-col items-center justify-center min-h-[200px]">
               <Utensils 
                 size={48} 
@@ -62,7 +62,7 @@ const Index = () => {
         </div>
         
         <div>
-          <Envelope label="BLOCKBUSTERS" className="h-auto transform hover:scale-[1.02] transition-transform duration-300">
+          <Envelope label="BLOCKBUSTERS" className="h-auto transform hover:scale-[1.02] transition-transform duration-300" backgroundColor="#8B5CF6">
             <div className="p-4 flex flex-col items-center justify-center min-h-[200px]">
               <Clapperboard 
                 size={48} 
