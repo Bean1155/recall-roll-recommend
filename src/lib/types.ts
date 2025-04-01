@@ -2,7 +2,7 @@
 export type CardType = 'food' | 'entertainment';
 export type FoodCategory = 'cafe' | 'diner' | 'specialty foods' | 'fine dining' | 'take out' | 'bakeries' | 'bars' | 'food trucks' | 'restaurant' | 'other';
 export type FoodStatus = 'Visited: Tried this bite' | 'Interested: Want a bite';
-export type EntertainmentStatus = 'Watched' | 'Want to Watch' | 'Currently Watching' | 'Highly Recommend' | 'Favorite';
+export type EntertainmentStatus = 'Watched' | 'Want to Watch' | 'Currently Watching';
 export type RecommendationBadge = 'Highly Recommend' | 'Favorite' | null;
 
 export interface CatalogCard {

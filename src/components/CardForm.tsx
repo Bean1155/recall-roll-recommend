@@ -468,8 +468,6 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                   <SelectItem value="Watched">Watched</SelectItem>
                   <SelectItem value="Want to Watch">Want to Watch</SelectItem>
                   <SelectItem value="Currently Watching">Currently Watching</SelectItem>
-                  <SelectItem value="Highly Recommend">Highly Recommend</SelectItem>
-                  <SelectItem value="Favorite">Favorite</SelectItem>
                 </SelectContent>
               </Select>
             </div>
