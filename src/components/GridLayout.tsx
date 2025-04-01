@@ -1,7 +1,6 @@
 
 import React from "react";
 import Header from "@/components/Header";
-import BottomNav from "@/components/BottomNav";
 
 interface GridLayoutProps {
   children: React.ReactNode;
@@ -22,12 +21,10 @@ const GridLayout: React.FC<GridLayoutProps> = ({ children, title }) => {
     >
       <Header />
       
-      <main className="flex-1 container mx-auto px-4 py-8 pb-24">
+      <main className="flex-1 container mx-auto px-4 py-8">
         {title && <h1 className="catalog-title text-3xl mb-8 text-center">{title}</h1>}
         {children}
       </main>
-      
-      <BottomNav />
       
       <footer className="bg-catalog-manila border-t border-catalog-softBrown py-4 text-center text-sm text-catalog-softBrown mt-16">
         <p>© {new Date().getFullYear()} TOTAL RECALL CATALOG • Tracking Every Bite and Blockbuster™</p>
