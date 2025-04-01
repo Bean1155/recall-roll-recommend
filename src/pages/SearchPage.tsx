@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Input } from "@/components/ui/input";
@@ -52,7 +53,10 @@ const SearchPage = () => {
         card.creator.toLowerCase().includes(searchTerm.toLowerCase()) ||
         card.notes.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (card.type === 'food' && (card as FoodCard).cuisine.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (card.type === 'entertainment' && (card as EntertainmentCard).genre.toLowerCase().includes(searchTerm.toLowerCase()))
+        (card.type === 'entertainment' && (card as EntertainmentCard).genre.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        // Add status to search criteria
+        (card.type === 'food' && (card as FoodCard).status.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (card.type === 'entertainment' && (card as EntertainmentCard).status.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -80,6 +84,17 @@ const SearchPage = () => {
             return (card as FoodCard).status === selectedStatus;
           } else if (card.type === 'entertainment') {
             return (card as EntertainmentCard).status === selectedStatus;
+          }
+          return false;
+        });
+      } else if (searchTerm) {
+        // If on status tab and no status is selected, but there's a search term,
+        // filter by status containing the search term
+        results = results.filter(card => {
+          if (card.type === 'food') {
+            return (card as FoodCard).status.toLowerCase().includes(searchTerm.toLowerCase());
+          } else if (card.type === 'entertainment') {
+            return (card as EntertainmentCard).status.toLowerCase().includes(searchTerm.toLowerCase());
           }
           return false;
         });
@@ -129,6 +144,8 @@ const SearchPage = () => {
       return "Search by location...";
     } else if (activeFilter === "keywords") {
       return "Search by keywords...";
+    } else if (activeFilter === "byStatus") {
+      return "Search by status...";
     } else {
       return "Search by title, creator...";
     }
