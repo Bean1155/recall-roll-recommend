@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -23,14 +24,14 @@ const Index = () => {
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="text-center mb-10">
           <h1 className="catalog-title text-4xl md:text-6xl mb-4 text-[#3B3B3B]">TOTAL RECALL CATALOG</h1>
-          <p className="catalog-subtitle text-lg md:text-xl text-catalog-softBrown">
+          <p className="catalog-subtitle text-lg md:text-xl text-[#A52A2A]">
             Tracking Every Bite and Blockbuster
           </p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <div>
-            <Envelope label="FOOD EXPERIENCES" className="h-64">
+            <Envelope label="FOOD EXPERIENCES" className="h-64" labelColor="#A52A2A">
               <div 
                 className={`catalog-card catalog-card-food h-48 flex flex-col items-center justify-center transition-all duration-300 ${activeCard === 'bites' ? 'transform scale-105 shadow-lg' : ''}`}
                 onMouseEnter={() => handleMouseEnter('bites')}
@@ -56,7 +57,7 @@ const Index = () => {
           </div>
           
           <div>
-            <Envelope label="ENTERTAINMENT EXPERIENCES" className="h-64">
+            <Envelope label="ENTERTAINMENT EXPERIENCES" className="h-64" labelColor="#A52A2A">
               <div 
                 className={`catalog-card catalog-card-entertainment h-48 flex flex-col items-center justify-center transition-all duration-300 ${activeCard === 'blockbusters' ? 'transform scale-105 shadow-lg' : ''}`}
                 onMouseEnter={() => handleMouseEnter('blockbusters')}
