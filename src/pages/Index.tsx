@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Envelope from "@/components/Envelope";
@@ -67,7 +68,7 @@ const Index = () => {
               <div className="flex flex-col gap-4 w-full items-center mt-2">
                 <div className="flex items-center justify-center p-1 relative">
                   <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
-                    <Link to="/bites" className="flex items-center justify-center relative">
+                    <Link to="/search" className="flex items-center justify-center relative">
                       <Search size={22} className="text-[#A52A2A] absolute -left-5 top-1/2 -translate-y-1/2" />
                       <span className="font-script text-4xl text-[#A52A2A]">
                         Browse
@@ -107,7 +108,7 @@ const Index = () => {
               <div className="flex flex-col gap-4 w-full items-center mt-2">
                 <div className="flex items-center justify-center p-1 relative">
                   <Button asChild variant="ghost" className="flex items-center justify-center h-full w-full hover:bg-transparent">
-                    <Link to="/blockbusters" className="flex items-center justify-center relative">
+                    <Link to="/search" className="flex items-center justify-center relative">
                       <Search size={22} className="text-[#A52A2A] absolute -left-5 top-1/2 -translate-y-1/2" />
                       <span className="font-script text-4xl text-[#A52A2A]">
                         Browse
