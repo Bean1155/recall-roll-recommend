@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -42,10 +43,10 @@
   body {
     @apply bg-catalog-manila text-foreground font-sans;
     background-image: 
-      linear-gradient(90deg, transparent, transparent calc(100% - 1px), rgba(245, 241, 230, 0.3) calc(100% - 1px)),
-      linear-gradient(0deg, transparent, transparent calc(100% - 1px), rgba(245, 241, 230, 0.3) calc(100% - 1px)),
-      linear-gradient(90deg, rgba(245, 241, 230, 0.3) 1px, transparent 1px),
-      linear-gradient(0deg, rgba(245, 241, 230, 0.3) 1px, transparent 1px);
+      linear-gradient(90deg, transparent, transparent calc(100% - 1px), rgba(172, 200, 229, 0.5) calc(100% - 1px)),
+      linear-gradient(0deg, transparent, transparent calc(100% - 1px), rgba(172, 200, 229, 0.5) calc(100% - 1px)),
+      linear-gradient(90deg, rgba(172, 200, 229, 0.5) 1px, transparent 1px),
+      linear-gradient(0deg, rgba(172, 200, 229, 0.5) 1px, transparent 1px);
     background-size: 100% 1.5rem, 33.33% 100%, 33.33% 100%, 100% 1.5rem;
     background-position: 0 0, 0 0, 0 0, 0 0;
   }

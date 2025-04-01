@@ -72,12 +72,12 @@ export default {
 				catalog: {
 					teal: '#1A7D76',
 					darkTeal: '#166661',
-					manila: '#E6D7B9',
+					manila: '#F5F1E6',
 					cream: '#F8F4E9',
 					green: '#D8E4C8',
 					pink: '#FDE1D3',
 					blue: '#D6E5F0',
-					gridLine: '#F5F1E6',
+					gridLine: '#ACC8E5',
 					softBrown: '#9E8979'
 				}
 			},
