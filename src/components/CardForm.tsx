@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -46,7 +45,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
     entertainmentCategory: 'movies',
     status: isFoodCard ? 'Visited: Tried this bite' as FoodStatus : 'Watched' as EntertainmentStatus,
   });
-  
+
   useEffect(() => {
     if (isEditMode && cardId) {
       const card = getCardById(cardId);
@@ -151,7 +150,6 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
       }
       
       if (isEditMode && cardId) {
-        // Update existing card
         updateCard({
           ...card,
           id: cardId,
@@ -162,7 +160,6 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
           description: "Your catalog card has been updated successfully!",
         });
       } else {
-        // Add new card
         addCard(card);
         
         toast({
@@ -334,7 +331,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
         ) : (
           <>
             <div>
-              <Label htmlFor="title" className="text-base">Title</Label>
+              <Label htmlFor="title" className="text-base">Title <span className="text-red-500">*</span></Label>
               <p className="text-xs italic mb-1">Name of show, performance, etc.</p>
               <Input
                 id="title"
@@ -360,10 +357,11 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
             </div>
             
             <div>
-              <Label htmlFor="entertainmentCategory">Entertainment Category</Label>
+              <Label htmlFor="entertainmentCategory">Entertainment Category <span className="text-red-500">*</span></Label>
               <Select
                 value={formData.entertainmentCategory}
                 onValueChange={(value) => handleSelectChange('entertainmentCategory', value)}
+                required
               >
                 <SelectTrigger className="catalog-input">
                   <SelectValue placeholder="Select a category" />
