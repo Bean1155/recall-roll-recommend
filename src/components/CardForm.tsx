@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -272,14 +273,14 @@ const CardForm = ({ type }: CardFormProps) => {
             </div>
             
             <div>
-              <Label htmlFor="creator">{isFoodCard ? 'Chef/Restaurant' : 'Creator/Author'}</Label>
+              <Label htmlFor="creator">Creator/Author</Label>
               <Input
                 id="creator"
                 name="creator"
                 value={formData.creator}
                 onChange={handleChange}
                 className="catalog-input"
-                placeholder={isFoodCard ? "Chef or Restaurant name" : "Director, Author, Studio, etc."}
+                placeholder="Director, Author, Studio, etc."
               />
             </div>
             
@@ -423,3 +424,48 @@ const CardForm = ({ type }: CardFormProps) => {
         )}
         
         {isFoodCard && (
+          <>
+            <div>
+              <Label htmlFor="notes">Notes</Label>
+              <Textarea
+                id="notes"
+                name="notes"
+                value={formData.notes}
+                onChange={handleChange}
+                className="catalog-input h-20"
+                placeholder="Your thoughts, impressions, and memorable details..."
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="tags" className="flex items-center">
+                <Tag className="w-4 h-4 mr-2" />
+                Tags
+              </Label>
+              <Input
+                id="tags"
+                name="tags"
+                value={formData.tags}
+                onChange={handleChange}
+                className="catalog-input"
+                placeholder="breakfast, sandwiches, coffee, etc. (comma separated)"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Separate tags with commas</p>
+            </div>
+          </>
+        )}
+
+        <div className="pt-4">
+          <Button 
+            type="submit"
+            className="w-full bg-catalog-softBrown hover:bg-catalog-darkBrown text-white"
+          >
+            {isFoodCard ? 'Save Bite' : 'Save Blockbuster'}
+          </Button>
+        </div>
+      </div>
+    </form>
+  );
+};
+
+export default CardForm;
