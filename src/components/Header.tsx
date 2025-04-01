@@ -8,11 +8,9 @@ const Header = () => {
     <header className="bg-catalog-manila border-b border-catalog-softBrown py-4">
       <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
         <Link to="/" className="flex items-center mb-4 md:mb-0">
-          <img 
-            src="/lovable-uploads/b1c69d28-6949-4945-8501-dcc72236d701.png" 
-            alt="Total Recall Catalog Logo" 
-            className="h-16 w-auto"
-          />
+          <div className="h-16 w-16 rounded-full bg-catalog-cream border border-catalog-softBrown flex items-center justify-center shadow-md">
+            <span className="font-bold text-xs text-center leading-tight">TOTAL<br/>RECALL<br/>CATALOG</span>
+          </div>
         </Link>
         
         <nav className="flex gap-2">
