@@ -13,7 +13,10 @@ const mockCards: CatalogCard[] = [
     notes: 'The pasta was perfectly al dente and the sauce was rich and flavorful.',
     cuisine: 'Italian',
     location: 'Downtown',
-    dish: 'Spaghetti Carbonara',
+    category: 'fine dining',
+    status: 'Highly Recommend',
+    visitCount: 2,
+    tags: ['pasta', 'italian', 'date night'],
   } as FoodCard,
   {
     id: '2',
@@ -37,7 +40,10 @@ const mockCards: CatalogCard[] = [
     notes: 'The most authentic tacos I\'ve had outside of Mexico.',
     cuisine: 'Mexican',
     location: 'East Side',
-    dish: 'Al Pastor Tacos',
+    category: 'food trucks',
+    status: 'Favorite',
+    visitCount: 3,
+    tags: ['tacos', 'spicy', 'mexican'],
   } as FoodCard,
   {
     id: '4',

@@ -13,8 +13,8 @@ const CreateCardPage = () => {
       <Header />
       
       <main className="flex-1 container mx-auto px-4 py-8">
-        <h1 className="catalog-title text-3xl mb-8 text-center">
-          {cardType === 'food' ? 'Add Food Experience' : 'Add Entertainment Experience'}
+        <h1 className="catalog-title text-3xl mb-8 text-center font-bold text-black">
+          {cardType === 'food' ? 'Add Bite' : 'Add Entertainment Experience'}
         </h1>
         
         <CardForm type={cardType as CardType} />

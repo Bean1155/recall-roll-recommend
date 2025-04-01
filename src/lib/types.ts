@@ -1,5 +1,7 @@
 
 export type CardType = 'food' | 'entertainment';
+export type FoodCategory = 'cafe' | 'diner' | 'specialty foods' | 'fine dining' | 'take out' | 'bakeries' | 'bars' | 'food trucks' | 'other';
+export type FoodStatus = 'Visited: Tried this bite' | 'Interested: Want a bite' | 'Highly Recommend' | 'Favorite';
 
 export interface CatalogCard {
   id: string;
@@ -17,7 +19,11 @@ export interface FoodCard extends CatalogCard {
   type: 'food';
   cuisine: string;
   location: string;
-  dish: string;
+  category: FoodCategory;
+  status: FoodStatus;
+  visitCount: number;
+  url?: string;
+  tags?: string[];
 }
 
 export interface EntertainmentCard extends CatalogCard {
