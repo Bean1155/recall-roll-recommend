@@ -61,7 +61,7 @@ const Index = () => {
         </div>
         
         <div>
-          <Envelope label="BLOCKBUSTERS" className="h-auto transform hover:scale-[1.02] transition-transform duration-300" backgroundColor="#8B5CF6">
+          <Envelope label="BLOCKBUSTERS" className="h-auto transform hover:scale-[1.02] transition-transform duration-300" backgroundColor="#D6E5F0">
             <div className="p-4 flex flex-col items-center justify-center min-h-[200px]">
               <Clapperboard 
                 size={48} 
