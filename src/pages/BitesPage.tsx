@@ -17,16 +17,24 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const BitesPage = () => {
   const [foodCards, setFoodCards] = useState<FoodCard[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const { userName } = useUser();
   const isMobile = useIsMobile();
   
   useEffect(() => {
     const cards = getCardsByType("food") as FoodCard[];
     setFoodCards(cards);
+    
+    // Set default active category to the first one
+    if (cards.length > 0) {
+      const categories = getSortedCategories(cards);
+      if (categories.length > 0) {
+        setActiveCategory(categories[0]);
+      }
+    }
   }, []);
 
   // Group food cards by category
@@ -48,30 +56,39 @@ const BitesPage = () => {
   };
 
   // Sort categories alphabetically, but ensure "etc." is last
-  const sortedCategories = Object.keys(groupedFoodCards).sort((a, b) => {
-    if (a.toLowerCase() === "etc.") return 1;
-    if (b.toLowerCase() === "etc.") return -1;
-    return a.localeCompare(b);
-  });
+  const getSortedCategories = (cards: FoodCard[]): string[] => {
+    const categories = Array.from(new Set(cards.map(card => card.category || "etc.")));
+    return categories.sort((a, b) => {
+      if (a.toLowerCase() === "etc.") return 1;
+      if (b.toLowerCase() === "etc.") return -1;
+      return a.localeCompare(b);
+    });
+  };
+  
+  const sortedCategories = getSortedCategories(foodCards);
   
   // Color mapping for categories
   const categoryColors: Record<string, string> = {
-    "cafe": "bg-[#D6E5F0] text-gray-800", // Soft blue
-    "diner": "bg-[#FFE29F] text-gray-800", // Soft yellow
-    "specialty foods": "bg-[#FDE1D3] text-gray-800", // Soft peach
-    "fine dining": "bg-[#E5DEFF] text-gray-800", // Soft purple
-    "take out": "bg-[#FFDEE2] text-gray-800", // Soft pink
-    "bakeries": "bg-[#F2FCE2] text-gray-800", // Soft green
-    "bars": "bg-[#FFCCA1] text-gray-800", // Soft orange
-    "food trucks": "bg-[#D8E4C8] text-gray-800", // Soft green
-    "restaurant": "bg-[#F5F1E6] text-gray-800", // Manila
-    "large event space": "bg-[#E5DEFF] text-gray-800", // Soft purple
-    "etc.": "bg-[#F1F0FB] text-gray-800", // Soft gray
+    "cafe": "#D6E5F0", // Soft blue
+    "diner": "#FFE29F", // Soft yellow
+    "specialty foods": "#FDE1D3", // Soft peach
+    "fine dining": "#E5DEFF", // Soft purple
+    "take out": "#FFDEE2", // Soft pink
+    "bakeries": "#F2FCE2", // Soft green
+    "bars": "#FFCCA1", // Soft orange
+    "food trucks": "#D8E4C8", // Soft green
+    "restaurant": "#F5F1E6", // Manila
+    "large event space": "#E5DEFF", // Soft purple
+    "etc.": "#F1F0FB", // Soft gray
   };
 
   // Get default color if category not in mapping
   const getCategoryColor = (category: string): string => {
-    return categoryColors[category.toLowerCase()] || "bg-[#F1F0FB] text-gray-800";
+    return categoryColors[category.toLowerCase()] || "#F1F0FB";
+  };
+  
+  const handleCategoryClick = (category: string) => {
+    setActiveCategory(category);
   };
   
   return (
@@ -109,25 +126,44 @@ const BitesPage = () => {
           </Button>
         </div>
       ) : (
-        <Tabs defaultValue={sortedCategories[0]}>
-          <TabsList className="flex flex-wrap mb-6 bg-transparent space-x-1 space-y-1 h-auto">
-            {sortedCategories.map((category) => (
-              <TabsTrigger
+        <div className="flex border border-catalog-softBrown/30 rounded-lg overflow-hidden bg-white shadow-md">
+          {/* Vertical tabs */}
+          <div className="flex flex-col relative shrink-0 bg-gray-50 border-r border-catalog-softBrown/30">
+            {sortedCategories.map((category, index) => (
+              <div 
                 key={category}
-                value={category}
-                className={`${getCategoryColor(category)} rounded-md border border-catalog-softBrown/30 shadow-sm px-4 py-2 transition-all`}
+                className={`relative cursor-pointer transition-all`}
+                onClick={() => handleCategoryClick(category)}
               >
-                {formatCategoryName(category)} ({groupedFoodCards[category].length})
-              </TabsTrigger>
+                {/* Tab divider with color */}
+                <div 
+                  className={`w-16 h-16 flex items-center justify-center text-xs font-medium ${
+                    category === activeCategory ? 'border-r-4' : ''
+                  }`}
+                  style={{ 
+                    backgroundColor: getCategoryColor(category),
+                    borderColor: category === activeCategory ? '#9E8979' : 'transparent',
+                  }}
+                >
+                  <div className="writing-mode-vertical-rl transform rotate-180 whitespace-nowrap px-2 py-3">
+                    {formatCategoryName(category)}
+                    <span className="ml-1">({groupedFoodCards[category].length})</span>
+                  </div>
+                </div>
+              </div>
             ))}
-          </TabsList>
-          
-          {sortedCategories.map((category) => (
-            <TabsContent key={category} value={category} className="space-y-4 py-4">
-              <div className={`border-t-4 ${getCategoryColor(category).split(' ')[0]} border-catalog-softBrown/30 pt-4`}>
+          </div>
+
+          {/* Content area */}
+          <div className="flex-grow p-4 min-h-[400px] bg-[url('/public/lovable-uploads/215f942c-ba3b-4d38-b851-069868df939a.png')] bg-no-repeat bg-right-top overflow-hidden">
+            {activeCategory && (
+              <div className="h-full">
+                <h2 className="text-xl font-semibold mb-4 pb-2 border-b" style={{ borderColor: getCategoryColor(activeCategory) }}>
+                  {formatCategoryName(activeCategory)}
+                </h2>
                 <Carousel className="w-full">
                   <CarouselContent>
-                    {groupedFoodCards[category].map((card) => (
+                    {groupedFoodCards[activeCategory].map((card) => (
                       <CarouselItem key={card.id} className={isMobile ? "basis-full" : "md:basis-1/2 lg:basis-1/3"}>
                         <div className="p-1">
                           <Envelope label={card.title}>
@@ -143,10 +179,16 @@ const BitesPage = () => {
                   </div>
                 </Carousel>
               </div>
-            </TabsContent>
-          ))}
-        </Tabs>
+            )}
+          </div>
+        </div>
       )}
+
+      <style jsx>{`
+        .writing-mode-vertical-rl {
+          writing-mode: vertical-rl;
+        }
+      `}</style>
     </GridLayout>
   );
 };
