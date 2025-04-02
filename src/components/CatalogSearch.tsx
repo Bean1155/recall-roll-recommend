@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -274,8 +275,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
           <DialogContent 
             className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 md:w-3/5 lg:w-2/5 max-w-md p-0 border-2 border-[#8B7D6B] shadow-lg rounded-2xl overflow-hidden"
             style={{
-              backgroundColor: "#FAEBD7",
-              backgroundImage: "linear-gradient(rgba(139, 125, 107, 0.05) 1px, transparent 1px)",
+              backgroundColor: "#FAF3E3", // Lightened background color
+              backgroundImage: "linear-gradient(rgba(139, 125, 107, 0.03) 1px, transparent 1px)", // Fainter lines
               backgroundSize: "100% 28px",
               boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
               maxHeight: "80vh",
@@ -292,7 +293,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
             </div>
             
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{
-              background: "linear-gradient(90deg, rgba(139,125,107,0.03) 0%, rgba(139,125,107,0) 20%, rgba(139,125,107,0) 80%, rgba(139,125,107,0.03) 100%)",
+              background: "linear-gradient(90deg, rgba(139,125,107,0.02) 0%, rgba(139,125,107,0) 20%, rgba(139,125,107,0) 80%, rgba(139,125,107,0.02) 100%)",
               zIndex: 1
             }}></div>
             
@@ -305,11 +306,11 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                   <Input
                     id="search-input"
                     type="text"
-                    placeholder="Search by Title, Creator, Tags, Location, Genre, Cuisine..."
+                    placeholder="Search by Keywords"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="w-full border-[#8B7D6B] pl-10 bg-[#FAEBD7] focus:ring-[#8B7D6B] focus:border-[#8B7D6B]"
+                    className="w-full border-[#8B7D6B] pl-10 bg-[#FAF3E3] focus:ring-[#8B7D6B] focus:border-[#8B7D6B]"
                     autoFocus
                   />
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8B7D6B]" size={16} />
@@ -333,7 +334,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                   className="w-full"
                 >
                   <div className="flex items-center justify-between">
-                    <h4 className="text-lg font-medium text-vintage-red font-typewriter">
+                    <h4 className="text-lg font-medium text-vintage-red font-typewriter hover:opacity-80 transition-opacity cursor-pointer"
+                      onClick={() => setIsFiltersOpen(!isFiltersOpen)}>
                       QUICK FILTERS
                     </h4>
                     <CollapsibleTrigger asChild>
@@ -499,7 +501,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
               <div className="mt-3 flex justify-center">
                 <Button 
                   onClick={executeSearch}
-                  className="bg-vintage-wood hover:bg-[#6B5D4B] px-8 rounded-full font-typewriter text-white"
+                  className="bg-vintage-wood hover:bg-[#6B5D4B] px-8 rounded-2xl font-typewriter text-white"
                 >
                   SEARCH CATALOG
                 </Button>
