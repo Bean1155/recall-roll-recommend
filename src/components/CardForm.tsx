@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -67,7 +66,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
           medium: 'Netflix',
           entertainmentCategory: 'movies',
           status: isFoodCard ? 'Visited: Tried this bite' as FoodStatus : 'Watched' as EntertainmentStatus,
-          isFavorite: card.isFavorite || false, // Add the missing isFavorite property
+          isFavorite: card.isFavorite || false,
         };
         
         if (card.type === 'food') {
@@ -243,16 +242,17 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="cafe">Cafe</SelectItem>
-                  <SelectItem value="diner">Diner</SelectItem>
-                  <SelectItem value="specialty foods">Specialty Foods</SelectItem>
-                  <SelectItem value="fine dining">Fine Dining</SelectItem>
-                  <SelectItem value="take out">Take Out</SelectItem>
                   <SelectItem value="bakeries">Bakeries</SelectItem>
                   <SelectItem value="bars">Bars</SelectItem>
+                  <SelectItem value="cafe">Cafe</SelectItem>
+                  <SelectItem value="diner">Diner</SelectItem>
+                  <SelectItem value="fine dining">Fine Dining</SelectItem>
                   <SelectItem value="food trucks">Food Trucks</SelectItem>
-                  <SelectItem value="restaurant">Restaurant</SelectItem>
+                  <SelectItem value="large event space">Large Event Space</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="restaurant">Restaurant</SelectItem>
+                  <SelectItem value="specialty foods">Specialty Foods</SelectItem>
+                  <SelectItem value="take out">Take Out</SelectItem>
                 </SelectContent>
               </Select>
             </div>
