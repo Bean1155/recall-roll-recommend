@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -66,6 +67,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
           medium: 'Netflix',
           entertainmentCategory: 'movies',
           status: isFoodCard ? 'Visited: Tried this bite' as FoodStatus : 'Watched' as EntertainmentStatus,
+          isFavorite: card.isFavorite || false, // Add the missing isFavorite property
         };
         
         if (card.type === 'food') {
@@ -137,7 +139,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
         date: formData.date,
         rating: Number(formData.rating),
         notes: formData.notes,
-        isFavorite: false,
+        isFavorite: formData.isFavorite,
       };
       
       let card;
