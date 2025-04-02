@@ -99,6 +99,8 @@
   
   .font-handwritten {
     font-family: 'Brush Script MT', cursive;
+    font-size: 1.2em;
+    letter-spacing: 0.02em;
   }
   
   .envelope-tab {

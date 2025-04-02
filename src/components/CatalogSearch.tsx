@@ -272,33 +272,35 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
         <DialogPortal>
           <DialogOverlay className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" />
           <DialogContent 
-            className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 md:w-3/5 lg:w-2/5 max-w-md p-0 border-2 border-catalog-softBrown bg-catalog-cream shadow-lg rounded-2xl overflow-hidden"
+            className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 md:w-3/5 lg:w-2/5 max-w-md p-0 border-2 border-[#8B7D6B] shadow-lg rounded-2xl overflow-hidden"
             style={{
-              backgroundColor: "#fffdd0",
-              backgroundImage: "linear-gradient(#dbd9d0 1px, transparent 1px)",
+              backgroundColor: "#F9F5E7",
+              backgroundImage: "linear-gradient(rgba(139, 125, 107, 0.1) 1px, transparent 1px)",
               backgroundSize: "100% 28px",
               boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
               maxHeight: "80vh",
               position: "relative"
             }}
           >
-            <div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{
-              background: "linear-gradient(90deg, rgba(175,170,150,0.1) 0%, rgba(175,170,150,0) 20%, rgba(175,170,150,0) 80%, rgba(175,170,150,0.1) 100%)",
-              zIndex: 1
-            }}></div>
-            
-            <div className="absolute top-0 w-full flex flex-col items-center -mt-3 z-10">
-              <div className="px-6 py-1.5 bg-vintage-tan text-[#5d4037] font-serif text-sm font-bold rounded-b-md border border-catalog-softBrown border-t-0">
+            <div className="bg-[#8B7D6B] w-full py-3 px-4 flex flex-col items-center justify-center">
+              <div className="text-[#F9F5E7] font-serif text-lg font-bold tracking-wide">
                 CATALOG CARD
               </div>
-              <div className="mt-1 text-xs text-[#5d4037] font-serif">
+              <div className="text-[#F9F5E7] font-serif text-sm">
                 {type === 'food' ? 'BITES' : 'BLOCKBUSTERS'}
               </div>
             </div>
             
-            <div className="p-4 overflow-y-auto relative z-10 mt-8" style={{ maxHeight: "calc(80vh - 20px)" }}>
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{
+              background: "linear-gradient(90deg, rgba(139,125,107,0.05) 0%, rgba(139,125,107,0) 20%, rgba(139,125,107,0) 80%, rgba(139,125,107,0.05) 100%)",
+              zIndex: 1
+            }}></div>
+            
+            <div className="p-4 overflow-y-auto relative z-10" style={{ maxHeight: "calc(80vh - 80px)" }}>
               <div className="mb-4">
-                <label htmlFor="search-input" className="block text-sm font-medium text-[#5d4037] mb-1" style={{ fontFamily: 'Brush Script MT, cursive' }}>Search Terms</label>
+                <label htmlFor="search-input" className="block text-xl font-medium text-[#5d4037] mb-1 font-handwritten">
+                  Search Terms
+                </label>
                 <div className="relative">
                   <Input
                     id="search-input"
@@ -307,10 +309,10 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="w-full border-catalog-softBrown pl-10 catalog-input"
+                    className="w-full border-[#8B7D6B] pl-10 bg-[#F9F5E7] focus:ring-[#8B7D6B] focus:border-[#8B7D6B]"
                     autoFocus
                   />
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-catalog-softBrown" size={16} />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8B7D6B]" size={16} />
                   {searchTerm && (
                     <Button 
                       type="button" 
@@ -324,14 +326,16 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 </div>
               </div>
 
-              <div className="mb-4 mt-4 border-t border-catalog-softBrown/20 pt-4">
+              <div className="mb-4 mt-4 border-t border-[#8B7D6B]/20 pt-4">
                 <Collapsible
                   open={isFiltersOpen}
                   onOpenChange={setIsFiltersOpen}
                   className="w-full"
                 >
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-medium text-[#5d4037]" style={{ fontFamily: 'Brush Script MT, cursive' }}>Quick Filters</h4>
+                    <h4 className="text-lg font-medium text-[#5d4037] font-handwritten">
+                      Quick Filters
+                    </h4>
                     <CollapsibleTrigger asChild>
                       <Button variant="ghost" size="sm" className="p-0 h-7 w-7 ml-2">
                         <ChevronDown 
@@ -344,7 +348,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                   
                   <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
                     <Tabs defaultValue="all" className="w-full mt-2" onValueChange={handleTabChange}>
-                      <TabsList className="w-full bg-catalog-cream p-1 rounded-md h-14 border border-catalog-softBrown/20 relative z-20">
+                      <TabsList className="w-full bg-[#F9F5E7] p-1 rounded-md h-14 border border-[#8B7D6B]/20 relative z-20">
                         <div className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-7'} w-full`}>
                           <TooltipProvider>
                             <Tooltip>
@@ -470,9 +474,9 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 </Collapsible>
               </div>
 
-              <div className="bg-catalog-cream border border-catalog-softBrown/20 p-3 rounded-md mb-4 text-sm">
-                <span className="font-medium text-[#5d4037]" style={{ fontFamily: 'Brush Script MT, cursive' }}>Current Filter: </span>
-                <span className="text-catalog-teal" style={{ fontFamily: 'Brush Script MT, cursive' }}>
+              <div className="bg-[#F9F5E7] border border-[#8B7D6B]/20 p-3 rounded-md mb-4 text-sm">
+                <span className="font-medium text-[#5d4037] font-handwritten text-lg">Current Filter: </span>
+                <span className="text-[#5d4037] font-handwritten text-lg">
                   {activeFilter === "all" && "All Items"}
                   {activeFilter === "favorites" && "Favorites"}
                   {activeFilter === "topRated" && "Top Rated Items (4-5 Stars)"}
@@ -483,7 +487,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 </span>
               </div>
 
-              <div className="flex items-center text-sm text-[#5d4037] border-t border-catalog-softBrown/20 pt-3 mt-2" style={{ fontFamily: 'Brush Script MT, cursive' }}>
+              <div className="flex items-center text-lg text-[#5d4037] border-t border-[#8B7D6B]/20 pt-3 mt-2 font-handwritten">
                 <span>
                   {searchTerm && `Searching for "${searchTerm}"`}
                   {selectedStatus !== "all" && (searchTerm ? " with " : "") + `status "${selectedStatus}"`}
@@ -495,14 +499,14 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
               <div className="mt-3 flex justify-center">
                 <Button 
                   onClick={executeSearch}
-                  className="bg-vintage-rust hover:bg-catalog-darkTeal px-8 rounded-full font-typewriter"
+                  className="bg-[#8B7D6B] hover:bg-[#6B5D4B] px-8 rounded-full font-typewriter text-[#F9F5E7]"
                 >
                   Search Catalog
                 </Button>
               </div>
 
               {searchResults.length > 0 && searchTerm && (
-                <div className="mt-6 border-t border-catalog-softBrown/40 pt-4">
+                <div className="mt-6 border-t border-[#8B7D6B]/40 pt-4">
                   <h4 className="text-sm font-medium text-[#5d4037] mb-3 font-typewriter">Search Preview (top 3 results)</h4>
                   <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2">
                     {searchResults.slice(0, 3).map((item) => (
