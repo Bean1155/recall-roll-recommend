@@ -184,11 +184,13 @@ const BlockbustersPage = () => {
         </div>
       )}
 
-      <style jsx>{`
+      <style>
+        {`
         .writing-mode-vertical-rl {
           writing-mode: vertical-rl;
         }
-      `}</style>
+        `}
+      </style>
     </GridLayout>
   );
 };
