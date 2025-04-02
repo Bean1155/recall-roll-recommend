@@ -33,6 +33,10 @@ const AccordionTrigger = React.forwardRef<
       {...props}
     >
       {children}
+      <ChevronDown
+        className="h-4 w-4 shrink-0 transition-transform duration-200 accordion-icon"
+        aria-hidden
+      />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ))

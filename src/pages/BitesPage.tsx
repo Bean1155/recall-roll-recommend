@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { FoodCard, FoodCategory } from "@/lib/types";
 import { getCardsByType } from "@/lib/data";
 import { useUser } from "@/contexts/UserContext";
-import { PlusCircle, Search, ChevronDown, ChevronUp } from "lucide-react";
+import { PlusCircle, Search, ChevronDown } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
 import {
   Carousel,
@@ -17,7 +17,6 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Separator } from "@/components/ui/separator";
 import { 
   Accordion, 
   AccordionContent, 
@@ -26,7 +25,13 @@ import {
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 
-// Define the category colors
+// Define all categories from the FoodCategory type
+const allCategories: FoodCategory[] = [
+  "cafe", "diner", "specialty foods", "fine dining", "take out", 
+  "bakeries", "bars", "food trucks", "large event space", "restaurant", "etc."
+];
+
+// Define the category colors with a wider variety of vintage colors
 const categoryColors: Record<FoodCategory, string> = {
   "cafe": "#e6d7b8", // Light beige
   "diner": "#d2b48c", // Tan
@@ -51,26 +56,27 @@ const getCategoryDisplayName = (category: string): string => {
 
 const BitesPage = () => {
   const [foodCards, setFoodCards] = useState<FoodCard[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
   const { userName } = useUser();
   const isMobile = useIsMobile();
   
   useEffect(() => {
     const cards = getCardsByType("food") as FoodCard[];
     setFoodCards(cards);
-    
-    // Extract unique categories
-    const uniqueCategories = Array.from(new Set(cards.map(card => card.category)));
-    setCategories(uniqueCategories);
   }, []);
 
   // Group cards by category
   const cardsByCategory: Record<string, FoodCard[]> = {};
+  
+  // Initialize all categories with empty arrays
+  allCategories.forEach(category => {
+    cardsByCategory[category] = [];
+  });
+  
+  // Then populate with actual cards
   foodCards.forEach(card => {
-    if (!cardsByCategory[card.category]) {
-      cardsByCategory[card.category] = [];
+    if (cardsByCategory[card.category]) {
+      cardsByCategory[card.category].push(card);
     }
-    cardsByCategory[card.category].push(card);
   });
 
   return (
@@ -109,10 +115,11 @@ const BitesPage = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          <Accordion type="multiple" defaultValue={[categories[0]]} className="w-full">
-            {categories.map((category) => {
-              const categoryColor = categoryColors[category as FoodCategory] || "#d2b48c";
+          <Accordion type="multiple" defaultValue={[allCategories[0]]} className="w-full">
+            {allCategories.map((category) => {
+              const categoryColor = categoryColors[category] || "#d2b48c";
               const textColor = "#603913"; // Dark brown text for contrast
+              const hasCards = cardsByCategory[category].length > 0;
               
               return (
                 <AccordionItem 
@@ -131,6 +138,9 @@ const BitesPage = () => {
                       <div className="flex items-center justify-between w-full">
                         <div className="flex items-center gap-3">
                           <span>{getCategoryDisplayName(category)}</span>
+                          {!hasCards && (
+                            <span className="text-sm opacity-70">(No entries yet)</span>
+                          )}
                         </div>
                         <div className="flex items-center">
                           <ChevronDown className="h-5 w-5 transition-transform duration-200 shrink-0 accordion-icon" />
@@ -140,23 +150,35 @@ const BitesPage = () => {
                   </div>
                   
                   <AccordionContent className="bg-white px-4 py-4 border border-t-0 border-catalog-softBrown/30 rounded-b-lg">
-                    <Carousel className="w-full">
-                      <CarouselContent>
-                        {cardsByCategory[category]?.map((card) => (
-                          <CarouselItem key={card.id} className={isMobile ? "basis-full" : "md:basis-1/2 lg:basis-1/3"}>
-                            <div className="p-1">
-                              <Envelope label={card.title}>
-                                <CatalogCard card={card} />
-                              </Envelope>
-                            </div>
-                          </CarouselItem>
-                        ))}
-                      </CarouselContent>
-                      <div className="flex justify-end gap-2 mt-4">
-                        <CarouselPrevious className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
-                        <CarouselNext className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
+                    {hasCards ? (
+                      <Carousel className="w-full">
+                        <CarouselContent>
+                          {cardsByCategory[category].map((card) => (
+                            <CarouselItem key={card.id} className={isMobile ? "basis-full" : "md:basis-1/2 lg:basis-1/3"}>
+                              <div className="p-1">
+                                <Envelope label={card.title}>
+                                  <CatalogCard card={card} />
+                                </Envelope>
+                              </div>
+                            </CarouselItem>
+                          ))}
+                        </CarouselContent>
+                        <div className="flex justify-end gap-2 mt-4">
+                          <CarouselPrevious className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
+                          <CarouselNext className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
+                        </div>
+                      </Carousel>
+                    ) : (
+                      <div className="text-center py-6">
+                        <p className="text-catalog-softBrown mb-4">No entries in this category yet.</p>
+                        <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+                          <Link to={`/create/food?category=${category}`}>
+                            <PlusCircle size={16} className="mr-2" />
+                            Add {getCategoryDisplayName(category)} Experience
+                          </Link>
+                        </Button>
                       </div>
-                    </Carousel>
+                    )}
                   </AccordionContent>
                 </AccordionItem>
               );
