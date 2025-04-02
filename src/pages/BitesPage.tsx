@@ -30,8 +30,8 @@ const allCategories: FoodCategory[] = [
   "bakery", "bar", "food truck", "event space", "restaurant", "other"
 ];
 
-const sortedCategories = [...allCategories]
-  .filter(category => category !== "other")
+const sortedCategories: FoodCategory[] = [...allCategories]
+  .filter(category => category !== "other" as FoodCategory)
   .sort((a, b) => a.localeCompare(b));
 
 sortedCategories.push("other");
