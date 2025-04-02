@@ -6,7 +6,7 @@ import Envelope from "@/components/Envelope";
 import { Button } from "@/components/ui/button";
 import { EntertainmentCard } from "@/lib/types";
 import { getCardsByType } from "@/lib/data";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Search } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
 import { useUser } from "@/contexts/UserContext";
 import {
@@ -18,27 +18,19 @@ import {
 } from "@/components/ui/carousel";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import CatalogSearch from "@/components/CatalogSearch";
 
 const BlockbustersPage = () => {
   const [entertainmentCards, setEntertainmentCards] = useState<EntertainmentCard[]>([]);
-  const [filteredEntertainmentCards, setFilteredEntertainmentCards] = useState<EntertainmentCard[]>([]);
   const { userName } = useUser();
   const isMobile = useIsMobile();
   
   useEffect(() => {
     const cards = getCardsByType('entertainment') as EntertainmentCard[];
     setEntertainmentCards(cards);
-    setFilteredEntertainmentCards(cards);
   }, []);
-
-  // Handle filtered items from search
-  const handleFilteredItemsChange = (filteredItems: EntertainmentCard[]) => {
-    setFilteredEntertainmentCards(filteredItems as EntertainmentCard[]);
-  };
   
   // Group entertainment cards by their entertainment category
-  const groupedEntertainmentCards = filteredEntertainmentCards.reduce<Record<string, EntertainmentCard[]>>((acc, card) => {
+  const groupedEntertainmentCards = entertainmentCards.reduce<Record<string, EntertainmentCard[]>>((acc, card) => {
     const category = card.entertainmentCategory || 'etc.';
     if (!acc[category]) {
       acc[category] = [];
@@ -96,28 +88,28 @@ const BlockbustersPage = () => {
         </Button>
       </div>
       
-      {/* Add search component */}
-      <CatalogSearch 
-        items={entertainmentCards} 
-        onFilteredItemsChange={handleFilteredItemsChange}
-        type="entertainment"
-      />
+      {/* Search redirect bar */}
+      <div className="mb-6 bg-white border border-catalog-softBrown rounded-md p-4 shadow-sm flex justify-between items-center">
+        <p className="text-catalog-softBrown">Looking for something specific?</p>
+        <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+          <Link to="/search">
+            <Search size={18} className="mr-2" />
+            Browse Catalog
+          </Link>
+        </Button>
+      </div>
       
-      {filteredEntertainmentCards.length === 0 ? (
+      {entertainmentCards.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-lg text-catalog-softBrown mb-4">
-            {entertainmentCards.length === 0 
-              ? "Your entertainment catalog is empty." 
-              : "No results match your search criteria."}
+            Your entertainment catalog is empty.
           </p>
-          {entertainmentCards.length === 0 && (
-            <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-              <Link to="/create/entertainment">
-                <PlusCircle size={18} className="mr-2" />
-                Add Your First Entertainment Experience
-              </Link>
-            </Button>
-          )}
+          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+            <Link to="/create/entertainment">
+              <PlusCircle size={18} className="mr-2" />
+              Add Your First Entertainment Experience
+            </Link>
+          </Button>
         </div>
       ) : (
         <Tabs defaultValue={sortedCategories[0]}>
