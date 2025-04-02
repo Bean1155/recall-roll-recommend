@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
@@ -6,7 +5,7 @@ import Envelope from "@/components/Envelope";
 import { Button } from "@/components/ui/button";
 import { EntertainmentCard } from "@/lib/types";
 import { getCardsByType } from "@/lib/data";
-import { PlusCircle, Search } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
 import { useUser } from "@/contexts/UserContext";
 import {
@@ -25,26 +24,23 @@ import {
 } from "@/components/ui/accordion";
 import CatalogSearch from "@/components/CatalogSearch";
 
-// Define all entertainment categories
 const allCategories = [
   "movies", "tv shows", "documentaries", "concerts", 
   "theater", "musicals", "podcasts", "comedy", "etc."
 ];
 
-// Define the category colors with a vintage color palette
 const categoryColors: Record<string, string> = {
-  "movies": "#f5c4d3", // Light pink
-  "tv shows": "#e0c5c1", // Dusty rose
-  "documentaries": "#ddb892", // Tan
-  "concerts": "#e9b44c", // Golden yellow
-  "theater": "#c1cc99", // Light olive
-  "musicals": "#9de0d0", // Mint
-  "podcasts": "#a5b1c2", // Slate blue
-  "comedy": "#a64b2a", // Rust brown
-  "etc.": "#da7f5d", // Terracotta
+  "movies": "#f5c4d3",
+  "tv shows": "#e0c5c1",
+  "documentaries": "#ddb892",
+  "concerts": "#e9b44c",
+  "theater": "#c1cc99",
+  "musicals": "#9de0d0",
+  "podcasts": "#a5b1c2",
+  "comedy": "#a64b2a",
+  "etc.": "#da7f5d",
 };
 
-// Helper function to get category display name
 const getCategoryDisplayName = (category: string): string => {
   return category
     .split(' ')
@@ -52,18 +48,14 @@ const getCategoryDisplayName = (category: string): string => {
     .join(' ');
 };
 
-// Helper function to generate text color based on background
 const getTextColor = (backgroundColor: string): string => {
-  // Convert hex to RGB
   const hex = backgroundColor.replace('#', '');
   const r = parseInt(hex.substring(0, 2), 16);
   const g = parseInt(hex.substring(2, 4), 16);
   const b = parseInt(hex.substring(4, 6), 16);
   
-  // Calculate brightness
   const brightness = (r * 299 + g * 587 + b * 114) / 1000;
   
-  // Return white for dark backgrounds, dark brown for light backgrounds
   return brightness > 145 ? "#603913" : "#ffffff";
 };
 
@@ -79,21 +71,17 @@ const BlockbustersPage = () => {
     setFilteredCards(cards);
   }, []);
   
-  // Group cards by category
   const cardsByCategory: Record<string, EntertainmentCard[]> = {};
   
-  // Initialize all categories with empty arrays
   allCategories.forEach(category => {
     cardsByCategory[category] = [];
   });
   
-  // Then populate with actual cards
   filteredCards.forEach(card => {
     const category = card.entertainmentCategory?.toLowerCase() || 'etc.';
     if (cardsByCategory[category]) {
       cardsByCategory[category].push(card);
     } else {
-      // If category doesn't match predefined categories, add to "etc."
       cardsByCategory['etc.'].push(card);
     }
   });
@@ -116,12 +104,6 @@ const BlockbustersPage = () => {
               type="entertainment"
             />
           </div>
-          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-            <Link to="/search?type=entertainment">
-              <Search size={18} className="mr-2" />
-              Browse Blockbusters
-            </Link>
-          </Button>
           <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
             <Link to="/create/entertainment">
               <PlusCircle size={18} className="mr-2" />
@@ -229,4 +211,3 @@ const BlockbustersPage = () => {
 };
 
 export default BlockbustersPage;
-
