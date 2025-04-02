@@ -7,7 +7,12 @@ import {
   Filter,
   ArrowUp,
   ArrowDown,
-  X
+  X,
+  Heart,
+  Star,
+  MapPin,
+  TrendingUp,
+  Clock
 } from "lucide-react";
 import { 
   Select,
@@ -28,7 +33,9 @@ import {
   DialogPortal,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FoodCard, EntertainmentCard, CatalogCard } from "@/lib/types";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CatalogSearchProps {
   items: CatalogCard[];
@@ -45,6 +52,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<string>("all");
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     let filteredItems = [...items];
@@ -73,13 +82,20 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
       });
     }
 
+    // Apply tab filters
+    if (activeFilter === "favorites") {
+      filteredItems = filteredItems.filter(item => item.isFavorite);
+    } else if (activeFilter === "topRated") {
+      filteredItems = filteredItems.filter(item => item.rating >= 4);
+    }
+
     // Apply sorting
     filteredItems.sort((a, b) => {
       return sortOrder === "desc" ? b.rating - a.rating : a.rating - b.rating;
     });
 
     onFilteredItemsChange(filteredItems);
-  }, [searchTerm, selectedStatus, sortOrder, items, type, onFilteredItemsChange]);
+  }, [searchTerm, selectedStatus, sortOrder, items, type, onFilteredItemsChange, activeFilter]);
 
   const toggleSortOrder = () => {
     setSortOrder(prevOrder => prevOrder === "desc" ? "asc" : "desc");
@@ -107,6 +123,13 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
     });
     
     return Array.from(statusSet);
+  };
+
+  const handleTabChange = (value: string) => {
+    setActiveFilter(value);
+    if (value !== "byStatus") {
+      setSelectedStatus("all");
+    }
   };
 
   // Prevent body scrolling when dialog is open
@@ -141,7 +164,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
           <DialogContent className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 md:w-4/5 lg:w-3/5 max-w-5xl p-0 border border-[#D3E4FD] bg-white shadow-lg rounded-md">
             <div className="bg-[#F1F1F1] p-3 flex justify-between items-center border-b border-[#D3E4FD]">
               <h3 className="text-catalog-teal font-medium">Search Options</h3>
-              <DialogClose className="text-gray-500 hover:text-gray-700">
+              <DialogClose className="text-gray-500 hover:text-gray-700 focus:outline-none">
                 <X size={18} />
               </DialogClose>
             </div>
@@ -208,12 +231,41 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 </div>
               </div>
 
+              {/* Tab filters added to the dialog overlay */}
+              <div className="mb-4 mt-6 border-t border-[#D3E4FD] pt-4">
+                <h4 className="text-sm font-medium text-catalog-softBrown mb-3">Quick Filters</h4>
+                <Tabs defaultValue="all" className="w-full" onValueChange={handleTabChange}>
+                  <TabsList className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-8'} w-full`}>
+                    <TabsTrigger value="all" className="text-sm">All</TabsTrigger>
+                    <TabsTrigger value="favorites" className="flex items-center gap-1 text-sm">
+                      <Heart size={14} /> {!isMobile && "Favorites"}
+                    </TabsTrigger>
+                    <TabsTrigger value="topRated" className="flex items-center gap-1 text-sm">
+                      <Star size={14} /> {!isMobile && "Top Rated"}
+                    </TabsTrigger>
+                    <TabsTrigger value="location" className="flex items-center gap-1 text-sm">
+                      <MapPin size={14} /> {!isMobile && "Location"}
+                    </TabsTrigger>
+                    <TabsTrigger value="byStatus" className="flex items-center gap-1 text-sm">
+                      <Clock size={14} /> {!isMobile && "By Status"}
+                    </TabsTrigger>
+                    <TabsTrigger value="keywords" className="text-sm flex items-center gap-1">
+                      <Search size={14} /> {!isMobile && "Keywords"}
+                    </TabsTrigger>
+                    <TabsTrigger value="topReferrals" className="flex items-center gap-1 text-sm">
+                      <TrendingUp size={14} /> {!isMobile && "Most Referred"}
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
+
               <div className="flex items-center text-sm text-catalog-softBrown border-t border-[#D3E4FD] pt-3 mt-3">
                 <Filter size={14} className="mr-1" />
                 <span>
                   {searchTerm && `Searching for "${searchTerm}"`}
                   {selectedStatus !== "all" && (searchTerm ? " with " : "") + `status "${selectedStatus}"`}
-                  {!searchTerm && selectedStatus === "all" && "No filters applied"}
+                  {activeFilter !== "all" && (searchTerm || selectedStatus !== "all" ? " and " : "") + `filter: ${activeFilter}`}
+                  {!searchTerm && selectedStatus === "all" && activeFilter === "all" && "No filters applied"}
                 </span>
               </div>
             </div>
