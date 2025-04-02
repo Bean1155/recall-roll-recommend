@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -141,6 +142,51 @@
   
   .text-catalog-softBrown {
     color: #d2b48c;
+  }
+  
+  /* New vintage colors from the color card */
+  .bg-vintage-pink {
+    background-color: #f5c4d3;
+  }
+  
+  .bg-vintage-rose {
+    background-color: #e0c5c1;
+  }
+  
+  .bg-vintage-tan {
+    background-color: #ddb892;
+  }
+  
+  .bg-vintage-gold {
+    background-color: #e9b44c;
+  }
+  
+  .bg-vintage-olive {
+    background-color: #c1cc99;
+  }
+  
+  .bg-vintage-mint {
+    background-color: #9de0d0;
+  }
+  
+  .bg-vintage-slate {
+    background-color: #a5b1c2;
+  }
+  
+  .bg-vintage-rust {
+    background-color: #a64b2a;
+  }
+  
+  .bg-vintage-coral {
+    background-color: #ff6b45;
+  }
+  
+  .bg-vintage-orange {
+    background-color: #e18336;
+  }
+  
+  .bg-vintage-terracotta {
+    background-color: #da7f5d;
   }
 }
 

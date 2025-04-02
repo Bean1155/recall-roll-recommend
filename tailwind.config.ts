@@ -79,7 +79,31 @@ export default {
 					pink: '#FDE1D3',
 					blue: '#D6E5F0',
 					gridLine: '#ACC8E5',
-					softBrown: '#9E8979'
+					softBrown: '#9E8979',
+					// Vintage color palette based on the provided image
+					vintage: {
+						pink: '#f5c4d3',
+						rose: '#e0c5c1',
+						tan: '#ddb892',
+						gold: '#e9b44c',
+						olive: '#c1cc99',
+						mint: '#9de0d0',
+						slate: '#a5b1c2',
+						rust: '#a64b2a',
+						coral: '#ff6b45',
+						orange: '#e18336',
+						terracotta: '#da7f5d',
+						brown: '#cc7f43',
+						brick: '#d35843',
+						deepOlive: '#4d583c',
+						moss: '#8c9e5e',
+						teal: '#358f8f',
+						dustyBlue: '#6b798e',
+						darkTeal: '#2f5d60',
+						deepTeal: '#1a535c',
+						darkBrown: '#4a3f35',
+						charcoal: '#232e33',
+					}
 				}
 			},
 			borderRadius: {

@@ -15,7 +15,7 @@ const Envelope: React.FC<EnvelopeProps> = ({
   label, 
   children, 
   className = '', 
-  labelColor = '#9E8979',
+  labelColor,
   isOpen: initialIsOpen = false,
   onClick,
   backgroundColor = '#E6D7B8'
@@ -26,6 +26,23 @@ const Envelope: React.FC<EnvelopeProps> = ({
     setIsOpen(!isOpen);
     if (onClick) onClick();
   };
+  
+  // Calculate text color based on background
+  const getTextColor = (bgColor: string): string => {
+    // Convert hex to RGB
+    const hex = bgColor.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    
+    // Calculate brightness
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    
+    // Return white for dark backgrounds, dark brown for light backgrounds
+    return brightness > 145 ? "#603913" : "#ffffff";
+  };
+  
+  const textColor = labelColor || getTextColor(backgroundColor);
   
   return (
     <div 
@@ -39,7 +56,8 @@ const Envelope: React.FC<EnvelopeProps> = ({
           borderRadius: '0 0 4px 4px',
           boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
           padding: '12px 12px 32px 12px',
-          border: '1px solid #9E8979',
+          border: '1px solid',
+          borderColor: backgroundColor,
           borderTop: 'none',
           minHeight: '80px',
           width: '100%',
@@ -49,7 +67,7 @@ const Envelope: React.FC<EnvelopeProps> = ({
       </div>
       
       <div 
-        className={`envelope-card bg-white relative transition-all duration-300 ease-in-out shadow-md border border-catalog-softBrown ${isOpen ? 'translate-y-[-30px]' : ''}`}
+        className={`envelope-card bg-white relative transition-all duration-300 ease-in-out shadow-md ${isOpen ? 'translate-y-[-30px]' : ''}`}
         style={{
           zIndex: 2,
           marginTop: '-20px',
@@ -70,9 +88,11 @@ const Envelope: React.FC<EnvelopeProps> = ({
       >
         {label && (
           <div 
-            className="bg-[#E6D7B8] border border-[#9E8979] rounded-t-md absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-[calc(100%-1px)] z-10"
+            className="border rounded-t-md absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-[calc(100%-1px)] z-10"
             style={{ 
-              color: '#3B3B3B', 
+              backgroundColor: backgroundColor,
+              borderColor: backgroundColor,
+              color: textColor, 
               fontWeight: 'bold', 
               textTransform: 'uppercase', 
               fontSize: '14px',
