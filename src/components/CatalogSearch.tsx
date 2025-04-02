@@ -229,17 +229,15 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
   }, [isSearchOpen]);
 
   return (
-    <div className="mb-6 relative">
-      <div className="flex justify-end mb-2">
-        <Button 
-          variant="outline" 
-          onClick={() => setIsSearchOpen(true)}
-          className="text-catalog-teal border-catalog-softBrown"
-        >
-          <Search size={18} className="mr-2" />
-          Search
-        </Button>
-      </div>
+    <>
+      <Button 
+        variant="outline" 
+        onClick={() => setIsSearchOpen(true)}
+        className="text-catalog-teal border-catalog-softBrown"
+      >
+        <Search size={18} className="mr-2" />
+        Search
+      </Button>
 
       <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
         <DialogPortal>
@@ -362,7 +360,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
           </DialogContent>
         </DialogPortal>
       </Dialog>
-    </div>
+    </>
   );
 };
 

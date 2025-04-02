@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Button } from "@/components/ui/button";
@@ -7,8 +8,6 @@ import {
   Star, 
   MapPin, 
   TrendingUp,
-  ArrowUp,
-  ArrowDown,
   Clock,
   Search
 } from "lucide-react";
@@ -33,7 +32,6 @@ const SearchPage = () => {
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const isMobile = useIsMobile();
   const location = useLocation();
 
@@ -49,10 +47,6 @@ const SearchPage = () => {
     setAllCards(initialCards);
     setFilteredCards(initialCards);
   }, [location.search]);
-
-  const toggleSortOrder = () => {
-    setSortOrder(prevOrder => prevOrder === "desc" ? "asc" : "desc");
-  };
 
   const getStatusOptions = () => {
     const searchParams = new URLSearchParams(location.search);
@@ -123,12 +117,13 @@ const SearchPage = () => {
   return (
     <GridLayout title={getPageTitle()}>
       <div className="max-w-5xl mx-auto">
-        {/* CatalogSearch Component */}
-        <CatalogSearch 
-          items={allCards} 
-          onFilteredItemsChange={handleFilteredItemsChange}
-          type={getCardType() as 'food' | 'entertainment'}
-        />
+        <div className="flex justify-end mb-6">
+          <CatalogSearch 
+            items={allCards} 
+            onFilteredItemsChange={handleFilteredItemsChange}
+            type={getCardType() as 'food' | 'entertainment'}
+          />
+        </div>
 
         <Tabs defaultValue="all" className="mb-6" onValueChange={handleTabChange}>
           <TabsList className={`${isMobile ? 'grid grid-cols-4 gap-1 mb-4' : 'grid grid-cols-8 mb-4'}`}>

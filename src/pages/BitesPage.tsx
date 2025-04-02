@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { FoodCard, FoodCategory } from "@/lib/types";
 import { getCardsByType } from "@/lib/data";
 import { useUser } from "@/contexts/UserContext";
-import { PlusCircle, Search } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
 import {
   Carousel,
@@ -148,12 +148,12 @@ const BitesPage = () => {
           From the Library of <span className="font-typewriter font-bold text-black">{userName}</span>
         </h1>
         <div className="flex flex-wrap gap-2">
-          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-            <Link to="/search?type=food">
-              <Search size={18} className="mr-2" />
-              Browse Bites
-            </Link>
-          </Button>
+          <CatalogSearch 
+            items={foodCards}
+            onFilteredItemsChange={handleFilteredItemsChange}
+            type="food"
+          />
+          
           <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
             <Link to="/create/food">
               <PlusCircle size={18} className="mr-2" />
@@ -162,12 +162,6 @@ const BitesPage = () => {
           </Button>
         </div>
       </div>
-
-      <CatalogSearch 
-        items={foodCards}
-        onFilteredItemsChange={handleFilteredItemsChange}
-        type="food"
-      />
 
       {foodCards.length === 0 ? (
         <div className="text-center py-12 bg-catalog-cream rounded-lg border border-catalog-softBrown/30 shadow-md">
