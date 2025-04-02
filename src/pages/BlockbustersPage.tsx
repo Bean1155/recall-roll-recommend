@@ -17,6 +17,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const BlockbustersPage = () => {
   const [entertainmentCards, setEntertainmentCards] = useState<EntertainmentCard[]>([]);
@@ -49,6 +50,23 @@ const BlockbustersPage = () => {
   // Sort categories alphabetically
   const sortedCategories = Object.keys(groupedEntertainmentCards).sort();
   
+  // Color mapping for entertainment categories
+  const categoryColors: Record<string, string> = {
+    "movies": "bg-[#FFE29F] text-gray-800", // Soft yellow
+    "tv shows": "bg-[#D6E5F0] text-gray-800", // Soft blue 
+    "documentaries": "bg-[#E5DEFF] text-gray-800", // Soft purple
+    "anime": "bg-[#FDE1D3] text-gray-800", // Soft peach
+    "concerts": "bg-[#FFDEE2] text-gray-800", // Soft pink
+    "theater": "bg-[#D8E4C8] text-gray-800", // Soft green
+    "podcasts": "bg-[#FFCCA1] text-gray-800", // Soft orange
+    "other": "bg-[#F1F0FB] text-gray-800", // Soft gray
+  };
+
+  // Get default color if category not in mapping
+  const getCategoryColor = (category: string): string => {
+    return categoryColors[category.toLowerCase()] || "bg-[#F1F0FB] text-gray-800";
+  };
+  
   return (
     <GridLayout>
       <div className="flex justify-between items-center mb-8">
@@ -72,32 +90,43 @@ const BlockbustersPage = () => {
           </Button>
         </div>
       ) : (
-        <div className="space-y-6">
-          {sortedCategories.map((category) => (
-            <div key={category} className="space-y-4 py-4">
-              <h2 className="text-2xl font-bold text-catalog-teal border-b border-catalog-softBrown pb-2">
+        <Tabs defaultValue={sortedCategories[0]}>
+          <TabsList className="flex flex-wrap mb-6 bg-transparent space-x-1 space-y-1 h-auto">
+            {sortedCategories.map((category) => (
+              <TabsTrigger
+                key={category}
+                value={category}
+                className={`${getCategoryColor(category)} rounded-md border border-catalog-softBrown/30 shadow-sm px-4 py-2 transition-all`}
+              >
                 {formatCategoryName(category)} ({groupedEntertainmentCards[category].length})
-              </h2>
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {groupedEntertainmentCards[category].map((card) => (
-                    <CarouselItem key={card.id} className={isMobile ? "basis-full" : "md:basis-1/2 lg:basis-1/3"}>
-                      <div className="p-1">
-                        <Envelope label={card.medium}>
-                          <CatalogCard card={card} />
-                        </Envelope>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <div className="flex justify-end gap-2 mt-4">
-                  <CarouselPrevious className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
-                  <CarouselNext className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
-                </div>
-              </Carousel>
-            </div>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          
+          {sortedCategories.map((category) => (
+            <TabsContent key={category} value={category} className="space-y-4 py-4">
+              <div className={`border-t-4 ${getCategoryColor(category).split(' ')[0]} border-catalog-softBrown/30 pt-4`}>
+                <Carousel className="w-full">
+                  <CarouselContent>
+                    {groupedEntertainmentCards[category].map((card) => (
+                      <CarouselItem key={card.id} className={isMobile ? "basis-full" : "md:basis-1/2 lg:basis-1/3"}>
+                        <div className="p-1">
+                          <Envelope label={card.medium}>
+                            <CatalogCard card={card} />
+                          </Envelope>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <div className="flex justify-end gap-2 mt-4">
+                    <CarouselPrevious className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
+                    <CarouselNext className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
+                  </div>
+                </Carousel>
+              </div>
+            </TabsContent>
           ))}
-        </div>
+        </Tabs>
       )}
     </GridLayout>
   );
