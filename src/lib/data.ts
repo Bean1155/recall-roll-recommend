@@ -1,4 +1,3 @@
-
 import { CatalogCard, FoodCard, EntertainmentCard, FoodStatus, RecommendationBadge } from './types';
 import { appUsers } from '@/contexts/UserContext';
 
@@ -18,6 +17,7 @@ const mockCards: CatalogCard[] = [
     status: 'Visited: Tried this bite' as FoodStatus,
     visitCount: 2,
     tags: ['pasta', 'italian', 'date night'],
+    isFavorite: false,
   } as FoodCard,
   {
     id: '2',
@@ -31,6 +31,7 @@ const mockCards: CatalogCard[] = [
     medium: 'Netflix',
     entertainmentCategory: 'movies',
     status: 'Watched',
+    isFavorite: true,
   } as EntertainmentCard,
   {
     id: '3',
@@ -46,6 +47,7 @@ const mockCards: CatalogCard[] = [
     status: 'Visited: Tried this bite' as FoodStatus,
     visitCount: 3,
     tags: ['tacos', 'spicy', 'mexican'],
+    isFavorite: false,
   } as FoodCard,
   {
     id: '4',
@@ -60,6 +62,7 @@ const mockCards: CatalogCard[] = [
     entertainmentCategory: 'tv shows',
     status: 'Watched',
     recommendationBadge: 'Highly Recommend' as RecommendationBadge,
+    isFavorite: false,
   } as EntertainmentCard,
 ];
 

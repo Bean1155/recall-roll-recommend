@@ -2,8 +2,10 @@
 import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Edit, Send, Star, MessageSquare } from "lucide-react";
+import { Edit, Send, Star, MessageSquare, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { updateCard } from "@/lib/data";
 
 interface CatalogCardProps {
   card: CatalogCardType;
@@ -15,6 +17,20 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
   const foodCard = card as FoodCard;
   const entertainmentCard = card as EntertainmentCard;
   const hasUserNotes = card.userNotes && card.userNotes.length > 0;
+  const [isFavorite, setIsFavorite] = useState(card.isFavorite || false);
+
+  const toggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const updatedCard = {
+      ...card,
+      isFavorite: !isFavorite
+    };
+    
+    updateCard(updatedCard);
+    setIsFavorite(!isFavorite);
+  };
 
   return (
     <div 
@@ -29,14 +45,26 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
             <h3 className="font-bold text-lg">{card.title}</h3>
             <p className="text-sm text-muted-foreground">{card.creator}</p>
           </div>
-          <div className="flex">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star 
-                key={i} 
-                size={16} 
-                className={i < card.rating ? "fill-yellow-500 text-yellow-500" : "text-gray-300"} 
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={toggleFavorite}
+              className="text-red-500 hover:scale-110 transition-transform"
+              aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            >
+              <Heart 
+                size={20} 
+                className={isFavorite ? "fill-red-500" : ""} 
               />
-            ))}
+            </button>
+            <div className="flex">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star 
+                  key={i} 
+                  size={16} 
+                  className={i < card.rating ? "fill-yellow-500 text-yellow-500" : "text-gray-300"} 
+                />
+              ))}
+            </div>
           </div>
         </div>
         <div className="catalog-line"></div>

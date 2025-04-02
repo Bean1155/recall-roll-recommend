@@ -24,6 +24,7 @@ export interface CatalogCard {
   recommendedTo?: string[];
   recommendationBadge?: RecommendationBadge;
   userNotes?: UserNote[];
+  isFavorite?: boolean; // New field to track favorite status
 }
 
 export interface FoodCard extends CatalogCard {
