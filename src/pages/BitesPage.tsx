@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { FoodCard, FoodCategory } from "@/lib/types";
 import { getCardsByType } from "@/lib/data";
 import { useUser } from "@/contexts/UserContext";
-import { PlusCircle, Search } from "lucide-react";
+import { PlusCircle, Search, ChevronDown, ChevronUp } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
 import {
   Carousel,
@@ -17,8 +17,13 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { 
+  Accordion, 
+  AccordionContent, 
+  AccordionItem, 
+  AccordionTrigger 
+} from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 
 // Define the category colors
@@ -47,10 +52,8 @@ const getCategoryDisplayName = (category: string): string => {
 const BitesPage = () => {
   const [foodCards, setFoodCards] = useState<FoodCard[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
-  const [activeCategory, setActiveCategory] = useState<string>("");
   const { userName } = useUser();
   const isMobile = useIsMobile();
-  const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
   
   useEffect(() => {
     const cards = getCardsByType("food") as FoodCard[];
@@ -59,11 +62,6 @@ const BitesPage = () => {
     // Extract unique categories
     const uniqueCategories = Array.from(new Set(cards.map(card => card.category)));
     setCategories(uniqueCategories);
-    
-    // Set initial active category
-    if (uniqueCategories.length > 0) {
-      setActiveCategory(uniqueCategories[0]);
-    }
   }, []);
 
   // Group cards by category
@@ -74,14 +72,6 @@ const BitesPage = () => {
     }
     cardsByCategory[card.category].push(card);
   });
-
-  const scrollToCategory = (category: string) => {
-    setActiveCategory(category);
-    categoryRefs.current[category]?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    });
-  };
 
   return (
     <GridLayout>
@@ -118,87 +108,60 @@ const BitesPage = () => {
           </Button>
         </div>
       ) : (
-        <div className="space-y-6">
-          <div className="overflow-x-auto pb-2">
-            <Tabs 
-              value={activeCategory} 
-              onValueChange={scrollToCategory}
-              className="w-full"
-            >
-              <TabsList className="bg-catalog-cream h-auto p-1 w-full flex overflow-x-auto">
-                {categories.map((category) => (
-                  <TabsTrigger 
-                    key={category} 
-                    value={category}
-                    className="font-typewriter"
-                    style={{
-                      backgroundColor: categoryColors[category as FoodCategory] || "#d2b48c",
-                      borderBottom: activeCategory === category ? "3px solid #8b7355" : "none",
-                      color: "#603913"
-                    }}
+        <div className="space-y-4">
+          <Accordion type="multiple" defaultValue={[categories[0]]} className="w-full">
+            {categories.map((category) => {
+              const categoryColor = categoryColors[category as FoodCategory] || "#d2b48c";
+              const textColor = "#603913"; // Dark brown text for contrast
+              
+              return (
+                <AccordionItem 
+                  key={category} 
+                  value={category}
+                  className="mb-4 rounded-lg overflow-hidden border-none shadow-md"
+                >
+                  <div 
+                    className="rounded-t-lg"
+                    style={{ backgroundColor: categoryColor }}
                   >
-                    {getCategoryDisplayName(category)}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
-          </div>
-
-          <div className="space-y-8">
-            {categories.map((category) => (
-              <div 
-                key={category}
-                ref={el => categoryRefs.current[category] = el}
-                className="border border-catalog-softBrown/30 rounded-lg p-4 bg-white shadow-md"
-              >
-                <Separator 
-                  className={cn(
-                    "my-2 h-1 rounded-full", 
-                    activeCategory === category ? "bg-catalog-softBrown" : "bg-catalog-softBrown/50"
-                  )}
-                  style={{
-                    backgroundColor: categoryColors[category as FoodCategory] || "#d2b48c"
-                  }}
-                />
-                
-                <div className="flex items-center gap-3 mb-4">
-                  <h2 
-                    className="text-xl font-typewriter font-semibold text-catalog-softBrown"
-                    style={{
-                      color: categoryColors[category as FoodCategory] 
-                        ? "#603913" // Dark brown text for contrast
-                        : "#8b7355"
-                    }}
-                  >
-                    {getCategoryDisplayName(category)}
-                  </h2>
-                  <Separator className="flex-1" style={{
-                    backgroundColor: categoryColors[category as FoodCategory] || "#d2b48c", 
-                    opacity: 0.5,
-                    height: "2px"
-                  }}/>
-                </div>
-                
-                <Carousel className="w-full">
-                  <CarouselContent>
-                    {cardsByCategory[category].map((card) => (
-                      <CarouselItem key={card.id} className={isMobile ? "basis-full" : "md:basis-1/2 lg:basis-1/3"}>
-                        <div className="p-1">
-                          <Envelope label={card.title}>
-                            <CatalogCard card={card} />
-                          </Envelope>
+                    <AccordionTrigger 
+                      className="px-4 py-6 font-typewriter font-semibold text-lg flex hover:no-underline"
+                      style={{ color: textColor }}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center gap-3">
+                          <span>{getCategoryDisplayName(category)}</span>
                         </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  <div className="flex justify-end gap-2 mt-4">
-                    <CarouselPrevious className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
-                    <CarouselNext className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
+                        <div className="flex items-center">
+                          <ChevronDown className="h-5 w-5 transition-transform duration-200 shrink-0 accordion-icon" />
+                        </div>
+                      </div>
+                    </AccordionTrigger>
                   </div>
-                </Carousel>
-              </div>
-            ))}
-          </div>
+                  
+                  <AccordionContent className="bg-white px-4 py-4 border border-t-0 border-catalog-softBrown/30 rounded-b-lg">
+                    <Carousel className="w-full">
+                      <CarouselContent>
+                        {cardsByCategory[category]?.map((card) => (
+                          <CarouselItem key={card.id} className={isMobile ? "basis-full" : "md:basis-1/2 lg:basis-1/3"}>
+                            <div className="p-1">
+                              <Envelope label={card.title}>
+                                <CatalogCard card={card} />
+                              </Envelope>
+                            </div>
+                          </CarouselItem>
+                        ))}
+                      </CarouselContent>
+                      <div className="flex justify-end gap-2 mt-4">
+                        <CarouselPrevious className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
+                        <CarouselNext className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
+                      </div>
+                    </Carousel>
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
         </div>
       )}
     </GridLayout>
