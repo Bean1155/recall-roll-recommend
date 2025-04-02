@@ -268,7 +268,7 @@ const BitesPage = () => {
         </div>
       )}
 
-      <style jsx="true">{`
+      <style>{`
         .highlight-pulse {
           animation: pulse 2s;
         }
