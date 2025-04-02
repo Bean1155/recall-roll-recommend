@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -114,6 +113,18 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
     return Array.from(statusSet);
   };
 
+  useEffect(() => {
+    if (isSearchVisible) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isSearchVisible]);
+
   return (
     <div className="mb-6 relative">
       <div className="flex justify-end mb-2">
@@ -129,12 +140,13 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
 
       {isSearchVisible && (
         <div 
-          className={`fixed inset-0 bg-black/30 z-40 flex items-start justify-center transition-opacity duration-300 ${isClosing ? 'opacity-0' : 'opacity-100'}`}
+          className={`fixed inset-0 bg-black/50 z-50 flex items-start justify-center transition-opacity duration-300 ${isClosing ? 'opacity-0' : 'opacity-100'}`}
           onClick={(e) => {
             if (e.target === e.currentTarget) {
               toggleSearchVisibility();
             }
           }}
+          style={{ pointerEvents: isSearchVisible ? 'auto' : 'none' }}
         >
           <Card 
             className={`w-11/12 md:w-4/5 lg:w-3/5 mt-20 bg-white border border-[#D3E4FD] shadow-lg transition-all duration-300 z-50 ${isClosing ? 'opacity-0 translate-y-[-20px]' : 'opacity-100 translate-y-0'}`}
