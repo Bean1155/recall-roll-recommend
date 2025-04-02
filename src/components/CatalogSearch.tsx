@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -51,6 +50,8 @@ import { FoodCard, EntertainmentCard, CatalogCard } from "@/lib/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+
+const vintageGreen = "#1A7D76";
 
 interface CatalogSearchProps {
   items: CatalogCard[];
@@ -275,15 +276,15 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
           <DialogContent 
             className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 md:w-3/5 lg:w-2/5 max-w-md p-0 border-2 border-[#8B7D6B] shadow-lg rounded-2xl overflow-hidden"
             style={{
-              backgroundColor: "#FAF3E3", // Lightened background color
-              backgroundImage: "linear-gradient(rgba(139, 125, 107, 0.03) 1px, transparent 1px)", // Fainter lines
+              backgroundColor: "#FAF3E3",
+              backgroundImage: "linear-gradient(rgba(139, 125, 107, 0.03) 1px, transparent 1px)",
               backgroundSize: "100% 28px",
               boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
               maxHeight: "80vh",
               position: "relative"
             }}
           >
-            <div className="bg-vintage-wood w-full py-3 px-4 flex flex-col items-center justify-center">
+            <div className="bg-[#1A7D76] w-full py-3 px-4 flex flex-col items-center justify-center">
               <div className="text-white font-serif text-xl font-bold tracking-wide">
                 CATALOG CARD
               </div>
@@ -357,7 +358,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                               <TooltipTrigger asChild>
                                 <TabsTrigger 
                                   value="all" 
-                                  className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm font-typewriter"
+                                  className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm font-typewriter"
                                 >
                                   All
                                 </TabsTrigger>
@@ -373,7 +374,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                               <TooltipTrigger asChild>
                                 <TabsTrigger 
                                   value="favorites" 
-                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
                                   <Heart size={14} className="text-pink-500" /> 
                                   {!isMobile && <span>Favorites</span>}
@@ -390,7 +391,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                               <TooltipTrigger asChild>
                                 <TabsTrigger 
                                   value="topRated" 
-                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
                                   <Star size={14} className="text-amber-500" /> 
                                   {!isMobile && <span>Top Rated</span>}
@@ -407,7 +408,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                               <TooltipTrigger asChild>
                                 <TabsTrigger 
                                   value="location" 
-                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
                                   <MapPin size={14} className="text-blue-500" /> 
                                   {!isMobile && <span>Location</span>}
@@ -424,7 +425,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                               <TooltipTrigger asChild>
                                 <TabsTrigger 
                                   value="byStatus" 
-                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
                                   <Clock size={14} className="text-purple-500" /> 
                                   {!isMobile && <span>By Status</span>}
@@ -441,7 +442,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                               <TooltipTrigger asChild>
                                 <TabsTrigger 
                                   value="keywords" 
-                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
                                   <Search size={14} className="text-gray-500" /> 
                                   {!isMobile && <span>Keywords</span>}
@@ -458,7 +459,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                               <TooltipTrigger asChild>
                                 <TabsTrigger 
                                   value="topReferrals" 
-                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
                                   <TrendingUp size={14} className="text-green-500" /> 
                                   {!isMobile && <span>Most Referred</span>}
@@ -501,7 +502,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
               <div className="mt-3 flex justify-center">
                 <Button 
                   onClick={executeSearch}
-                  className="bg-vintage-wood hover:bg-[#6B5D4B] px-8 rounded-2xl font-typewriter text-white"
+                  className="bg-[#1A7D76] hover:bg-[#166661] px-8 rounded-2xl font-typewriter text-white"
                 >
                   SEARCH CATALOG
                 </Button>
