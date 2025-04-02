@@ -275,18 +275,18 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
           <DialogContent 
             className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 md:w-3/5 lg:w-2/5 max-w-md p-0 border-2 border-catalog-softBrown bg-catalog-cream shadow-lg rounded-2xl overflow-hidden"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23d2b48c' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d2b48c' fill-opacity='0.15'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
               backgroundColor: "#fffdd0",
               boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
               maxHeight: "85vh",
               position: "relative"
             }}
           >
-            <div className="absolute top-0 left-6 -mt-2.5 px-4 py-1 bg-vintage-tan text-[#5d4037] font-serif text-xs font-bold rounded-b-md border border-catalog-softBrown border-t-0 transform rotate-[-2deg]">
+            <div className="absolute top-0 left-6 -mt-2.5 px-4 py-1 bg-vintage-tan text-[#5d4037] font-serif text-xs font-bold rounded-b-md border border-catalog-softBrown border-t-0 transform rotate-[-2deg] z-10">
               CATALOG CARD
             </div>
             
-            <div className="absolute top-0 right-6 -mt-2.5 px-4 py-1 bg-vintage-tan text-[#5d4037] font-serif text-xs font-bold rounded-b-md border border-catalog-softBrown border-t-0 transform rotate-[2deg]">
+            <div className="absolute top-0 right-6 -mt-2.5 px-4 py-1 bg-vintage-tan text-[#5d4037] font-serif text-xs font-bold rounded-b-md border border-catalog-softBrown border-t-0 transform rotate-[2deg] z-10">
               {type === 'food' ? 'BITES' : 'BLOCKBUSTERS'}
             </div>
             
@@ -325,16 +325,16 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 </div>
               </div>
 
-              <div className="mb-4 mt-6 border-t border-catalog-softBrown/40 pt-4">
+              <div className="mb-4 mt-4 border-t border-catalog-softBrown/40 pt-4">
                 <Collapsible
                   open={isFiltersOpen}
                   onOpenChange={setIsFiltersOpen}
                   className="w-full"
                 >
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-bold font-typewriter text-[#5d4037] mb-2">Quick Filters</h4>
+                    <h4 className="text-sm font-bold font-typewriter text-[#5d4037]">Quick Filters</h4>
                     <CollapsibleTrigger asChild>
-                      <Button variant="ghost" size="sm" className="p-0 h-7 w-7 -mt-2">
+                      <Button variant="ghost" size="sm" className="p-0 h-7 w-7">
                         <ChevronDown 
                           className={`h-4 w-4 transition-transform duration-200 ${isFiltersOpen ? 'rotate-180' : ''}`} 
                         />
@@ -344,7 +344,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                   </div>
                   
                   <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
-                    <Tabs defaultValue="all" className="w-full" onValueChange={handleTabChange}>
+                    <Tabs defaultValue="all" className="w-full mt-2" onValueChange={handleTabChange}>
                       <TabsList className="w-full bg-catalog-cream p-1 rounded-md h-14 border border-catalog-softBrown/30">
                         <div className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-7'} w-full`}>
                           <TooltipProvider>
@@ -484,7 +484,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 </span>
               </div>
 
-              <div className="flex items-center text-sm text-[#5d4037] border-t border-catalog-softBrown/40 pt-3 mt-3 font-typewriter">
+              <div className="flex items-center text-sm text-[#5d4037] border-t border-catalog-softBrown/40 pt-3 mt-2 font-typewriter">
                 <span>
                   {searchTerm && `Searching for "${searchTerm}"`}
                   {selectedStatus !== "all" && (searchTerm ? " with " : "") + `status "${selectedStatus}"`}
@@ -493,7 +493,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 </span>
               </div>
 
-              <div className="mt-4 flex justify-center">
+              <div className="mt-3 flex justify-center">
                 <Button 
                   onClick={executeSearch}
                   className="bg-vintage-rust hover:bg-catalog-darkTeal px-8 rounded-full font-typewriter"
