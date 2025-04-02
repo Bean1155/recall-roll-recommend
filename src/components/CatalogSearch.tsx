@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -161,9 +162,9 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
     
     if (type === 'food') {
       const foodCard = card as FoodCard;
-      navigate(`${path}?highlight=${card.id}&category=${foodCard.category}`);
+      navigate(`${path}?highlight=${card.id}&category=${foodCard.category}&fromSearch=true`);
     } else {
-      navigate(`${path}?highlight=${card.id}`);
+      navigate(`${path}?highlight=${card.id}&fromSearch=true`);
     }
     
     toast({

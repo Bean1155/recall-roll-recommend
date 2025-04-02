@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
@@ -7,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { FoodCard, FoodCategory } from "@/lib/types";
 import { getCardsByType } from "@/lib/data";
 import { useUser } from "@/contexts/UserContext";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, X } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
 import {
   Carousel,
@@ -25,6 +24,12 @@ import {
 } from "@/components/ui/accordion";
 import { useToast } from "@/components/ui/use-toast";
 import CatalogSearch from "@/components/CatalogSearch";
+import {
+  Dialog,
+  DialogContent,
+  DialogOverlay,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 const allCategories: FoodCategory[] = [
   "cafe", "diner", "specialty food", "fine dining", "take out", 
@@ -101,6 +106,8 @@ const BitesPage = () => {
   const [foodCards, setFoodCards] = useState<FoodCard[]>([]);
   const [filteredCards, setFilteredCards] = useState<FoodCard[]>([]);
   const [initialAccordionValues, setInitialAccordionValues] = useState<string[]>([sortedCategories[0]]);
+  const [selectedCard, setSelectedCard] = useState<FoodCard | null>(null);
+  const [isCardModalOpen, setIsCardModalOpen] = useState(false);
   const { userName } = useUser();
   const isMobile = useIsMobile();
   const location = useLocation();
@@ -120,36 +127,38 @@ const BitesPage = () => {
       const cardToHighlight = cards.find(card => card.id === highlightId);
       
       if (cardToHighlight) {
-        // Get the category from either the URL parameter or the card itself
         const category = categoryParam || cardToHighlight.category;
         
-        // Set the accordion to be initially open for this category
         setInitialAccordionValues([category]);
         
-        setTimeout(() => {
-          // Find and click the accordion item if it's not already open
-          const accordionItem = document.querySelector(`[data-value="${category}"]`);
-          if (accordionItem && !accordionItem.closest('[data-state="open"]')) {
-            (accordionItem as HTMLElement).click();
-          }
-          
+        if (searchParams.get('fromSearch') === 'true') {
+          setSelectedCard(cardToHighlight);
+          setIsCardModalOpen(true);
+        } else {
           setTimeout(() => {
-            const cardElement = document.getElementById(`card-${highlightId}`);
-            if (cardElement) {
-              cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              
-              cardElement.classList.add('highlight-pulse');
-              setTimeout(() => {
-                cardElement.classList.remove('highlight-pulse');
-              }, 2000);
-              
-              toast({
-                title: "Card found",
-                description: `Showing ${cardToHighlight.title}`,
-              });
+            const accordionItem = document.querySelector(`[data-value="${category}"]`);
+            if (accordionItem && !accordionItem.closest('[data-state="open"]')) {
+              (accordionItem as HTMLElement).click();
             }
-          }, 500);
-        }, 300);
+            
+            setTimeout(() => {
+              const cardElement = document.getElementById(`card-${highlightId}`);
+              if (cardElement) {
+                cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                cardElement.classList.add('highlight-pulse');
+                setTimeout(() => {
+                  cardElement.classList.remove('highlight-pulse');
+                }, 2000);
+                
+                toast({
+                  title: "Card found",
+                  description: `Showing ${cardToHighlight.title}`,
+                });
+              }
+            }, 500);
+          }, 300);
+        }
       }
     }
   }, [location.search, toast]);
@@ -290,6 +299,28 @@ const BitesPage = () => {
           </Accordion>
         </div>
       )}
+
+      <Dialog open={isCardModalOpen} onOpenChange={setIsCardModalOpen}>
+        <DialogOverlay className="bg-black/80 backdrop-blur-sm" />
+        <DialogContent 
+          className="sm:max-w-[600px] p-0 border-2 border-catalog-softBrown rounded-xl overflow-hidden max-h-[90vh]"
+          style={{ backgroundColor: selectedCard ? categoryColors[selectedCard.category] : "#f8f8f8" }}
+        >
+          <div className="relative">
+            <DialogClose className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 shadow-md hover:bg-gray-100">
+              <X size={18} />
+            </DialogClose>
+            
+            {selectedCard && (
+              <div className="p-6 animate-fade-in">
+                <Envelope label={selectedCard.title} backgroundColor={categoryColors[selectedCard.category]}>
+                  <CatalogCard card={selectedCard} />
+                </Envelope>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <style>{`
         .highlight-pulse {
