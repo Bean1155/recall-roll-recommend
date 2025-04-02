@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -243,17 +242,17 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="bakeries">Bakeries</SelectItem>
-                  <SelectItem value="bars">Bars</SelectItem>
+                  <SelectItem value="bakery">Bakery</SelectItem>
+                  <SelectItem value="bar">Bar</SelectItem>
                   <SelectItem value="cafe">Cafe</SelectItem>
                   <SelectItem value="diner">Diner</SelectItem>
+                  <SelectItem value="event space">Event Space</SelectItem>
                   <SelectItem value="fine dining">Fine Dining</SelectItem>
-                  <SelectItem value="food trucks">Food Trucks</SelectItem>
-                  <SelectItem value="large event space">Large Event Space</SelectItem>
+                  <SelectItem value="food truck">Food Truck</SelectItem>
                   <SelectItem value="restaurant">Restaurant</SelectItem>
-                  <SelectItem value="specialty foods">Specialty Foods</SelectItem>
+                  <SelectItem value="specialty food">Specialty Food</SelectItem>
                   <SelectItem value="take out">Take Out</SelectItem>
-                  <SelectItem value="etc.">Etc.</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>
