@@ -271,13 +271,14 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
       <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
         <DialogPortal>
           <DialogOverlay className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" />
-          <DialogContent className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 md:w-3/5 lg:w-2/5 max-w-md p-0 border border-[#D3E4FD] bg-white shadow-lg rounded-xl overflow-hidden"
+          <DialogContent className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 md:w-3/5 lg:w-2/5 max-w-md p-0 border border-[#D3E4FD] bg-white shadow-lg rounded-2xl overflow-hidden"
             style={{
               backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
               backgroundSize: "20px 20px, 20px 20px",
               backgroundPosition: "0 0, 0 0",
               backgroundColor: "#f9f9f5",
-              backgroundAttachment: "local"
+              backgroundAttachment: "local",
+              maxHeight: "85vh"
             }}
           >
             <DialogTitle className="sr-only">Search Options</DialogTitle>
@@ -285,12 +286,9 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
             
             <div className="bg-[#F1F1F1] p-3 flex justify-between items-center border-b border-[#D3E4FD]">
               <h3 className="text-catalog-teal font-medium">Search Options</h3>
-              <DialogClose className="text-gray-500 hover:text-gray-700 focus:outline-none">
-                <X size={18} />
-              </DialogClose>
             </div>
             
-            <div className="p-4">
+            <div className="p-4 overflow-y-auto" style={{ maxHeight: "calc(85vh - 50px)" }}>
               <div className="mb-4">
                 <label htmlFor="search-input" className="block text-sm font-medium text-catalog-softBrown mb-1">Search Terms</label>
                 <div className="relative">
@@ -325,9 +323,9 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                   className="w-full"
                 >
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-medium text-gray-700 mb-2">Quick Filters</h4>
+                    <h4 className="text-sm font-bold font-serif text-gray-700 mb-2">Quick Filters</h4>
                     <CollapsibleTrigger asChild>
-                      <Button variant="ghost" size="sm" className="p-0 h-7 w-7">
+                      <Button variant="ghost" size="sm" className="p-0 h-7 w-7 -mt-2">
                         <ChevronDown 
                           className={`h-4 w-4 transition-transform duration-200 ${isFiltersOpen ? 'rotate-180' : ''}`} 
                         />
@@ -486,10 +484,10 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 </span>
               </div>
 
-              <div className="mt-6 flex justify-center">
+              <div className="mt-4 flex justify-center">
                 <Button 
                   onClick={executeSearch}
-                  className="bg-catalog-teal hover:bg-catalog-darkTeal px-8"
+                  className="bg-catalog-teal hover:bg-catalog-darkTeal px-8 rounded-full"
                 >
                   Search Catalog
                 </Button>
