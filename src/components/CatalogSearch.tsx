@@ -25,7 +25,8 @@ import {
   DialogContent,
   DialogClose,
   DialogOverlay,
-  DialogPortal
+  DialogPortal,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { FoodCard, EntertainmentCard, CatalogCard } from "@/lib/types";
 
@@ -136,8 +137,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
 
       <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
         <DialogPortal>
-          <DialogOverlay className="bg-black/70 backdrop-blur-sm" />
-          <DialogContent className="bg-white border border-[#D3E4FD] shadow-lg w-11/12 md:w-4/5 lg:w-3/5 p-0 max-w-5xl fixed z-50 left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
+          <DialogOverlay className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" />
+          <DialogContent className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 md:w-4/5 lg:w-3/5 max-w-5xl p-0 border border-[#D3E4FD] bg-white shadow-lg rounded-md">
             <div className="bg-[#F1F1F1] p-3 flex justify-between items-center border-b border-[#D3E4FD]">
               <h3 className="text-catalog-teal font-medium">Search Options</h3>
               <DialogClose className="text-gray-500 hover:text-gray-700">

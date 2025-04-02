@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  Search, 
-  Star, 
   Heart, 
+  Star, 
   MapPin, 
   TrendingUp,
   ArrowUp,
   ArrowDown,
   Clock,
-  Check,
+  Search
 } from "lucide-react";
-import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard, EntertainmentStatus } from "@/lib/types";
+import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
 import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
@@ -27,15 +25,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import CatalogSearch from "@/components/CatalogSearch";
 
 const SearchPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isHovered, setIsHovered] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<string>("all");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [allCards, setAllCards] = useState<CatalogCardType[]>([]);
   const [filteredCards, setFilteredCards] = useState<CatalogCardType[]>([]);
+  const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const isMobile = useIsMobile();
   const location = useLocation();
 
@@ -51,73 +49,6 @@ const SearchPage = () => {
     setAllCards(initialCards);
     setFilteredCards(initialCards);
   }, [location.search]);
-
-  useEffect(() => {
-    let results = allCards;
-
-    if (searchTerm) {
-      results = results.filter(card => 
-        card.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        card.creator.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        card.notes.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (card.type === 'food' && (card as FoodCard).cuisine.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (card.type === 'entertainment' && (card as EntertainmentCard).genre.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (card.type === 'food' && (card as FoodCard).status.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (card.type === 'entertainment' && (card as EntertainmentCard).status.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-    }
-
-    if (activeFilter === "favorites") {
-      results = results.filter(card => card.recommendationBadge === "Favorite");
-    } else if (activeFilter === "topRated") {
-      results = results.filter(card => card.rating >= 4);
-    } else if (activeFilter === "location") {
-      if (searchTerm) {
-        results = results.filter(card => 
-          card.type === 'food' && (card as FoodCard).location.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
-    } else if (activeFilter === "topReferrals") {
-      results = results.filter(card => card.recommendedTo && card.recommendedTo.length > 0)
-        .sort((a, b) => {
-          const aCount = a.recommendedTo?.length || 0;
-          const bCount = b.recommendedTo?.length || 0;
-          return sortOrder === "desc" ? bCount - aCount : aCount - bCount;
-        });
-    } else if (activeFilter === "byStatus") {
-      if (selectedStatus !== "all") {
-        results = results.filter(card => {
-          if (card.type === 'food') {
-            return (card as FoodCard).status === selectedStatus;
-          } else if (card.type === 'entertainment') {
-            return (card as EntertainmentCard).status === selectedStatus;
-          }
-          return false;
-        });
-      } else if (searchTerm) {
-        results = results.filter(card => {
-          if (card.type === 'food') {
-            return (card as FoodCard).status.toLowerCase().includes(searchTerm.toLowerCase());
-          } else if (card.type === 'entertainment') {
-            return (card as EntertainmentCard).status.toLowerCase().includes(searchTerm.toLowerCase());
-          }
-          return false;
-        });
-      }
-    }
-
-    if (activeFilter !== "topReferrals") {
-      results = results.sort((a, b) => {
-        return sortOrder === "desc" ? b.rating - a.rating : a.rating - b.rating;
-      });
-    }
-
-    setFilteredCards(results);
-  }, [searchTerm, activeFilter, sortOrder, allCards, selectedStatus]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-  };
 
   const toggleSortOrder = () => {
     setSortOrder(prevOrder => prevOrder === "desc" ? "asc" : "desc");
@@ -157,18 +88,6 @@ const SearchPage = () => {
     }
   };
 
-  const getSearchPlaceholder = () => {
-    if (activeFilter === "location") {
-      return "Search by location...";
-    } else if (activeFilter === "keywords") {
-      return "Search by keywords...";
-    } else if (activeFilter === "byStatus") {
-      return "Search by status...";
-    } else {
-      return "Search by title, creator...";
-    }
-  };
-
   const getPageTitle = () => {
     const searchParams = new URLSearchParams(location.search);
     const typeParam = searchParams.get('type');
@@ -181,52 +100,35 @@ const SearchPage = () => {
     return "Browse Catalog";
   };
 
+  // Handle filter changes from CatalogSearch
+  const handleFilteredItemsChange = (items: CatalogCardType[]) => {
+    setFilteredCards(items);
+  };
+
+  // Determine the type for CatalogSearch
+  const getCardType = () => {
+    const searchParams = new URLSearchParams(location.search);
+    const typeParam = searchParams.get('type');
+    
+    if (typeParam === 'food') {
+      return 'food';
+    } else if (typeParam === 'entertainment') {
+      return 'entertainment';
+    }
+    
+    // Default to 'food' if no type specified
+    return 'food';
+  };
+
   return (
     <GridLayout title={getPageTitle()}>
       <div className="max-w-5xl mx-auto">
-        <form 
-          onSubmit={handleSearch} 
-          className={`flex flex-col md:flex-row mb-6 ${isMobile ? 'gap-2' : ''}`}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          <div className={`flex-1 relative ${isMobile ? 'mb-2' : ''}`}>
-            <Input
-              type="text"
-              placeholder={getSearchPlaceholder()}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full border-catalog-softBrown transition-all duration-300 ${isHovered ? 'border-catalog-teal shadow-sm' : ''}`}
-            />
-            {searchTerm && (
-              <Button 
-                type="button" 
-                variant="ghost" 
-                className="absolute right-10 top-0 h-full p-2"
-                onClick={() => setSearchTerm("")}
-              >
-                ×
-              </Button>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Button 
-              type="submit" 
-              className={`transition-all duration-300 ${isHovered ? 'bg-catalog-darkTeal scale-105' : 'bg-catalog-teal'}`}
-            >
-              <Search size={18} />
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={toggleSortOrder}
-              className="border-catalog-softBrown"
-              title={sortOrder === "desc" ? "Highest to Lowest" : "Lowest to Highest"}
-            >
-              {sortOrder === "desc" ? <ArrowDown size={18} /> : <ArrowUp size={18} />}
-            </Button>
-          </div>
-        </form>
+        {/* CatalogSearch Component */}
+        <CatalogSearch 
+          items={allCards} 
+          onFilteredItemsChange={handleFilteredItemsChange}
+          type={getCardType() as 'food' | 'entertainment'}
+        />
 
         <Tabs defaultValue="all" className="mb-6" onValueChange={handleTabChange}>
           <TabsList className={`${isMobile ? 'grid grid-cols-4 gap-1 mb-4' : 'grid grid-cols-8 mb-4'}`}>
@@ -332,7 +234,7 @@ const SearchPage = () => {
           {filteredCards.length === 0 ? (
             <div className="catalog-card p-6 bg-white text-center">
               <p className="text-catalog-softBrown">
-                {searchTerm || activeFilter !== "all"
+                {activeFilter !== "all"
                   ? "No results found. Try different search terms or filters."
                   : "Your catalog is empty. Add some items to start browsing!"}
               </p>
