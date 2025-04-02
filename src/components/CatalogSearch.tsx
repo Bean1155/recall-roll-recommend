@@ -275,7 +275,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
             className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 md:w-3/5 lg:w-2/5 max-w-md p-0 border-2 border-catalog-softBrown bg-catalog-cream shadow-lg rounded-2xl overflow-hidden"
             style={{
               backgroundColor: "#fffdd0",
-              backgroundImage: "linear-gradient(#aaadb0 1px, transparent 1px)",
+              backgroundImage: "linear-gradient(#dbd9d0 1px, transparent 1px)",
               backgroundSize: "100% 28px",
               boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
               maxHeight: "80vh",
@@ -287,24 +287,18 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
               zIndex: 1
             }}></div>
             
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-2.5 px-6 py-1.5 bg-vintage-tan text-[#5d4037] font-serif text-sm font-bold rounded-b-md border border-catalog-softBrown border-t-0 transform z-10">
-              CATALOG CARD
+            <div className="absolute top-0 w-full flex flex-col items-center -mt-3 z-10">
+              <div className="px-6 py-1.5 bg-vintage-tan text-[#5d4037] font-serif text-sm font-bold rounded-b-md border border-catalog-softBrown border-t-0">
+                CATALOG CARD
+              </div>
+              <div className="mt-1 text-xs text-[#5d4037] font-serif">
+                {type === 'food' ? 'BITES' : 'BLOCKBUSTERS'}
+              </div>
             </div>
             
-            <div className="absolute top-0 right-0 -mt-2.5 px-6 py-1.5 bg-vintage-tan text-[#5d4037] font-serif text-sm font-bold rounded-bl-md border-l border-b border-catalog-softBrown transform z-10">
-              {type === 'food' ? 'BITES' : 'BLOCKBUSTERS'}
-            </div>
-            
-            <DialogTitle className="sr-only">Search Options</DialogTitle>
-            <DialogDescription className="sr-only">Search and filter your catalog items</DialogDescription>
-            
-            <div className="bg-vintage-tan p-3 flex justify-between items-center border-b border-catalog-softBrown">
-              <h3 className="text-[#5d4037] font-typewriter font-medium tracking-wider">Search Options</h3>
-            </div>
-            
-            <div className="p-4 overflow-y-auto relative z-10" style={{ maxHeight: "calc(80vh - 50px)" }}>
+            <div className="p-4 overflow-y-auto relative z-10 mt-8" style={{ maxHeight: "calc(80vh - 20px)" }}>
               <div className="mb-4">
-                <label htmlFor="search-input" className="block text-sm font-medium text-[#5d4037] mb-1 font-typewriter">Search Terms</label>
+                <label htmlFor="search-input" className="block text-sm font-medium text-[#5d4037] mb-1" style={{ fontFamily: 'Brush Script MT, cursive' }}>Search Terms</label>
                 <div className="relative">
                   <Input
                     id="search-input"
@@ -330,14 +324,14 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 </div>
               </div>
 
-              <div className="mb-4 mt-4 border-t border-catalog-softBrown/40 pt-4">
+              <div className="mb-4 mt-4 border-t border-catalog-softBrown/20 pt-4">
                 <Collapsible
                   open={isFiltersOpen}
                   onOpenChange={setIsFiltersOpen}
                   className="w-full"
                 >
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-bold font-serif text-[#5d4037]">Quick Filters</h4>
+                    <h4 className="text-sm font-medium text-[#5d4037]" style={{ fontFamily: 'Brush Script MT, cursive' }}>Quick Filters</h4>
                     <CollapsibleTrigger asChild>
                       <Button variant="ghost" size="sm" className="p-0 h-7 w-7 ml-2">
                         <ChevronDown 
@@ -350,7 +344,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                   
                   <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
                     <Tabs defaultValue="all" className="w-full mt-2" onValueChange={handleTabChange}>
-                      <TabsList className="w-full bg-catalog-cream p-1 rounded-md h-14 border border-catalog-softBrown/30 relative z-20">
+                      <TabsList className="w-full bg-catalog-cream p-1 rounded-md h-14 border border-catalog-softBrown/20 relative z-20">
                         <div className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-7'} w-full`}>
                           <TooltipProvider>
                             <Tooltip>
@@ -476,9 +470,9 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 </Collapsible>
               </div>
 
-              <div className="bg-catalog-cream border border-catalog-softBrown/30 p-3 rounded-md mb-4 text-sm">
-                <span className="font-medium text-[#5d4037] font-typewriter">Current Filter: </span>
-                <span className="text-catalog-teal font-typewriter">
+              <div className="bg-catalog-cream border border-catalog-softBrown/20 p-3 rounded-md mb-4 text-sm">
+                <span className="font-medium text-[#5d4037]" style={{ fontFamily: 'Brush Script MT, cursive' }}>Current Filter: </span>
+                <span className="text-catalog-teal" style={{ fontFamily: 'Brush Script MT, cursive' }}>
                   {activeFilter === "all" && "All Items"}
                   {activeFilter === "favorites" && "Favorites"}
                   {activeFilter === "topRated" && "Top Rated Items (4-5 Stars)"}
@@ -489,7 +483,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 </span>
               </div>
 
-              <div className="flex items-center text-sm text-[#5d4037] border-t border-catalog-softBrown/40 pt-3 mt-2 font-typewriter">
+              <div className="flex items-center text-sm text-[#5d4037] border-t border-catalog-softBrown/20 pt-3 mt-2" style={{ fontFamily: 'Brush Script MT, cursive' }}>
                 <span>
                   {searchTerm && `Searching for "${searchTerm}"`}
                   {selectedStatus !== "all" && (searchTerm ? " with " : "") + `status "${selectedStatus}"`}

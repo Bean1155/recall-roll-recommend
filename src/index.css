@@ -97,6 +97,10 @@
     font-family: 'Courier New', Courier, monospace;
   }
   
+  .font-handwritten {
+    font-family: 'Brush Script MT', cursive;
+  }
+  
   .envelope-tab {
     @apply bg-[#E6D7B8] text-[#9E8979] py-1 px-3 rounded-t-md border border-[#9E8979] border-b-0 inline-block;
   }
