@@ -1,8 +1,17 @@
-
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { User, Folder, Sparkles, PlusCircle, Menu, Home, Search, Settings } from "lucide-react";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { 
+  HoverCard, 
+  HoverCardContent, 
+  HoverCardTrigger 
+} from "@/components/ui/hover-card";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger 
+} from "@/components/ui/tooltip";
 import { 
   Popover,
   PopoverContent,
@@ -100,38 +109,40 @@ export const NavBar = () => {
               );
             })}
 
-            {/* Search with hover card and hover effect */}
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <Link 
-                  to={searchItem.path}
-                  className="flex flex-col items-center order-first"
-                  onClick={() => setIsExpanded(false)}
-                >
-                  <div 
-                    className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-all ${
-                      location.pathname === searchItem.path ? "shadow-md" : ""
-                    } hover:scale-110 hover:shadow-md`}
-                    style={{ backgroundColor: searchItem.color }}
+            {/* Search with tooltip and hover effect */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link 
+                    to={searchItem.path}
+                    className="flex flex-col items-center order-first"
+                    onClick={() => setIsExpanded(false)}
                   >
-                    <searchItem.icon 
-                      size={22} 
-                      className={`transition-colors ${
-                        location.pathname === searchItem.path ? "text-catalog-teal" : "text-catalog-softBrown"
-                      }`}
-                    />
-                  </div>
-                  <span className={`text-xs font-medium ${
-                    location.pathname === searchItem.path ? "text-catalog-teal" : "text-catalog-softBrown"
-                  }`}>
-                    {searchItem.name}
-                  </span>
-                </Link>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-48 bg-white p-2 text-sm text-catalog-softBrown">
-                Quick search your catalog items
-              </HoverCardContent>
-            </HoverCard>
+                    <div 
+                      className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-all ${
+                        location.pathname === searchItem.path ? "shadow-md" : ""
+                      } hover:scale-110 hover:shadow-md`}
+                      style={{ backgroundColor: searchItem.color }}
+                    >
+                      <searchItem.icon 
+                        size={22} 
+                        className={`transition-colors ${
+                          location.pathname === searchItem.path ? "text-catalog-teal" : "text-catalog-softBrown"
+                        }`}
+                      />
+                    </div>
+                    <span className={`text-xs font-medium ${
+                      location.pathname === searchItem.path ? "text-catalog-teal" : "text-catalog-softBrown"
+                    }`}>
+                      {searchItem.name}
+                    </span>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent className="bg-white text-catalog-softBrown">
+                  Quick search your catalog items
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
             {/* Profile with settings popover and hover effect */}
             <Popover>
