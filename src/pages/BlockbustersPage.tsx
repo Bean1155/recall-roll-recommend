@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
@@ -27,7 +26,7 @@ import {
 // Define all entertainment categories
 const allCategories = [
   "movies", "tv shows", "documentaries", "concerts", 
-  "theater", "musicals", "podcasts", "comedy", "anime", "etc."
+  "theater", "musicals", "podcasts", "comedy", "etc."
 ];
 
 // Define the category colors with a vintage color palette
@@ -40,7 +39,6 @@ const categoryColors: Record<string, string> = {
   "musicals": "#9de0d0", // Mint
   "podcasts": "#a5b1c2", // Slate blue
   "comedy": "#a64b2a", // Rust brown
-  "anime": "#ff6b45", // Coral
   "etc.": "#da7f5d", // Terracotta
 };
 
