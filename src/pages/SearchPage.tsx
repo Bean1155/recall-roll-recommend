@@ -15,7 +15,7 @@ import {
   Clock,
   Check,
 } from "lucide-react";
-import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard } from "@/lib/types";
+import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard, EntertainmentStatus } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
 import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
@@ -125,6 +125,14 @@ const SearchPage = () => {
   };
 
   const getStatusOptions = () => {
+    const searchParams = new URLSearchParams(location.search);
+    const typeParam = searchParams.get('type');
+    
+    // Return predefined entertainment statuses if we're viewing entertainment items
+    if (typeParam === 'entertainment') {
+      return ["Watched", "Want to Watch", "Currently Watching"];
+    }
+    
     const statusSet = new Set<string>();
     
     allCards.forEach(card => {
