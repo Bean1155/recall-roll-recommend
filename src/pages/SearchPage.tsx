@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Button } from "@/components/ui/button";
@@ -94,12 +93,10 @@ const SearchPage = () => {
     return "Browse Catalog";
   };
 
-  // Handle filter changes from CatalogSearch
   const handleFilteredItemsChange = (items: CatalogCardType[]) => {
     setFilteredCards(items);
   };
 
-  // Determine the type for CatalogSearch
   const getCardType = () => {
     const searchParams = new URLSearchParams(location.search);
     const typeParam = searchParams.get('type');
@@ -110,7 +107,6 @@ const SearchPage = () => {
       return 'entertainment';
     }
     
-    // Default to 'food' if no type specified
     return 'food';
   };
 
@@ -126,56 +122,107 @@ const SearchPage = () => {
         </div>
 
         <Tabs defaultValue="all" className="mb-6" onValueChange={handleTabChange}>
-          <TabsList className={`${isMobile ? 'grid grid-cols-4 gap-1 mb-4' : 'grid grid-cols-8 mb-4'}`}>
-            <TabsTrigger value="all" className="text-sm">All</TabsTrigger>
-            <TabsTrigger value="favorites" className="flex items-center gap-1 text-sm">
-              <Heart size={14} /> {!isMobile && "Favorites"}
-            </TabsTrigger>
-            <TabsTrigger value="topRated" className="flex items-center gap-1 text-sm">
-              <Star size={14} /> {!isMobile && "Top Rated"}
-            </TabsTrigger>
-            {isMobile && (
-              <TabsTrigger value="location" className="flex items-center gap-1 text-sm">
-                <MapPin size={14} />
+          <TabsList className="w-full bg-gray-100 p-1 rounded-md mb-4">
+            <div className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-8'} w-full`}>
+              <TabsTrigger 
+                value="all" 
+                className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+              >
+                All
               </TabsTrigger>
-            )}
-            {isMobile && (
-              <TabsTrigger value="byStatus" className="flex items-center gap-1 text-sm">
-                <Clock size={14} />
+              
+              <TabsTrigger 
+                value="favorites" 
+                className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+              >
+                <Heart size={14} className="text-pink-500" /> 
+                {!isMobile && <span>Favorites</span>}
               </TabsTrigger>
-            )}
-            {isMobile && (
-              <TabsTrigger value="keywords" className="text-sm">
-                <Search size={14} />
+              
+              <TabsTrigger 
+                value="topRated" 
+                className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+              >
+                <Star size={14} className="text-amber-500" /> 
+                {!isMobile && <span>Top Rated</span>}
               </TabsTrigger>
-            )}
-            {isMobile && (
-              <TabsTrigger value="topReferrals" className="flex items-center gap-1 text-sm">
-                <TrendingUp size={14} />
-              </TabsTrigger>
-            )}
-            {!isMobile && (
-              <TabsTrigger value="location" className="flex items-center gap-1">
-                <MapPin size={14} /> Location
-              </TabsTrigger>
-            )}
-            {!isMobile && (
-              <TabsTrigger value="byStatus" className="flex items-center gap-1">
-                <Clock size={14} /> By Status
-              </TabsTrigger>
-            )}
-            {!isMobile && (
-              <TabsTrigger value="keywords">Keywords</TabsTrigger>
-            )}
-            {!isMobile && (
-              <TabsTrigger value="topReferrals" className="flex items-center gap-1">
-                <TrendingUp size={14} /> Most Referred
-              </TabsTrigger>
-            )}
+              
+              {isMobile && (
+                <TabsTrigger 
+                  value="location" 
+                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                >
+                  <MapPin size={14} className="text-blue-500" />
+                </TabsTrigger>
+              )}
+              
+              {isMobile && (
+                <TabsTrigger 
+                  value="byStatus" 
+                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                >
+                  <Clock size={14} className="text-purple-500" />
+                </TabsTrigger>
+              )}
+              
+              {isMobile && (
+                <TabsTrigger 
+                  value="keywords" 
+                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                >
+                  <Search size={14} className="text-gray-500" />
+                </TabsTrigger>
+              )}
+              
+              {isMobile && (
+                <TabsTrigger 
+                  value="topReferrals" 
+                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                >
+                  <TrendingUp size={14} className="text-green-500" />
+                </TabsTrigger>
+              )}
+              
+              {!isMobile && (
+                <TabsTrigger 
+                  value="location" 
+                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                >
+                  <MapPin size={14} className="text-blue-500" /> Location
+                </TabsTrigger>
+              )}
+              
+              {!isMobile && (
+                <TabsTrigger 
+                  value="byStatus" 
+                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                >
+                  <Clock size={14} className="text-purple-500" /> By Status
+                </TabsTrigger>
+              )}
+              
+              {!isMobile && (
+                <TabsTrigger 
+                  value="keywords" 
+                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                >
+                  <Search size={14} className="text-gray-500" /> Keywords
+                </TabsTrigger>
+              )}
+              
+              {!isMobile && (
+                <TabsTrigger 
+                  value="topReferrals" 
+                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                >
+                  <TrendingUp size={14} className="text-green-500" /> Most Referred
+                </TabsTrigger>
+              )}
+            </div>
           </TabsList>
 
           {isMobile && (
-            <div className="text-sm font-medium mb-2 text-catalog-teal">
+            <div className="text-sm font-medium mb-4 p-3 bg-gray-50 rounded-md text-catalog-teal">
               {activeFilter === "all" && "All Items"}
               {activeFilter === "favorites" && "Favorites"}
               {activeFilter === "topRated" && "Top Rated Items (4-5 Stars)"}

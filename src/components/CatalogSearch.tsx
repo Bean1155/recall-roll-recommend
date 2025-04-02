@@ -283,32 +283,83 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 </div>
               </div>
 
-              {/* Tab filters in the dialog overlay */}
+              {/* Quick Filters with improved visibility */}
               <div className="mb-4 mt-6 border-t border-[#D3E4FD] pt-4">
-                <h4 className="text-sm font-medium text-catalog-softBrown mb-3">Quick Filters</h4>
+                <h4 className="text-sm font-medium text-gray-700 mb-3">Quick Filters</h4>
                 <Tabs defaultValue="all" className="w-full" onValueChange={handleTabChange}>
-                  <TabsList className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-8'} w-full`}>
-                    <TabsTrigger value="all" className="text-sm">All</TabsTrigger>
-                    <TabsTrigger value="favorites" className="flex items-center gap-1 text-sm">
-                      <Heart size={14} /> {!isMobile && "Favorites"}
-                    </TabsTrigger>
-                    <TabsTrigger value="topRated" className="flex items-center gap-1 text-sm">
-                      <Star size={14} /> {!isMobile && "Top Rated"}
-                    </TabsTrigger>
-                    <TabsTrigger value="location" className="flex items-center gap-1 text-sm">
-                      <MapPin size={14} /> {!isMobile && "Location"}
-                    </TabsTrigger>
-                    <TabsTrigger value="byStatus" className="flex items-center gap-1 text-sm">
-                      <Clock size={14} /> {!isMobile && "By Status"}
-                    </TabsTrigger>
-                    <TabsTrigger value="keywords" className="text-sm flex items-center gap-1">
-                      <Search size={14} /> {!isMobile && "Keywords"}
-                    </TabsTrigger>
-                    <TabsTrigger value="topReferrals" className="flex items-center gap-1 text-sm">
-                      <TrendingUp size={14} /> {!isMobile && "Most Referred"}
-                    </TabsTrigger>
+                  <TabsList className="w-full bg-gray-100 p-1 rounded-md">
+                    <div className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-7'} w-full`}>
+                      <TabsTrigger 
+                        value="all" 
+                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                      >
+                        All
+                      </TabsTrigger>
+                      
+                      <TabsTrigger 
+                        value="favorites" 
+                        className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                      >
+                        <Heart size={14} className="text-pink-500" /> 
+                        {!isMobile && <span>Favorites</span>}
+                      </TabsTrigger>
+                      
+                      <TabsTrigger 
+                        value="topRated" 
+                        className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                      >
+                        <Star size={14} className="text-amber-500" /> 
+                        {!isMobile && <span>Top Rated</span>}
+                      </TabsTrigger>
+                      
+                      <TabsTrigger 
+                        value="location" 
+                        className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                      >
+                        <MapPin size={14} className="text-blue-500" /> 
+                        {!isMobile && <span>Location</span>}
+                      </TabsTrigger>
+                      
+                      <TabsTrigger 
+                        value="byStatus" 
+                        className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                      >
+                        <Clock size={14} className="text-purple-500" /> 
+                        {!isMobile && <span>By Status</span>}
+                      </TabsTrigger>
+                      
+                      <TabsTrigger 
+                        value="keywords" 
+                        className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                      >
+                        <Search size={14} className="text-gray-500" /> 
+                        {!isMobile && <span>Keywords</span>}
+                      </TabsTrigger>
+                      
+                      <TabsTrigger 
+                        value="topReferrals" 
+                        className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                      >
+                        <TrendingUp size={14} className="text-green-500" /> 
+                        {!isMobile && <span>Most Referred</span>}
+                      </TabsTrigger>
+                    </div>
                   </TabsList>
                 </Tabs>
+              </div>
+
+              {/* Filter explanation */}
+              <div className="bg-gray-50 p-3 rounded-md mb-4 text-sm">
+                <span className="font-medium text-gray-700">Current Filter: </span>
+                <span className="text-catalog-teal">
+                  {activeFilter === "all" && "All Items"}
+                  {activeFilter === "favorites" && "Favorites"}
+                  {activeFilter === "topRated" && "Top Rated Items (4-5 Stars)"}
+                  {activeFilter === "location" && "By Location"}
+                  {activeFilter === "byStatus" && "By Status"}
+                  {activeFilter === "keywords" && "By Keywords"}
+                  {activeFilter === "topReferrals" && "Most Recommended Items"}
+                </span>
               </div>
 
               <div className="flex items-center text-sm text-catalog-softBrown border-t border-[#D3E4FD] pt-3 mt-3">
