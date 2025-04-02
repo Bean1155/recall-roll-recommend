@@ -91,6 +91,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
   const executeSearch = () => {
     let filteredItems = [...items];
 
+    // Filter items based on search criteria
     if (searchTerm) {
       filteredItems = filteredItems.filter(item => {
         const itemAsAny = item as any;
@@ -145,10 +146,19 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
         variant: "destructive"
       });
     } else if (filteredItems.length === 1) {
+      // For single result, navigate directly to the card
       setIsSearchOpen(false);
       handleCardClick(filteredItems[0]);
     } else {
+      // For multiple results, show them in a dedicated view
       setIsSearchOpen(false);
+      
+      // Navigate to the current page with search results as parameters
+      const path = type === 'food' ? '/bites' : '/blockbusters';
+      const resultIds = filteredItems.map(card => card.id).join(',');
+      
+      navigate(`${path}?searchResults=${resultIds}`);
+      
       toast({
         title: `Found ${filteredItems.length} results`,
         description: "Showing matching items",
@@ -300,6 +310,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
               position: "relative"
             }}
           >
+            <DialogTitle className="sr-only">Search Catalog</DialogTitle>
             <div className="bg-[#1A7D76] w-full py-3 px-4 flex flex-col items-center justify-center">
               <div className="text-white font-serif text-xl font-bold tracking-wide">
                 CATALOG CARD

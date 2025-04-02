@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
@@ -27,6 +28,8 @@ import CatalogSearch from "@/components/CatalogSearch";
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
+  DialogDescription,
   DialogOverlay,
   DialogClose,
 } from "@/components/ui/dialog";
@@ -108,6 +111,8 @@ const BitesPage = () => {
   const [initialAccordionValues, setInitialAccordionValues] = useState<string[]>([sortedCategories[0]]);
   const [selectedCard, setSelectedCard] = useState<FoodCard | null>(null);
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState<FoodCard[]>([]);
+  const [isSearchResultsOpen, setIsSearchResultsOpen] = useState(false);
   const { userName } = useUser();
   const isMobile = useIsMobile();
   const location = useLocation();
@@ -122,6 +127,7 @@ const BitesPage = () => {
     const searchParams = new URLSearchParams(location.search);
     const highlightId = searchParams.get('highlight');
     const categoryParam = searchParams.get('category');
+    const fromSearch = searchParams.get('fromSearch');
     
     if (highlightId) {
       const cardToHighlight = cards.find(card => card.id === highlightId);
@@ -131,7 +137,7 @@ const BitesPage = () => {
         
         setInitialAccordionValues([category]);
         
-        if (searchParams.get('fromSearch') === 'true') {
+        if (fromSearch === 'true') {
           setSelectedCard(cardToHighlight);
           setIsCardModalOpen(true);
         } else {
@@ -161,10 +167,36 @@ const BitesPage = () => {
         }
       }
     }
+    
+    // Handle multiple search results
+    const searchResultsParam = searchParams.get('searchResults');
+    if (searchResultsParam) {
+      try {
+        const ids = searchResultsParam.split(',');
+        const matchingCards = cards.filter(card => ids.includes(card.id));
+        if (matchingCards.length > 0) {
+          setSearchResults(matchingCards);
+          setIsSearchResultsOpen(true);
+          
+          toast({
+            title: `Found ${matchingCards.length} results`,
+            description: "Click on a card to view details",
+          });
+        }
+      } catch (error) {
+        console.error("Error parsing search results:", error);
+      }
+    }
   }, [location.search, toast]);
 
   const handleFilteredItemsChange = (items: FoodCard[]) => {
     setFilteredCards(items);
+  };
+  
+  const handleSearchResultCardClick = (card: FoodCard) => {
+    setIsSearchResultsOpen(false);
+    setSelectedCard(card);
+    setIsCardModalOpen(true);
   };
 
   const cardsByCategory: Record<string, FoodCard[]> = {};
@@ -300,12 +332,51 @@ const BitesPage = () => {
         </div>
       )}
 
+      {/* Search Results Dialog */}
+      <Dialog open={isSearchResultsOpen} onOpenChange={setIsSearchResultsOpen}>
+        <DialogOverlay className="bg-black/80 backdrop-blur-sm" />
+        <DialogContent 
+          className="sm:max-w-[700px] p-4 border-2 border-catalog-softBrown rounded-xl overflow-hidden max-h-[90vh] overflow-y-auto"
+          style={{ backgroundColor: "#f8f8f8" }}
+        >
+          <DialogTitle className="text-xl font-typewriter text-catalog-teal">
+            Search Results
+          </DialogTitle>
+          <DialogDescription className="text-sm text-catalog-softBrown mb-4">
+            We found {searchResults.length} matches. Click on a card to view details.
+          </DialogDescription>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in">
+            {searchResults.map((card) => (
+              <div 
+                key={card.id}
+                className="cursor-pointer transition-transform hover:scale-105"
+                onClick={() => handleSearchResultCardClick(card)}
+              >
+                <Envelope 
+                  label={card.title}
+                  backgroundColor={categoryColors[card.category]}
+                >
+                  <CatalogCard card={card} showActions={false} />
+                </Envelope>
+              </div>
+            ))}
+          </div>
+          
+          <DialogClose className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 shadow-md hover:bg-gray-100">
+            <X size={18} />
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
+
+      {/* Individual Card Modal */}
       <Dialog open={isCardModalOpen} onOpenChange={setIsCardModalOpen}>
         <DialogOverlay className="bg-black/80 backdrop-blur-sm" />
         <DialogContent 
           className="sm:max-w-[600px] p-0 border-2 border-catalog-softBrown rounded-xl overflow-hidden max-h-[90vh]"
           style={{ backgroundColor: selectedCard ? categoryColors[selectedCard.category] : "#f8f8f8" }}
         >
+          <DialogTitle className="sr-only">Card Details</DialogTitle>
           <div className="relative">
             <DialogClose className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 shadow-md hover:bg-gray-100">
               <X size={18} />
@@ -337,6 +408,15 @@ const BitesPage = () => {
           100% {
             box-shadow: 0 0 0 0 rgba(0, 128, 128, 0);
           }
+        }
+        
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
       `}</style>
     </GridLayout>
