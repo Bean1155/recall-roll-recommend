@@ -3,7 +3,7 @@ import React from "react";
 import GridLayout from "@/components/GridLayout";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Utensils, Clapperboard } from "lucide-react";
+import { Utensils, Clapperboard, Plus } from "lucide-react";
 
 const CollectionsPage = () => {
   return (
@@ -15,9 +15,16 @@ const CollectionsPage = () => {
             Bites Collection
           </h2>
           <p className="mb-4">Your collection of memorable food experiences.</p>
-          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal w-full">
-            <Link to="/bites">View Bites</Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex-1">
+              <Link to="/bites">View Bites</Link>
+            </Button>
+            <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex-1">
+              <Link to="/create/food" className="flex items-center justify-center">
+                <Plus size={16} className="mr-1" /> Add New Bite
+              </Link>
+            </Button>
+          </div>
         </div>
 
         <div className="catalog-card p-6 rounded-lg">
@@ -26,9 +33,16 @@ const CollectionsPage = () => {
             Blockbusters Collection
           </h2>
           <p className="mb-4">Your collection of memorable entertainment experiences.</p>
-          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal w-full">
-            <Link to="/blockbusters">View Blockbusters</Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex-1">
+              <Link to="/blockbusters">View Blockbusters</Link>
+            </Button>
+            <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal flex-1">
+              <Link to="/create/entertainment" className="flex items-center justify-center">
+                <Plus size={16} className="mr-1" /> Add New Blockbuster
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </GridLayout>

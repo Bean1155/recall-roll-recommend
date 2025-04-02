@@ -43,6 +43,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
     medium: 'Netflix',
     entertainmentCategory: 'movies',
     status: isFoodCard ? 'Visited: Tried this bite' as FoodStatus : 'Watched' as EntertainmentStatus,
+    isFavorite: false,
   });
 
   useEffect(() => {
@@ -136,6 +137,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
         date: formData.date,
         rating: Number(formData.rating),
         notes: formData.notes,
+        isFavorite: false,
       };
       
       let card;
@@ -163,6 +165,8 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
         } as Omit<EntertainmentCard, 'id'>;
       }
       
+      let savedCard;
+      
       if (isEditMode && cardId) {
         updateCard({
           ...card,
@@ -171,14 +175,16 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
         
         toast({
           title: "Card Updated",
-          description: "Your catalog card has been updated successfully!",
+          description: `Your ${isFoodCard ? 'bite' : 'blockbuster'} has been updated successfully!`,
         });
+        
+        savedCard = { id: cardId, ...card };
       } else {
-        addCard(card);
+        savedCard = addCard(card);
         
         toast({
-          title: "Card Created",
-          description: "Your catalog card has been created successfully!",
+          title: isFoodCard ? "Bite Added" : "Blockbuster Added",
+          description: `Your ${isFoodCard ? 'bite' : 'blockbuster'} has been added to your collection!`,
         });
       }
       
@@ -187,7 +193,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
       console.error('Error processing card:', error);
       toast({
         title: "Error",
-        description: "There was an error processing your card. Please try again.",
+        description: "There was an error saving your card. Please try again.",
         variant: "destructive",
       });
     }
