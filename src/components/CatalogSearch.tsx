@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,8 @@ import {
   Star,
   MapPin,
   TrendingUp,
-  Clock
+  Clock,
+  ChevronDown
 } from "lucide-react";
 import { 
   Select,
@@ -45,6 +45,7 @@ import {
   TooltipTrigger 
 } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { FoodCard, EntertainmentCard, CatalogCard } from "@/lib/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "@/components/ui/use-toast";
@@ -67,6 +68,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [searchResults, setSearchResults] = useState<CatalogCard[]>([]);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
@@ -85,7 +87,6 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
 
     if (searchTerm) {
       filteredItems = filteredItems.filter(item => {
-        // Check all string properties for matches
         const itemAsAny = item as any;
         const searchableProperties = [
           'title', 'creator', 'notes', 'location', 
@@ -98,7 +99,6 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
           return value && typeof value === 'string' && 
             value.toLowerCase().includes(searchTerm.toLowerCase());
         }) || 
-        // Check tags if they exist
         (item.tags && 
           item.tags.some(tag => 
             tag.toLowerCase().includes(searchTerm.toLowerCase())
@@ -160,7 +160,6 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
 
     if (searchTerm) {
       filteredItems = filteredItems.filter(item => {
-        // Check all string properties for matches
         const itemAsAny = item as any;
         const searchableProperties = [
           'title', 'creator', 'notes', 'location', 
@@ -173,7 +172,6 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
           return value && typeof value === 'string' && 
             value.toLowerCase().includes(searchTerm.toLowerCase());
         }) || 
-        // Check tags if they exist
         (item.tags && 
           item.tags.some(tag => 
             tag.toLowerCase().includes(searchTerm.toLowerCase())
@@ -321,130 +319,149 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
               </div>
 
               <div className="mb-4 mt-6 border-t border-[#D3E4FD] pt-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-3">Quick Filters</h4>
-                <Tabs defaultValue="all" className="w-full" onValueChange={handleTabChange}>
-                  <TabsList className="w-full bg-gray-100 p-1 rounded-md h-14">
-                    <div className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-7'} w-full`}>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <TabsTrigger 
-                              value="all" 
-                              className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
-                            >
-                              All
-                            </TabsTrigger>
-                          </TooltipTrigger>
-                          <TooltipContent className="bg-white text-catalog-softBrown">
-                            {filterDescriptions.all}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <TabsTrigger 
-                              value="favorites" 
-                              className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
-                            >
-                              <Heart size={14} className="text-pink-500" /> 
-                              {!isMobile && <span>Favorites</span>}
-                            </TabsTrigger>
-                          </TooltipTrigger>
-                          <TooltipContent className="bg-white text-catalog-softBrown">
-                            {filterDescriptions.favorites}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <TabsTrigger 
-                              value="topRated" 
-                              className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
-                            >
-                              <Star size={14} className="text-amber-500" /> 
-                              {!isMobile && <span>Top Rated</span>}
-                            </TabsTrigger>
-                          </TooltipTrigger>
-                          <TooltipContent className="bg-white text-catalog-softBrown">
-                            {filterDescriptions.topRated}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <TabsTrigger 
-                              value="location" 
-                              className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
-                            >
-                              <MapPin size={14} className="text-blue-500" /> 
-                              {!isMobile && <span>Location</span>}
-                            </TabsTrigger>
-                          </TooltipTrigger>
-                          <TooltipContent className="bg-white text-catalog-softBrown">
-                            {filterDescriptions.location}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <TabsTrigger 
-                              value="byStatus" 
-                              className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
-                            >
-                              <Clock size={14} className="text-purple-500" /> 
-                              {!isMobile && <span>By Status</span>}
-                            </TabsTrigger>
-                          </TooltipTrigger>
-                          <TooltipContent className="bg-white text-catalog-softBrown">
-                            {filterDescriptions.byStatus}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <TabsTrigger 
-                              value="keywords" 
-                              className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
-                            >
-                              <Search size={14} className="text-gray-500" /> 
-                              {!isMobile && <span>Keywords</span>}
-                            </TabsTrigger>
-                          </TooltipTrigger>
-                          <TooltipContent className="bg-white text-catalog-softBrown">
-                            {filterDescriptions.keywords}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <TabsTrigger 
-                              value="topReferrals" 
-                              className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
-                            >
-                              <TrendingUp size={14} className="text-green-500" /> 
-                              {!isMobile && <span>Most Referred</span>}
-                            </TabsTrigger>
-                          </TooltipTrigger>
-                          <TooltipContent className="bg-white text-catalog-softBrown">
-                            {filterDescriptions.topReferrals}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                  </TabsList>
-                </Tabs>
+                <Collapsible
+                  open={isFiltersOpen}
+                  onOpenChange={setIsFiltersOpen}
+                  className="w-full"
+                >
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">Quick Filters</h4>
+                    <CollapsibleTrigger asChild>
+                      <Button variant="ghost" size="sm" className="p-0 h-7 w-7">
+                        <ChevronDown 
+                          className={`h-4 w-4 transition-transform duration-200 ${isFiltersOpen ? 'rotate-180' : ''}`} 
+                        />
+                        <span className="sr-only">Toggle filters</span>
+                      </Button>
+                    </CollapsibleTrigger>
+                  </div>
+                  
+                  <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+                    <Tabs defaultValue="all" className="w-full" onValueChange={handleTabChange}>
+                      <TabsList className="w-full bg-gray-100 p-1 rounded-md h-14">
+                        <div className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-7'} w-full`}>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <TabsTrigger 
+                                  value="all" 
+                                  className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                                >
+                                  All
+                                </TabsTrigger>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-white text-catalog-softBrown">
+                                {filterDescriptions.all}
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <TabsTrigger 
+                                  value="favorites" 
+                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                                >
+                                  <Heart size={14} className="text-pink-500" /> 
+                                  {!isMobile && <span>Favorites</span>}
+                                </TabsTrigger>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-white text-catalog-softBrown">
+                                {filterDescriptions.favorites}
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <TabsTrigger 
+                                  value="topRated" 
+                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                                >
+                                  <Star size={14} className="text-amber-500" /> 
+                                  {!isMobile && <span>Top Rated</span>}
+                                </TabsTrigger>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-white text-catalog-softBrown">
+                                {filterDescriptions.topRated}
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <TabsTrigger 
+                                  value="location" 
+                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                                >
+                                  <MapPin size={14} className="text-blue-500" /> 
+                                  {!isMobile && <span>Location</span>}
+                                </TabsTrigger>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-white text-catalog-softBrown">
+                                {filterDescriptions.location}
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <TabsTrigger 
+                                  value="byStatus" 
+                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                                >
+                                  <Clock size={14} className="text-purple-500" /> 
+                                  {!isMobile && <span>By Status</span>}
+                                </TabsTrigger>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-white text-catalog-softBrown">
+                                {filterDescriptions.byStatus}
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <TabsTrigger 
+                                  value="keywords" 
+                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                                >
+                                  <Search size={14} className="text-gray-500" /> 
+                                  {!isMobile && <span>Keywords</span>}
+                                </TabsTrigger>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-white text-catalog-softBrown">
+                                {filterDescriptions.keywords}
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <TabsTrigger 
+                                  value="topReferrals" 
+                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                                >
+                                  <TrendingUp size={14} className="text-green-500" /> 
+                                  {!isMobile && <span>Most Referred</span>}
+                                </TabsTrigger>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-white text-catalog-softBrown">
+                                {filterDescriptions.topReferrals}
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                      </TabsList>
+                    </Tabs>
+                  </CollapsibleContent>
+                </Collapsible>
               </div>
 
               <div className="bg-gray-50 p-3 rounded-md mb-4 text-sm">
