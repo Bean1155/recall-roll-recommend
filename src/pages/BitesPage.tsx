@@ -1,6 +1,5 @@
-
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { Link, useLocation } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
 import { Button } from "@/components/ui/button";
@@ -23,43 +22,41 @@ import {
   AccordionItem, 
   AccordionTrigger 
 } from "@/components/ui/accordion";
+import { useToast } from "@/components/ui/use-toast";
+import CatalogSearch from "@/components/CatalogSearch";
 
-// Define all categories from the FoodCategory type
 const allCategories: FoodCategory[] = [
   "cafe", "diner", "specialty foods", "fine dining", "take out", 
   "bakeries", "bars", "food trucks", "large event space", "restaurant", "etc."
 ];
 
-// Define the category colors with a vintage color palette from the provided image
 const categoryColors: Record<FoodCategory, string> = {
-  "cafe": "#f5c4d3", // Light pink
-  "diner": "#e0c5c1", // Dusty rose
-  "specialty foods": "#ddb892", // Tan
-  "fine dining": "#e9b44c", // Golden yellow
-  "take out": "#c1cc99", // Light olive
-  "bakeries": "#9de0d0", // Mint
-  "bars": "#a5b1c2", // Slate blue
-  "food trucks": "#a64b2a", // Rust brown
-  "large event space": "#ff6b45", // Coral
-  "restaurant": "#e18336", // Burnt orange
-  "etc.": "#da7f5d", // Terracotta
+  "cafe": "#f5c4d3",
+  "diner": "#e0c5c1",
+  "specialty foods": "#ddb892",
+  "fine dining": "#e9b44c",
+  "take out": "#c1cc99",
+  "bakeries": "#9de0d0",
+  "bars": "#a5b1c2",
+  "food trucks": "#a64b2a",
+  "large event space": "#ff6b45",
+  "restaurant": "#e18336",
+  "etc.": "#da7f5d",
 };
 
-// Additional colors for more categories if needed
 const extraColors = [
-  "#cc7f43", // Light brown
-  "#d35843", // Brick red
-  "#4d583c", // Olive green
-  "#8c9e5e", // Moss green
-  "#358f8f", // Teal
-  "#6b798e", // Dusty blue
-  "#2f5d60", // Dark teal
-  "#1a535c", // Deep teal
-  "#4a3f35", // Dark brown
-  "#232e33", // Almost black
+  "#cc7f43",
+  "#d35843",
+  "#4d583c",
+  "#8c9e5e",
+  "#358f8f",
+  "#6b798e",
+  "#2f5d60",
+  "#1a535c",
+  "#4a3f35",
+  "#232e33",
 ];
 
-// Helper function to get category display name
 const getCategoryDisplayName = (category: string): string => {
   return category
     .split(' ')
@@ -67,41 +64,78 @@ const getCategoryDisplayName = (category: string): string => {
     .join(' ');
 };
 
-// Helper function to generate text color based on background
 const getTextColor = (backgroundColor: string): string => {
-  // Convert hex to RGB
   const hex = backgroundColor.replace('#', '');
   const r = parseInt(hex.substring(0, 2), 16);
   const g = parseInt(hex.substring(2, 4), 16);
   const b = parseInt(hex.substring(4, 6), 16);
   
-  // Calculate brightness
   const brightness = (r * 299 + g * 587 + b * 114) / 1000;
   
-  // Return white for dark backgrounds, dark brown for light backgrounds
   return brightness > 145 ? "#603913" : "#ffffff";
 };
 
 const BitesPage = () => {
   const [foodCards, setFoodCards] = useState<FoodCard[]>([]);
+  const [filteredCards, setFilteredCards] = useState<FoodCard[]>([]);
   const { userName } = useUser();
   const isMobile = useIsMobile();
+  const location = useLocation();
+  const { toast } = useToast();
+  const highlightedCardRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     const cards = getCardsByType("food") as FoodCard[];
     setFoodCards(cards);
-  }, []);
+    setFilteredCards(cards);
+    
+    const searchParams = new URLSearchParams(location.search);
+    const highlightId = searchParams.get('highlight');
+    
+    if (highlightId) {
+      const cardToHighlight = cards.find(card => card.id === highlightId);
+      
+      if (cardToHighlight) {
+        const category = cardToHighlight.category;
+        
+        setTimeout(() => {
+          const accordionItem = document.querySelector(`[data-value="${category}"]`);
+          if (accordionItem) {
+            (accordionItem as HTMLElement).click();
+          }
+          
+          setTimeout(() => {
+            const cardElement = document.getElementById(`card-${highlightId}`);
+            if (cardElement) {
+              cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              
+              cardElement.classList.add('highlight-pulse');
+              setTimeout(() => {
+                cardElement.classList.remove('highlight-pulse');
+              }, 2000);
+              
+              toast({
+                title: "Card found",
+                description: `Showing ${cardToHighlight.title}`,
+              });
+            }
+          }, 500);
+        }, 300);
+      }
+    }
+  }, [location.search, toast]);
 
-  // Group cards by category
+  const handleFilteredItemsChange = (items: FoodCard[]) => {
+    setFilteredCards(items);
+  };
+
   const cardsByCategory: Record<string, FoodCard[]> = {};
   
-  // Initialize all categories with empty arrays
   allCategories.forEach(category => {
     cardsByCategory[category] = [];
   });
   
-  // Then populate with actual cards
-  foodCards.forEach(card => {
+  filteredCards.forEach(card => {
     if (cardsByCategory[card.category]) {
       cardsByCategory[card.category].push(card);
     }
@@ -128,6 +162,12 @@ const BitesPage = () => {
           </Button>
         </div>
       </div>
+
+      <CatalogSearch 
+        items={foodCards}
+        onFilteredItemsChange={handleFilteredItemsChange}
+        type="food"
+      />
 
       {foodCards.length === 0 ? (
         <div className="text-center py-12 bg-catalog-cream rounded-lg border border-catalog-softBrown/30 shadow-md">
@@ -161,6 +201,7 @@ const BitesPage = () => {
                     <AccordionTrigger 
                       className="px-6 py-6 font-typewriter font-semibold text-lg"
                       style={{ color: textColor }}
+                      data-value={category}
                     >
                       <div className="flex items-center justify-between w-full">
                         <div className="flex items-center gap-3">
@@ -182,7 +223,11 @@ const BitesPage = () => {
                         <CarouselContent>
                           {cardsByCategory[category].map((card) => (
                             <CarouselItem key={card.id} className={isMobile ? "basis-full" : "md:basis-1/2 lg:basis-1/3"}>
-                              <div className="p-1">
+                              <div 
+                                className="p-1" 
+                                id={`card-${card.id}`}
+                                ref={location.search.includes(`highlight=${card.id}`) ? highlightedCardRef : null}
+                              >
                                 <Envelope 
                                   label={card.title}
                                   backgroundColor={categoryColor}
@@ -222,6 +267,24 @@ const BitesPage = () => {
           </Accordion>
         </div>
       )}
+
+      <style jsx="true">{`
+        .highlight-pulse {
+          animation: pulse 2s;
+        }
+        
+        @keyframes pulse {
+          0% {
+            box-shadow: 0 0 0 0 rgba(0, 128, 128, 0.7);
+          }
+          70% {
+            box-shadow: 0 0 0 15px rgba(0, 128, 128, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(0, 128, 128, 0);
+          }
+        }
+      `}</style>
     </GridLayout>
   );
 };
