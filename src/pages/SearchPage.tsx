@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Input } from "@/components/ui/input";
@@ -12,7 +13,9 @@ import {
   ArrowUp,
   ArrowDown,
   Clock,
-  Check
+  Check,
+  Utensils,
+  Clapperboard
 } from "lucide-react";
 import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
@@ -27,6 +30,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { useUser } from "@/contexts/UserContext";
 
 const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,8 +55,11 @@ const SearchPage = () => {
   const [allCards, setAllCards] = useState<CatalogCardType[]>([]);
   const [filteredCards, setFilteredCards] = useState<CatalogCardType[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [drawerCards, setDrawerCards] = useState<CatalogCardType[]>([]);
+  const [activeDrawerType, setActiveDrawerType] = useState<"food" | "entertainment" | null>(null);
   const isMobile = useIsMobile();
   const location = useLocation();
+  const { userName } = useUser();
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -168,9 +190,145 @@ const SearchPage = () => {
     return "Browse Catalog";
   };
 
+  const handleDrawerOpen = (type: "food" | "entertainment") => {
+    setActiveDrawerType(type);
+    // Filter cards based on the drawer type
+    const cards = allCards.filter(card => card.type === type);
+    setDrawerCards(cards);
+  };
+
+  const showFoodDrawer = !location.search || location.search.includes('type=food');
+  const showEntertainmentDrawer = !location.search || location.search.includes('type=entertainment');
+
   return (
     <GridLayout title={getPageTitle()}>
       <div className="max-w-5xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-center items-center gap-6 md:gap-10 mb-10">
+          {showFoodDrawer && (
+            <Drawer onOpenChange={(open) => {
+              if (open) handleDrawerOpen("food");
+            }}>
+              <DrawerTrigger asChild>
+                <div
+                  className="relative flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105"
+                  style={{ width: "200px" }}
+                >
+                  <div className="bg-[#d4a76a] rounded-lg h-16 w-full flex items-center justify-center shadow-md border border-[#b38c50]">
+                    <Utensils className="text-[#5c4a2a] h-8 w-8" />
+                  </div>
+                  <div className="bg-[#e0b77e] rounded-md h-10 w-full mt-1 flex items-center justify-center shadow-md border border-[#b38c50]">
+                    <div className="h-1 w-16 bg-[#8a6c3c] rounded-full" />
+                  </div>
+                  <p className="mt-2 font-typewriter text-lg font-semibold text-[#5c4a2a]">
+                    BITES
+                  </p>
+                </div>
+              </DrawerTrigger>
+              <DrawerContent>
+                <div className="mx-auto w-full max-w-6xl">
+                  <DrawerHeader>
+                    <DrawerTitle className="text-2xl font-typewriter text-catalog-softBrown">
+                      Your Bites Collection
+                    </DrawerTitle>
+                    <DrawerDescription>
+                      {userName}'s food experiences catalog
+                    </DrawerDescription>
+                  </DrawerHeader>
+                  <div className="p-4 pb-10">
+                    {drawerCards.length === 0 ? (
+                      <div className="text-center py-6">
+                        <p className="text-lg text-catalog-softBrown">
+                          Your food catalog is empty.
+                        </p>
+                      </div>
+                    ) : (
+                      <Carousel className="w-full">
+                        <CarouselContent>
+                          {drawerCards.map((card) => (
+                            <CarouselItem key={card.id} className={isMobile ? "basis-full" : "md:basis-1/2 lg:basis-1/3"}>
+                              <div className="p-1">
+                                <Envelope label={card.title}>
+                                  <CatalogCard card={card} />
+                                </Envelope>
+                              </div>
+                            </CarouselItem>
+                          ))}
+                        </CarouselContent>
+                        <div className="flex justify-end gap-2 mt-4">
+                          <CarouselPrevious className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
+                          <CarouselNext className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
+                        </div>
+                      </Carousel>
+                    )}
+                  </div>
+                </div>
+              </DrawerContent>
+            </Drawer>
+          )}
+
+          {showEntertainmentDrawer && (
+            <Drawer onOpenChange={(open) => {
+              if (open) handleDrawerOpen("entertainment");
+            }}>
+              <DrawerTrigger asChild>
+                <div
+                  className="relative flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105"
+                  style={{ width: "200px" }}
+                >
+                  <div className="bg-[#d4a76a] rounded-lg h-16 w-full flex items-center justify-center shadow-md border border-[#b38c50]">
+                    <Clapperboard className="text-[#5c4a2a] h-8 w-8" />
+                  </div>
+                  <div className="bg-[#e0b77e] rounded-md h-10 w-full mt-1 flex items-center justify-center shadow-md border border-[#b38c50]">
+                    <div className="h-1 w-16 bg-[#8a6c3c] rounded-full" />
+                  </div>
+                  <p className="mt-2 font-typewriter text-lg font-semibold text-[#5c4a2a]">
+                    BLOCKBUSTERS
+                  </p>
+                </div>
+              </DrawerTrigger>
+              <DrawerContent>
+                <div className="mx-auto w-full max-w-6xl">
+                  <DrawerHeader>
+                    <DrawerTitle className="text-2xl font-typewriter text-catalog-softBrown">
+                      Your Blockbusters Collection
+                    </DrawerTitle>
+                    <DrawerDescription>
+                      {userName}'s entertainment experiences catalog
+                    </DrawerDescription>
+                  </DrawerHeader>
+                  <div className="p-4 pb-10">
+                    {drawerCards.length === 0 ? (
+                      <div className="text-center py-6">
+                        <p className="text-lg text-catalog-softBrown">
+                          Your entertainment catalog is empty.
+                        </p>
+                      </div>
+                    ) : (
+                      <Carousel className="w-full">
+                        <CarouselContent>
+                          {drawerCards.map((card) => (
+                            <CarouselItem key={card.id} className={isMobile ? "basis-full" : "md:basis-1/2 lg:basis-1/3"}>
+                              <div className="p-1">
+                                <Envelope label={card.title}>
+                                  <CatalogCard card={card} />
+                                </Envelope>
+                              </div>
+                            </CarouselItem>
+                          ))}
+                        </CarouselContent>
+                        <div className="flex justify-end gap-2 mt-4">
+                          <CarouselPrevious className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
+                          <CarouselNext className="relative static left-0 right-0 translate-y-0 bg-catalog-teal text-white hover:bg-catalog-darkTeal" />
+                        </div>
+                      </Carousel>
+                    )}
+                  </div>
+                </div>
+              </DrawerContent>
+            </Drawer>
+          )}
+        </div>
+
         <form 
           onSubmit={handleSearch} 
           className={`flex flex-col md:flex-row mb-6 ${isMobile ? 'gap-2' : ''}`}
