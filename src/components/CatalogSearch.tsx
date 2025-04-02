@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -275,18 +274,24 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
           <DialogContent 
             className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 md:w-3/5 lg:w-2/5 max-w-md p-0 border-2 border-catalog-softBrown bg-catalog-cream shadow-lg rounded-2xl overflow-hidden"
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d2b48c' fill-opacity='0.15'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
               backgroundColor: "#fffdd0",
+              backgroundImage: "linear-gradient(#aaadb0 1px, transparent 1px)",
+              backgroundSize: "100% 28px",
               boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
-              maxHeight: "85vh",
+              maxHeight: "80vh",
               position: "relative"
             }}
           >
-            <div className="absolute top-0 left-6 -mt-2.5 px-4 py-1 bg-vintage-tan text-[#5d4037] font-serif text-xs font-bold rounded-b-md border border-catalog-softBrown border-t-0 transform rotate-[-2deg] z-10">
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{
+              background: "linear-gradient(90deg, rgba(175,170,150,0.1) 0%, rgba(175,170,150,0) 20%, rgba(175,170,150,0) 80%, rgba(175,170,150,0.1) 100%)",
+              zIndex: 1
+            }}></div>
+            
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-2.5 px-6 py-1.5 bg-vintage-tan text-[#5d4037] font-serif text-sm font-bold rounded-b-md border border-catalog-softBrown border-t-0 transform z-10">
               CATALOG CARD
             </div>
             
-            <div className="absolute top-0 right-6 -mt-2.5 px-4 py-1 bg-vintage-tan text-[#5d4037] font-serif text-xs font-bold rounded-b-md border border-catalog-softBrown border-t-0 transform rotate-[2deg] z-10">
+            <div className="absolute top-0 right-0 -mt-2.5 px-6 py-1.5 bg-vintage-tan text-[#5d4037] font-serif text-sm font-bold rounded-bl-md border-l border-b border-catalog-softBrown transform z-10">
               {type === 'food' ? 'BITES' : 'BLOCKBUSTERS'}
             </div>
             
@@ -297,7 +302,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
               <h3 className="text-[#5d4037] font-typewriter font-medium tracking-wider">Search Options</h3>
             </div>
             
-            <div className="p-4 overflow-y-auto" style={{ maxHeight: "calc(85vh - 50px)" }}>
+            <div className="p-4 overflow-y-auto relative z-10" style={{ maxHeight: "calc(80vh - 50px)" }}>
               <div className="mb-4">
                 <label htmlFor="search-input" className="block text-sm font-medium text-[#5d4037] mb-1 font-typewriter">Search Terms</label>
                 <div className="relative">
@@ -332,9 +337,9 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                   className="w-full"
                 >
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-bold font-typewriter text-[#5d4037]">Quick Filters</h4>
+                    <h4 className="text-sm font-bold font-serif text-[#5d4037]">Quick Filters</h4>
                     <CollapsibleTrigger asChild>
-                      <Button variant="ghost" size="sm" className="p-0 h-7 w-7">
+                      <Button variant="ghost" size="sm" className="p-0 h-7 w-7 ml-2">
                         <ChevronDown 
                           className={`h-4 w-4 transition-transform duration-200 ${isFiltersOpen ? 'rotate-180' : ''}`} 
                         />
@@ -345,7 +350,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                   
                   <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
                     <Tabs defaultValue="all" className="w-full mt-2" onValueChange={handleTabChange}>
-                      <TabsList className="w-full bg-catalog-cream p-1 rounded-md h-14 border border-catalog-softBrown/30">
+                      <TabsList className="w-full bg-catalog-cream p-1 rounded-md h-14 border border-catalog-softBrown/30 relative z-20">
                         <div className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-7'} w-full`}>
                           <TooltipProvider>
                             <Tooltip>
