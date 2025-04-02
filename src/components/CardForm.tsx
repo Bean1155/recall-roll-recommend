@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -413,14 +414,15 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="movies">Movies</SelectItem>
-                  <SelectItem value="tv shows">TV Shows</SelectItem>
-                  <SelectItem value="comedies">Comedies</SelectItem>
-                  <SelectItem value="live performances">Live Performances</SelectItem>
-                  <SelectItem value="podcasts">Podcasts</SelectItem>
                   <SelectItem value="books">Books</SelectItem>
-                  <SelectItem value="games">Games</SelectItem>
+                  <SelectItem value="comedies">Comedies</SelectItem>
                   <SelectItem value="events">Events</SelectItem>
+                  <SelectItem value="games">Games</SelectItem>
+                  <SelectItem value="live performances">Live Performances</SelectItem>
+                  <SelectItem value="movies">Movies</SelectItem>
+                  <SelectItem value="podcasts">Podcasts</SelectItem>
+                  <SelectItem value="tv shows">TV Shows</SelectItem>
+                  <SelectItem value="etc.">Etc.</SelectItem>
                 </SelectContent>
               </Select>
             </div>
