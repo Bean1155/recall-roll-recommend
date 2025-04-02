@@ -84,13 +84,27 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
     let filteredItems = [...items];
 
     if (searchTerm) {
-      filteredItems = filteredItems.filter(item => 
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.creator.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.notes.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (type === 'food' && (item as FoodCard).cuisine?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (type === 'entertainment' && (item as EntertainmentCard).genre?.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
+      filteredItems = filteredItems.filter(item => {
+        // Check all string properties for matches
+        const itemAsAny = item as any;
+        const searchableProperties = [
+          'title', 'creator', 'notes', 'location', 
+          'cuisine', 'genre', 'medium', 'entertainmentCategory',
+          'category', 'status'
+        ];
+        
+        return searchableProperties.some(prop => {
+          const value = itemAsAny[prop];
+          return value && typeof value === 'string' && 
+            value.toLowerCase().includes(searchTerm.toLowerCase());
+        }) || 
+        // Check tags if they exist
+        (item.tags && 
+          item.tags.some(tag => 
+            tag.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+        );
+      });
     }
 
     if (selectedStatus !== "all") {
@@ -145,13 +159,27 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
     let filteredItems = [...items];
 
     if (searchTerm) {
-      filteredItems = filteredItems.filter(item => 
-        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.creator.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.notes.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (type === 'food' && (item as FoodCard).cuisine?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (type === 'entertainment' && (item as EntertainmentCard).genre?.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
+      filteredItems = filteredItems.filter(item => {
+        // Check all string properties for matches
+        const itemAsAny = item as any;
+        const searchableProperties = [
+          'title', 'creator', 'notes', 'location', 
+          'cuisine', 'genre', 'medium', 'entertainmentCategory',
+          'category', 'status'
+        ];
+        
+        return searchableProperties.some(prop => {
+          const value = itemAsAny[prop];
+          return value && typeof value === 'string' && 
+            value.toLowerCase().includes(searchTerm.toLowerCase());
+        }) || 
+        // Check tags if they exist
+        (item.tags && 
+          item.tags.some(tag => 
+            tag.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+        );
+      });
     }
 
     if (selectedStatus !== "all") {
@@ -254,6 +282,9 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
               backgroundAttachment: "local"
             }}
           >
+            <DialogTitle className="sr-only">Search Options</DialogTitle>
+            <DialogDescription className="sr-only">Search and filter your catalog items</DialogDescription>
+            
             <div className="bg-[#F1F1F1] p-3 flex justify-between items-center border-b border-[#D3E4FD]">
               <h3 className="text-catalog-teal font-medium">Search Options</h3>
               <DialogClose className="text-gray-500 hover:text-gray-700 focus:outline-none">
@@ -268,7 +299,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                   <Input
                     id="search-input"
                     type="text"
-                    placeholder="Refine search by Title, Creator, Description..."
+                    placeholder="Search by Title, Creator, Tags, Location, Genre, Cuisine..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyDown={handleKeyDown}
