@@ -12,11 +12,13 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const SettingsPage = () => {
   const navigate = useNavigate();
   const { userName } = useUser();
   const [activeTab, setActiveTab] = useState("profile");
+  const isMobile = useIsMobile();
   
   const handleSaveSettings = () => {
     toast({
@@ -51,11 +53,31 @@ const SettingsPage = () => {
         
         <div className="bg-white rounded-lg shadow p-6 border border-catalog-softBrown/20">
           <Tabs defaultValue="profile" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-4 mb-6">
-              <TabsTrigger value="profile">Profile</TabsTrigger>
-              <TabsTrigger value="account">Account</TabsTrigger>
-              <TabsTrigger value="notifications">Notifications</TabsTrigger>
-              <TabsTrigger value="sharing">Sharing</TabsTrigger>
+            <TabsList className="grid grid-cols-4 mb-6 bg-gray-100 p-1.5">
+              <TabsTrigger 
+                value="profile" 
+                className="data-[state=active]:bg-catalog-teal data-[state=active]:text-white"
+              >
+                Profile
+              </TabsTrigger>
+              <TabsTrigger 
+                value="account" 
+                className="data-[state=active]:bg-catalog-teal data-[state=active]:text-white"
+              >
+                Account
+              </TabsTrigger>
+              <TabsTrigger 
+                value="notifications" 
+                className="data-[state=active]:bg-catalog-teal data-[state=active]:text-white"
+              >
+                {isMobile ? "Alerts" : "Notifications"}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="sharing" 
+                className="data-[state=active]:bg-catalog-teal data-[state=active]:text-white"
+              >
+                Sharing
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="profile" className="space-y-6">
