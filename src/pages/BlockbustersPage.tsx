@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,15 @@ import {
   AccordionTrigger 
 } from "@/components/ui/accordion";
 import CatalogSearch from "@/components/CatalogSearch";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import ShareOptions from "@/components/ShareOptions";
+import { toast } from "@/components/ui/use-toast";
 
 const allCategories = [
   "movies", "tv shows", "documentaries", "concerts", 
@@ -64,12 +73,68 @@ const BlockbustersPage = () => {
   const [filteredCards, setFilteredCards] = useState<EntertainmentCard[]>([]);
   const { userName } = useUser();
   const isMobile = useIsMobile();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [openCategories, setOpenCategories] = useState<string[]>([]);
+  const [highlightedCardId, setHighlightedCardId] = useState<string | null>(null);
+  const [showSearchResultsDialog, setShowSearchResultsDialog] = useState(false);
+  const [searchResults, setSearchResults] = useState<EntertainmentCard[]>([]);
+  const [selectedCard, setSelectedCard] = useState<EntertainmentCard | null>(null);
+  const [showCardDialog, setShowCardDialog] = useState(false);
+  const accordionRefs = useRef<Record<string, HTMLElement | null>>({});
   
   useEffect(() => {
     const cards = getCardsByType('entertainment') as EntertainmentCard[];
     setEntertainmentCards(cards);
     setFilteredCards(cards);
-  }, []);
+    
+    const searchParams = new URLSearchParams(location.search);
+    const highlight = searchParams.get('highlight');
+    const category = searchParams.get('category');
+    const fromSearch = searchParams.get('fromSearch') === 'true';
+    const searchResultsParam = searchParams.get('searchResults');
+    
+    if (searchResultsParam) {
+      const resultIds = searchResultsParam.split(',');
+      const results = cards.filter(card => resultIds.includes(card.id));
+      if (results.length > 0) {
+        setSearchResults(results);
+        setShowSearchResultsDialog(true);
+      }
+    } else if (highlight) {
+      const card = cards.find(c => c.id === highlight);
+      if (card) {
+        if (fromSearch) {
+          setSelectedCard(card);
+          setShowCardDialog(true);
+        } else {
+          const category = card.entertainmentCategory?.toLowerCase() || 'etc.';
+          setOpenCategories([category]);
+          setHighlightedCardId(card.id);
+          setTimeout(() => {
+            if (accordionRefs.current[category]) {
+              accordionRefs.current[category]?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+            }
+          }, 300);
+        }
+      }
+    } else if (category) {
+      setOpenCategories([category.toLowerCase()]);
+    } else if (cards.length > 0) {
+      for (const category of allCategories) {
+        const hasCards = cards.some(c => 
+          (c.entertainmentCategory?.toLowerCase() || 'etc.') === category
+        );
+        if (hasCards) {
+          setOpenCategories([category]);
+          break;
+        }
+      }
+    }
+  }, [location.search]);
   
   const cardsByCategory: Record<string, EntertainmentCard[]> = {};
   
@@ -88,6 +153,27 @@ const BlockbustersPage = () => {
 
   const handleFilteredItemsChange = (items: EntertainmentCard[]) => {
     setFilteredCards(items);
+  };
+  
+  const handleAccordionChange = (value: string[]) => {
+    setOpenCategories(value);
+  };
+  
+  const handleCardClick = (card: EntertainmentCard) => {
+    setSelectedCard(card);
+    setShowCardDialog(true);
+  };
+  
+  const handleSearchResultClick = (card: EntertainmentCard) => {
+    setShowSearchResultsDialog(false);
+    setSelectedCard(card);
+    setShowCardDialog(true);
+  };
+  
+  const handleCloseSearchResults = () => {
+    setShowSearchResultsDialog(false);
+    const newUrl = location.pathname;
+    navigate(newUrl, { replace: true });
   };
 
   return (
@@ -127,7 +213,12 @@ const BlockbustersPage = () => {
         </div>
       ) : (
         <div className="space-y-6">
-          <Accordion type="multiple" defaultValue={[allCategories[0]]} className="w-full">
+          <Accordion 
+            type="multiple" 
+            value={openCategories} 
+            onValueChange={handleAccordionChange}
+            className="w-full"
+          >
             {allCategories.map((category) => {
               const categoryColor = categoryColors[category] || "#d2b48c";
               const textColor = getTextColor(categoryColor);
@@ -137,6 +228,7 @@ const BlockbustersPage = () => {
                 <AccordionItem 
                   key={category} 
                   value={category}
+                  ref={el => accordionRefs.current[category] = el}
                 >
                   <div 
                     style={{ backgroundColor: categoryColor, borderRadius: "0.5rem 0.5rem 0 0" }}
@@ -165,8 +257,14 @@ const BlockbustersPage = () => {
                       <Carousel className="w-full">
                         <CarouselContent>
                           {cardsByCategory[category].map((card) => (
-                            <CarouselItem key={card.id} className={isMobile ? "basis-full" : "md:basis-1/2 lg:basis-1/3"}>
-                              <div className="p-1">
+                            <CarouselItem 
+                              key={card.id} 
+                              className={isMobile ? "basis-full" : "md:basis-1/2 lg:basis-1/3"}
+                            >
+                              <div 
+                                className={`p-1 ${highlightedCardId === card.id ? 'animate-pulse' : ''}`}
+                                onClick={() => handleCardClick(card)}
+                              >
                                 <Envelope 
                                   label={card.title}
                                   backgroundColor={categoryColor}
@@ -206,6 +304,101 @@ const BlockbustersPage = () => {
           </Accordion>
         </div>
       )}
+      
+      <Dialog open={showSearchResultsDialog} onOpenChange={setShowSearchResultsDialog}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Search Results</DialogTitle>
+            <DialogDescription>
+              Found {searchResults.length} matching items
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            {searchResults.map(card => {
+              const category = card.entertainmentCategory?.toLowerCase() || 'etc.';
+              const categoryColor = categoryColors[category] || "#d2b48c";
+              
+              return (
+                <div 
+                  key={card.id}
+                  className="cursor-pointer transition-transform hover:scale-[1.02]"
+                  onClick={() => handleSearchResultClick(card)}
+                >
+                  <Envelope 
+                    label={card.title}
+                    backgroundColor={categoryColor}
+                  >
+                    <CatalogCard card={card} />
+                  </Envelope>
+                </div>
+              );
+            })}
+          </div>
+          
+          <div className="flex justify-between mt-4">
+            <Button 
+              variant="outline"
+              onClick={handleCloseSearchResults}
+            >
+              Close Results
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={showCardDialog} onOpenChange={setShowCardDialog}>
+        <DialogContent className="sm:max-w-lg">
+          {selectedCard && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{selectedCard.title}</DialogTitle>
+                <DialogDescription>
+                  {selectedCard.creator} • {selectedCard.entertainmentCategory}
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="mt-4">
+                <CatalogCard card={selectedCard} />
+              </div>
+              
+              <div className="flex flex-wrap justify-between mt-4 gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setShowCardDialog(false);
+                    navigate('/blockbusters', { replace: true });
+                  }}
+                >
+                  Close
+                </Button>
+                
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      toast({
+                        title: "Card location saved",
+                        description: "Direct link copied to clipboard"
+                      });
+                      const url = `${window.location.origin}/blockbusters?highlight=${selectedCard.id}&fromSearch=true`;
+                      navigator.clipboard.writeText(url);
+                    }}
+                  >
+                    Copy Direct Link
+                  </Button>
+                  
+                  <ShareOptions 
+                    card={selectedCard} 
+                    variant="dialog" 
+                    mode="external"
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </GridLayout>
   );
 };

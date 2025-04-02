@@ -31,7 +31,8 @@ import {
   DialogPortal,
   DialogTitle,
   DialogDescription,
-  DialogOverlay
+  DialogOverlay,
+  DialogHeader
 } from "@/components/ui/dialog";
 import { 
   Sheet,
@@ -174,7 +175,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
       const foodCard = card as FoodCard;
       navigate(`${path}?highlight=${card.id}&category=${foodCard.category}&fromSearch=true`);
     } else {
-      navigate(`${path}?highlight=${card.id}&fromSearch=true`);
+      const entertainmentCard = card as EntertainmentCard;
+      navigate(`${path}?highlight=${card.id}&category=${entertainmentCard.entertainmentCategory?.toLowerCase() || 'etc.'}&fromSearch=true`);
     }
     
     toast({
@@ -310,7 +312,13 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
               position: "relative"
             }}
           >
-            <DialogTitle className="sr-only">Search Catalog</DialogTitle>
+            <DialogHeader>
+              <DialogTitle className="sr-only">Search Catalog</DialogTitle>
+              <DialogDescription className="sr-only">
+                Search for items in your catalog
+              </DialogDescription>
+            </DialogHeader>
+            
             <div className="bg-[#1A7D76] w-full py-3 px-4 flex flex-col items-center justify-center">
               <div className="text-white font-serif text-xl font-bold tracking-wide">
                 CATALOG CARD
