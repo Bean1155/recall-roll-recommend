@@ -5,6 +5,12 @@ export type FoodStatus = 'Visited: Tried this bite' | 'Interested: Want a bite';
 export type EntertainmentStatus = 'Watched' | 'Want to Watch' | 'Currently Watching';
 export type RecommendationBadge = 'Highly Recommend' | 'Favorite' | null;
 
+export interface UserNote {
+  userId: string;
+  notes: string;
+  date: string;
+}
+
 export interface CatalogCard {
   id: string;
   type: CardType;
@@ -16,6 +22,7 @@ export interface CatalogCard {
   recommendedBy?: string;
   recommendedTo?: string[];
   recommendationBadge?: RecommendationBadge;
+  userNotes?: UserNote[];
 }
 
 export interface FoodCard extends CatalogCard {

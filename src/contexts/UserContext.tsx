@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Mock app users - in a real app, this would come from a database
@@ -29,6 +28,7 @@ type SharingSettings = {
   publicProfile: boolean;
   shareCards: boolean;
   defaultPermission: 'public' | 'friends' | 'private';
+  allowNoteUpdates: boolean;
 };
 
 type UserContextType = {
@@ -64,6 +64,7 @@ const defaultSharingSettings: SharingSettings = {
   publicProfile: true,
   shareCards: true,
   defaultPermission: 'friends',
+  allowNoteUpdates: true,
 };
 
 const UserContext = createContext<UserContextType>({

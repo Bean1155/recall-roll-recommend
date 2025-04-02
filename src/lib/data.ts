@@ -1,5 +1,5 @@
-
 import { CatalogCard, FoodCard, EntertainmentCard, FoodStatus, RecommendationBadge } from './types';
+import { appUsers } from '@/contexts/UserContext';
 
 // Mock data
 const mockCards: CatalogCard[] = [
@@ -156,6 +156,45 @@ export const getRecommendedUsers = (cardId: string): string[] => {
 export const isRecommendedToUser = (cardId: string, userId: string): boolean => {
   const recommendedUsers = getRecommendedUsers(cardId);
   return recommendedUsers.includes(userId);
+};
+
+// Add a new function to add user notes to a card
+export const addUserNotesToCard = (
+  cardId: string, 
+  userId: string, 
+  notes: string, 
+  allowNoteUpdates: boolean = false
+): boolean => {
+  if (!allowNoteUpdates) return false;
+  
+  const cards = getAllCards();
+  const cardIndex = cards.findIndex(c => c.id === cardId);
+  
+  if (cardIndex !== -1) {
+    const card = cards[cardIndex];
+    
+    // Only allow updates if the card has been shared with this user
+    if (card.recommendedTo && card.recommendedTo.includes(userId)) {
+      // Append the new notes with a separator
+      const existingNotes = card.notes || '';
+      const userName = appUsers.find(user => user.id === userId)?.name || 'User';
+      
+      const updatedNotes = existingNotes 
+        ? `${existingNotes}\n\n--- Notes from ${userName} ---\n${notes}`
+        : `Notes from ${userName}:\n${notes}`;
+      
+      cards[cardIndex] = {
+        ...card,
+        notes: updatedNotes,
+        userNotes: [...(card.userNotes || []), { userId, notes, date: new Date().toISOString() }]
+      };
+      
+      localStorage.setItem('catalogCards', JSON.stringify(cards));
+      return true;
+    }
+  }
+  
+  return false;
 };
 
 // Add a new function to share card

@@ -62,7 +62,7 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
       </div>
       
       <div className="mb-4 bg-white bg-opacity-50 p-2 rounded border border-catalog-softBrown">
-        <p className="text-sm italic">{card.notes}</p>
+        <p className="text-sm italic whitespace-pre-line">{card.notes}</p>
       </div>
       
       {(isFoodCard && foodCard.tags && foodCard.tags.length > 0) || 

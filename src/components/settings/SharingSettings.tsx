@@ -3,11 +3,19 @@ import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useUser } from "@/contexts/UserContext";
 
 export const SharingSettings = () => {
-  const [publicProfile, setPublicProfile] = useState(true);
-  const [shareCards, setShareCards] = useState(true);
-  const [defaultSharingPermission, setDefaultSharingPermission] = useState("friends");
+  const { sharingSettings, updateSharingSettings } = useUser();
+  const { publicProfile, shareCards, defaultPermission, allowNoteUpdates } = sharingSettings;
+  
+  const handleSwitchChange = (field: string) => (checked: boolean) => {
+    updateSharingSettings({ [field]: checked });
+  };
+  
+  const handlePermissionChange = (value: string) => {
+    updateSharingSettings({ defaultPermission: value as 'public' | 'friends' | 'private' });
+  };
   
   return (
     <div className="space-y-6">
@@ -29,7 +37,7 @@ export const SharingSettings = () => {
             <Switch
               id="public-profile"
               checked={publicProfile}
-              onCheckedChange={setPublicProfile}
+              onCheckedChange={handleSwitchChange('publicProfile')}
             />
           </div>
           
@@ -45,7 +53,23 @@ export const SharingSettings = () => {
             <Switch
               id="share-cards"
               checked={shareCards}
-              onCheckedChange={setShareCards}
+              onCheckedChange={handleSwitchChange('shareCards')}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between py-2 border-t border-gray-100">
+            <div className="space-y-0.5">
+              <Label htmlFor="allow-note-updates" className="text-sm font-medium">
+                Allow Note Updates
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Allow others to add notes to your cards when you share them
+              </p>
+            </div>
+            <Switch
+              id="allow-note-updates"
+              checked={allowNoteUpdates}
+              onCheckedChange={handleSwitchChange('allowNoteUpdates')}
             />
           </div>
         </div>
@@ -54,8 +78,8 @@ export const SharingSettings = () => {
           <h3 className="text-base font-medium">Default Sharing Permissions</h3>
           
           <RadioGroup 
-            value={defaultSharingPermission} 
-            onValueChange={setDefaultSharingPermission}
+            value={defaultPermission} 
+            onValueChange={handlePermissionChange}
             className="space-y-3"
           >
             <div className="flex items-center space-x-2">
