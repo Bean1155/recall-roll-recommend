@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
@@ -99,6 +100,7 @@ const getTextColor = (backgroundColor: string): string => {
 const BitesPage = () => {
   const [foodCards, setFoodCards] = useState<FoodCard[]>([]);
   const [filteredCards, setFilteredCards] = useState<FoodCard[]>([]);
+  const [initialAccordionValues, setInitialAccordionValues] = useState<string[]>([sortedCategories[0]]);
   const { userName } = useUser();
   const isMobile = useIsMobile();
   const location = useLocation();
@@ -112,16 +114,22 @@ const BitesPage = () => {
     
     const searchParams = new URLSearchParams(location.search);
     const highlightId = searchParams.get('highlight');
+    const categoryParam = searchParams.get('category');
     
     if (highlightId) {
       const cardToHighlight = cards.find(card => card.id === highlightId);
       
       if (cardToHighlight) {
-        const category = cardToHighlight.category;
+        // Get the category from either the URL parameter or the card itself
+        const category = categoryParam || cardToHighlight.category;
+        
+        // Set the accordion to be initially open for this category
+        setInitialAccordionValues([category]);
         
         setTimeout(() => {
+          // Find and click the accordion item if it's not already open
           const accordionItem = document.querySelector(`[data-value="${category}"]`);
-          if (accordionItem) {
+          if (accordionItem && !accordionItem.closest('[data-state="open"]')) {
             (accordionItem as HTMLElement).click();
           }
           
@@ -198,7 +206,7 @@ const BitesPage = () => {
         </div>
       ) : (
         <div className="space-y-6">
-          <Accordion type="multiple" defaultValue={[sortedCategories[0]]} className="w-full">
+          <Accordion type="multiple" defaultValue={initialAccordionValues} className="w-full">
             {sortedCategories.map((category) => {
               const categoryColor = categoryColors[category] || "#d2b48c";
               const textColor = getTextColor(categoryColor);

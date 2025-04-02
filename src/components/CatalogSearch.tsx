@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -51,7 +50,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { FoodCard, EntertainmentCard, CatalogCard } from "@/lib/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const vintageGreen = "#1A7D76";
 
@@ -75,6 +74,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const filterDescriptions = {
     all: "Show all items without filtering",
@@ -145,12 +145,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
       });
     } else if (filteredItems.length === 1) {
       setIsSearchOpen(false);
-      const path = type === 'food' ? '/bites' : '/blockbusters';
-      navigate(`${path}?highlight=${filteredItems[0].id}`);
-      toast({
-        title: "Found a match!",
-        description: `Navigating to ${filteredItems[0].title}`,
-      });
+      handleCardClick(filteredItems[0]);
     } else {
       setIsSearchOpen(false);
       toast({
@@ -158,6 +153,23 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
         description: "Showing matching items",
       });
     }
+  };
+
+  const handleCardClick = (card: CatalogCard) => {
+    setIsSearchOpen(false);
+    const path = type === 'food' ? '/bites' : '/blockbusters';
+    
+    if (type === 'food') {
+      const foodCard = card as FoodCard;
+      navigate(`${path}?highlight=${card.id}&category=${foodCard.category}`);
+    } else {
+      navigate(`${path}?highlight=${card.id}`);
+    }
+    
+    toast({
+      title: "Navigating to card",
+      description: `Opening ${card.title}`,
+    });
   };
 
   useEffect(() => {
@@ -537,11 +549,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                       <Card 
                         key={item.id} 
                         className="bg-catalog-cream hover:bg-vintage-tan cursor-pointer border border-catalog-softBrown/40 transition-colors duration-150"
-                        onClick={() => {
-                          setIsSearchOpen(false);
-                          const path = type === 'food' ? '/bites' : '/blockbusters';
-                          navigate(`${path}?highlight=${item.id}`);
-                        }}
+                        onClick={() => handleCardClick(item)}
                       >
                         <CardContent className="p-3">
                           <div className="flex items-center gap-2">
