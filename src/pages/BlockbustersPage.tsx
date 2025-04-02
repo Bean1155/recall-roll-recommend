@@ -18,20 +18,28 @@ import {
 } from "@/components/ui/carousel";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import CatalogSearch from "@/components/CatalogSearch";
 
 const BlockbustersPage = () => {
   const [entertainmentCards, setEntertainmentCards] = useState<EntertainmentCard[]>([]);
+  const [filteredEntertainmentCards, setFilteredEntertainmentCards] = useState<EntertainmentCard[]>([]);
   const { userName } = useUser();
   const isMobile = useIsMobile();
   
   useEffect(() => {
     const cards = getCardsByType('entertainment') as EntertainmentCard[];
     setEntertainmentCards(cards);
+    setFilteredEntertainmentCards(cards);
   }, []);
+
+  // Handle filtered items from search
+  const handleFilteredItemsChange = (filteredItems: EntertainmentCard[]) => {
+    setFilteredEntertainmentCards(filteredItems as EntertainmentCard[]);
+  };
   
   // Group entertainment cards by their entertainment category
-  const groupedEntertainmentCards = entertainmentCards.reduce<Record<string, EntertainmentCard[]>>((acc, card) => {
-    const category = card.entertainmentCategory || 'other';
+  const groupedEntertainmentCards = filteredEntertainmentCards.reduce<Record<string, EntertainmentCard[]>>((acc, card) => {
+    const category = card.entertainmentCategory || 'etc.';
     if (!acc[category]) {
       acc[category] = [];
     }
@@ -47,8 +55,12 @@ const BlockbustersPage = () => {
       .join(' ');
   };
 
-  // Sort categories alphabetically
-  const sortedCategories = Object.keys(groupedEntertainmentCards).sort();
+  // Sort categories alphabetically, but ensure "etc." is last
+  const sortedCategories = Object.keys(groupedEntertainmentCards).sort((a, b) => {
+    if (a.toLowerCase() === "etc.") return 1;
+    if (b.toLowerCase() === "etc.") return -1;
+    return a.localeCompare(b);
+  });
   
   // Color mapping for entertainment categories
   const categoryColors: Record<string, string> = {
@@ -59,7 +71,12 @@ const BlockbustersPage = () => {
     "concerts": "bg-[#FFDEE2] text-gray-800", // Soft pink
     "theater": "bg-[#D8E4C8] text-gray-800", // Soft green
     "podcasts": "bg-[#FFCCA1] text-gray-800", // Soft orange
-    "other": "bg-[#F1F0FB] text-gray-800", // Soft gray
+    "books": "bg-[#F2FCE2] text-gray-800", // Soft green
+    "games": "bg-[#E5F1FF] text-gray-800", // Light blue
+    "comedies": "bg-[#FFE8D6] text-gray-800", // Peach
+    "events": "bg-[#D1F5EA] text-gray-800", // Mint
+    "live performances": "bg-[#FFECB3] text-gray-800", // Light amber
+    "etc.": "bg-[#F1F0FB] text-gray-800", // Soft gray
   };
 
   // Get default color if category not in mapping
@@ -79,15 +96,28 @@ const BlockbustersPage = () => {
         </Button>
       </div>
       
-      {entertainmentCards.length === 0 ? (
+      {/* Add search component */}
+      <CatalogSearch 
+        items={entertainmentCards} 
+        onFilteredItemsChange={handleFilteredItemsChange}
+        type="entertainment"
+      />
+      
+      {filteredEntertainmentCards.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-lg text-catalog-softBrown mb-4">Your entertainment catalog is empty.</p>
-          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-            <Link to="/create/entertainment">
-              <PlusCircle size={18} className="mr-2" />
-              Add Your First Entertainment Experience
-            </Link>
-          </Button>
+          <p className="text-lg text-catalog-softBrown mb-4">
+            {entertainmentCards.length === 0 
+              ? "Your entertainment catalog is empty." 
+              : "No results match your search criteria."}
+          </p>
+          {entertainmentCards.length === 0 && (
+            <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+              <Link to="/create/entertainment">
+                <PlusCircle size={18} className="mr-2" />
+                Add Your First Entertainment Experience
+              </Link>
+            </Button>
+          )}
         </div>
       ) : (
         <Tabs defaultValue={sortedCategories[0]}>

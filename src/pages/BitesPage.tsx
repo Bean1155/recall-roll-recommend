@@ -18,20 +18,28 @@ import {
 } from "@/components/ui/carousel";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import CatalogSearch from "@/components/CatalogSearch";
 
 const BitesPage = () => {
   const [foodCards, setFoodCards] = useState<FoodCard[]>([]);
+  const [filteredFoodCards, setFilteredFoodCards] = useState<FoodCard[]>([]);
   const { userName } = useUser();
   const isMobile = useIsMobile();
   
   useEffect(() => {
     const cards = getCardsByType("food") as FoodCard[];
     setFoodCards(cards);
+    setFilteredFoodCards(cards);
   }, []);
 
+  // Handle filtered items from search
+  const handleFilteredItemsChange = (filteredItems: FoodCard[]) => {
+    setFilteredFoodCards(filteredItems as FoodCard[]);
+  };
+
   // Group food cards by category
-  const groupedFoodCards = foodCards.reduce<Record<string, FoodCard[]>>((acc, card) => {
-    const category = card.category || "other";
+  const groupedFoodCards = filteredFoodCards.reduce<Record<string, FoodCard[]>>((acc, card) => {
+    const category = card.category || "etc.";
     if (!acc[category]) {
       acc[category] = [];
     }
@@ -47,8 +55,12 @@ const BitesPage = () => {
       .join(" ");
   };
 
-  // Sort categories alphabetically
-  const sortedCategories = Object.keys(groupedFoodCards).sort();
+  // Sort categories alphabetically, but ensure "etc." is last
+  const sortedCategories = Object.keys(groupedFoodCards).sort((a, b) => {
+    if (a.toLowerCase() === "etc.") return 1;
+    if (b.toLowerCase() === "etc.") return -1;
+    return a.localeCompare(b);
+  });
   
   // Color mapping for categories
   const categoryColors: Record<string, string> = {
@@ -61,7 +73,8 @@ const BitesPage = () => {
     "bars": "bg-[#FFCCA1] text-gray-800", // Soft orange
     "food trucks": "bg-[#D8E4C8] text-gray-800", // Soft green
     "restaurant": "bg-[#F5F1E6] text-gray-800", // Manila
-    "other": "bg-[#F1F0FB] text-gray-800", // Soft gray
+    "large event space": "bg-[#E5DEFF] text-gray-800", // Soft purple
+    "etc.": "bg-[#F1F0FB] text-gray-800", // Soft gray
   };
 
   // Get default color if category not in mapping
@@ -83,15 +96,28 @@ const BitesPage = () => {
         </Button>
       </div>
 
-      {foodCards.length === 0 ? (
+      {/* Add search component */}
+      <CatalogSearch 
+        items={foodCards} 
+        onFilteredItemsChange={handleFilteredItemsChange}
+        type="food"
+      />
+
+      {filteredFoodCards.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-lg text-catalog-softBrown mb-4">Your food catalog is empty.</p>
-          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-            <Link to="/create/food">
-              <PlusCircle size={18} className="mr-2" />
-              Add Your First Food Experience
-            </Link>
-          </Button>
+          <p className="text-lg text-catalog-softBrown mb-4">
+            {foodCards.length === 0 
+              ? "Your food catalog is empty." 
+              : "No results match your search criteria."}
+          </p>
+          {foodCards.length === 0 && (
+            <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+              <Link to="/create/food">
+                <PlusCircle size={18} className="mr-2" />
+                Add Your First Food Experience
+              </Link>
+            </Button>
+          )}
         </div>
       ) : (
         <Tabs defaultValue={sortedCategories[0]}>
