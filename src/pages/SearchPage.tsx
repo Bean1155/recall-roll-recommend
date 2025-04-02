@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Input } from "@/components/ui/input";
@@ -54,7 +53,6 @@ const SearchPage = () => {
         card.notes.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (card.type === 'food' && (card as FoodCard).cuisine.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (card.type === 'entertainment' && (card as EntertainmentCard).genre.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        // Add status to search criteria
         (card.type === 'food' && (card as FoodCard).status.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (card.type === 'entertainment' && (card as EntertainmentCard).status.toLowerCase().includes(searchTerm.toLowerCase()))
       );
@@ -88,8 +86,6 @@ const SearchPage = () => {
           return false;
         });
       } else if (searchTerm) {
-        // If on status tab and no status is selected, but there's a search term,
-        // filter by status containing the search term
         results = results.filter(card => {
           if (card.type === 'food') {
             return (card as FoodCard).status.toLowerCase().includes(searchTerm.toLowerCase());
@@ -312,10 +308,7 @@ const SearchPage = () => {
               {filteredCards.map(card => (
                 <Envelope 
                   key={card.id} 
-                  label={card.type === 'food' 
-                    ? (card as FoodCard).cuisine 
-                    : (card as EntertainmentCard).medium
-                  }
+                  label={card.title}
                 >
                   <CatalogCard card={card} />
                 </Envelope>
