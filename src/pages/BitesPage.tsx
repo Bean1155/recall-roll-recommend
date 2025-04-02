@@ -30,6 +30,12 @@ const allCategories: FoodCategory[] = [
   "bakery", "bar", "food truck", "event space", "restaurant", "other"
 ];
 
+const sortedCategories = [...allCategories]
+  .filter(category => category !== "other")
+  .sort((a, b) => a.localeCompare(b));
+
+sortedCategories.push("other");
+
 const categoryColors: Record<FoodCategory, string> = {
   "cafe": "#f5c4d3",
   "diner": "#e0c5c1",
@@ -192,8 +198,8 @@ const BitesPage = () => {
         </div>
       ) : (
         <div className="space-y-6">
-          <Accordion type="multiple" defaultValue={[allCategories[0]]} className="w-full">
-            {allCategories.map((category) => {
+          <Accordion type="multiple" defaultValue={[sortedCategories[0]]} className="w-full">
+            {sortedCategories.map((category) => {
               const categoryColor = categoryColors[category] || "#d2b48c";
               const textColor = getTextColor(categoryColor);
               const hasCards = cardsByCategory[category].length > 0;

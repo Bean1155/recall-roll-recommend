@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -533,12 +534,16 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                   <h4 className="text-lg font-medium text-vintage-red mb-3 font-typewriter">SEARCH PREVIEW</h4>
                   <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2">
                     {searchResults.slice(0, 3).map((item) => (
-                      <Card key={item.id} className="bg-catalog-cream hover:bg-vintage-tan cursor-pointer border border-catalog-softBrown/40">
-                        <CardContent className="p-3" onClick={() => {
+                      <Card 
+                        key={item.id} 
+                        className="bg-catalog-cream hover:bg-vintage-tan cursor-pointer border border-catalog-softBrown/40 transition-colors duration-150"
+                        onClick={() => {
                           setIsSearchOpen(false);
                           const path = type === 'food' ? '/bites' : '/blockbusters';
                           navigate(`${path}?highlight=${item.id}`);
-                        }}>
+                        }}
+                      >
+                        <CardContent className="p-3">
                           <div className="flex items-center gap-2">
                             <div className="flex-1">
                               <h5 className="font-medium font-typewriter">{item.title}</h5>
