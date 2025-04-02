@@ -14,7 +14,8 @@ import {
   MapPin, 
   TrendingUp,
   Clock,
-  Search
+  Search,
+  Calendar
 } from "lucide-react";
 import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
@@ -47,7 +48,8 @@ const SearchPage = () => {
     location: "Filter items by their location",
     byStatus: "Filter by status (visited, interested, etc.)",
     keywords: "Search by specific keywords or tags",
-    topReferrals: "Show items most recommended by friends"
+    topReferrals: "Show items most recommended by friends",
+    newest: "Show the most recently added items"
   };
 
   useEffect(() => {
@@ -186,6 +188,23 @@ const SearchPage = () => {
                   </TooltipTrigger>
                   <TooltipContent className="bg-white text-catalog-softBrown">
                     {filterDescriptions.topRated}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger 
+                      value="newest" 
+                      className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                    >
+                      <Calendar size={14} className="text-green-600" /> 
+                      {!isMobile && <span>Newest</span>}
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-white text-catalog-softBrown">
+                    {filterDescriptions.newest}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -345,6 +364,7 @@ const SearchPage = () => {
               {activeFilter === "byStatus" && "By Status"}
               {activeFilter === "keywords" && "By Keywords"}
               {activeFilter === "topReferrals" && "Most Recommended Items"}
+              {activeFilter === "newest" && "Most Recent Items"}
             </div>
           )}
 
@@ -356,6 +376,9 @@ const SearchPage = () => {
           </TabsContent>
           <TabsContent value="topRated" className="mt-0">
             {!isMobile && <h2 className="text-xl font-bold mb-4">Top Rated Items (4-5 Stars)</h2>}
+          </TabsContent>
+          <TabsContent value="newest" className="mt-0">
+            {!isMobile && <h2 className="text-xl font-bold mb-4">Most Recent Items</h2>}
           </TabsContent>
           <TabsContent value="location" className="mt-0">
             {!isMobile && <h2 className="text-xl font-bold mb-4">Browse by Location</h2>}

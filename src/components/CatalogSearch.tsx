@@ -9,7 +9,8 @@ import {
   MapPin,
   TrendingUp,
   Clock,
-  ChevronDown
+  ChevronDown,
+  Calendar
 } from "lucide-react";
 import { 
   Select,
@@ -81,7 +82,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
     location: "Filter items by their location",
     byStatus: "Filter by status (visited, interested, etc.)",
     keywords: "Search by specific keywords or tags",
-    topReferrals: "Show items most recommended by friends"
+    topReferrals: "Show items most recommended by friends",
+    newest: "Show the most recently added items"
   };
 
   const executeSearch = () => {
@@ -352,7 +354,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                   <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
                     <Tabs defaultValue="all" className="w-full mt-2" onValueChange={handleTabChange}>
                       <TabsList className="w-full bg-[#FAEBD7] p-1 rounded-md h-14 border border-[#8B7D6B]/20 relative z-20">
-                        <div className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-7'} w-full`}>
+                        <div className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-8'} w-full`}>
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
@@ -441,6 +443,23 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <TabsTrigger 
+                                  value="newest" 
+                                  className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
+                                >
+                                  <Calendar size={14} className="text-green-600" /> 
+                                  {!isMobile && <span>Newest</span>}
+                                </TabsTrigger>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-white text-catalog-softBrown">
+                                {filterDescriptions.newest}
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <TabsTrigger 
                                   value="keywords" 
                                   className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
@@ -487,6 +506,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                   {activeFilter === "byStatus" && "By Status"}
                   {activeFilter === "keywords" && "By Keywords"}
                   {activeFilter === "topReferrals" && "Most Recommended Items"}
+                  {activeFilter === "newest" && "Most Recent Items"}
                 </span>
               </div>
 
