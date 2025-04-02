@@ -29,6 +29,7 @@ import {
   DialogPortal,
   DialogTitle,
   DialogDescription,
+  DialogOverlay
 } from "@/components/ui/dialog";
 import { 
   Sheet,
