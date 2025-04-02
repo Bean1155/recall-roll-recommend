@@ -1,3 +1,4 @@
+
 import { CatalogCard, FoodCard, EntertainmentCard, FoodStatus, RecommendationBadge } from './types';
 import { appUsers } from '@/contexts/UserContext';
 
@@ -158,14 +159,24 @@ export const isRecommendedToUser = (cardId: string, userId: string): boolean => 
   return recommendedUsers.includes(userId);
 };
 
-// Add a new function to add user notes to a card
+// Updated function to add user notes to a card 
 export const addUserNotesToCard = (
   cardId: string, 
   userId: string, 
   notes: string, 
   allowNoteUpdates: boolean = false
 ): boolean => {
-  if (!allowNoteUpdates) return false;
+  // Check users' sharing settings from local storage
+  const sharingSettingsJson = localStorage.getItem('catalogSharingSettings');
+  let autoReceiveNotes = true; // Default to true if settings not found
+  
+  if (sharingSettingsJson) {
+    const sharingSettings = JSON.parse(sharingSettingsJson);
+    autoReceiveNotes = sharingSettings.autoReceiveNotes;
+  }
+  
+  // If manual note updates aren't allowed and auto-receive is disabled, return false
+  if (!allowNoteUpdates && !autoReceiveNotes) return false;
   
   const cards = getAllCards();
   const cardIndex = cards.findIndex(c => c.id === cardId);

@@ -2,7 +2,7 @@
 import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Edit, Send, Star } from "lucide-react";
+import { Edit, Send, Star, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CatalogCardProps {
@@ -14,6 +14,7 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
   const isFoodCard = card.type === 'food';
   const foodCard = card as FoodCard;
   const entertainmentCard = card as EntertainmentCard;
+  const hasUserNotes = card.userNotes && card.userNotes.length > 0;
 
   return (
     <div 
@@ -64,6 +65,28 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
       <div className="mb-4 bg-white bg-opacity-50 p-2 rounded border border-catalog-softBrown">
         <p className="text-sm italic whitespace-pre-line">{card.notes}</p>
       </div>
+      
+      {hasUserNotes && (
+        <div className="mb-4 p-2 bg-blue-50 rounded border border-blue-200">
+          <div className="flex items-center gap-1 mb-2">
+            <MessageSquare size={14} className="text-blue-600" />
+            <h4 className="text-sm font-medium text-blue-800">User Notes</h4>
+          </div>
+          <div className="space-y-2">
+            {card.userNotes?.map((note, index) => (
+              <div key={index} className="p-2 bg-white rounded text-xs">
+                <div className="font-medium text-blue-700">
+                  {note.userId}
+                </div>
+                <p className="whitespace-pre-line mt-1">{note.notes}</p>
+                <div className="text-gray-500 text-[10px] mt-1">
+                  {new Date(note.date).toLocaleString()}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       
       {(isFoodCard && foodCard.tags && foodCard.tags.length > 0) || 
        (!isFoodCard && entertainmentCard.tags && entertainmentCard.tags.length > 0) ? (

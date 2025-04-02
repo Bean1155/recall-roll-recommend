@@ -7,7 +7,7 @@ import { useUser } from "@/contexts/UserContext";
 
 export const SharingSettings = () => {
   const { sharingSettings, updateSharingSettings } = useUser();
-  const { publicProfile, shareCards, defaultPermission, allowNoteUpdates } = sharingSettings;
+  const { publicProfile, shareCards, defaultPermission, allowNoteUpdates, autoReceiveNotes } = sharingSettings;
   
   const handleSwitchChange = (field: string) => (checked: boolean) => {
     updateSharingSettings({ [field]: checked });
@@ -70,6 +70,22 @@ export const SharingSettings = () => {
               id="allow-note-updates"
               checked={allowNoteUpdates}
               onCheckedChange={handleSwitchChange('allowNoteUpdates')}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between py-2 border-t border-gray-100">
+            <div className="space-y-0.5">
+              <Label htmlFor="auto-receive-notes" className="text-sm font-medium">
+                Auto-Receive Recommendation Notes
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Automatically add notes from recommendations to your cards in real-time
+              </p>
+            </div>
+            <Switch
+              id="auto-receive-notes"
+              checked={autoReceiveNotes}
+              onCheckedChange={handleSwitchChange('autoReceiveNotes')}
             />
           </div>
         </div>

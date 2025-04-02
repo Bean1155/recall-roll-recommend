@@ -9,6 +9,7 @@ export interface UserNote {
   userId: string;
   notes: string;
   date: string;
+  userName?: string; // Add userName field to display in notes
 }
 
 export interface CatalogCard {

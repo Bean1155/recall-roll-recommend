@@ -63,17 +63,21 @@ const RecommendPage = () => {
       return;
     }
     
+    // Check if user wants to manually add notes or if auto-receive is enabled
+    const autoAdd = sharingSettings.autoReceiveNotes;
     const success = addUserNotesToCard(
       card.id, 
       selectedUserId, 
       userNotes.trim(), 
-      addNotesToOriginal && sharingSettings.allowNoteUpdates
+      addNotesToOriginal || autoAdd
     );
     
     if (success) {
       toast({
         title: "Notes Added",
-        description: "Your notes have been added to the original card",
+        description: autoAdd 
+          ? "Notes were automatically added to the original card based on recipient's settings" 
+          : "Your notes have been added to the original card",
       });
       
       // Refresh the card data
@@ -154,6 +158,13 @@ const RecommendPage = () => {
                       Add these notes to the original card
                     </Label>
                   </div>
+                  
+                  {sharingSettings.autoReceiveNotes && (
+                    <div className="bg-blue-50 p-3 rounded-md border border-blue-200 text-sm text-blue-800">
+                      Note: Recipients have enabled auto-note reception, so your notes will be 
+                      automatically added to their card when you share it.
+                    </div>
+                  )}
                   
                   <Button 
                     onClick={handleAddNotes}
