@@ -274,32 +274,32 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
           <DialogContent 
             className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 md:w-3/5 lg:w-2/5 max-w-md p-0 border-2 border-[#8B7D6B] shadow-lg rounded-2xl overflow-hidden"
             style={{
-              backgroundColor: "#F9F5E7",
-              backgroundImage: "linear-gradient(rgba(139, 125, 107, 0.1) 1px, transparent 1px)",
+              backgroundColor: "#FAEBD7",
+              backgroundImage: "linear-gradient(rgba(139, 125, 107, 0.05) 1px, transparent 1px)",
               backgroundSize: "100% 28px",
               boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
               maxHeight: "80vh",
               position: "relative"
             }}
           >
-            <div className="bg-[#8B7D6B] w-full py-3 px-4 flex flex-col items-center justify-center">
-              <div className="text-[#F9F5E7] font-serif text-lg font-bold tracking-wide">
+            <div className="bg-vintage-wood w-full py-3 px-4 flex flex-col items-center justify-center">
+              <div className="text-white font-serif text-xl font-bold tracking-wide">
                 CATALOG CARD
               </div>
-              <div className="text-[#F9F5E7] font-serif text-sm">
+              <div className="text-white/90 font-serif text-sm">
                 {type === 'food' ? 'BITES' : 'BLOCKBUSTERS'}
               </div>
             </div>
             
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{
-              background: "linear-gradient(90deg, rgba(139,125,107,0.05) 0%, rgba(139,125,107,0) 20%, rgba(139,125,107,0) 80%, rgba(139,125,107,0.05) 100%)",
+              background: "linear-gradient(90deg, rgba(139,125,107,0.03) 0%, rgba(139,125,107,0) 20%, rgba(139,125,107,0) 80%, rgba(139,125,107,0.03) 100%)",
               zIndex: 1
             }}></div>
             
             <div className="p-4 overflow-y-auto relative z-10" style={{ maxHeight: "calc(80vh - 80px)" }}>
               <div className="mb-4">
-                <label htmlFor="search-input" className="block text-xl font-medium text-[#5d4037] mb-1 font-handwritten">
-                  Search Terms
+                <label htmlFor="search-input" className="block text-xl font-medium text-vintage-red mb-1 font-typewriter">
+                  SEARCH TERMS
                 </label>
                 <div className="relative">
                   <Input
@@ -309,7 +309,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="w-full border-[#8B7D6B] pl-10 bg-[#F9F5E7] focus:ring-[#8B7D6B] focus:border-[#8B7D6B]"
+                    className="w-full border-[#8B7D6B] pl-10 bg-[#FAEBD7] focus:ring-[#8B7D6B] focus:border-[#8B7D6B]"
                     autoFocus
                   />
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8B7D6B]" size={16} />
@@ -333,8 +333,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                   className="w-full"
                 >
                   <div className="flex items-center justify-between">
-                    <h4 className="text-lg font-medium text-[#5d4037] font-handwritten">
-                      Quick Filters
+                    <h4 className="text-lg font-medium text-vintage-red font-typewriter">
+                      QUICK FILTERS
                     </h4>
                     <CollapsibleTrigger asChild>
                       <Button variant="ghost" size="sm" className="p-0 h-7 w-7 ml-2">
@@ -348,7 +348,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                   
                   <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
                     <Tabs defaultValue="all" className="w-full mt-2" onValueChange={handleTabChange}>
-                      <TabsList className="w-full bg-[#F9F5E7] p-1 rounded-md h-14 border border-[#8B7D6B]/20 relative z-20">
+                      <TabsList className="w-full bg-[#FAEBD7] p-1 rounded-md h-14 border border-[#8B7D6B]/20 relative z-20">
                         <div className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-7'} w-full`}>
                           <TooltipProvider>
                             <Tooltip>
@@ -474,9 +474,9 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 </Collapsible>
               </div>
 
-              <div className="bg-[#F9F5E7] border border-[#8B7D6B]/20 p-3 rounded-md mb-4 text-sm">
-                <span className="font-medium text-[#5d4037] font-handwritten text-lg">Current Filter: </span>
-                <span className="text-[#5d4037] font-handwritten text-lg">
+              <div className="bg-[#FAEBD7] border border-[#8B7D6B]/20 p-3 rounded-md mb-4 text-sm">
+                <span className="font-medium text-vintage-red font-typewriter text-lg">CURRENT FILTER: </span>
+                <span className="text-[#5d4037] font-typewriter text-lg">
                   {activeFilter === "all" && "All Items"}
                   {activeFilter === "favorites" && "Favorites"}
                   {activeFilter === "topRated" && "Top Rated Items (4-5 Stars)"}
@@ -487,7 +487,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 </span>
               </div>
 
-              <div className="flex items-center text-lg text-[#5d4037] border-t border-[#8B7D6B]/20 pt-3 mt-2 font-handwritten">
+              <div className="flex items-center text-lg text-[#5d4037] border-t border-[#8B7D6B]/20 pt-3 mt-2 font-typewriter">
                 <span>
                   {searchTerm && `Searching for "${searchTerm}"`}
                   {selectedStatus !== "all" && (searchTerm ? " with " : "") + `status "${selectedStatus}"`}
@@ -499,15 +499,15 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
               <div className="mt-3 flex justify-center">
                 <Button 
                   onClick={executeSearch}
-                  className="bg-[#8B7D6B] hover:bg-[#6B5D4B] px-8 rounded-full font-typewriter text-[#F9F5E7]"
+                  className="bg-vintage-wood hover:bg-[#6B5D4B] px-8 rounded-full font-typewriter text-white"
                 >
-                  Search Catalog
+                  SEARCH CATALOG
                 </Button>
               </div>
 
               {searchResults.length > 0 && searchTerm && (
                 <div className="mt-6 border-t border-[#8B7D6B]/40 pt-4">
-                  <h4 className="text-sm font-medium text-[#5d4037] mb-3 font-typewriter">Search Preview (top 3 results)</h4>
+                  <h4 className="text-lg font-medium text-vintage-red mb-3 font-typewriter">SEARCH PREVIEW</h4>
                   <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2">
                     {searchResults.slice(0, 3).map((item) => (
                       <Card key={item.id} className="bg-catalog-cream hover:bg-vintage-tan cursor-pointer border border-catalog-softBrown/40">
