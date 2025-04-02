@@ -138,7 +138,7 @@ const SearchPage = () => {
         </div>
 
         <Tabs defaultValue="all" className="mb-6" onValueChange={handleTabChange}>
-          <TabsList className="w-full bg-gray-100 p-1 rounded-md mb-4">
+          <TabsList className="w-full bg-gray-100 p-1 rounded-md mb-4 h-14">
             <div className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-8'} w-full`}>
               <TooltipProvider>
                 <Tooltip>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,11 +26,17 @@ import {
   Dialog,
   DialogContent,
   DialogClose,
-  DialogOverlay,
   DialogPortal,
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { 
+  Sheet,
+  SheetContent,
+  SheetClose,
+  SheetPortal,
+  SheetOverlay
+} from "@/components/ui/sheet";
 import { 
   Tooltip,
   TooltipContent,
@@ -237,12 +244,15 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
       <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
         <DialogPortal>
           <DialogOverlay className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" />
-          <DialogContent className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 md:w-4/5 lg:w-3/5 max-w-5xl p-0 border border-[#D3E4FD] bg-white shadow-lg rounded-md">
-            <DialogTitle className="sr-only">Search Options</DialogTitle>
-            <DialogDescription className="sr-only">
-              Search for items in your catalog
-            </DialogDescription>
-            
+          <DialogContent className="fixed z-50 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-11/12 md:w-3/5 lg:w-2/5 max-w-md p-0 border border-[#D3E4FD] bg-white shadow-lg rounded-xl overflow-hidden"
+            style={{
+              backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+              backgroundSize: "20px 20px, 20px 20px",
+              backgroundPosition: "0 0, 0 0",
+              backgroundColor: "#f9f9f5",
+              backgroundAttachment: "local"
+            }}
+          >
             <div className="bg-[#F1F1F1] p-3 flex justify-between items-center border-b border-[#D3E4FD]">
               <h3 className="text-catalog-teal font-medium">Search Options</h3>
               <DialogClose className="text-gray-500 hover:text-gray-700 focus:outline-none">
@@ -250,14 +260,14 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
               </DialogClose>
             </div>
             
-            <div className="p-5">
+            <div className="p-4">
               <div className="mb-4">
                 <label htmlFor="search-input" className="block text-sm font-medium text-catalog-softBrown mb-1">Search Terms</label>
                 <div className="relative">
                   <Input
                     id="search-input"
                     type="text"
-                    placeholder="Search by title, creator, description..."
+                    placeholder="Refine search by Title, Creator, Description..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyDown={handleKeyDown}
@@ -281,7 +291,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
               <div className="mb-4 mt-6 border-t border-[#D3E4FD] pt-4">
                 <h4 className="text-sm font-medium text-gray-700 mb-3">Quick Filters</h4>
                 <Tabs defaultValue="all" className="w-full" onValueChange={handleTabChange}>
-                  <TabsList className="w-full bg-gray-100 p-1 rounded-md">
+                  <TabsList className="w-full bg-gray-100 p-1 rounded-md h-14">
                     <div className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-7'} w-full`}>
                       <TooltipProvider>
                         <Tooltip>
