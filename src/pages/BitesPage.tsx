@@ -58,10 +58,25 @@ const extraColors = [
 ];
 
 const getCategoryDisplayName = (category: string): string => {
-  return category
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+  const customDisplayNames: Record<string, string> = {
+    "cafe": "Cafés",
+    "diner": "Diners",
+    "specialty food": "Specialty Foods",
+    "fine dining": "Fine Dining",
+    "take out": "Take-Out",
+    "bakery": "Bakeries",
+    "bar": "Bars",
+    "food truck": "Food Trucks",
+    "event space": "Event Spaces",
+    "restaurant": "Restaurants",
+    "other": "Other Places"
+  };
+
+  return customDisplayNames[category] || 
+    category
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
 };
 
 const getTextColor = (backgroundColor: string): string => {
