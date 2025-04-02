@@ -55,7 +55,9 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
     if (selectedStatus !== "all") {
       filteredItems = filteredItems.filter(item => {
         if (type === 'food') {
-          return (item as FoodCard).status === selectedStatus;
+          // Match on the simplified status (first word before colon)
+          const itemStatus = (item as FoodCard).status;
+          return itemStatus.startsWith(selectedStatus);
         } else {
           return (item as EntertainmentCard).status === selectedStatus;
         }
@@ -79,11 +81,17 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
       return ["Watched", "Want to Watch", "Currently Watching"];
     }
     
+    if (type === 'food') {
+      return ["Visited", "Interested"];
+    }
+    
     const statusSet = new Set<string>();
     
     items.forEach(item => {
       if (type === 'food') {
-        statusSet.add((item as FoodCard).status);
+        const status = (item as FoodCard).status;
+        const simplifiedStatus = status.split(':')[0];
+        statusSet.add(simplifiedStatus);
       } else if (type === 'entertainment') {
         statusSet.add((item as EntertainmentCard).status);
       }

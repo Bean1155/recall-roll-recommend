@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Input } from "@/components/ui/input";
@@ -128,16 +127,21 @@ const SearchPage = () => {
     const searchParams = new URLSearchParams(location.search);
     const typeParam = searchParams.get('type');
     
-    // Return predefined entertainment statuses if we're viewing entertainment items
     if (typeParam === 'entertainment') {
       return ["Watched", "Want to Watch", "Currently Watching"];
+    }
+    
+    if (typeParam === 'food') {
+      return ["Visited", "Interested"];
     }
     
     const statusSet = new Set<string>();
     
     allCards.forEach(card => {
       if (card.type === 'food') {
-        statusSet.add((card as FoodCard).status);
+        const status = (card as FoodCard).status;
+        const simplifiedStatus = status.split(':')[0];
+        statusSet.add(simplifiedStatus);
       } else if (card.type === 'entertainment') {
         statusSet.add((card as EntertainmentCard).status);
       }
