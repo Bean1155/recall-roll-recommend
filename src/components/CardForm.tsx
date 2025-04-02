@@ -249,10 +249,10 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                   <SelectItem value="fine dining">Fine Dining</SelectItem>
                   <SelectItem value="food trucks">Food Trucks</SelectItem>
                   <SelectItem value="large event space">Large Event Space</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
                   <SelectItem value="restaurant">Restaurant</SelectItem>
                   <SelectItem value="specialty foods">Specialty Foods</SelectItem>
                   <SelectItem value="take out">Take Out</SelectItem>
+                  <SelectItem value="etc.">Etc.</SelectItem>
                 </SelectContent>
               </Select>
             </div>
