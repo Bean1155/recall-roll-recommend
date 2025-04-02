@@ -43,7 +43,7 @@ const mockCards: CatalogCard[] = [
     notes: 'The most authentic tacos I\'ve had outside of Mexico.',
     cuisine: 'Mexican',
     location: 'East Side',
-    category: 'food trucks',
+    category: 'food truck',
     status: 'Visited: Tried this bite' as FoodStatus,
     visitCount: 3,
     tags: ['tacos', 'spicy', 'mexican'],

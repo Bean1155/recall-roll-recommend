@@ -26,22 +26,22 @@ import { useToast } from "@/components/ui/use-toast";
 import CatalogSearch from "@/components/CatalogSearch";
 
 const allCategories: FoodCategory[] = [
-  "cafe", "diner", "specialty foods", "fine dining", "take out", 
-  "bakeries", "bars", "food trucks", "large event space", "restaurant", "etc."
+  "cafe", "diner", "specialty food", "fine dining", "take out", 
+  "bakery", "bar", "food truck", "event space", "restaurant", "other"
 ];
 
 const categoryColors: Record<FoodCategory, string> = {
   "cafe": "#f5c4d3",
   "diner": "#e0c5c1",
-  "specialty foods": "#ddb892",
+  "specialty food": "#ddb892",
   "fine dining": "#e9b44c",
   "take out": "#c1cc99",
-  "bakeries": "#9de0d0",
-  "bars": "#a5b1c2",
-  "food trucks": "#a64b2a",
-  "large event space": "#ff6b45",
+  "bakery": "#9de0d0",
+  "bar": "#a5b1c2",
+  "food truck": "#a64b2a",
+  "event space": "#ff6b45",
   "restaurant": "#e18336",
-  "etc.": "#da7f5d",
+  "other": "#da7f5d",
 };
 
 const extraColors = [
