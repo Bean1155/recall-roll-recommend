@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { FoodCard } from "@/lib/types";
 import { getCardsByType } from "@/lib/data";
 import { useUser } from "@/contexts/UserContext";
-import { PlusCircle, Search } from "lucide-react";
+import { PlusCircle, Search, Archive } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
 import {
   Carousel,
@@ -83,6 +83,15 @@ const BitesPage = () => {
           </Carousel>
         </div>
       )}
+      
+      <div className="mt-8 text-center">
+        <Link to="/drawer-catalog">
+          <Button variant="outline" className="border-[#d4a76a] text-[#5c4a2a] hover:bg-[#f0e0c0]">
+            <Archive size={18} className="mr-2" />
+            Try Drawer View
+          </Button>
+        </Link>
+      </div>
     </GridLayout>
   );
 };
