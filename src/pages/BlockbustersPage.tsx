@@ -111,7 +111,7 @@ const BlockbustersPage = () => {
                     {groupedEntertainmentCards[category].map((card) => (
                       <CarouselItem key={card.id} className={isMobile ? "basis-full" : "md:basis-1/2 lg:basis-1/3"}>
                         <div className="p-1">
-                          <Envelope label={card.medium}>
+                          <Envelope label={card.title}>
                             <CatalogCard card={card} />
                           </Envelope>
                         </div>
