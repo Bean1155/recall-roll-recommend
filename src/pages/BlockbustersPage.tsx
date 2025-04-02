@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
@@ -22,6 +23,7 @@ import {
   AccordionItem, 
   AccordionTrigger 
 } from "@/components/ui/accordion";
+import CatalogSearch from "@/components/CatalogSearch";
 
 // Define all entertainment categories
 const allCategories = [
@@ -67,12 +69,14 @@ const getTextColor = (backgroundColor: string): string => {
 
 const BlockbustersPage = () => {
   const [entertainmentCards, setEntertainmentCards] = useState<EntertainmentCard[]>([]);
+  const [filteredCards, setFilteredCards] = useState<EntertainmentCard[]>([]);
   const { userName } = useUser();
   const isMobile = useIsMobile();
   
   useEffect(() => {
     const cards = getCardsByType('entertainment') as EntertainmentCard[];
     setEntertainmentCards(cards);
+    setFilteredCards(cards);
   }, []);
   
   // Group cards by category
@@ -84,7 +88,7 @@ const BlockbustersPage = () => {
   });
   
   // Then populate with actual cards
-  entertainmentCards.forEach(card => {
+  filteredCards.forEach(card => {
     const category = card.entertainmentCategory?.toLowerCase() || 'etc.';
     if (cardsByCategory[category]) {
       cardsByCategory[category].push(card);
@@ -94,6 +98,10 @@ const BlockbustersPage = () => {
     }
   });
 
+  const handleFilteredItemsChange = (items: EntertainmentCard[]) => {
+    setFilteredCards(items);
+  };
+
   return (
     <GridLayout>
       <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mb-8 gap-4">
@@ -101,6 +109,13 @@ const BlockbustersPage = () => {
           From the Library of <span className="font-typewriter font-bold text-black">{userName}</span>
         </h1>
         <div className="flex flex-wrap gap-2">
+          <div className="mr-2">
+            <CatalogSearch 
+              items={entertainmentCards} 
+              onFilteredItemsChange={handleFilteredItemsChange}
+              type="entertainment"
+            />
+          </div>
           <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
             <Link to="/search?type=entertainment">
               <Search size={18} className="mr-2" />
@@ -214,3 +229,4 @@ const BlockbustersPage = () => {
 };
 
 export default BlockbustersPage;
+
