@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Envelope from "@/components/Envelope";
-import { Utensils, Clapperboard, PlusCircle, Search, Archive } from "lucide-react";
+import { Utensils, Clapperboard, PlusCircle, Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { getCardsByType } from "@/lib/data";
@@ -135,16 +135,6 @@ const Index = () => {
             </div>
           </Envelope>
         </div>
-      </div>
-      
-      {/* New drawer catalog link */}
-      <div className="text-center mt-10">
-        <Link to="/drawer-catalog">
-          <Button className="bg-[#d4a76a] hover:bg-[#c39a60] text-[#5c4a2a] border border-[#b38c50]">
-            <Archive className="mr-2" />
-            Try Drawer Catalog View
-          </Button>
-        </Link>
       </div>
       
       <div className="mt-16 max-w-2xl mx-auto text-center">
