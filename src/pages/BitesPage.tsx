@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { FoodCard } from "@/lib/types";
 import { getCardsByType } from "@/lib/data";
 import { useUser } from "@/contexts/UserContext";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Search } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
 import {
   Carousel,
@@ -18,27 +18,19 @@ import {
 } from "@/components/ui/carousel";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import CatalogSearch from "@/components/CatalogSearch";
 
 const BitesPage = () => {
   const [foodCards, setFoodCards] = useState<FoodCard[]>([]);
-  const [filteredFoodCards, setFilteredFoodCards] = useState<FoodCard[]>([]);
   const { userName } = useUser();
   const isMobile = useIsMobile();
   
   useEffect(() => {
     const cards = getCardsByType("food") as FoodCard[];
     setFoodCards(cards);
-    setFilteredFoodCards(cards);
   }, []);
 
-  // Handle filtered items from search
-  const handleFilteredItemsChange = (filteredItems: FoodCard[]) => {
-    setFilteredFoodCards(filteredItems as FoodCard[]);
-  };
-
   // Group food cards by category
-  const groupedFoodCards = filteredFoodCards.reduce<Record<string, FoodCard[]>>((acc, card) => {
+  const groupedFoodCards = foodCards.reduce<Record<string, FoodCard[]>>((acc, card) => {
     const category = card.category || "etc.";
     if (!acc[category]) {
       acc[category] = [];
@@ -88,36 +80,33 @@ const BitesPage = () => {
         <h1 className="catalog-title text-3xl">
           From the Library of <span className="font-typewriter font-bold text-black">{userName}</span>
         </h1>
-        <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-          <Link to="/create/food">
-            <PlusCircle size={18} className="mr-2" />
-            Add New Bite
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+            <Link to="/search?type=food">
+              <Search size={18} className="mr-2" />
+              Browse Bites
+            </Link>
+          </Button>
+          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+            <Link to="/create/food">
+              <PlusCircle size={18} className="mr-2" />
+              Add New Bite
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      {/* Add search component */}
-      <CatalogSearch 
-        items={foodCards} 
-        onFilteredItemsChange={handleFilteredItemsChange}
-        type="food"
-      />
-
-      {filteredFoodCards.length === 0 ? (
+      {foodCards.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-lg text-catalog-softBrown mb-4">
-            {foodCards.length === 0 
-              ? "Your food catalog is empty." 
-              : "No results match your search criteria."}
+            Your food catalog is empty.
           </p>
-          {foodCards.length === 0 && (
-            <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-              <Link to="/create/food">
-                <PlusCircle size={18} className="mr-2" />
-                Add Your First Food Experience
-              </Link>
-            </Button>
-          )}
+          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+            <Link to="/create/food">
+              <PlusCircle size={18} className="mr-2" />
+              Add Your First Food Experience
+            </Link>
+          </Button>
         </div>
       ) : (
         <Tabs defaultValue={sortedCategories[0]}>

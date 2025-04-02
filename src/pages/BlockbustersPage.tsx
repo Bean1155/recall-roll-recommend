@@ -80,23 +80,20 @@ const BlockbustersPage = () => {
     <GridLayout>
       <div className="flex justify-between items-center mb-8">
         <h1 className="catalog-title text-3xl">From the Library of {userName}</h1>
-        <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-          <Link to="/create/entertainment">
-            <PlusCircle size={18} className="mr-2" />
-            Add New Blockbuster
-          </Link>
-        </Button>
-      </div>
-      
-      {/* Search redirect bar */}
-      <div className="mb-6 bg-white border border-catalog-softBrown rounded-md p-4 shadow-sm flex justify-between items-center">
-        <p className="text-catalog-softBrown">Looking for something specific?</p>
-        <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-          <Link to="/search">
-            <Search size={18} className="mr-2" />
-            Browse Catalog
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+            <Link to="/search?type=entertainment">
+              <Search size={18} className="mr-2" />
+              Browse Blockbusters
+            </Link>
+          </Button>
+          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+            <Link to="/create/entertainment">
+              <PlusCircle size={18} className="mr-2" />
+              Add New Blockbuster
+            </Link>
+          </Button>
+        </div>
       </div>
       
       {entertainmentCards.length === 0 ? (

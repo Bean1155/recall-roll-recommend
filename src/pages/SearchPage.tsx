@@ -19,6 +19,7 @@ import { getAllCards } from "@/lib/data";
 import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLocation } from "react-router-dom";
 import { 
   Select,
   SelectContent,
@@ -36,12 +37,20 @@ const SearchPage = () => {
   const [filteredCards, setFilteredCards] = useState<CatalogCardType[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const isMobile = useIsMobile();
+  const location = useLocation();
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const typeParam = searchParams.get('type');
+    
     const cards = getAllCards();
-    setAllCards(cards);
-    setFilteredCards(cards);
-  }, []);
+    const initialCards = typeParam ? 
+      cards.filter(card => card.type === typeParam) : 
+      cards;
+    
+    setAllCards(initialCards);
+    setFilteredCards(initialCards);
+  }, [location.search]);
 
   useEffect(() => {
     let results = allCards;
@@ -147,8 +156,20 @@ const SearchPage = () => {
     }
   };
 
+  const getPageTitle = () => {
+    const searchParams = new URLSearchParams(location.search);
+    const typeParam = searchParams.get('type');
+    
+    if (typeParam === 'food') {
+      return "Browse Bites";
+    } else if (typeParam === 'entertainment') {
+      return "Browse Blockbusters";
+    }
+    return "Browse Catalog";
+  };
+
   return (
-    <GridLayout title="Browse Catalog">
+    <GridLayout title={getPageTitle()}>
       <div className="max-w-5xl mx-auto">
         <form 
           onSubmit={handleSearch} 
@@ -247,11 +268,11 @@ const SearchPage = () => {
             <div className="text-sm font-medium mb-2 text-catalog-teal">
               {activeFilter === "all" && "All Items"}
               {activeFilter === "favorites" && "Favorites"}
-              {activeFilter === "topRated" && "Top Rated"}
+              {activeFilter === "topRated" && "Top Rated Items (4-5 Stars)"}
               {activeFilter === "location" && "By Location"}
               {activeFilter === "byStatus" && "By Status"}
               {activeFilter === "keywords" && "By Keywords"}
-              {activeFilter === "topReferrals" && "Most Referred"}
+              {activeFilter === "topReferrals" && "Most Recommended Items"}
             </div>
           )}
 
