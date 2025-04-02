@@ -75,6 +75,10 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
   };
 
   const getStatusOptions = () => {
+    if (type === 'entertainment') {
+      return ["Watched", "Want to Watch", "Currently Watching"];
+    }
+    
     const statusSet = new Set<string>();
     
     items.forEach(item => {
