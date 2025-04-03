@@ -25,6 +25,7 @@ import {
   DialogFooter,
   DialogClose
 } from "@/components/ui/dialog";
+import { defaultCategories, getCategoryDisplayName } from "@/utils/categoryUtils";
 
 interface CardFormProps {
   type: CardType;
@@ -291,20 +292,15 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="bakery">Bakery</SelectItem>
-                  <SelectItem value="bar">Bar</SelectItem>
-                  <SelectItem value="cafe">Cafe</SelectItem>
-                  <SelectItem value="diner">Diner</SelectItem>
-                  <SelectItem value="fine dining">Fine Dining</SelectItem>
-                  <SelectItem value="food truck">Food Truck</SelectItem>
-                  <SelectItem value="restaurant">Restaurant</SelectItem>
-                  <SelectItem value="specialty">Specialty</SelectItem>
-                  <SelectItem value="take out">Take Out</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
+                  {defaultCategories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {getCategoryDisplayName(category)}
+                    </SelectItem>
+                  ))}
                   
                   {customCategories.map((category) => (
                     <SelectItem key={category} value={category}>
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
+                      {getCategoryDisplayName(category)}
                     </SelectItem>
                   ))}
                   

@@ -72,3 +72,19 @@ export const generateCategoryColors = (categories: FoodCategory[]): Record<strin
   
   return categoryColors;
 };
+
+// Load all categories including custom ones from localStorage
+export const getAllCategories = (): FoodCategory[] => {
+  const customCategories: FoodCategory[] = [];
+  try {
+    const savedCategories = localStorage.getItem('customFoodCategories');
+    if (savedCategories) {
+      const parsed = JSON.parse(savedCategories);
+      customCategories.push(...parsed);
+    }
+  } catch (e) {
+    console.error("Error loading custom categories:", e);
+  }
+  
+  return [...defaultCategories, ...customCategories];
+};

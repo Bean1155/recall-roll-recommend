@@ -2,6 +2,7 @@
 import { CatalogCollapsible } from "@/components/ui/collapsible";
 import { FoodCard, FoodCategory } from "@/lib/types";
 import CategoryCardsDisplay from "./CategoryCardsDisplay";
+import { useEffect, useState } from "react";
 
 interface CategoryDrawerProps {
   category: FoodCategory;
@@ -22,6 +23,14 @@ const CategoryDrawer = ({
   isOpen,
   onOpenChange,
 }: CategoryDrawerProps) => {
+  const [visibleCards, setVisibleCards] = useState<FoodCard[]>(cards);
+
+  // Filter cards that match the current category
+  useEffect(() => {
+    const filteredCards = cards.filter(card => card.category === category);
+    setVisibleCards(filteredCards);
+  }, [cards, category]);
+
   return (
     <div className="w-full">
       <CatalogCollapsible
@@ -33,7 +42,7 @@ const CategoryDrawer = ({
       >
         <CategoryCardsDisplay
           category={category}
-          cards={cards}
+          cards={visibleCards}
           categoryColor={backgroundColor}
           categoryDisplayName={categoryDisplayName}
           textColor={textColor}
