@@ -177,7 +177,7 @@ const BitesPage = () => {
         <h1 className="catalog-title text-3xl">
           From the Library of <span className="font-typewriter font-bold text-black">{userName}</span>
         </h1>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 w-full md:w-auto">
           <CatalogSearch 
             items={foodCards}
             onFilteredItemsChange={handleFilteredItemsChange}
@@ -212,8 +212,8 @@ const BitesPage = () => {
         </div>
       ) : (
         <div className="space-y-10">
-          <div className="flex justify-between items-center pb-4">
-            <h2 className="text-xl font-medium text-catalog-softBrown">Categories</h2>
+          <div className="flex justify-center items-center pb-4">
+            <h2 className="text-xl font-medium text-[#1EAEDB] font-typewriter">Categories</h2>
           </div>
           
           {categoryPairs.map((pair, pairIndex) => (
