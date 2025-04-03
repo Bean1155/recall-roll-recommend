@@ -1,8 +1,6 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
-import { Button } from "@/components/ui/button";
 import { 
   Utensils, 
   Film, 
@@ -22,11 +20,9 @@ const Index = () => {
         <p className="text-xl text-vintage-red font-script">Tracking Every Bite and Blockbuster</p>
       </div>
 
-      {/* Two column layout for Bites and Blockbusters */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        {/* Bites Column */}
         <div className="border rounded-lg overflow-hidden border-catalog-softBrown">
-          <div className="bg-vintage-pink p-4 text-center">
+          <div className="bg-[#FFDEE2] p-4 text-center">
             <h2 className="text-2xl font-bold text-[#5D4037] font-typewriter">BITES</h2>
           </div>
           
@@ -66,10 +62,9 @@ const Index = () => {
           </div>
         </div>
         
-        {/* Blockbusters Column - Updated with the blue color to match nav bar */}
         <div className="border rounded-lg overflow-hidden border-catalog-softBrown">
-          <div className="bg-blue-500 p-4 text-center">
-            <h2 className="text-2xl font-bold text-white font-typewriter">BLOCKBUSTERS</h2>
+          <div className="bg-[#D3E4FD] p-4 text-center">
+            <h2 className="text-2xl font-bold text-[#5D4037] font-typewriter">BLOCKBUSTERS</h2>
           </div>
           
           <div className="grid grid-cols-3 border-b border-catalog-softBrown">
@@ -109,7 +104,6 @@ const Index = () => {
         </div>
       </div>
       
-      {/* How It Works Section - Updated with Card component for visual pop */}
       <Card className="border-2 border-catalog-softBrown rounded-lg shadow-lg mb-12 bg-catalog-cream hover:shadow-xl transition-shadow duration-300">
         <CardContent className="p-8">
           <h2 className="text-2xl font-bold text-center mb-8 font-typewriter text-[#5D4037]">How It Works</h2>
