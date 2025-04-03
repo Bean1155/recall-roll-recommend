@@ -1,5 +1,6 @@
 import { CatalogCard, FoodCard, EntertainmentCard, FoodStatus, RecommendationBadge, UserNote, AgreementStatus } from './types';
 import { appUsers } from '@/contexts/UserContext';
+import { showRewardToast } from '@/utils/rewardUtils';
 
 // Mock data
 const mockCards: CatalogCard[] = [
@@ -156,7 +157,7 @@ export const getUserRewards = (userId: string): number => {
 };
 
 // Function to add reward points to a user
-export const addUserRewardPoints = (userId: string, points: number = 1): number => {
+export const addUserRewardPoints = (userId: string, points: number = 1, reason: string = 'Activity'): number => {
   const rewardsData = localStorage.getItem('catalogUserRewards');
   let rewards = rewardsData ? JSON.parse(rewardsData) : {};
   
@@ -171,6 +172,9 @@ export const addUserRewardPoints = (userId: string, points: number = 1): number 
   // Save back to localStorage
   localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
   
+  // Show toast notification for reward
+  showRewardToast(userId, points, reason);
+  
   return rewards[userId];
 };
 
@@ -182,7 +186,8 @@ export const trackUserCardAdditions = (userId: string, cardType: 'food' | 'enter
   
   // Every 2 cards of the same type earn 1 point
   if (count % 2 === 0) {
-    addUserRewardPoints(userId, 1);
+    const reason = `Adding ${count} ${cardType} items`;
+    addUserRewardPoints(userId, 1, reason);
   }
   
   localStorage.setItem(key, count.toString());
@@ -235,11 +240,13 @@ export const addRecommendation = (cardId: string, userId: string, badge: string 
       
       // Add reward point for the recommender (current user)
       if (card.recommendedBy) {
-        addUserRewardPoints(card.recommendedBy);
+        const reason = `Recommending "${card.title}" to a friend`;
+        addUserRewardPoints(card.recommendedBy, 1, reason);
       }
       
       // Add reward point for the receiver
-      addUserRewardPoints(userId);
+      const receiverReason = `Receiving a recommendation for "${card.title}"`;
+      addUserRewardPoints(userId, 1, receiverReason);
     }
   }
 };

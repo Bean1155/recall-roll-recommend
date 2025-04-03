@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FoodCategory } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/contexts/UserContext";
+import { addUserRewardPoints } from "@/lib/data";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +32,7 @@ const AddCategoryDialog = ({
 }: AddCategoryDialogProps) => {
   const [newCategory, setNewCategory] = useState("");
   const { toast } = useToast();
+  const { currentUser } = useUser();
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +77,11 @@ const AddCategoryDialog = ({
         title: "Success",
         description: `Added new category: ${formattedCategory}`,
       });
+      
+      // Add reward point for creating a new category
+      if (currentUser) {
+        addUserRewardPoints(currentUser.id, 1, "Creating a new food category");
+      }
     } catch (error) {
       console.error("Error saving category:", error);
       toast({
