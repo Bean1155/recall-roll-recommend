@@ -183,19 +183,13 @@ const BlockbustersPage = () => {
           From the Library of <span className="font-typewriter font-bold text-black">{userName}</span>
         </h1>
         <div className="flex flex-wrap gap-2">
-          <div className="mr-2">
+          <div>
             <CatalogSearch 
               items={entertainmentCards} 
               onFilteredItemsChange={handleFilteredItemsChange}
               type="entertainment"
             />
           </div>
-          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-            <Link to="/create/entertainment">
-              <PlusCircle size={18} className="mr-2" />
-              Add New Blockbuster
-            </Link>
-          </Button>
         </div>
       </div>
 
