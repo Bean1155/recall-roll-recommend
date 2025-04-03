@@ -22,7 +22,12 @@ const RewardsPage = () => {
             icon={Gift} 
             backgroundColor="#E5DEFF"
           >
-            <p>The user will increase their recall of favorite bites and blockbusters. If a user has a memory block, they will be able to access that fabulous restaurant tucked away in Portland or that scary movie they saw on Apple TV+. Our catalog is designed to help you recall, track and reward your connections. Now when a friend says, "what shows have you seen that are worth watching?" You will know!</p>
+            <ul className="space-y-2 pl-4 list-decimal">
+              <li>Increase of recall of favorite bites & blockbusters</li>
+              <li>No more memory blocks, i.e. user can access catalog to find that restaurant tucked away in Portland Maine you loved</li>
+              <li>You'll always have an answer to "What shows have you seen that are worth watching"?</li>
+              <li>When you share you support businesses and creators</li>
+            </ul>
           </RewardsInfoCard>
           
           <RewardsInfoCard 
