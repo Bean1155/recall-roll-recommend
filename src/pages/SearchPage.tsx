@@ -63,6 +63,10 @@ const SearchPage = () => {
     setFilteredCards(items);
   };
 
+  // Colors that match the navigation bar in the home page
+  const foodTabBgColor = "#FFECB3";  // Soft Yellow/Gold (same as Home nav item)
+  const entertainmentTabBgColor = "#E5DEFF"; // Soft Purple (same as Add nav item)
+
   return (
     <GridLayout title={getPageTitle()}>
       <div className="max-w-5xl mx-auto">
@@ -70,14 +74,22 @@ const SearchPage = () => {
           <TabsList className="w-full bg-gray-100 p-1 rounded-md mb-4">
             <TabsTrigger 
               value="food" 
-              className="flex items-center gap-2 flex-1 data-[state=active]:bg-catalog-darkTeal data-[state=active]:text-white"
+              className="flex items-center gap-2 flex-1 text-catalog-softBrown hover:bg-opacity-80 transition-colors"
+              style={{
+                backgroundColor: activeTab === "food" ? foodTabBgColor : "transparent",
+                color: activeTab === "food" ? "#5d4037" : undefined
+              }}
             >
               <UtensilsCrossed size={16} />
               Bites
             </TabsTrigger>
             <TabsTrigger 
               value="entertainment" 
-              className="flex items-center gap-2 flex-1 data-[state=active]:bg-catalog-darkTeal data-[state=active]:text-white"
+              className="flex items-center gap-2 flex-1 text-catalog-softBrown hover:bg-opacity-80 transition-colors"
+              style={{
+                backgroundColor: activeTab === "entertainment" ? entertainmentTabBgColor : "transparent",
+                color: activeTab === "entertainment" ? "#5d4037" : undefined
+              }}
             >
               <Film size={16} />
               Blockbusters
