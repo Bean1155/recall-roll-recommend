@@ -3,19 +3,16 @@ import React from "react";
 import GridLayout from "@/components/GridLayout";
 import { BarChart4, Gift } from "lucide-react";
 import RewardsCounter from "@/components/RewardsCounter";
-import RewardsTabsComponent from "@/components/rewards/RewardsTabsComponent";
 import RewardsInfoCard from "@/components/rewards/RewardsInfoCard";
+import { CatalogCollapsible } from "@/components/ui/collapsible";
+import HowItWorksTab from "@/components/rewards/HowItWorksTab";
+import RewardSystemTab from "@/components/rewards/RewardSystemTab";
 
 const RewardsPage = () => {
   return (
     <GridLayout title="How to Earn Rewards">
       <div className="max-w-3xl mx-auto">
-        <div className="mb-6">
-          <RewardsCounter />
-        </div>
-        
-        <RewardsTabsComponent />
-        
+        {/* Benefits and Track Progress cards side by side at the top */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <RewardsInfoCard 
             title="Benefits" 
@@ -38,6 +35,33 @@ const RewardsPage = () => {
             <p>Keep an eye on your monthly report card to track your referral progress.</p>
             <p>Challenge yourself to reach the next tier in our rating scale!</p>
           </RewardsInfoCard>
+        </div>
+        
+        {/* Collapsible How It Works section */}
+        <div className="mb-8">
+          <CatalogCollapsible 
+            label="How It Works" 
+            backgroundColor="#ACC8E5" 
+            textColor="#603913"
+          >
+            <HowItWorksTab />
+          </CatalogCollapsible>
+        </div>
+        
+        {/* Collapsible Reward System section */}
+        <div className="mb-8">
+          <CatalogCollapsible 
+            label="Reward System" 
+            backgroundColor="#d2b48c" 
+            textColor="#603913"
+          >
+            <RewardSystemTab />
+          </CatalogCollapsible>
+        </div>
+        
+        {/* Rewards Status at the bottom */}
+        <div className="mb-6">
+          <RewardsCounter />
         </div>
       </div>
     </GridLayout>
