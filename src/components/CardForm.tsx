@@ -38,16 +38,27 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
   const isEditMode = !!cardId;
   const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
   const [newCategory, setNewCategory] = useState('');
-  const [customCategories, setCustomCategories] = useState<FoodCategory[]>([]);
+  const [customFoodCategories, setCustomFoodCategories] = useState<FoodCategory[]>([]);
+  const [customEntertainmentCategories, setCustomEntertainmentCategories] = useState<string[]>([]);
   
   useEffect(() => {
-    const savedCategories = localStorage.getItem('customFoodCategories');
-    if (savedCategories) {
+    const savedFoodCategories = localStorage.getItem('customFoodCategories');
+    if (savedFoodCategories) {
       try {
-        const parsed = JSON.parse(savedCategories);
-        setCustomCategories(parsed);
+        const parsed = JSON.parse(savedFoodCategories);
+        setCustomFoodCategories(parsed);
       } catch (e) {
-        console.error("Error parsing custom categories:", e);
+        console.error("Error parsing custom food categories:", e);
+      }
+    }
+    
+    const savedEntertainmentCategories = localStorage.getItem('customEntertainmentCategories');
+    if (savedEntertainmentCategories) {
+      try {
+        const parsed = JSON.parse(savedEntertainmentCategories);
+        setCustomEntertainmentCategories(parsed);
+      } catch (e) {
+        console.error("Error parsing custom entertainment categories:", e);
       }
     }
   }, []);
@@ -124,7 +135,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    if (value === "add_new_category" && name === "category") {
+    if (value === "add_new_category") {
       setIsAddCategoryDialogOpen(true);
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
@@ -133,14 +144,19 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
 
   const handleAddNewCategory = () => {
     if (newCategory.trim()) {
-      const categoryValue = newCategory.trim().toLowerCase() as FoodCategory;
+      const categoryValue = newCategory.trim().toLowerCase();
       
-      const updatedCategories = [...customCategories, categoryValue];
-      setCustomCategories(updatedCategories);
-      
-      localStorage.setItem('customFoodCategories', JSON.stringify(updatedCategories));
-      
-      setFormData(prev => ({ ...prev, category: categoryValue }));
+      if (isFoodCard) {
+        const updatedCategories = [...customFoodCategories, categoryValue as FoodCategory];
+        setCustomFoodCategories(updatedCategories);
+        localStorage.setItem('customFoodCategories', JSON.stringify(updatedCategories));
+        setFormData(prev => ({ ...prev, category: categoryValue as FoodCategory }));
+      } else {
+        const updatedCategories = [...customEntertainmentCategories, categoryValue];
+        setCustomEntertainmentCategories(updatedCategories);
+        localStorage.setItem('customEntertainmentCategories', JSON.stringify(updatedCategories));
+        setFormData(prev => ({ ...prev, entertainmentCategory: categoryValue }));
+      }
       
       setNewCategory('');
       setIsAddCategoryDialogOpen(false);
@@ -250,6 +266,11 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
     }
   };
   
+  const defaultEntertainmentCategories = [
+    "books", "comedies", "events", "games", "live performances", 
+    "movies", "podcasts", "tv shows", "etc."
+  ];
+  
   return (
     <form onSubmit={handleSubmit} className="catalog-card max-w-md mx-auto">
       <div className="space-y-4">
@@ -298,7 +319,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                     </SelectItem>
                   ))}
                   
-                  {customCategories.map((category) => (
+                  {customFoodCategories.map((category) => (
                     <SelectItem key={category} value={category}>
                       {getCategoryDisplayName(category)}
                     </SelectItem>
@@ -467,15 +488,21 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="books">Books</SelectItem>
-                  <SelectItem value="comedies">Comedies</SelectItem>
-                  <SelectItem value="events">Events</SelectItem>
-                  <SelectItem value="games">Games</SelectItem>
-                  <SelectItem value="live performances">Live Performances</SelectItem>
-                  <SelectItem value="movies">Movies</SelectItem>
-                  <SelectItem value="podcasts">Podcasts</SelectItem>
-                  <SelectItem value="tv shows">TV Shows</SelectItem>
-                  <SelectItem value="etc.">Etc.</SelectItem>
+                  {defaultEntertainmentCategories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {getCategoryDisplayName(category)}
+                    </SelectItem>
+                  ))}
+                  
+                  {customEntertainmentCategories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {getCategoryDisplayName(category)}
+                    </SelectItem>
+                  ))}
+                  
+                  <SelectItem value="add_new_category" className="text-catalog-teal font-semibold">
+                    + Add Category
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -669,7 +696,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
           <DialogHeader>
             <DialogTitle>Add New Category</DialogTitle>
             <DialogDescription>
-              Create a custom category for your food entries.
+              Create a custom category for your {isFoodCard ? 'food' : 'entertainment'} entries.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -682,7 +709,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                 value={newCategory}
                 onChange={(e) => setNewCategory(e.target.value)}
                 className="col-span-3"
-                placeholder="e.g., Ice Cream Shop"
+                placeholder={`e.g., ${isFoodCard ? 'Ice Cream Shop' : 'Anime'}`}
               />
             </div>
           </div>

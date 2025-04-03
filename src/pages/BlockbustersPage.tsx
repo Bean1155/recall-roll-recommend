@@ -20,10 +20,25 @@ import {
 import Envelope from "@/components/Envelope";
 import CatalogCard from "@/components/CatalogCard";
 
-const allCategories = [
+const defaultCategories = [
   "movies", "tv shows", "documentaries", "concerts", 
   "theater", "musicals", "podcasts", "comedy", "etc."
 ];
+
+const getAllCategories = (): string[] => {
+  const customCategories: string[] = [];
+  try {
+    const savedCategories = localStorage.getItem('customEntertainmentCategories');
+    if (savedCategories) {
+      const parsed = JSON.parse(savedCategories);
+      customCategories.push(...parsed);
+    }
+  } catch (e) {
+    console.error("Error loading custom entertainment categories:", e);
+  }
+  
+  return [...defaultCategories, ...customCategories];
+};
 
 const categoryColors: Record<string, string> = {
   "movies": "#f5c4d3",
@@ -35,6 +50,25 @@ const categoryColors: Record<string, string> = {
   "podcasts": "#a5b1c2",
   "comedy": "#a64b2a",
   "etc.": "#da7f5d",
+};
+
+const generateCategoryColors = (categories: string[]): Record<string, string> => {
+  const colors = {...categoryColors};
+  
+  const extraColors = [
+    "#cc7f43", "#d35843", "#4d583c", "#8c9e5e", "#358f8f",
+    "#6b798e", "#2f5d60", "#1a535c", "#4a3f35", "#232e33",
+  ];
+  
+  let colorIndex = 0;
+  categories.forEach(category => {
+    if (!colors[category]) {
+      colors[category] = extraColors[colorIndex % extraColors.length];
+      colorIndex++;
+    }
+  });
+  
+  return colors;
 };
 
 const getCategoryDisplayName = (category: string): string => {
@@ -68,6 +102,9 @@ const BlockbustersPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const highlightedCardRef = useRef<HTMLDivElement>(null);
+  
+  const allCategories = getAllCategories();
+  const allCategoryColors = generateCategoryColors(allCategories);
   
   useEffect(() => {
     const cards = getCardsByType('entertainment') as EntertainmentCard[];
@@ -243,7 +280,7 @@ const BlockbustersPage = () => {
           {categoryPairs.map((pair, pairIndex) => (
             <div key={`pair-${pairIndex}`} className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {pair.map((category) => {
-                const categoryColor = categoryColors[category] || "#d2b48c";
+                const categoryColor = allCategoryColors[category] || "#d2b48c";
                 const textColor = getTextColor(categoryColor);
                 const isOpen = openCatalogs.includes(category);
                 
@@ -282,7 +319,7 @@ const BlockbustersPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             {searchResults.map(card => {
               const category = card.entertainmentCategory?.toLowerCase() || 'etc.';
-              const categoryColor = categoryColors[category] || "#d2b48c";
+              const categoryColor = allCategoryColors[category] || "#d2b48c";
               
               return (
                 <div 
@@ -319,7 +356,7 @@ const BlockbustersPage = () => {
         isOpen={isCardModalOpen}
         onOpenChange={setIsCardModalOpen}
         card={selectedCard}
-        categoryColors={categoryColors}
+        categoryColors={allCategoryColors}
       />
 
       <style>{`
