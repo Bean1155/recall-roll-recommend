@@ -11,10 +11,10 @@ import {
   SelectTrigger,
   SelectValue 
 } from "@/components/ui/select";
-import { CardType, CatalogCard, FoodCard, EntertainmentCard, FoodCategory, FoodStatus, EntertainmentStatus } from "@/lib/types";
+import { CardType, CatalogCard, FoodCard, EntertainmentCard, FoodCategory, FoodStatus, EntertainmentStatus, ServiceRating } from "@/lib/types";
 import { addCard, updateCard, getCardById } from "@/lib/data";
 import { toast } from "@/components/ui/use-toast";
-import { Plus, Minus, Calendar, Link, Tag, Star } from "lucide-react";
+import { Plus, Minus, Calendar, Link, Tag, Star, Smile, Meh, Frown } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import {
   Dialog,
@@ -84,6 +84,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
     entertainmentCategory: 'movies',
     status: isFoodCard ? 'Visited: Tried this bite' as FoodStatus : 'Watched' as EntertainmentStatus,
     isFavorite: false,
+    serviceRating: null as ServiceRating | null,
   });
 
   useEffect(() => {
@@ -179,6 +180,10 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
     }
   };
 
+  const handleServiceRatingChange = (value: ServiceRating | null) => {
+    setFormData(prev => ({ ...prev, serviceRating: value }));
+  };
+
   const handleAddNewCategory = () => {
     if (newCategory.trim()) {
       const categoryValue = newCategory.trim().toLowerCase();
@@ -264,6 +269,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
           visitCount: formData.visitCount,
           url: formData.url,
           tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()) : [],
+          serviceRating: formData.serviceRating,
         } as Omit<FoodCard, 'id'>;
       } else {
         card = {
@@ -316,505 +322,564 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
     "movies", "podcasts", "tv shows", "etc."
   ];
   
+  const getServiceRatingIcon = (rating: ServiceRating | null) => {
+    switch(rating) {
+      case 'Had me at hello':
+        return <Smile className="w-6 h-6 text-green-500" />;
+      case 'Needs more effort':
+        return <Meh className="w-6 h-6 text-amber-500" />;
+      case 'Disappointed':
+        return <Frown className="w-6 h-6 text-red-500" />;
+      default:
+        return null;
+    }
+  };
+  
   return (
-    <form onSubmit={handleSubmit} className="catalog-card max-w-md mx-auto">
-      <div className="space-y-4">
-        {isFoodCard ? (
-          <>
-            <div>
-              <Label htmlFor="title" className="text-base">Name <span className="text-red-500">*</span></Label>
-              <p className="text-xs italic mb-1">Name of Establishment</p>
-              <Input
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                required
-                className="catalog-input"
-                placeholder="Establishment Name"
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="creator">Chef/Restauranteur</Label>
-              <Input
-                id="creator"
-                name="creator"
-                value={formData.creator}
-                onChange={handleChange}
-                className="catalog-input"
-                placeholder="Chef or Restauranteur name"
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="category">Category <span className="text-red-500">*</span> <span className="text-xs text-muted-foreground">(Select from menu)</span></Label>
-              <Select
-                value={formData.category}
-                onValueChange={(value) => handleSelectChange('category', value)}
-                required
-              >
-                <SelectTrigger className="catalog-input">
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {defaultCategories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {getCategoryDisplayName(category)}
+    <Form>
+      <form onSubmit={handleSubmit} className="catalog-card max-w-md mx-auto">
+        <div className="space-y-4">
+          {isFoodCard ? (
+            <>
+              <div>
+                <Label htmlFor="title" className="text-base">Name <span className="text-red-500">*</span></Label>
+                <p className="text-xs italic mb-1">Name of Establishment</p>
+                <Input
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  required
+                  className="catalog-input"
+                  placeholder="Establishment Name"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="creator">Chef/Restauranteur</Label>
+                <Input
+                  id="creator"
+                  name="creator"
+                  value={formData.creator}
+                  onChange={handleChange}
+                  className="catalog-input"
+                  placeholder="Chef or Restauranteur name"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="category">Category <span className="text-red-500">*</span> <span className="text-xs text-muted-foreground">(Select from menu)</span></Label>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) => handleSelectChange('category', value)}
+                  required
+                >
+                  <SelectTrigger className="catalog-input">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {defaultCategories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {getCategoryDisplayName(category)}
+                      </SelectItem>
+                    ))}
+                    
+                    {customFoodCategories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {getCategoryDisplayName(category)}
+                      </SelectItem>
+                    ))}
+                    
+                    <SelectItem value="add_new_category" className="text-catalog-teal font-semibold">
+                      + Add Category
                     </SelectItem>
-                  ))}
-                  
-                  {customFoodCategories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {getCategoryDisplayName(category)}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="cuisine">Cuisine</Label>
+                <Input
+                  id="cuisine"
+                  name="cuisine"
+                  value={formData.cuisine}
+                  onChange={handleChange}
+                  className="catalog-input"
+                  placeholder="Italian, Mexican, etc."
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="location">Location</Label>
+                <Input
+                  id="location"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  className="catalog-input"
+                  placeholder="Restaurant Location"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="status">Status <span className="text-xs text-muted-foreground">(Select from menu)</span></Label>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => handleSelectChange('status', value)}
+                >
+                  <SelectTrigger className="catalog-input">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Visited: Tried this bite">Visited: Tried this bite</SelectItem>
+                    <SelectItem value="Interested: Want a bite">Interested: Want a bite</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {formData.status === 'Visited: Tried this bite' && (
+                <div>
+                  <Label htmlFor="serviceRating">Service</Label>
+                  <div className="flex justify-between items-center mt-2 p-3 border rounded-md">
+                    <div 
+                      className={`flex flex-col items-center cursor-pointer p-2 rounded-md ${formData.serviceRating === 'Had me at hello' ? 'bg-green-100' : ''}`}
+                      onClick={() => handleServiceRatingChange('Had me at hello')}
+                    >
+                      <Smile className="w-8 h-8 text-green-500" />
+                      <span className="text-xs text-center mt-1">Had me at hello</span>
+                    </div>
+                    
+                    <div 
+                      className={`flex flex-col items-center cursor-pointer p-2 rounded-md ${formData.serviceRating === 'Needs more effort' ? 'bg-amber-100' : ''}`}
+                      onClick={() => handleServiceRatingChange('Needs more effort')}
+                    >
+                      <Meh className="w-8 h-8 text-amber-500" />
+                      <span className="text-xs text-center mt-1">Needs more effort</span>
+                    </div>
+                    
+                    <div 
+                      className={`flex flex-col items-center cursor-pointer p-2 rounded-md ${formData.serviceRating === 'Disappointed' ? 'bg-red-100' : ''}`}
+                      onClick={() => handleServiceRatingChange('Disappointed')}
+                    >
+                      <Frown className="w-8 h-8 text-red-500" />
+                      <span className="text-xs text-center mt-1">Disappointed</span>
+                    </div>
+                  </div>
+                  {formData.serviceRating && (
+                    <div className="flex justify-end mt-1">
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => handleServiceRatingChange(null)}
+                        className="text-xs h-6 px-2"
+                      >
+                        Clear
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="space-y-1">
+                <Label htmlFor="date" className="flex items-center">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Date Experienced
+                </Label>
+                <div className="flex items-center space-x-2">
+                  <Input
+                    id="date"
+                    name="date"
+                    type="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    className="catalog-input flex-1"
+                  />
+                  <div className="flex items-center border border-catalog-softBrown rounded-md">
+                    <Button 
+                      type="button" 
+                      onClick={decrementVisitCount}
+                      variant="ghost"
+                      className="px-2 py-1 h-8"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                    <span className="px-2">{formData.visitCount}</span>
+                    <Button 
+                      type="button" 
+                      onClick={incrementVisitCount}
+                      variant="ghost"
+                      className="px-2 py-1 h-8"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">Visit count: {formData.visitCount}</p>
+              </div>
+
+              <div className="space-y-1">
+                {showRating && (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="rating" className="flex items-center">
+                        <Star className="w-4 h-4 mr-2" />
+                        Rating
+                      </Label>
+                      
+                      <RadioGroup 
+                        value={formData.hasRating ? "rated" : "not-rated"}
+                        onValueChange={(value) => handleRatingToggle(value === "rated")}
+                        className="flex space-x-4"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="rated" id="rating-yes" />
+                          <Label htmlFor="rating-yes" className="text-sm">Rate it</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="not-rated" id="rating-no" />
+                          <Label htmlFor="rating-no" className="text-sm">No rating yet</Label>
+                        </div>
+                      </RadioGroup>
+                    </div>
+                    
+                    {formData.hasRating && (
+                      <>
+                        <div className="flex items-center space-x-2 py-4">
+                          <Slider
+                            id="rating"
+                            min={1}
+                            max={5}
+                            step={1}
+                            value={[formData.rating]}
+                            onValueChange={handleRatingChange}
+                          />
+                          <div className="w-24 text-center">
+                            <span className="font-semibold">{formData.rating}</span>
+                            <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
+                          </div>
+                        </div>
+                        <div className="flex justify-between text-xs">
+                          <span>1 - Yikes</span>
+                          <span>5 - Amazing</span>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="url" className="flex items-center">
+                  <Link className="w-4 h-4 mr-2" />
+                  URL
+                </Label>
+                <Input
+                  id="url"
+                  name="url"
+                  value={formData.url}
+                  onChange={handleChange}
+                  className="catalog-input"
+                  placeholder="Website or social media link"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="notes">Notes</Label>
+                <Textarea
+                  id="notes"
+                  name="notes"
+                  value={formData.notes}
+                  onChange={handleChange}
+                  className="catalog-input h-20"
+                  placeholder="Your thoughts, impressions, and memorable details..."
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="tags" className="flex items-center">
+                  <Tag className="w-4 h-4 mr-2" />
+                  Tags
+                </Label>
+                <Input
+                  id="tags"
+                  name="tags"
+                  value={formData.tags}
+                  onChange={handleChange}
+                  className="catalog-input"
+                  placeholder="breakfast, sandwiches, coffee, etc. (comma separated)"
+                />
+                <p className="text-xs text-muted-foreground mt-1">Separate tags with commas</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <Label htmlFor="title" className="text-base">Title <span className="text-red-500">*</span></Label>
+                <p className="text-xs italic mb-1">Name of show, performance, etc.</p>
+                <Input
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  required
+                  className="catalog-input"
+                  placeholder="Title of entertainment"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="creator">Creator/Author</Label>
+                <Input
+                  id="creator"
+                  name="creator"
+                  value={formData.creator}
+                  onChange={handleChange}
+                  className="catalog-input"
+                  placeholder="Director, Author, Studio, etc."
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="entertainmentCategory">Entertainment Category <span className="text-red-500">*</span> <span className="text-xs text-muted-foreground">(Select from menu)</span></Label>
+                <Select
+                  value={formData.entertainmentCategory}
+                  onValueChange={(value) => handleSelectChange('entertainmentCategory', value)}
+                  required
+                >
+                  <SelectTrigger className="catalog-input">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {defaultEntertainmentCategories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {getCategoryDisplayName(category)}
+                      </SelectItem>
+                    ))}
+                    
+                    {customEntertainmentCategories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {getCategoryDisplayName(category)}
+                      </SelectItem>
+                    ))}
+                    
+                    <SelectItem value="add_new_category" className="text-catalog-teal font-semibold">
+                      + Add Category
                     </SelectItem>
-                  ))}
-                  
-                  <SelectItem value="add_new_category" className="text-catalog-teal font-semibold">
-                    + Add Category
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div>
-              <Label htmlFor="cuisine">Cuisine</Label>
-              <Input
-                id="cuisine"
-                name="cuisine"
-                value={formData.cuisine}
-                onChange={handleChange}
-                className="catalog-input"
-                placeholder="Italian, Mexican, etc."
-              />
-            </div>
+              <div>
+                <Label htmlFor="genre">Genre</Label>
+                <Input
+                  id="genre"
+                  name="genre"
+                  value={formData.genre}
+                  onChange={handleChange}
+                  className="catalog-input"
+                  placeholder="Drama, Comedy, etc."
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="medium">Medium</Label>
+                <Select
+                  value={formData.medium}
+                  onValueChange={(value) => handleSelectChange('medium', value)}
+                >
+                  <SelectTrigger className="catalog-input">
+                    <SelectValue placeholder="Select a streaming service" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Netflix">Netflix</SelectItem>
+                    <SelectItem value="Hulu">Hulu</SelectItem>
+                    <SelectItem value="Apple TV+">Apple TV+</SelectItem>
+                    <SelectItem value="Disney+">Disney+</SelectItem>
+                    <SelectItem value="Amazon Prime">Amazon Prime</SelectItem>
+                    <SelectItem value="HBO Max">HBO Max</SelectItem>
+                    <SelectItem value="Peacock">Peacock</SelectItem>
+                    <SelectItem value="Paramount+">Paramount+</SelectItem>
+                    <SelectItem value="YouTube">YouTube</SelectItem>
+                    <SelectItem value="Theater">Theater</SelectItem>
+                    <SelectItem value="Physical Media">Physical Media</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label htmlFor="status">Status <span className="text-xs text-muted-foreground">(Select from menu)</span></Label>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => handleSelectChange('status', value)}
+                >
+                  <SelectTrigger className="catalog-input">
+                    <SelectValue placeholder="Select a status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Watched">Watched</SelectItem>
+                    <SelectItem value="Want to Watch">Want to Watch</SelectItem>
+                    <SelectItem value="Currently Watching">Currently Watching</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div>
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                className="catalog-input"
-                placeholder="Restaurant Location"
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="status">Status <span className="text-xs text-muted-foreground">(Select from menu)</span></Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => handleSelectChange('status', value)}
-              >
-                <SelectTrigger className="catalog-input">
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Visited: Tried this bite">Visited: Tried this bite</SelectItem>
-                  <SelectItem value="Interested: Want a bite">Interested: Want a bite</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1">
-              <Label htmlFor="date" className="flex items-center">
-                <Calendar className="w-4 h-4 mr-2" />
-                Date Experienced
-              </Label>
-              <div className="flex items-center space-x-2">
+              <div className="space-y-1">
+                <Label htmlFor="date" className="flex items-center">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Date Experienced
+                </Label>
                 <Input
                   id="date"
                   name="date"
                   type="date"
                   value={formData.date}
                   onChange={handleChange}
-                  className="catalog-input flex-1"
+                  className="catalog-input"
                 />
-                <div className="flex items-center border border-catalog-softBrown rounded-md">
-                  <Button 
-                    type="button" 
-                    onClick={decrementVisitCount}
-                    variant="ghost"
-                    className="px-2 py-1 h-8"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </Button>
-                  <span className="px-2">{formData.visitCount}</span>
-                  <Button 
-                    type="button" 
-                    onClick={incrementVisitCount}
-                    variant="ghost"
-                    className="px-2 py-1 h-8"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
               </div>
-              <p className="text-xs text-muted-foreground">Visit count: {formData.visitCount}</p>
-            </div>
-
-            <div className="space-y-1">
-              {showRating && (
-                <>
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="rating" className="flex items-center">
-                      <Star className="w-4 h-4 mr-2" />
-                      Rating
-                    </Label>
-                    
-                    <RadioGroup 
-                      value={formData.hasRating ? "rated" : "not-rated"}
-                      onValueChange={(value) => handleRatingToggle(value === "rated")}
-                      className="flex space-x-4"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="rated" id="rating-yes" />
-                        <Label htmlFor="rating-yes" className="text-sm">Rate it</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="not-rated" id="rating-no" />
-                        <Label htmlFor="rating-no" className="text-sm">No rating yet</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-                  
-                  {formData.hasRating && (
-                    <>
-                      <div className="flex items-center space-x-2 py-4">
-                        <Slider
-                          id="rating"
-                          min={1}
-                          max={5}
-                          step={1}
-                          value={[formData.rating]}
-                          onValueChange={handleRatingChange}
-                        />
-                        <div className="w-24 text-center">
-                          <span className="font-semibold">{formData.rating}</span>
-                          <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
+              
+              <div className="space-y-1">
+                {showRating && (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="rating" className="flex items-center">
+                        <Star className="w-4 h-4 mr-2" />
+                        Rating
+                      </Label>
+                      
+                      <RadioGroup 
+                        value={formData.hasRating ? "rated" : "not-rated"}
+                        onValueChange={(value) => handleRatingToggle(value === "rated")}
+                        className="flex space-x-4"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="rated" id="rating-yes" />
+                          <Label htmlFor="rating-yes" className="text-sm">Rate it</Label>
                         </div>
-                      </div>
-                      <div className="flex justify-between text-xs">
-                        <span>1 - Yikes</span>
-                        <span>5 - Amazing</span>
-                      </div>
-                    </>
-                  )}
-                </>
-              )}
-            </div>
-
-            <div>
-              <Label htmlFor="url" className="flex items-center">
-                <Link className="w-4 h-4 mr-2" />
-                URL
-              </Label>
-              <Input
-                id="url"
-                name="url"
-                value={formData.url}
-                onChange={handleChange}
-                className="catalog-input"
-                placeholder="Website or social media link"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="notes">Notes</Label>
-              <Textarea
-                id="notes"
-                name="notes"
-                value={formData.notes}
-                onChange={handleChange}
-                className="catalog-input h-20"
-                placeholder="Your thoughts, impressions, and memorable details..."
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="tags" className="flex items-center">
-                <Tag className="w-4 h-4 mr-2" />
-                Tags
-              </Label>
-              <Input
-                id="tags"
-                name="tags"
-                value={formData.tags}
-                onChange={handleChange}
-                className="catalog-input"
-                placeholder="breakfast, sandwiches, coffee, etc. (comma separated)"
-              />
-              <p className="text-xs text-muted-foreground mt-1">Separate tags with commas</p>
-            </div>
-          </>
-        ) : (
-          <>
-            <div>
-              <Label htmlFor="title" className="text-base">Title <span className="text-red-500">*</span></Label>
-              <p className="text-xs italic mb-1">Name of show, performance, etc.</p>
-              <Input
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                required
-                className="catalog-input"
-                placeholder="Title of entertainment"
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="creator">Creator/Author</Label>
-              <Input
-                id="creator"
-                name="creator"
-                value={formData.creator}
-                onChange={handleChange}
-                className="catalog-input"
-                placeholder="Director, Author, Studio, etc."
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="entertainmentCategory">Entertainment Category <span className="text-red-500">*</span> <span className="text-xs text-muted-foreground">(Select from menu)</span></Label>
-              <Select
-                value={formData.entertainmentCategory}
-                onValueChange={(value) => handleSelectChange('entertainmentCategory', value)}
-                required
-              >
-                <SelectTrigger className="catalog-input">
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {defaultEntertainmentCategories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {getCategoryDisplayName(category)}
-                    </SelectItem>
-                  ))}
-                  
-                  {customEntertainmentCategories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {getCategoryDisplayName(category)}
-                    </SelectItem>
-                  ))}
-                  
-                  <SelectItem value="add_new_category" className="text-catalog-teal font-semibold">
-                    + Add Category
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="genre">Genre</Label>
-              <Input
-                id="genre"
-                name="genre"
-                value={formData.genre}
-                onChange={handleChange}
-                className="catalog-input"
-                placeholder="Drama, Comedy, etc."
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="medium">Medium</Label>
-              <Select
-                value={formData.medium}
-                onValueChange={(value) => handleSelectChange('medium', value)}
-              >
-                <SelectTrigger className="catalog-input">
-                  <SelectValue placeholder="Select a streaming service" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Netflix">Netflix</SelectItem>
-                  <SelectItem value="Hulu">Hulu</SelectItem>
-                  <SelectItem value="Apple TV+">Apple TV+</SelectItem>
-                  <SelectItem value="Disney+">Disney+</SelectItem>
-                  <SelectItem value="Amazon Prime">Amazon Prime</SelectItem>
-                  <SelectItem value="HBO Max">HBO Max</SelectItem>
-                  <SelectItem value="Peacock">Peacock</SelectItem>
-                  <SelectItem value="Paramount+">Paramount+</SelectItem>
-                  <SelectItem value="YouTube">YouTube</SelectItem>
-                  <SelectItem value="Theater">Theater</SelectItem>
-                  <SelectItem value="Physical Media">Physical Media</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <Label htmlFor="status">Status <span className="text-xs text-muted-foreground">(Select from menu)</span></Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => handleSelectChange('status', value)}
-              >
-                <SelectTrigger className="catalog-input">
-                  <SelectValue placeholder="Select a status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Watched">Watched</SelectItem>
-                  <SelectItem value="Want to Watch">Want to Watch</SelectItem>
-                  <SelectItem value="Currently Watching">Currently Watching</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1">
-              <Label htmlFor="date" className="flex items-center">
-                <Calendar className="w-4 h-4 mr-2" />
-                Date Experienced
-              </Label>
-              <Input
-                id="date"
-                name="date"
-                type="date"
-                value={formData.date}
-                onChange={handleChange}
-                className="catalog-input"
-              />
-            </div>
-            
-            <div className="space-y-1">
-              {showRating && (
-                <>
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="rating" className="flex items-center">
-                      <Star className="w-4 h-4 mr-2" />
-                      Rating
-                    </Label>
-                    
-                    <RadioGroup 
-                      value={formData.hasRating ? "rated" : "not-rated"}
-                      onValueChange={(value) => handleRatingToggle(value === "rated")}
-                      className="flex space-x-4"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="rated" id="rating-yes" />
-                        <Label htmlFor="rating-yes" className="text-sm">Rate it</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="not-rated" id="rating-no" />
-                        <Label htmlFor="rating-no" className="text-sm">No rating yet</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-                  
-                  {formData.hasRating && (
-                    <>
-                      <div className="flex items-center space-x-2 py-4">
-                        <Slider
-                          id="rating"
-                          min={1}
-                          max={5}
-                          step={1}
-                          value={[formData.rating]}
-                          onValueChange={handleRatingChange}
-                        />
-                        <div className="w-24 text-center">
-                          <span className="font-semibold">{formData.rating}</span>
-                          <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="not-rated" id="rating-no" />
+                          <Label htmlFor="rating-no" className="text-sm">No rating yet</Label>
                         </div>
-                      </div>
-                      <div className="flex justify-between text-xs">
-                        <span>1 - Yikes</span>
-                        <span>5 - Amazing</span>
-                      </div>
-                    </>
-                  )}
-                </>
-              )}
-            </div>
+                      </RadioGroup>
+                    </div>
+                    
+                    {formData.hasRating && (
+                      <>
+                        <div className="flex items-center space-x-2 py-4">
+                          <Slider
+                            id="rating"
+                            min={1}
+                            max={5}
+                            step={1}
+                            value={[formData.rating]}
+                            onValueChange={handleRatingChange}
+                          />
+                          <div className="w-24 text-center">
+                            <span className="font-semibold">{formData.rating}</span>
+                            <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
+                          </div>
+                        </div>
+                        <div className="flex justify-between text-xs">
+                          <span>1 - Yikes</span>
+                          <span>5 - Amazing</span>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
 
-            <div>
-              <Label htmlFor="url" className="flex items-center">
-                <Link className="w-4 h-4 mr-2" />
-                URL
-              </Label>
-              <Input
-                id="url"
-                name="url"
-                value={formData.url}
-                onChange={handleChange}
-                className="catalog-input"
-                placeholder="Website or streaming link"
-              />
-            </div>
+              <div>
+                <Label htmlFor="url" className="flex items-center">
+                  <Link className="w-4 h-4 mr-2" />
+                  URL
+                </Label>
+                <Input
+                  id="url"
+                  name="url"
+                  value={formData.url}
+                  onChange={handleChange}
+                  className="catalog-input"
+                  placeholder="Website or streaming link"
+                />
+              </div>
 
-            <div>
-              <Label htmlFor="notes">Notes</Label>
-              <Textarea
-                id="notes"
-                name="notes"
-                value={formData.notes}
-                onChange={handleChange}
-                className="catalog-input h-20"
-                placeholder="Your thoughts, impressions, and memorable details..."
-              />
-            </div>
+              <div>
+                <Label htmlFor="notes">Notes</Label>
+                <Textarea
+                  id="notes"
+                  name="notes"
+                  value={formData.notes}
+                  onChange={handleChange}
+                  className="catalog-input h-20"
+                  placeholder="Your thoughts, impressions, and memorable details..."
+                />
+              </div>
 
-            <div>
-              <Label htmlFor="tags" className="flex items-center">
-                <Tag className="w-4 h-4 mr-2" />
-                Tags
-              </Label>
-              <Input
-                id="tags"
-                name="tags"
-                value={formData.tags}
-                onChange={handleChange}
-                className="catalog-input"
-                placeholder="comedy, sci-fi, 90s, etc. (comma separated)"
-              />
-              <p className="text-xs text-muted-foreground mt-1">Separate tags with commas</p>
-            </div>
-          </>
-        )}
-        
-        <div className="pt-4">
-          <Button 
-            type="submit"
-            className="w-full bg-catalog-softBrown hover:bg-catalog-darkBrown text-white"
-          >
-            {isEditMode 
-              ? (isFoodCard ? 'Update Bite' : 'Update Blockbuster') 
-              : (isFoodCard ? 'Save Bite' : 'Save Blockbuster')}
-          </Button>
-        </div>
-      </div>
-      
-      <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Add New Category</DialogTitle>
-            <DialogDescription>
-              Create a custom category for your {isFoodCard ? 'food' : 'entertainment'} entries.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="new-category" className="text-right col-span-1">
-                Name
-              </Label>
-              <Input
-                id="new-category"
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                className="col-span-3"
-                placeholder={`e.g., ${isFoodCard ? 'Ice Cream Shop' : 'Anime'}`}
-              />
-            </div>
+              <div>
+                <Label htmlFor="tags" className="flex items-center">
+                  <Tag className="w-4 h-4 mr-2" />
+                  Tags
+                </Label>
+                <Input
+                  id="tags"
+                  name="tags"
+                  value={formData.tags}
+                  onChange={handleChange}
+                  className="catalog-input"
+                  placeholder="comedy, sci-fi, 90s, etc. (comma separated)"
+                />
+                <p className="text-xs text-muted-foreground mt-1">Separate tags with commas</p>
+              </div>
+            </>
+          )}
+          
+          <div className="pt-4">
+            <Button 
+              type="submit"
+              className="w-full bg-catalog-softBrown hover:bg-catalog-darkBrown text-white"
+            >
+              {isEditMode 
+                ? (isFoodCard ? 'Update Bite' : 'Update Blockbuster') 
+                : (isFoodCard ? 'Save Bite' : 'Save Blockbuster')}
+            </Button>
           </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button type="button" onClick={handleAddNewCategory}>Add Category</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </form>
+        </div>
+        
+        <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Add New Category</DialogTitle>
+              <DialogDescription>
+                Create a custom category for your {isFoodCard ? 'food' : 'entertainment'} entries.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="new-category" className="text-right col-span-1">
+                  Name
+                </Label>
+                <Input
+                  id="new-category"
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                  className="col-span-3"
+                  placeholder={`e.g., ${isFoodCard ? 'Ice Cream Shop' : 'Anime'}`}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+              <Button type="button" onClick={handleAddNewCategory}>Add Category</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </form>
+    </Form>
   );
 };
 

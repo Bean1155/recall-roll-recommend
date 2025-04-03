@@ -5,6 +5,7 @@ export type FoodStatus = 'Visited: Tried this bite' | 'Interested: Want a bite';
 export type EntertainmentStatus = 'Watched' | 'Want to Watch' | 'Currently Watching';
 export type RecommendationBadge = 'Highly Recommend' | 'Favorite' | null;
 export type AgreementStatus = 'Agree' | 'Disagree' | 'Neutral' | null;
+export type ServiceRating = 'Had me at hello' | 'Needs more effort' | 'Disappointed' | null;
 
 export interface UserNote {
   userId: string;
@@ -42,6 +43,7 @@ export interface FoodCard extends CatalogCard {
   category: FoodCategory;
   status: FoodStatus;
   visitCount: number;
+  serviceRating?: ServiceRating; // Added service rating field
   url?: string;
   tags?: string[];
 }
