@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
@@ -168,7 +167,6 @@ const BitesPage = () => {
       }
     }
     
-    // Handle multiple search results
     const searchResultsParam = searchParams.get('searchResults');
     if (searchResultsParam) {
       try {
@@ -223,13 +221,6 @@ const BitesPage = () => {
             onFilteredItemsChange={handleFilteredItemsChange}
             type="food"
           />
-          
-          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-            <Link to="/create/food">
-              <PlusCircle size={18} className="mr-2" />
-              Add New Bite
-            </Link>
-          </Button>
         </div>
       </div>
 
