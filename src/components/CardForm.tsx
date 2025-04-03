@@ -16,6 +16,15 @@ import { addCard, updateCard, getCardById } from "@/lib/data";
 import { toast } from "@/components/ui/use-toast";
 import { Plus, Minus, Calendar, Link, Tag, Star } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose
+} from "@/components/ui/dialog";
 
 interface CardFormProps {
   type: CardType;
@@ -26,6 +35,21 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
   const navigate = useNavigate();
   const isFoodCard = type === 'food';
   const isEditMode = !!cardId;
+  const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
+  const [newCategory, setNewCategory] = useState('');
+  const [customCategories, setCustomCategories] = useState<FoodCategory[]>([]);
+  
+  useEffect(() => {
+    const savedCategories = localStorage.getItem('customFoodCategories');
+    if (savedCategories) {
+      try {
+        const parsed = JSON.parse(savedCategories);
+        setCustomCategories(parsed);
+      } catch (e) {
+        console.error("Error parsing custom categories:", e);
+      }
+    }
+  }, []);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -99,7 +123,32 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
+    if (value === "add_new_category" && name === "category") {
+      setIsAddCategoryDialogOpen(true);
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleAddNewCategory = () => {
+    if (newCategory.trim()) {
+      const categoryValue = newCategory.trim().toLowerCase() as FoodCategory;
+      
+      const updatedCategories = [...customCategories, categoryValue];
+      setCustomCategories(updatedCategories);
+      
+      localStorage.setItem('customFoodCategories', JSON.stringify(updatedCategories));
+      
+      setFormData(prev => ({ ...prev, category: categoryValue }));
+      
+      setNewCategory('');
+      setIsAddCategoryDialogOpen(false);
+      
+      toast({
+        title: "Category Added",
+        description: `"${newCategory}" has been added to your categories.`,
+      });
+    }
   };
 
   const incrementVisitCount = () => {
@@ -246,13 +295,22 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                   <SelectItem value="bar">Bar</SelectItem>
                   <SelectItem value="cafe">Cafe</SelectItem>
                   <SelectItem value="diner">Diner</SelectItem>
-                  <SelectItem value="event space">Event Space</SelectItem>
                   <SelectItem value="fine dining">Fine Dining</SelectItem>
                   <SelectItem value="food truck">Food Truck</SelectItem>
                   <SelectItem value="restaurant">Restaurant</SelectItem>
-                  <SelectItem value="specialty food">Specialty Food</SelectItem>
+                  <SelectItem value="specialty">Specialty</SelectItem>
                   <SelectItem value="take out">Take Out</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
+                  
+                  {customCategories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category.charAt(0).toUpperCase() + category.slice(1)}
+                    </SelectItem>
+                  ))}
+                  
+                  <SelectItem value="add_new_category" className="text-catalog-teal font-semibold">
+                    + Add Category
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -609,6 +667,37 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
           </Button>
         </div>
       </div>
+      
+      <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add New Category</DialogTitle>
+            <DialogDescription>
+              Create a custom category for your food entries.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="new-category" className="text-right col-span-1">
+                Name
+              </Label>
+              <Input
+                id="new-category"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                className="col-span-3"
+                placeholder="e.g., Ice Cream Shop"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button type="button" onClick={handleAddNewCategory}>Add Category</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </form>
   );
 };

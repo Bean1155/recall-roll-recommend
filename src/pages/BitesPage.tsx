@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
@@ -40,81 +39,16 @@ import {
   CatalogCollapsible
 } from "@/components/ui/collapsible";
 
-const allCategories: FoodCategory[] = [
-  "cafe", "diner", "specialty food", "fine dining", "take out", 
-  "bakery", "bar", "food truck", "event space", "restaurant", "other"
+const defaultCategories: FoodCategory[] = [
+  "cafe", "diner", "specialty", "fine dining", "take out", 
+  "bakery", "bar", "food truck", "restaurant", "other"
 ];
-
-const sortedCategories: FoodCategory[] = [...allCategories]
-  .filter(category => category !== "other" as FoodCategory)
-  .sort((a, b) => a.localeCompare(b));
-
-sortedCategories.push("other");
-
-const categoryColors: Record<FoodCategory, string> = {
-  "cafe": "#f5c4d3",
-  "diner": "#e0c5c1",
-  "specialty food": "#ddb892",
-  "fine dining": "#e9b44c",
-  "take out": "#c1cc99",
-  "bakery": "#9de0d0",
-  "bar": "#a5b1c2",
-  "food truck": "#a64b2a",
-  "event space": "#ff6b45",
-  "restaurant": "#e18336",
-  "other": "#da7f5d",
-};
-
-const extraColors = [
-  "#cc7f43",
-  "#d35843",
-  "#4d583c",
-  "#8c9e5e",
-  "#358f8f",
-  "#6b798e",
-  "#2f5d60",
-  "#1a535c",
-  "#4a3f35",
-  "#232e33",
-];
-
-const getCategoryDisplayName = (category: string): string => {
-  const customDisplayNames: Record<string, string> = {
-    "cafe": "Cafés",
-    "diner": "Diners",
-    "specialty food": "Specialty Foods",
-    "fine dining": "Fine Dining",
-    "take out": "Take-Out",
-    "bakery": "Bakeries",
-    "bar": "Bars",
-    "food truck": "Food Trucks",
-    "event space": "Event Spaces",
-    "restaurant": "Restaurants",
-    "other": "Other Places"
-  };
-
-  return customDisplayNames[category] || 
-    category
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-};
-
-const getTextColor = (backgroundColor: string): string => {
-  const hex = backgroundColor.replace('#', '');
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-  
-  return brightness > 145 ? "#603913" : "#ffffff";
-};
 
 const BitesPage = () => {
   const [foodCards, setFoodCards] = useState<FoodCard[]>([]);
   const [filteredCards, setFilteredCards] = useState<FoodCard[]>([]);
-  const [initialAccordionValues, setInitialAccordionValues] = useState<string[]>([sortedCategories[0]]);
+  const [categories, setCategories] = useState<FoodCategory[]>([]);
+  const [initialAccordionValues, setInitialAccordionValues] = useState<string[]>([]);
   const [selectedCard, setSelectedCard] = useState<FoodCard | null>(null);
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
   const [searchResults, setSearchResults] = useState<FoodCard[]>([]);
@@ -125,6 +59,37 @@ const BitesPage = () => {
   const location = useLocation();
   const { toast } = useToast();
   const highlightedCardRef = useRef<HTMLDivElement>(null);
+  
+  // Load all categories including custom ones
+  useEffect(() => {
+    // Load custom categories
+    const savedCategories = localStorage.getItem('customFoodCategories');
+    let customCategories: FoodCategory[] = [];
+    
+    if (savedCategories) {
+      try {
+        customCategories = JSON.parse(savedCategories);
+      } catch (e) {
+        console.error("Error parsing custom categories:", e);
+      }
+    }
+    
+    // Combine default and custom categories, filter out duplicates
+    const allCategories = [...defaultCategories, ...customCategories];
+    const uniqueCategories = [...new Set(allCategories)];
+    
+    // Sort categories but keep "other" at the end
+    const sortedCategories = uniqueCategories
+      .filter(category => category !== "other" as FoodCategory)
+      .sort((a, b) => a.localeCompare(b));
+    
+    sortedCategories.push("other");
+    setCategories(sortedCategories);
+    
+    if (sortedCategories.length > 0) {
+      setInitialAccordionValues([sortedCategories[0]]);
+    }
+  }, []);
   
   useEffect(() => {
     const cards = getCardsByType("food") as FoodCard[];
@@ -205,26 +170,90 @@ const BitesPage = () => {
     setIsCardModalOpen(true);
   };
 
+  // Create dynamic cardsByCategory based on available categories
   const cardsByCategory: Record<string, FoodCard[]> = {};
   
-  allCategories.forEach(category => {
+  categories.forEach(category => {
     cardsByCategory[category] = [];
   });
   
   filteredCards.forEach(card => {
-    if (cardsByCategory[card.category]) {
-      cardsByCategory[card.category].push(card);
+    // If the category doesn't exist in our map yet, add it
+    if (!cardsByCategory[card.category]) {
+      cardsByCategory[card.category] = [];
     }
+    cardsByCategory[card.category].push(card);
   });
 
+  // Generate category pairs for grid layout
   const categoryPairs = [];
-  for (let i = 0; i < sortedCategories.length; i += 2) {
-    const pair = [sortedCategories[i]];
-    if (i + 1 < sortedCategories.length) {
-      pair.push(sortedCategories[i + 1]);
+  for (let i = 0; i < categories.length; i += 2) {
+    const pair = [categories[i]];
+    if (i + 1 < categories.length) {
+      pair.push(categories[i + 1]);
     }
     categoryPairs.push(pair);
   }
+
+  // Generate category colors, including for custom categories
+  const categoryColors: Record<string, string> = {
+    "cafe": "#f5c4d3",
+    "diner": "#e0c5c1",
+    "specialty": "#ddb892",
+    "fine dining": "#e9b44c",
+    "take out": "#c1cc99",
+    "bakery": "#9de0d0",
+    "bar": "#a5b1c2",
+    "food truck": "#a64b2a",
+    "restaurant": "#e18336",
+    "other": "#da7f5d",
+  };
+  
+  // Generate colors for any custom categories not in the default map
+  const extraColors = [
+    "#cc7f43", "#d35843", "#4d583c", "#8c9e5e", "#358f8f",
+    "#6b798e", "#2f5d60", "#1a535c", "#4a3f35", "#232e33",
+  ];
+  
+  let colorIndex = 0;
+  categories.forEach(category => {
+    if (!categoryColors[category]) {
+      categoryColors[category] = extraColors[colorIndex % extraColors.length];
+      colorIndex++;
+    }
+  });
+
+  const getCategoryDisplayName = (category: string): string => {
+    const customDisplayNames: Record<string, string> = {
+      "cafe": "Cafés",
+      "diner": "Diners",
+      "specialty": "Specialty",
+      "fine dining": "Fine Dining",
+      "take out": "Take-Out",
+      "bakery": "Bakeries",
+      "bar": "Bars",
+      "food truck": "Food Trucks",
+      "restaurant": "Restaurants",
+      "other": "Other Places"
+    };
+
+    return customDisplayNames[category] || 
+      category
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+  };
+
+  const getTextColor = (backgroundColor: string): string => {
+    const hex = backgroundColor.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    
+    return brightness > 145 ? "#603913" : "#ffffff";
+  };
 
   const handleCatalogToggle = (category: string, isOpen: boolean) => {
     setOpenCatalogs(prev => {
@@ -271,7 +300,7 @@ const BitesPage = () => {
               {pair.map((category) => {
                 const categoryColor = categoryColors[category] || "#d2b48c";
                 const textColor = getTextColor(categoryColor);
-                const hasCards = cardsByCategory[category].length > 0;
+                const hasCards = cardsByCategory[category]?.length > 0;
                 const isOpen = openCatalogs.includes(category);
                 
                 return (
