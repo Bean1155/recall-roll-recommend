@@ -4,19 +4,19 @@ import { Button } from "@/components/ui/button";
 import { FoodCard, FoodCategory } from "@/lib/types";
 import { getCardsByType } from "@/lib/data";
 import { useUser } from "@/contexts/UserContext";
-import { PlusCircle, Plus } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
 import { useToast } from "@/hooks/use-toast";
 import CatalogSearch from "@/components/CatalogSearch";
 import CategoryDrawer from "@/components/bites/CategoryDrawer";
 import SearchResultsDialog from "@/components/bites/SearchResultsDialog";
 import CardDetailDialog from "@/components/bites/CardDetailDialog";
-import AddCategoryDialog from "@/components/bites/AddCategoryDialog";
 import { 
   defaultCategories,
   getCategoryDisplayName,
   generateCategoryColors,
-  getTextColor
+  getTextColor,
+  getAllCategories
 } from "@/utils/categoryUtils";
 
 const BitesPage = () => {
@@ -29,7 +29,6 @@ const BitesPage = () => {
   const [searchResults, setSearchResults] = useState<FoodCard[]>([]);
   const [isSearchResultsOpen, setIsSearchResultsOpen] = useState(false);
   const [openCatalogs, setOpenCatalogs] = useState<string[]>([]);
-  const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
   const { userName } = useUser();
   const location = useLocation();
   const { toast } = useToast();
@@ -155,14 +154,6 @@ const BitesPage = () => {
       }
     });
   };
-  
-  const handleCategoryAdded = (newCategory: FoodCategory) => {
-    setCategories(prev => {
-      // Insert new category before "other"
-      const withoutOther = prev.filter(c => c !== "other");
-      return [...withoutOther, newCategory, "other"];
-    });
-  };
 
   // Create dynamic cardsByCategory based on available categories
   const cardsByCategory: Record<string, FoodCard[]> = {};
@@ -223,14 +214,6 @@ const BitesPage = () => {
         <div className="space-y-10">
           <div className="flex justify-between items-center pb-4">
             <h2 className="text-xl font-medium text-catalog-softBrown">Categories</h2>
-            <Button 
-              onClick={() => setIsAddCategoryDialogOpen(true)}
-              variant="outline" 
-              className="text-sm border-catalog-softBrown text-catalog-teal"
-            >
-              <Plus size={16} className="mr-2" />
-              Add Category
-            </Button>
           </div>
           
           {categoryPairs.map((pair, pairIndex) => (
@@ -272,13 +255,6 @@ const BitesPage = () => {
         onOpenChange={setIsCardModalOpen}
         card={selectedCard}
         categoryColors={categoryColors}
-      />
-      
-      <AddCategoryDialog
-        isOpen={isAddCategoryDialogOpen}
-        onOpenChange={setIsAddCategoryDialogOpen}
-        onCategoryAdded={handleCategoryAdded}
-        existingCategories={categories}
       />
 
       <style>{`
