@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { getUserRewards, getUserRewardTier } from "@/lib/data";
 import { useUser } from "@/contexts/UserContext";
 import { Award, Trophy } from "lucide-react";
@@ -18,6 +18,8 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
   const [points, setPoints] = useState(0);
   const [tier, setTier] = useState("");
   const navigate = useNavigate();
+  const prevUserIdRef = useRef<string | null>(null);
+  const refreshCountRef = useRef(0);
   
   const handleClick = () => {
     if (onClick) {
@@ -31,17 +33,39 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
   const refreshRewards = useCallback(() => {
     if (currentUser) {
       const userPoints = getUserRewards(currentUser.id);
+      
+      // Only log if points changed or every 10th refresh
+      const shouldLog = points !== userPoints || refreshCountRef.current % 10 === 0;
+      
+      if (shouldLog) {
+        console.log(`RewardsCounter: Points refreshed to ${userPoints} (from ${points}) for user ${currentUser.id}`);
+        refreshCountRef.current = 0;
+      }
+      
+      refreshCountRef.current++;
+      
       setPoints(userPoints);
       setTier(getUserRewardTier(userPoints));
-      console.log("RewardsCounter: Points refreshed to", userPoints);
+      
+      // Update the previous user ID
+      prevUserIdRef.current = currentUser.id;
     }
-  }, [currentUser]);
+  }, [currentUser, points]);
   
   // Initial load of points and whenever currentUser changes
   useEffect(() => {
     if (currentUser) {
-      console.log("RewardsCounter: Current user changed, refreshing points for", currentUser.id);
+      // Log when user changes
+      if (prevUserIdRef.current !== currentUser.id) {
+        console.log(`RewardsCounter: User changed from ${prevUserIdRef.current} to ${currentUser.id}`);
+      }
+      
       refreshRewards();
+      
+      // Force multiple refreshes on user change
+      for (let i = 0; i < 3; i++) {
+        setTimeout(refreshRewards, (i + 1) * 500);
+      }
     }
   }, [currentUser, refreshRewards]);
   
@@ -54,10 +78,10 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     
     window.addEventListener('refreshRewards', handleRefreshEvent);
     
-    // Update more frequently initially to catch any immediate changes
+    // Refresh on regular intervals, more frequently initially
     const immediateIntervalId = setInterval(refreshRewards, 500);
     
-    // After 5 seconds, switch to a less frequent refresh
+    // After 10 seconds, switch to a less frequent refresh
     const timeoutId = setTimeout(() => {
       clearInterval(immediateIntervalId);
       const regularIntervalId = setInterval(refreshRewards, 3000);
@@ -65,7 +89,7 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
       return () => {
         clearInterval(regularIntervalId);
       };
-    }, 5000);
+    }, 10000);
     
     return () => {
       window.removeEventListener('refreshRewards', handleRefreshEvent);
@@ -73,6 +97,28 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
       clearTimeout(timeoutId);
     };
   }, [refreshRewards]);
+  
+  // Additional interval to periodically force a refresh from localStorage
+  useEffect(() => {
+    const forcedRefreshInterval = setInterval(() => {
+      if (currentUser) {
+        // Direct check from localStorage
+        const rewardsData = localStorage.getItem('catalogUserRewards');
+        if (rewardsData) {
+          const rewards = JSON.parse(rewardsData);
+          const storedPoints = rewards[currentUser.id] || 0;
+          
+          if (storedPoints !== points) {
+            console.log(`RewardsCounter: Forced refresh detected change: ${points} → ${storedPoints}`);
+            setPoints(storedPoints);
+            setTier(getUserRewardTier(storedPoints));
+          }
+        }
+      }
+    }, 2000);
+    
+    return () => clearInterval(forcedRefreshInterval);
+  }, [currentUser, points]);
   
   // Function to get background color based on tier
   const getTierColor = () => {

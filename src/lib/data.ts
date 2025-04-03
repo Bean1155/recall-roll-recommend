@@ -136,7 +136,7 @@ export const addCard = (card: Omit<CatalogCard, 'id'>): CatalogCard => {
     trackUserCardAdditions(currentUser.id, card.type);
     
     // Force a refresh of rewards counters
-    forceRewardsRefresh();
+    setTimeout(() => forceRewardsRefresh(), 500);
   } else {
     console.log("Cannot award points: either card type missing or no current user", { 
       cardType: card.type, 
@@ -197,7 +197,7 @@ export const addUserRewardPoints = (userId: string, points: number = 1, reason: 
   // Show toast notification for reward
   showRewardToast(userId, points, reason);
   
-  // Trigger refresh event
+  // Trigger refresh event with multiple attempts to ensure it's caught
   forceRewardsRefresh();
   
   console.log(`REWARD TRACKING: User ${userId} now has ${rewards[userId]} points`);
@@ -216,7 +216,7 @@ export const trackUserCardAdditions = (userId: string, cardType: 'food' | 'enter
   
   // Award points for adding a card (increased from previous version)
   const reason = `Adding a new ${cardType === 'food' ? 'bite' : 'blockbuster'}`;
-  addUserRewardPoints(userId, 5, reason);
+  addUserRewardPoints(userId, 10, reason);
 };
 
 // Get current user from localStorage or context

@@ -30,11 +30,13 @@ export const showRewardToast = (
     variant: "default",
   });
   
-  // Force the rewards counter to refresh immediately
-  setTimeout(() => {
-    forceRewardsRefresh();
-    console.log(`Toast notification triggered: +${pointsAdded} points (${reason})`);
-  }, 100);
+  // Force the rewards counter to refresh immediately and repeatedly
+  for (let i = 0; i < 5; i++) {
+    setTimeout(() => {
+      forceRewardsRefresh();
+      console.log(`Toast notification triggered: +${pointsAdded} points (${reason}) - refresh attempt ${i+1}`);
+    }, i * 300);
+  }
 };
 
 /**
@@ -42,19 +44,15 @@ export const showRewardToast = (
  */
 export const forceRewardsRefresh = (): void => {
   console.log("Force refresh rewards event triggered");
-  // Dispatch the event multiple times with small delays to ensure it's caught
-  setTimeout(() => {
-    const event = new CustomEvent('refreshRewards');
-    window.dispatchEvent(event);
-  }, 0);
   
-  setTimeout(() => {
-    const event = new CustomEvent('refreshRewards');
-    window.dispatchEvent(event);
-  }, 300);
+  // Dispatch the event multiple times with various delays to ensure it's caught
+  const delays = [0, 100, 300, 500, 1000, 2000];
   
-  setTimeout(() => {
-    const event = new CustomEvent('refreshRewards');
-    window.dispatchEvent(event);
-  }, 1000);
+  delays.forEach(delay => {
+    setTimeout(() => {
+      const event = new CustomEvent('refreshRewards');
+      window.dispatchEvent(event);
+      console.log(`Dispatched refreshRewards event with delay: ${delay}ms`);
+    }, delay);
+  });
 };
