@@ -76,7 +76,7 @@ export const NavBar = () => {
       <div className="container mx-auto max-w-md">
         {isExpanded ? (
           <div className="flex justify-around items-center py-2 animate-fade-in">
-            {/* Regular navigation items with hover effect */}
+            {/* Regular navigation items with enhanced hover effect */}
             {navItems.map((item, index) => {
               const isActive = location.pathname === item.path;
               const isMiddle = index === Math.floor(navItems.length / 2);
@@ -89,9 +89,9 @@ export const NavBar = () => {
                   onClick={() => setIsExpanded(false)}
                 >
                   <div 
-                    className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-all ${
+                    className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-all duration-200 ${
                       isActive ? "shadow-md" : ""
-                    } hover:scale-110 hover:shadow-md`}
+                    } hover:scale-125 hover:shadow-lg`}
                     style={{ backgroundColor: item.color }}
                   >
                     <item.icon 
@@ -103,26 +103,26 @@ export const NavBar = () => {
                   </div>
                   <span className={`text-xs font-medium ${
                     isActive ? "text-catalog-teal" : "text-catalog-softBrown"
-                  }`}>
+                  } transition-all duration-200 group-hover:font-bold`}>
                     {item.name}
                   </span>
                 </Link>
               );
             })}
 
-            {/* Search with tooltip and hover effect - updated to universal search */}
+            {/* Search with tooltip and enhanced hover effect */}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Link 
                     to={searchItem.path}
-                    className="flex flex-col items-center order-first"
+                    className="flex flex-col items-center order-first group"
                     onClick={() => setIsExpanded(false)}
                   >
                     <div 
-                      className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-all ${
+                      className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-all duration-200 ${
                         location.pathname === searchItem.path ? "shadow-md" : ""
-                      } hover:scale-110 hover:shadow-md`}
+                      } hover:scale-125 hover:shadow-lg`}
                       style={{ backgroundColor: searchItem.color }}
                     >
                       <searchItem.icon 
@@ -134,7 +134,7 @@ export const NavBar = () => {
                     </div>
                     <span className={`text-xs font-medium ${
                       location.pathname === searchItem.path ? "text-catalog-teal" : "text-catalog-softBrown"
-                    }`}>
+                    } transition-all duration-200 group-hover:font-bold`}>
                       {searchItem.name}
                     </span>
                   </Link>
@@ -145,14 +145,14 @@ export const NavBar = () => {
               </Tooltip>
             </TooltipProvider>
 
-            {/* Profile with settings popover and hover effect */}
+            {/* Profile with settings popover and enhanced hover effect */}
             <Popover>
               <PopoverTrigger asChild>
-                <div className="flex flex-col items-center order-last cursor-pointer">
+                <div className="flex flex-col items-center order-last cursor-pointer group">
                   <div 
-                    className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-all ${
+                    className={`w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-all duration-200 ${
                       location.pathname === profileItem.path ? "shadow-md" : ""
-                    } hover:scale-110 hover:shadow-md`}
+                    } hover:scale-125 hover:shadow-lg`}
                     style={{ backgroundColor: profileItem.color }}
                   >
                     <profileItem.icon 
@@ -164,7 +164,7 @@ export const NavBar = () => {
                   </div>
                   <span className={`text-xs font-medium ${
                     location.pathname === profileItem.path ? "text-catalog-teal" : "text-catalog-softBrown"
-                  }`}>
+                  } transition-all duration-200 group-hover:font-bold`}>
                     {profileItem.name}
                   </span>
                 </div>
@@ -195,7 +195,7 @@ export const NavBar = () => {
           <div className="flex justify-center py-2">
             <button
               onClick={toggleNavbar}
-              className="w-12 h-12 rounded-full bg-catalog-teal flex items-center justify-center shadow-md text-white hover:bg-catalog-darkTeal transition-colors duration-200"
+              className="w-12 h-12 rounded-full bg-catalog-teal flex items-center justify-center shadow-md text-white hover:bg-catalog-darkTeal transition-colors duration-200 hover:scale-110 hover:shadow-lg"
             >
               <Menu size={24} />
             </button>
