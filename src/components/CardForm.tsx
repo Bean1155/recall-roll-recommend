@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -109,6 +110,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
           entertainmentCategory: 'movies',
           status: isFoodCard ? 'Visited: Tried this bite' as FoodStatus : 'Watched' as EntertainmentStatus,
           isFavorite: card.isFavorite || false,
+          serviceRating: null as ServiceRating | null,
         };
         
         if (card.type === 'food') {
@@ -120,6 +122,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
           initialData.status = foodCard.status;
           initialData.url = foodCard.url || '';
           initialData.tags = foodCard.tags ? foodCard.tags.join(', ') : '';
+          initialData.serviceRating = foodCard.serviceRating || null;
           
           setShowRating(foodCard.status === 'Visited: Tried this bite');
         } else {
@@ -180,8 +183,12 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
     }
   };
 
-  const handleServiceRatingChange = (value: ServiceRating | null) => {
-    setFormData(prev => ({ ...prev, serviceRating: value }));
+  const handleServiceRatingChange = (value: string | null) => {
+    if (value === "null") {
+      setFormData(prev => ({ ...prev, serviceRating: null }));
+    } else {
+      setFormData(prev => ({ ...prev, serviceRating: value as ServiceRating }));
+    }
   };
 
   const handleAddNewCategory = () => {
@@ -336,7 +343,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
   };
   
   return (
-    <Form>
+    <div>
       <form onSubmit={handleSubmit} className="catalog-card max-w-md mx-auto">
         <div className="space-y-4">
           {isFoodCard ? (
@@ -440,44 +447,46 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
               {formData.status === 'Visited: Tried this bite' && (
                 <div>
                   <Label htmlFor="serviceRating">Service</Label>
-                  <div className="flex justify-between items-center mt-2 p-3 border rounded-md">
-                    <div 
-                      className={`flex flex-col items-center cursor-pointer p-2 rounded-md ${formData.serviceRating === 'Had me at hello' ? 'bg-green-100' : ''}`}
-                      onClick={() => handleServiceRatingChange('Had me at hello')}
-                    >
-                      <Smile className="w-8 h-8 text-green-500" />
-                      <span className="text-xs text-center mt-1">Had me at hello</span>
-                    </div>
-                    
-                    <div 
-                      className={`flex flex-col items-center cursor-pointer p-2 rounded-md ${formData.serviceRating === 'Needs more effort' ? 'bg-amber-100' : ''}`}
-                      onClick={() => handleServiceRatingChange('Needs more effort')}
-                    >
-                      <Meh className="w-8 h-8 text-amber-500" />
-                      <span className="text-xs text-center mt-1">Needs more effort</span>
-                    </div>
-                    
-                    <div 
-                      className={`flex flex-col items-center cursor-pointer p-2 rounded-md ${formData.serviceRating === 'Disappointed' ? 'bg-red-100' : ''}`}
-                      onClick={() => handleServiceRatingChange('Disappointed')}
-                    >
-                      <Frown className="w-8 h-8 text-red-500" />
-                      <span className="text-xs text-center mt-1">Disappointed</span>
-                    </div>
-                  </div>
-                  {formData.serviceRating && (
-                    <div className="flex justify-end mt-1">
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => handleServiceRatingChange(null)}
-                        className="text-xs h-6 px-2"
-                      >
-                        Clear
-                      </Button>
-                    </div>
-                  )}
+                  <Select
+                    value={formData.serviceRating || "null"}
+                    onValueChange={(value) => handleServiceRatingChange(value === "null" ? null : value)}
+                  >
+                    <SelectTrigger className="catalog-input">
+                      <SelectValue placeholder="How was the service?">
+                        {formData.serviceRating ? (
+                          <div className="flex items-center space-x-2">
+                            {getServiceRatingIcon(formData.serviceRating)}
+                            <span>{formData.serviceRating}</span>
+                          </div>
+                        ) : (
+                          <span>How was the service?</span>
+                        )}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Had me at hello">
+                        <div className="flex items-center space-x-2">
+                          <Smile className="w-5 h-5 text-green-500" />
+                          <span>Had me at hello</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="Needs more effort">
+                        <div className="flex items-center space-x-2">
+                          <Meh className="w-5 h-5 text-amber-500" />
+                          <span>Needs more effort</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="Disappointed">
+                        <div className="flex items-center space-x-2">
+                          <Frown className="w-5 h-5 text-red-500" />
+                          <span>Disappointed</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="null">
+                        <span className="text-muted-foreground">No rating</span>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               )}
 
@@ -879,7 +888,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
           </DialogContent>
         </Dialog>
       </form>
-    </Form>
+    </div>
   );
 };
 
