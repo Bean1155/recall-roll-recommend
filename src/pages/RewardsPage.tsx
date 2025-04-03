@@ -41,6 +41,27 @@ const RewardsPage = () => {
       }, delay);
     });
     
+    // CRITICAL ADDITION: Listen specifically for card creation reward events
+    const handleCardRewardUpdate = () => {
+      console.log("RewardsPage: Received card_reward_update event");
+      // Run multiple refreshes with increasing delays
+      for (let i = 0; i < 10; i++) {
+        setTimeout(() => {
+          forceRewardsRefresh();
+          console.log(`RewardsPage: Card reward update refresh attempt ${i+1}`);
+        }, i * 200);
+      }
+    };
+    
+    window.addEventListener('card_reward_update', handleCardRewardUpdate);
+    window.addEventListener('catalog_action', (e) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail?.action === 'card_added') {
+        console.log("RewardsPage: Detected card_added event, triggering refresh");
+        handleCardRewardUpdate();
+      }
+    });
+    
     // Set up a regular interval for this page
     const intervalId = setInterval(() => {
       forceRewardsRefresh();
@@ -48,8 +69,17 @@ const RewardsPage = () => {
     
     return () => {
       clearInterval(intervalId);
+      window.removeEventListener('card_reward_update', handleCardRewardUpdate);
+      window.removeEventListener('catalog_action', handleCardRewardUpdate);
     };
   }, [currentUser]);
+  
+  // Manual refresh function (useful for debugging)
+  const triggerManualRefresh = () => {
+    if (!currentUser) return;
+    console.log("RewardsPage: Manual refresh triggered by user action");
+    forceRewardsRefresh();
+  };
   
   return (
     <GridLayout title={
@@ -63,6 +93,14 @@ const RewardsPage = () => {
       </>
     }>
       <div className="max-w-3xl mx-auto">
+        {/* Clickable area to force refresh - hidden but useful for debugging */}
+        <div 
+          className="mb-4 p-2 text-center cursor-pointer hover:bg-catalog-cream/50 rounded-md transition-colors"
+          onClick={triggerManualRefresh}
+        >
+          <span className="text-sm text-catalog-softBrown">Click to refresh your points</span>
+        </div>
+      
         {/* Collapsible How It Works section (now first) */}
         <div className="mb-8">
           <CatalogCollapsible 
