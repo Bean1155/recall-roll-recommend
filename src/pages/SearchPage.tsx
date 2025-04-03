@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -70,27 +71,29 @@ const SearchPage = () => {
     <GridLayout title={getPageTitle()}>
       <div className="max-w-5xl mx-auto">
         <Tabs value={activeTab} onValueChange={handleCatalogTypeChange} className="mb-6">
-          <TabsList className="w-full bg-gray-100 p-1 rounded-md mb-4">
+          <TabsList className="w-full bg-transparent p-0 rounded-md mb-4 flex gap-4">
             <TabsTrigger 
               value="food" 
-              className="flex items-center gap-2 flex-1 text-catalog-softBrown hover:bg-opacity-80 transition-colors"
+              className="flex items-center gap-2 flex-1 py-3 rounded-md border-2 transition-colors text-black font-medium"
               style={{
-                backgroundColor: activeTab === "food" ? foodTabBgColor : "transparent",
-                color: activeTab === "food" ? "#5d4037" : undefined
+                backgroundColor: foodTabBgColor,
+                borderColor: activeTab === "food" ? "#d2b48c" : "transparent",
+                boxShadow: activeTab === "food" ? "0 2px 4px rgba(0,0,0,0.1)" : "none"
               }}
             >
-              <UtensilsCrossed size={16} />
+              <UtensilsCrossed size={18} />
               Bites
             </TabsTrigger>
             <TabsTrigger 
               value="entertainment" 
-              className="flex items-center gap-2 flex-1 text-catalog-softBrown hover:bg-opacity-80 transition-colors"
+              className="flex items-center gap-2 flex-1 py-3 rounded-md border-2 transition-colors text-black font-medium"
               style={{
-                backgroundColor: activeTab === "entertainment" ? entertainmentTabBgColor : "transparent",
-                color: activeTab === "entertainment" ? "#5d4037" : undefined
+                backgroundColor: entertainmentTabBgColor,
+                borderColor: activeTab === "entertainment" ? "#d2b48c" : "transparent",
+                boxShadow: activeTab === "entertainment" ? "0 2px 4px rgba(0,0,0,0.1)" : "none"
               }}
             >
-              <Film size={16} />
+              <Film size={18} />
               Blockbusters
             </TabsTrigger>
           </TabsList>
