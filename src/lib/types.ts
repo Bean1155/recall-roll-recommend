@@ -24,7 +24,7 @@ export interface CatalogCard {
   title: string;
   creator: string; // chef/restaurant or director/studio
   date: string;
-  rating: number;
+  rating?: number; // Changed to optional
   notes: string;
   recommendedBy?: string;
   recommendedTo?: string[];

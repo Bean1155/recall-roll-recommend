@@ -26,6 +26,8 @@ import {
   DialogClose
 } from "@/components/ui/dialog";
 import { defaultCategories, getCategoryDisplayName } from "@/utils/categoryUtils";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 
 interface CardFormProps {
   type: CardType;
@@ -40,6 +42,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
   const [newCategory, setNewCategory] = useState('');
   const [customFoodCategories, setCustomFoodCategories] = useState<FoodCategory[]>([]);
   const [customEntertainmentCategories, setCustomEntertainmentCategories] = useState<string[]>([]);
+  const [showRating, setShowRating] = useState(true);
   
   useEffect(() => {
     const savedFoodCategories = localStorage.getItem('customFoodCategories');
@@ -68,6 +71,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
     creator: '',
     date: new Date().toISOString().split('T')[0],
     rating: 3,
+    hasRating: true,
     notes: '',
     cuisine: '',
     location: '',
@@ -90,7 +94,8 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
           title: card.title,
           creator: card.creator,
           date: card.date,
-          rating: card.rating,
+          rating: card.rating || 0,
+          hasRating: card.rating !== undefined && card.rating !== null,
           notes: card.notes,
           cuisine: '',
           location: '',
@@ -114,6 +119,8 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
           initialData.status = foodCard.status;
           initialData.url = foodCard.url || '';
           initialData.tags = foodCard.tags ? foodCard.tags.join(', ') : '';
+          
+          setShowRating(foodCard.status === 'Visited: Tried this bite');
         } else {
           const entertainmentCard = card as EntertainmentCard;
           initialData.genre = entertainmentCard.genre;
@@ -122,12 +129,26 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
           initialData.status = entertainmentCard.status;
           initialData.url = entertainmentCard.url || '';
           initialData.tags = entertainmentCard.tags ? entertainmentCard.tags.join(', ') : '';
+          
+          setShowRating(entertainmentCard.status === 'Watched');
         }
         
         setFormData(initialData);
       }
     }
   }, [cardId, isEditMode, isFoodCard]);
+  
+  useEffect(() => {
+    if (isFoodCard) {
+      setShowRating(formData.status === 'Visited: Tried this bite');
+    } else {
+      setShowRating(formData.status === 'Watched');
+    }
+    
+    if (!showRating) {
+      setFormData(prev => ({ ...prev, hasRating: false }));
+    }
+  }, [formData.status, isFoodCard, showRating]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -139,6 +160,22 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
       setIsAddCategoryDialogOpen(true);
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
+      
+      if (name === 'status') {
+        if (isFoodCard) {
+          const newShowRating = value === 'Visited: Tried this bite';
+          setShowRating(newShowRating);
+          if (!newShowRating) {
+            setFormData(prev => ({ ...prev, hasRating: false }));
+          }
+        } else {
+          const newShowRating = value === 'Watched';
+          setShowRating(newShowRating);
+          if (!newShowRating) {
+            setFormData(prev => ({ ...prev, hasRating: false }));
+          }
+        }
+      }
     }
   };
 
@@ -179,7 +216,15 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
   };
   
   const handleRatingChange = (value: number[]) => {
-    setFormData(prev => ({ ...prev, rating: value[0] }));
+    setFormData(prev => ({ ...prev, rating: value[0], hasRating: true }));
+  };
+  
+  const handleRatingToggle = (hasRating: boolean) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      hasRating,
+      rating: hasRating ? (prev.rating || 3) : 0
+    }));
   };
 
   const getRatingLabel = (rating: number): string => {
@@ -202,7 +247,7 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
         title: formData.title,
         creator: formData.creator,
         date: formData.date,
-        rating: Number(formData.rating),
+        rating: formData.hasRating ? Number(formData.rating) : undefined,
         notes: formData.notes,
         isFavorite: formData.isFavorite,
       };
@@ -410,28 +455,52 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="rating" className="flex items-center">
-                <Star className="w-4 h-4 mr-2" />
-                Rating
-              </Label>
-              <div className="flex items-center space-x-2 py-4">
-                <Slider
-                  id="rating"
-                  min={1}
-                  max={5}
-                  step={1}
-                  value={[formData.rating]}
-                  onValueChange={handleRatingChange}
-                />
-                <div className="w-24 text-center">
-                  <span className="font-semibold">{formData.rating}</span>
-                  <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
+              {showRating && (
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="rating" className="flex items-center">
+                    <Star className="w-4 h-4 mr-2" />
+                    Rating
+                  </Label>
+                  
+                  <RadioGroup 
+                    value={formData.hasRating ? "rated" : "not-rated"}
+                    onValueChange={(value) => handleRatingToggle(value === "rated")}
+                    className="flex space-x-4"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="rated" id="rating-yes" />
+                      <Label htmlFor="rating-yes" className="text-sm">Rate it</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="not-rated" id="rating-no" />
+                      <Label htmlFor="rating-no" className="text-sm">No rating yet</Label>
+                    </div>
+                  </RadioGroup>
                 </div>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span>1 - Yikes</span>
-                <span>5 - Amazing</span>
-              </div>
+                
+                {formData.hasRating && (
+                  <>
+                    <div className="flex items-center space-x-2 py-4">
+                      <Slider
+                        id="rating"
+                        min={1}
+                        max={5}
+                        step={1}
+                        value={[formData.rating]}
+                        onValueChange={handleRatingChange}
+                      />
+                      <div className="w-24 text-center">
+                        <span className="font-semibold">{formData.rating}</span>
+                        <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span>1 - Yikes</span>
+                      <span>5 - Amazing</span>
+                    </div>
+                  </>
+                )}
+              )}
             </div>
 
             <div>
@@ -447,6 +516,34 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
                 className="catalog-input"
                 placeholder="Website or social media link"
               />
+            </div>
+
+            <div>
+              <Label htmlFor="notes">Notes</Label>
+              <Textarea
+                id="notes"
+                name="notes"
+                value={formData.notes}
+                onChange={handleChange}
+                className="catalog-input h-20"
+                placeholder="Your thoughts, impressions, and memorable details..."
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="tags" className="flex items-center">
+                <Tag className="w-4 h-4 mr-2" />
+                Tags
+              </Label>
+              <Input
+                id="tags"
+                name="tags"
+                value={formData.tags}
+                onChange={handleChange}
+                className="catalog-input"
+                placeholder="breakfast, sandwiches, coffee, etc. (comma separated)"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Separate tags with commas</p>
             </div>
           </>
         ) : (
@@ -578,28 +675,52 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
             </div>
             
             <div className="space-y-1">
-              <Label htmlFor="rating" className="flex items-center">
-                <Star className="w-4 h-4 mr-2" />
-                Rating
-              </Label>
-              <div className="flex items-center space-x-2 py-4">
-                <Slider
-                  id="rating"
-                  min={1}
-                  max={5}
-                  step={1}
-                  value={[formData.rating]}
-                  onValueChange={handleRatingChange}
-                />
-                <div className="w-24 text-center">
-                  <span className="font-semibold">{formData.rating}</span>
-                  <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
+              {showRating && (
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="rating" className="flex items-center">
+                    <Star className="w-4 h-4 mr-2" />
+                    Rating
+                  </Label>
+                  
+                  <RadioGroup 
+                    value={formData.hasRating ? "rated" : "not-rated"}
+                    onValueChange={(value) => handleRatingToggle(value === "rated")}
+                    className="flex space-x-4"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="rated" id="rating-yes" />
+                      <Label htmlFor="rating-yes" className="text-sm">Rate it</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="not-rated" id="rating-no" />
+                      <Label htmlFor="rating-no" className="text-sm">No rating yet</Label>
+                    </div>
+                  </RadioGroup>
                 </div>
-              </div>
-              <div className="flex justify-between text-xs">
-                <span>1 - Yikes</span>
-                <span>5 - Amazing</span>
-              </div>
+                
+                {formData.hasRating && (
+                  <>
+                    <div className="flex items-center space-x-2 py-4">
+                      <Slider
+                        id="rating"
+                        min={1}
+                        max={5}
+                        step={1}
+                        value={[formData.rating]}
+                        onValueChange={handleRatingChange}
+                      />
+                      <div className="w-24 text-center">
+                        <span className="font-semibold">{formData.rating}</span>
+                        <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span>1 - Yikes</span>
+                      <span>5 - Amazing</span>
+                    </div>
+                  </>
+                )}
+              )}
             </div>
 
             <div>
