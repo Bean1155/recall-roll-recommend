@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -175,6 +176,12 @@ const BitesPage = () => {
             onFilteredItemsChange={handleFilteredItemsChange}
             type="food"
           />
+          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+            <Link to="/create/food">
+              <PlusCircle size={16} className="mr-2" />
+              Add New Bite
+            </Link>
+          </Button>
         </div>
       </div>
 
@@ -204,14 +211,8 @@ const BitesPage = () => {
         </div>
       ) : (
         <div className="space-y-10">
-          <div className="flex justify-between items-center pb-4">
-            <h2 className="text-xl font-medium text-[#1EAEDB] font-typewriter mx-auto">Categories</h2>
-            <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-              <Link to="/create/food">
-                <PlusCircle size={16} className="mr-2" />
-                Add New Bite
-              </Link>
-            </Button>
+          <div className="flex justify-center items-center pb-4">
+            <h2 className="text-xl font-medium text-[#1EAEDB] font-typewriter">Categories</h2>
           </div>
           
           {categoryPairs.map((pair, pairIndex) => (
