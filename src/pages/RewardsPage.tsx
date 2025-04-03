@@ -20,8 +20,30 @@ const RewardsPage = () => {
       </>
     }>
       <div className="max-w-3xl mx-auto">
-        {/* Benefits and Track Progress cards side by side at the top */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {/* Collapsible How It Works section (now first) */}
+        <div className="mb-8">
+          <CatalogCollapsible 
+            label="How It Works" 
+            backgroundColor="#ACC8E5" 
+            textColor="#603913"
+          >
+            <HowItWorksTab />
+          </CatalogCollapsible>
+        </div>
+        
+        {/* Collapsible Reward System section (now second) */}
+        <div className="mb-8">
+          <CatalogCollapsible 
+            label="Reward System" 
+            backgroundColor="#d2b48c" 
+            textColor="#603913"
+          >
+            <RewardSystemTab />
+          </CatalogCollapsible>
+        </div>
+        
+        {/* Benefits section (now third) */}
+        <div className="mb-8">
           <CatalogCollapsible 
             label="Benefits" 
             backgroundColor="#E5DEFF" 
@@ -40,7 +62,10 @@ const RewardsPage = () => {
               </ul>
             </div>
           </CatalogCollapsible>
-          
+        </div>
+        
+        {/* Track Progress section (now fourth) */}
+        <div className="mb-8">
           <CatalogCollapsible 
             label="Track Progress" 
             backgroundColor="#FADADD" 
@@ -54,28 +79,6 @@ const RewardsPage = () => {
               <p>Keep an eye on your monthly report card to track your referral progress.</p>
               <p>Challenge yourself to reach the next tier in our rating scale!</p>
             </div>
-          </CatalogCollapsible>
-        </div>
-        
-        {/* Collapsible How It Works section */}
-        <div className="mb-8">
-          <CatalogCollapsible 
-            label="How It Works" 
-            backgroundColor="#ACC8E5" 
-            textColor="#603913"
-          >
-            <HowItWorksTab />
-          </CatalogCollapsible>
-        </div>
-        
-        {/* Collapsible Reward System section */}
-        <div className="mb-8">
-          <CatalogCollapsible 
-            label="Reward System" 
-            backgroundColor="#d2b48c" 
-            textColor="#603913"
-          >
-            <RewardSystemTab />
           </CatalogCollapsible>
         </div>
       </div>
