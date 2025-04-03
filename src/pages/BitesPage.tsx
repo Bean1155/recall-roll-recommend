@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
@@ -225,12 +226,13 @@ const BitesPage = () => {
     categoryPairs.push(pair);
   }
 
-  const handleCatalogToggle = (category: string) => {
+  const handleCatalogToggle = (category: string, isOpen: boolean) => {
     setOpenCatalogs(prev => {
-      if (prev.includes(category)) {
-        return prev.filter(cat => cat !== category);
-      } else {
+      if (isOpen) {
+        if (prev.includes(category)) return prev;
         return [...prev, category];
+      } else {
+        return prev.filter(cat => cat !== category);
       }
     });
   };
@@ -279,7 +281,7 @@ const BitesPage = () => {
                       backgroundColor={categoryColor}
                       textColor={textColor}
                       open={isOpen}
-                      onOpenChange={() => handleCatalogToggle(category)}
+                      onOpenChange={(open) => handleCatalogToggle(category, open)}
                     >
                       {hasCards ? (
                         <Carousel className="w-full">
@@ -426,10 +428,13 @@ const BitesPage = () => {
           transition: transform 0.3s ease-in-out;
         }
         
+        .catalog-drawer .catalog-drawer-front {
+          cursor: pointer;
+        }
+        
         .catalog-drawer:hover .catalog-drawer-front {
           transform: translateY(8px) !important;
           box-shadow: 0 3px 8px rgba(0,0,0,0.1) !important;
-          cursor: pointer;
         }
         
         .border-3 {

@@ -19,18 +19,14 @@ export const CatalogCollapsible = React.forwardRef<
     backgroundColor?: string;
     textColor?: string;
   }
->(({ className, label, backgroundColor = "#d2b48c", textColor = "#603913", children, ...props }, ref) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+>(({ className, label, backgroundColor = "#d2b48c", textColor = "#603913", children, open, onOpenChange, ...props }, ref) => {
   const [isHovering, setIsHovering] = React.useState(false);
-  
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
-  };
   
   return (
     <Collapsible 
       ref={ref}
-      open={isOpen}
+      open={open}
+      onOpenChange={onOpenChange}
       className={`catalog-drawer relative mb-4 ${className}`}
       {...props}
     >
@@ -57,46 +53,47 @@ export const CatalogCollapsible = React.forwardRef<
           </div>
         </div>
         
-        <div 
-          className="catalog-drawer-front relative border-3 rounded-md transition-all duration-300 ease-in-out cursor-pointer"
-          style={{ 
-            backgroundColor, 
-            borderColor: backgroundColor,
-            borderWidth: "3px",
-            transform: isOpen ? "translateY(15px)" : isHovering ? "translateY(8px)" : "translateY(0)",
-            boxShadow: isOpen ? "0 5px 15px rgba(0,0,0,0.15)" : isHovering ? "0 3px 8px rgba(0,0,0,0.1)" : "none",
-          }}
-          onClick={handleToggle}
-        >
+        <CollapsibleTrigger asChild>
           <div 
-            className="catalog-handle mx-auto mt-1 mb-3 flex items-center justify-center"
-            style={{
-              width: "40%",
-              height: "12px",
-              backgroundColor: textColor,
-              borderRadius: "6px",
-              opacity: 0.6
+            className="catalog-drawer-front relative border-3 rounded-md transition-all duration-300 ease-in-out cursor-pointer"
+            style={{ 
+              backgroundColor, 
+              borderColor: backgroundColor,
+              borderWidth: "3px",
+              transform: open ? "translateY(15px)" : isHovering ? "translateY(8px)" : "translateY(0)",
+              boxShadow: open ? "0 5px 15px rgba(0,0,0,0.15)" : isHovering ? "0 3px 8px rgba(0,0,0,0.1)" : "none",
             }}
           >
             <div 
-              className="catalog-handle-hole"
+              className="catalog-handle mx-auto mt-1 mb-3 flex items-center justify-center"
               style={{
-                width: "6px",
-                height: "6px",
-                backgroundColor: "black",
-                borderRadius: "50%",
-                opacity: 0.5
+                width: "40%",
+                height: "12px",
+                backgroundColor: textColor,
+                borderRadius: "6px",
+                opacity: 0.6
               }}
-            />
+            >
+              <div 
+                className="catalog-handle-hole"
+                style={{
+                  width: "6px",
+                  height: "6px",
+                  backgroundColor: "black",
+                  borderRadius: "50%",
+                  opacity: 0.5
+                }}
+              />
+            </div>
           </div>
-        </div>
+        </CollapsibleTrigger>
       </div>
       
       <CollapsibleContent 
         className="rounded-b-md bg-white overflow-hidden transition-all data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up"
         style={{ 
-          marginTop: isOpen ? "8px" : "0", 
-          border: isOpen ? `3px solid ${backgroundColor}` : "none",
+          marginTop: open ? "8px" : "0", 
+          border: open ? `3px solid ${backgroundColor}` : "none",
           zIndex: 5,
           position: "relative"
         }}
