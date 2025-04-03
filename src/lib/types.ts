@@ -4,12 +4,17 @@ export type FoodCategory = 'bakery' | 'bar' | 'cafe' | 'diner' | 'event space' |
 export type FoodStatus = 'Visited: Tried this bite' | 'Interested: Want a bite';
 export type EntertainmentStatus = 'Watched' | 'Want to Watch' | 'Currently Watching';
 export type RecommendationBadge = 'Highly Recommend' | 'Favorite' | null;
+export type AgreementStatus = 'Agree' | 'Disagree' | 'Neutral' | null;
 
 export interface UserNote {
   userId: string;
   notes: string;
   date: string;
-  userName?: string; // Add userName field to display in notes
+  userName?: string;
+  userRating?: number;
+  agreementStatus?: AgreementStatus;
+  tags?: string[];
+  url?: string;
 }
 
 export interface CatalogCard {

@@ -1,4 +1,4 @@
-import { CatalogCard, FoodCard, EntertainmentCard, FoodStatus, RecommendationBadge } from './types';
+import { CatalogCard, FoodCard, EntertainmentCard, FoodStatus, RecommendationBadge, UserNote, AgreementStatus } from './types';
 import { appUsers } from '@/contexts/UserContext';
 
 // Mock data
@@ -162,12 +162,18 @@ export const isRecommendedToUser = (cardId: string, userId: string): boolean => 
   return recommendedUsers.includes(userId);
 };
 
-// Updated function to add user notes to a card 
+// Updated function to add user notes and preferences to a card
 export const addUserNotesToCard = (
   cardId: string, 
   userId: string, 
-  notes: string, 
-  allowNoteUpdates: boolean = false
+  data: {
+    notes?: string,
+    userRating?: number,
+    agreementStatus?: AgreementStatus,
+    tags?: string[],
+    url?: string,
+    addNotesToOriginal?: boolean
+  }
 ): boolean => {
   // Check users' sharing settings from local storage
   const sharingSettingsJson = localStorage.getItem('catalogSharingSettings');
@@ -179,7 +185,7 @@ export const addUserNotesToCard = (
   }
   
   // If manual note updates aren't allowed and auto-receive is disabled, return false
-  if (!allowNoteUpdates && !autoReceiveNotes) return false;
+  if (!data.addNotesToOriginal && !autoReceiveNotes) return false;
   
   const cards = getAllCards();
   const cardIndex = cards.findIndex(c => c.id === cardId);
@@ -189,19 +195,68 @@ export const addUserNotesToCard = (
     
     // Only allow updates if the card has been shared with this user
     if (card.recommendedTo && card.recommendedTo.includes(userId)) {
-      // Append the new notes with a separator
-      const existingNotes = card.notes || '';
+      // Get existing user notes or create new array
+      const userNotes = card.userNotes || [];
+      
+      // Check if this user already has a note
+      const existingNoteIndex = userNotes.findIndex(note => note.userId === userId);
       const userName = appUsers.find(user => user.id === userId)?.name || 'User';
       
-      const updatedNotes = existingNotes 
-        ? `${existingNotes}\n\n--- Notes from ${userName} ---\n${notes}`
-        : `Notes from ${userName}:\n${notes}`;
+      // Create a new note or update existing
+      const noteContent = data.notes ? data.notes.trim() : '';
+      const newUserNote: UserNote = {
+        userId,
+        userName,
+        notes: noteContent,
+        date: new Date().toISOString(),
+        userRating: data.userRating,
+        agreementStatus: data.agreementStatus,
+        tags: data.tags,
+        url: data.url
+      };
       
+      // If user already had a note, update it; otherwise add new note
+      if (existingNoteIndex >= 0) {
+        userNotes[existingNoteIndex] = {
+          ...userNotes[existingNoteIndex],
+          ...newUserNote,
+          // Keep original date but add updated timestamp
+          date: userNotes[existingNoteIndex].date,
+          updatedDate: new Date().toISOString()
+        };
+      } else {
+        userNotes.push(newUserNote);
+      }
+      
+      // Update the card with new user notes
       cards[cardIndex] = {
         ...card,
-        notes: updatedNotes,
-        userNotes: [...(card.userNotes || []), { userId, notes, date: new Date().toISOString() }]
+        userNotes
       };
+      
+      // If addNotesToOriginal is true, also add the notes to the original card notes
+      if (data.addNotesToOriginal || autoReceiveNotes) {
+        if (noteContent) {
+          const existingNotes = card.notes || '';
+          const updatedNotes = existingNotes 
+            ? `${existingNotes}\n\n--- Notes from ${userName} ---\n${noteContent}`
+            : `Notes from ${userName}:\n${noteContent}`;
+            
+          cards[cardIndex].notes = updatedNotes;
+        }
+        
+        // Merge tags if provided
+        if (data.tags && data.tags.length > 0) {
+          const existingTags = card.tags || [];
+          const uniqueTags = [...new Set([...existingTags, ...data.tags])];
+          cards[cardIndex].tags = uniqueTags;
+        }
+        
+        // Add URL if provided
+        if (data.url) {
+          cards[cardIndex].url = data.url;
+        }
+      }
       
       localStorage.setItem('catalogCards', JSON.stringify(cards));
       return true;
@@ -209,6 +264,23 @@ export const addUserNotesToCard = (
   }
   
   return false;
+};
+
+// Function to get recommended users with their notes
+export const getRecommendedUsersWithNotes = (cardId: string): Array<{userId: string, userName: string, hasNotes: boolean}> => {
+  const card = getCardById(cardId);
+  if (!card || !card.recommendedTo) return [];
+  
+  return card.recommendedTo.map(userId => {
+    const user = appUsers.find(u => u.id === userId);
+    const userNote = card.userNotes?.find(note => note.userId === userId);
+    
+    return {
+      userId,
+      userName: user?.name || 'Unknown User',
+      hasNotes: !!userNote
+    };
+  });
 };
 
 // Add a new function to share card
