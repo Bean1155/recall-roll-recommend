@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -63,9 +62,9 @@ const SearchPage = () => {
     setFilteredCards(items);
   };
 
-  // Colors that match the navigation bar in the home page
-  const foodTabBgColor = "#FFECB3";  // Soft Yellow/Gold (same as Home nav item)
-  const entertainmentTabBgColor = "#E5DEFF"; // Soft Purple (same as Add nav item)
+  // Colors that match the navigation bar in the home page header
+  const foodTabBgColor = "#FDE1D3";  // Pink (Bites) from the header
+  const entertainmentTabBgColor = "#D6E5F0"; // Blue (Blockbusters) from the header
 
   return (
     <GridLayout title={getPageTitle()}>
