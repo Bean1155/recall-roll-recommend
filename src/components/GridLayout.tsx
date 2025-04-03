@@ -1,7 +1,8 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "@/components/Header";
 import NavBar from "@/components/NavBar";
+import { forceRewardsRefresh } from "@/utils/rewardUtils";
 
 interface GridLayoutProps {
   children: React.ReactNode;
@@ -9,6 +10,21 @@ interface GridLayoutProps {
 }
 
 const GridLayout: React.FC<GridLayoutProps> = ({ children, title }) => {
+  // Force a rewards refresh when any page using GridLayout is loaded
+  useEffect(() => {
+    console.log("GridLayout: Component mounted, forcing rewards refresh");
+    forceRewardsRefresh();
+    
+    // Set up a regular refresh interval
+    const intervalId = setInterval(() => {
+      forceRewardsRefresh();
+    }, 5000);
+    
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+  
   return (
     <div 
       className="min-h-screen flex flex-col font-typewriter"

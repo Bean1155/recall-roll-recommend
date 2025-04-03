@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { getUserRewards, getUserRewardTier } from "@/lib/data";
 import { useUser } from "@/contexts/UserContext";
 import { Award, Trophy } from "lucide-react";
@@ -28,24 +28,22 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
   };
   
   // Function to refresh rewards display
-  const refreshRewards = () => {
+  const refreshRewards = useCallback(() => {
     if (currentUser) {
       const userPoints = getUserRewards(currentUser.id);
       setPoints(userPoints);
       setTier(getUserRewardTier(userPoints));
       console.log("RewardsCounter: Points refreshed to", userPoints);
     }
-  };
+  }, [currentUser]);
   
   // Initial load of points and whenever currentUser changes
   useEffect(() => {
-    refreshRewards();
-    
-    // Refresh immediately when currentUser changes
     if (currentUser) {
       console.log("RewardsCounter: Current user changed, refreshing points for", currentUser.id);
+      refreshRewards();
     }
-  }, [currentUser]);
+  }, [currentUser, refreshRewards]);
   
   // Set up event listeners for points updates
   useEffect(() => {
@@ -74,7 +72,7 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
       clearInterval(immediateIntervalId);
       clearTimeout(timeoutId);
     };
-  }, [currentUser]);
+  }, [refreshRewards]);
   
   // Function to get background color based on tier
   const getTierColor = () => {

@@ -13,7 +13,7 @@ export const showRewardToast = (
   pointsAdded: number,
   reason: string
 ): void => {
-  if (pointsAdded <= 0) return;
+  if (pointsAdded <= 0 || !userId) return;
   
   // Get the updated total points
   const totalPoints = getUserRewards(userId);
@@ -32,8 +32,7 @@ export const showRewardToast = (
   
   // Force the rewards counter to refresh immediately
   setTimeout(() => {
-    const event = new CustomEvent('refreshRewards');
-    window.dispatchEvent(event);
+    forceRewardsRefresh();
     console.log(`Toast notification triggered: +${pointsAdded} points (${reason})`);
   }, 100);
 };
@@ -42,7 +41,20 @@ export const showRewardToast = (
  * Force the rewards counter to refresh
  */
 export const forceRewardsRefresh = (): void => {
-  const event = new CustomEvent('refreshRewards');
-  window.dispatchEvent(event);
   console.log("Force refresh rewards event triggered");
+  // Dispatch the event multiple times with small delays to ensure it's caught
+  setTimeout(() => {
+    const event = new CustomEvent('refreshRewards');
+    window.dispatchEvent(event);
+  }, 0);
+  
+  setTimeout(() => {
+    const event = new CustomEvent('refreshRewards');
+    window.dispatchEvent(event);
+  }, 300);
+  
+  setTimeout(() => {
+    const event = new CustomEvent('refreshRewards');
+    window.dispatchEvent(event);
+  }, 1000);
 };
