@@ -27,30 +27,38 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     }
   };
   
-  useEffect(() => {
+  // Function to refresh rewards display
+  const refreshRewards = () => {
     if (currentUser) {
       const userPoints = getUserRewards(currentUser.id);
       setPoints(userPoints);
       setTier(getUserRewardTier(userPoints));
-      console.log("RewardsCounter: User has", userPoints, "points");
+      console.log("RewardsCounter: Points refreshed to", userPoints);
     }
+  };
+  
+  // Initial load of points
+  useEffect(() => {
+    refreshRewards();
   }, [currentUser]);
   
-  // Update the points every 1 second to catch any changes
+  // Listen for refreshRewards events
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (currentUser) {
-        const userPoints = getUserRewards(currentUser.id);
-        if (userPoints !== points) {
-          console.log("RewardsCounter: Points updated from", points, "to", userPoints);
-          setPoints(userPoints);
-          setTier(getUserRewardTier(userPoints));
-        }
-      }
-    }, 1000);
+    const handleRefreshEvent = () => {
+      console.log("RewardsCounter: Refresh event received");
+      refreshRewards();
+    };
     
-    return () => clearInterval(intervalId);
-  }, [currentUser, points]);
+    window.addEventListener('refreshRewards', handleRefreshEvent);
+    
+    // Update the points every 2 seconds to catch any changes
+    const intervalId = setInterval(refreshRewards, 2000);
+    
+    return () => {
+      window.removeEventListener('refreshRewards', handleRefreshEvent);
+      clearInterval(intervalId);
+    };
+  }, [currentUser]);
   
   // Function to get background color based on tier
   const getTierColor = () => {

@@ -125,7 +125,8 @@ export const addCard = (card: Omit<CatalogCard, 'id'>): CatalogCard => {
   localStorage.setItem('catalogCards', JSON.stringify(updatedCards));
   
   // Track this card addition for rewards if created by a user
-  if (card.recommendedBy) {
+  if (card.recommendedBy && currentUser) {
+    console.log(`Adding card by ${card.recommendedBy} of type ${card.type}`);
     trackUserCardAdditions(card.recommendedBy, card.type);
   }
   
@@ -158,6 +159,7 @@ export const getUserRewards = (userId: string): number => {
 
 // Function to add reward points to a user
 export const addUserRewardPoints = (userId: string, points: number = 1, reason: string = 'Activity'): number => {
+  console.log(`Adding ${points} points to user ${userId} for ${reason}`);
   const rewardsData = localStorage.getItem('catalogUserRewards');
   let rewards = rewardsData ? JSON.parse(rewardsData) : {};
   
@@ -175,23 +177,44 @@ export const addUserRewardPoints = (userId: string, points: number = 1, reason: 
   // Show toast notification for reward
   showRewardToast(userId, points, reason);
   
+  // Trigger refresh event
+  const event = new CustomEvent('refreshRewards');
+  window.dispatchEvent(event);
+  
+  console.log(`User ${userId} now has ${rewards[userId]} points`);
+  
   return rewards[userId];
 };
 
 // Track cards added by users for rewards
 export const trackUserCardAdditions = (userId: string, cardType: 'food' | 'entertainment'): void => {
+  console.log(`Tracking ${cardType} addition for user ${userId}`);
   const key = `catalog_${userId}_${cardType}_additions`;
   let count = parseInt(localStorage.getItem(key) || '0');
   count += 1;
+  localStorage.setItem(key, count.toString());
+  
+  console.log(`User has added ${count} ${cardType} items`);
   
   // Every 2 cards of the same type earn 1 point
   if (count % 2 === 0) {
     const reason = `Adding ${count} ${cardType} items`;
     addUserRewardPoints(userId, 1, reason);
+  } else {
+    // Give a partial point for odd-numbered additions
+    const reason = `Adding your first ${cardType} item`;
+    addUserRewardPoints(userId, 1, reason);
   }
-  
-  localStorage.setItem(key, count.toString());
 };
+
+// Get current user from localStorage or context
+const getCurrentUser = () => {
+  const storedUser = localStorage.getItem('currentUser');
+  return storedUser ? JSON.parse(storedUser) : null;
+};
+
+// Reference to the current user for use in functions
+const currentUser = getCurrentUser();
 
 // Function to get all user rewards for leaderboard
 export const getAllUserRewards = (): Record<string, number> => {
