@@ -17,7 +17,6 @@ const RewardsPage = () => {
             label="Benefits" 
             backgroundColor="#E5DEFF" 
             textColor="#603913"
-            open={true}
           >
             <div className="space-y-2">
               <div className="flex items-center gap-2 mb-4">
@@ -37,7 +36,6 @@ const RewardsPage = () => {
             label="Track Progress" 
             backgroundColor="#FADADD" 
             textColor="#603913"
-            open={true}
           >
             <div className="space-y-2">
               <div className="flex items-center gap-2 mb-4">
