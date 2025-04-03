@@ -21,6 +21,10 @@ export const showRewardToast = (
   console.log("REWARD TOAST: User earned", pointsAdded, "points for", reason);
   console.log("REWARD TOAST: Total points now", totalPoints);
   
+  // Update localStorage with a timestamp to force refresh on components
+  const timestamp = Date.now();
+  localStorage.setItem('lastRewardUpdate', timestamp.toString());
+  
   // Use a more visible toast with longer duration and higher z-index
   toast({
     title: `🎉 You earned ${pointsAdded} point${pointsAdded > 1 ? 's' : ''}!`,
@@ -31,11 +35,11 @@ export const showRewardToast = (
   });
   
   // Force the rewards counter to refresh immediately and repeatedly
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 10; i++) {
     setTimeout(() => {
       forceRewardsRefresh();
       console.log(`Toast notification triggered: +${pointsAdded} points (${reason}) - refresh attempt ${i+1}`);
-    }, i * 300);
+    }, i * 200);
   }
 };
 
@@ -45,14 +49,32 @@ export const showRewardToast = (
 export const forceRewardsRefresh = (): void => {
   console.log("Force refresh rewards event triggered");
   
+  // Update localStorage with a timestamp to force refresh
+  localStorage.setItem('lastRewardUpdate', Date.now().toString());
+  
   // Dispatch the event multiple times with various delays to ensure it's caught
-  const delays = [0, 100, 300, 500, 1000, 2000];
+  const delays = [0, 50, 100, 200, 300, 500, 1000, 2000, 3000];
   
   delays.forEach(delay => {
     setTimeout(() => {
-      const event = new CustomEvent('refreshRewards');
-      window.dispatchEvent(event);
-      console.log(`Dispatched refreshRewards event with delay: ${delay}ms`);
+      try {
+        const event = new CustomEvent('refreshRewards', { 
+          detail: { timestamp: Date.now() } 
+        });
+        window.dispatchEvent(event);
+        console.log(`Dispatched refreshRewards event with delay: ${delay}ms`);
+      } catch (error) {
+        console.error("Error dispatching reward refresh event:", error);
+      }
     }, delay);
   });
+  
+  // Also try to directly update any reward displays on the page
+  try {
+    document.querySelectorAll('[data-rewards-display]').forEach(element => {
+      element.setAttribute('data-update', Date.now().toString());
+    });
+  } catch (e) {
+    // Ignore DOM errors, this is just a bonus attempt
+  }
 };

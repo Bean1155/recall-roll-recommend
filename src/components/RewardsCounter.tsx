@@ -20,6 +20,7 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
   const navigate = useNavigate();
   const prevUserIdRef = useRef<string | null>(null);
   const refreshCountRef = useRef(0);
+  const lastUpdateRef = useRef<string | null>(null);
   
   const handleClick = () => {
     if (onClick) {
@@ -33,17 +34,24 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
   const refreshRewards = useCallback(() => {
     if (currentUser) {
       const userPoints = getUserRewards(currentUser.id);
+      const lastUpdateTime = localStorage.getItem('lastRewardUpdate');
       
-      // Only log if points changed or every 10th refresh
-      const shouldLog = points !== userPoints || refreshCountRef.current % 10 === 0;
+      // Check if there's been an update since last refresh
+      const hasUpdate = lastUpdateTime !== lastUpdateRef.current;
+      
+      // Only log if points changed or there's been an update
+      const shouldLog = points !== userPoints || hasUpdate;
       
       if (shouldLog) {
         console.log(`RewardsCounter: Points refreshed to ${userPoints} (from ${points}) for user ${currentUser.id}`);
+        console.log(`RewardsCounter: Update triggered by ${hasUpdate ? 'localStorage update' : 'regular check'}`);
         refreshCountRef.current = 0;
+        lastUpdateRef.current = lastUpdateTime;
       }
       
       refreshCountRef.current++;
       
+      // Always update the points to ensure UI is synchronized
       setPoints(userPoints);
       setTier(getUserRewardTier(userPoints));
       
@@ -63,28 +71,28 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
       refreshRewards();
       
       // Force multiple refreshes on user change
-      for (let i = 0; i < 3; i++) {
-        setTimeout(refreshRewards, (i + 1) * 500);
+      for (let i = 0; i < 5; i++) {
+        setTimeout(refreshRewards, (i + 1) * 300);
       }
     }
   }, [currentUser, refreshRewards]);
   
   // Set up event listeners for points updates
   useEffect(() => {
-    const handleRefreshEvent = () => {
-      console.log("RewardsCounter: Refresh event received");
+    const handleRefreshEvent = (event: Event) => {
+      console.log("RewardsCounter: Refresh event received", event);
       refreshRewards();
     };
     
     window.addEventListener('refreshRewards', handleRefreshEvent);
     
     // Refresh on regular intervals, more frequently initially
-    const immediateIntervalId = setInterval(refreshRewards, 500);
+    const immediateIntervalId = setInterval(refreshRewards, 300);
     
     // After 10 seconds, switch to a less frequent refresh
     const timeoutId = setTimeout(() => {
       clearInterval(immediateIntervalId);
-      const regularIntervalId = setInterval(refreshRewards, 3000);
+      const regularIntervalId = setInterval(refreshRewards, 2000);
       
       return () => {
         clearInterval(regularIntervalId);
@@ -100,24 +108,39 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
   
   // Additional interval to periodically force a refresh from localStorage
   useEffect(() => {
-    const forcedRefreshInterval = setInterval(() => {
-      if (currentUser) {
-        // Direct check from localStorage
-        const rewardsData = localStorage.getItem('catalogUserRewards');
-        if (rewardsData) {
-          const rewards = JSON.parse(rewardsData);
-          const storedPoints = rewards[currentUser.id] || 0;
-          
-          if (storedPoints !== points) {
-            console.log(`RewardsCounter: Forced refresh detected change: ${points} → ${storedPoints}`);
-            setPoints(storedPoints);
-            setTier(getUserRewardTier(storedPoints));
+    const checkStorageChanges = () => {
+      const lastUpdateTime = localStorage.getItem('lastRewardUpdate');
+      
+      // If there's been an update since our last check
+      if (lastUpdateTime !== lastUpdateRef.current) {
+        console.log(`RewardsCounter: Detected localStorage update, refreshing`);
+        lastUpdateRef.current = lastUpdateTime;
+        
+        if (currentUser) {
+          // Direct check from localStorage
+          const rewardsData = localStorage.getItem('catalogUserRewards');
+          if (rewardsData) {
+            try {
+              const rewards = JSON.parse(rewardsData);
+              const storedPoints = rewards[currentUser.id] || 0;
+              
+              if (storedPoints !== points) {
+                console.log(`RewardsCounter: Storage check detected change: ${points} → ${storedPoints}`);
+                setPoints(storedPoints);
+                setTier(getUserRewardTier(storedPoints));
+              }
+            } catch (error) {
+              console.error("Error parsing rewards data:", error);
+            }
           }
         }
       }
-    }, 2000);
+    };
     
-    return () => clearInterval(forcedRefreshInterval);
+    // Check for storage changes more frequently
+    const storageCheckInterval = setInterval(checkStorageChanges, 500);
+    
+    return () => clearInterval(storageCheckInterval);
   }, [currentUser, points]);
   
   // Function to get background color based on tier
@@ -137,6 +160,7 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
       <div 
         className={`flex items-center ${className} bg-catalog-cream rounded-full px-3 py-1 shadow-sm border-2 border-catalog-teal cursor-pointer hover:bg-catalog-teal hover:text-white transition-colors`}
         onClick={handleClick}
+        data-rewards-display="true"
       >
         <Award className="text-catalog-teal h-5 w-5 mr-1 group-hover:text-white" />
         <span className="font-typewriter text-sm font-bold">{points}</span>
@@ -145,7 +169,10 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
   }
   
   return (
-    <Card className={`border-catalog-softBrown shadow-md overflow-hidden ${className}`}>
+    <Card 
+      className={`border-catalog-softBrown shadow-md overflow-hidden ${className}`}
+      data-rewards-display="true"
+    >
       <div className="bg-catalog-teal text-white font-typewriter font-bold py-2 px-4 flex items-center">
         <Trophy className="h-5 w-5 mr-2" />
         Your Rewards Status

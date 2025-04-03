@@ -1,13 +1,38 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { BarChart4, Gift } from "lucide-react";
 import RewardsCounter from "@/components/RewardsCounter";
 import { CatalogCollapsible } from "@/components/ui/collapsible";
 import HowItWorksTab from "@/components/rewards/HowItWorksTab";
 import RewardSystemTab from "@/components/rewards/RewardSystemTab";
+import { forceRewardsRefresh } from "@/utils/rewardUtils";
 
 const RewardsPage = () => {
+  // Force rewards refresh when this page is loaded
+  useEffect(() => {
+    console.log("RewardsPage: Component mounted, forcing rewards refresh");
+    
+    // Multiple refreshes to ensure it's caught
+    const delays = [0, 200, 500, 1000, 2000];
+    
+    delays.forEach(delay => {
+      setTimeout(() => {
+        forceRewardsRefresh();
+        console.log(`RewardsPage: Forced refresh with delay ${delay}ms`);
+      }, delay);
+    });
+    
+    // Set up a regular interval for this page
+    const intervalId = setInterval(() => {
+      forceRewardsRefresh();
+    }, 3000);
+    
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+  
   return (
     <GridLayout title={
       <>
