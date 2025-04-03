@@ -63,7 +63,9 @@ const EditCardPage = () => {
   return (
     <GridLayout title={title}>
       <div className="w-full max-w-md mx-auto">
-        <div className="flex justify-end mb-4">
+        <CardForm type={cardType} cardId={id} />
+        
+        <div className="flex justify-center mt-8">
           <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
             <AlertDialogTrigger asChild>
               <Button 
@@ -92,7 +94,6 @@ const EditCardPage = () => {
             </AlertDialogContent>
           </AlertDialog>
         </div>
-        <CardForm type={cardType} cardId={id} />
       </div>
     </GridLayout>
   );
