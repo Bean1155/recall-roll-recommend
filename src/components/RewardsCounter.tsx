@@ -59,14 +59,14 @@ const RewardsCounter = ({ variant = "detailed", className = "" }: RewardsCounter
       }}>
         <div className="space-y-4 pt-2">
           <div className="flex justify-between items-center">
-            <span className="font-bold font-typewriter">Total Points:</span>
+            <span className="font-typewriter text-sm font-bold">Total Points:</span>
             <span className="text-xl font-bold">{points}</span>
           </div>
           
           <Separator className="bg-catalog-softBrown/20" />
           
           <div className="flex justify-between items-center">
-            <span className="font-bold font-typewriter">Current Tier:</span>
+            <span className="font-typewriter text-sm font-bold">Current Tier:</span>
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${getTierColor()}`}>
               {tier}
             </span>
@@ -75,7 +75,7 @@ const RewardsCounter = ({ variant = "detailed", className = "" }: RewardsCounter
           <div className="text-sm mt-2">
             <p className="font-typewriter">
               {points === 0 
-                ? "Start sharing recommendations to earn points!" 
+                ? "Start tracking and sharing recommendations to avoid forgetting!" 
                 : `You've earned ${points} points so far. Keep sharing!`}
             </p>
           </div>
