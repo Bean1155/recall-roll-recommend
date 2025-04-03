@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -21,13 +20,11 @@ import {
 import Envelope from "@/components/Envelope";
 import CatalogCard from "@/components/CatalogCard";
 
-// Entertainment categories
 const allCategories = [
   "movies", "tv shows", "documentaries", "concerts", 
   "theater", "musicals", "podcasts", "comedy", "etc."
 ];
 
-// Category colors
 const categoryColors: Record<string, string> = {
   "movies": "#f5c4d3",
   "tv shows": "#e0c5c1",
@@ -88,7 +85,6 @@ const BlockbustersPage = () => {
       if (cardToHighlight) {
         const category = categoryParam || (cardToHighlight.entertainmentCategory?.toLowerCase() || 'etc.');
         
-        // Open the category drawer
         setOpenCatalogs([category]);
         
         if (fromSearch === 'true') {
@@ -163,14 +159,12 @@ const BlockbustersPage = () => {
     });
   };
 
-  // Get all categories that have cards
   const activeCategories = allCategories.filter(category => 
     filteredCards.some(card => 
       (card.entertainmentCategory?.toLowerCase() || 'etc.') === category
     )
   );
 
-  // Create dynamic cardsByCategory based on available categories
   const cardsByCategory: Record<string, EntertainmentCard[]> = {};
   
   activeCategories.forEach(category => {
@@ -180,14 +174,12 @@ const BlockbustersPage = () => {
   filteredCards.forEach(card => {
     const category = card.entertainmentCategory?.toLowerCase() || 'etc.';
     
-    // If the category doesn't exist in our map yet, add it
     if (!cardsByCategory[category]) {
       cardsByCategory[category] = [];
     }
     cardsByCategory[category].push(card);
   });
 
-  // Generate category pairs for grid layout
   const categoryPairs = [];
   for (let i = 0; i < activeCategories.length; i += 2) {
     const pair = [activeCategories[i]];
@@ -238,8 +230,14 @@ const BlockbustersPage = () => {
         </div>
       ) : (
         <div className="space-y-10">
-          <div className="flex justify-center items-center pb-4">
-            <h2 className="text-xl font-medium text-[#1EAEDB] font-typewriter">Categories</h2>
+          <div className="flex justify-between items-center pb-4">
+            <h2 className="text-xl font-medium text-[#1EAEDB] font-typewriter mx-auto">Categories</h2>
+            <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+              <Link to="/create/entertainment">
+                <PlusCircle size={16} className="mr-2" />
+                Add New Blockbuster
+              </Link>
+            </Button>
           </div>
           
           {categoryPairs.map((pair, pairIndex) => (
@@ -249,7 +247,6 @@ const BlockbustersPage = () => {
                 const textColor = getTextColor(categoryColor);
                 const isOpen = openCatalogs.includes(category);
                 
-                // Only render categories that have cards
                 const categoryCards = cardsByCategory[category] || [];
                 if (categoryCards.length === 0) {
                   return null;
@@ -273,7 +270,6 @@ const BlockbustersPage = () => {
         </div>
       )}
 
-      {/* Dialog for search results */}
       <Dialog open={isSearchResultsOpen} onOpenChange={setIsSearchResultsOpen}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
@@ -319,7 +315,6 @@ const BlockbustersPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog for card details */}
       <EntertainmentDetailDialog
         isOpen={isCardModalOpen}
         onOpenChange={setIsCardModalOpen}

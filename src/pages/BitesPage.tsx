@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -34,11 +33,9 @@ const BitesPage = () => {
   const { toast } = useToast();
   const highlightedCardRef = useRef<HTMLDivElement>(null);
   
-  // Load all categories
   useEffect(() => {
     const allCategories = getAllCategories();
     
-    // Sort categories
     const sortedCategories = allCategories.sort((a, b) => a.localeCompare(b));
     
     setCategories(sortedCategories);
@@ -138,12 +135,10 @@ const BitesPage = () => {
     });
   };
 
-  // Get all categories that have cards
   const activeCategories = categories.filter(category => 
     filteredCards.some(card => card.category === category)
   );
 
-  // Create dynamic cardsByCategory based on available categories
   const cardsByCategory: Record<string, FoodCard[]> = {};
   
   activeCategories.forEach(category => {
@@ -151,14 +146,12 @@ const BitesPage = () => {
   });
   
   filteredCards.forEach(card => {
-    // If the category doesn't exist in our map yet, add it
     if (!cardsByCategory[card.category]) {
       cardsByCategory[card.category] = [];
     }
     cardsByCategory[card.category].push(card);
   });
 
-  // Generate category pairs for grid layout
   const categoryPairs = [];
   for (let i = 0; i < activeCategories.length; i += 2) {
     const pair = [activeCategories[i]];
@@ -168,7 +161,6 @@ const BitesPage = () => {
     categoryPairs.push(pair);
   }
 
-  // Generate category colors
   const categoryColors = generateCategoryColors(categories);
 
   return (
@@ -212,8 +204,14 @@ const BitesPage = () => {
         </div>
       ) : (
         <div className="space-y-10">
-          <div className="flex justify-center items-center pb-4">
-            <h2 className="text-xl font-medium text-[#1EAEDB] font-typewriter">Categories</h2>
+          <div className="flex justify-between items-center pb-4">
+            <h2 className="text-xl font-medium text-[#1EAEDB] font-typewriter mx-auto">Categories</h2>
+            <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+              <Link to="/create/food">
+                <PlusCircle size={16} className="mr-2" />
+                Add New Bite
+              </Link>
+            </Button>
           </div>
           
           {categoryPairs.map((pair, pairIndex) => (
@@ -223,7 +221,6 @@ const BitesPage = () => {
                 const textColor = getTextColor(categoryColor);
                 const isOpen = openCatalogs.includes(category);
                 
-                // Only render categories that have cards
                 const categoryCards = cardsByCategory[category] || [];
                 if (categoryCards.length === 0) {
                   return null;
@@ -247,7 +244,6 @@ const BitesPage = () => {
         </div>
       )}
 
-      {/* Dialogs */}
       <SearchResultsDialog
         isOpen={isSearchResultsOpen}
         onOpenChange={setIsSearchResultsOpen}
