@@ -32,26 +32,33 @@ const RewardSystemTab = () => {
           <div className="bg-vintage-tan rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-1">
             <span className="font-bold">2</span>
           </div>
-          <p className="font-typewriter text-lg">The more points you accumulate, the more share your favorite bites and blockbusters.</p>
+          <p className="font-typewriter text-lg">Users receive 1 point for every 2 cards added to each library (Bites and Blockbusters counted separately)</p>
         </div>
         
         <div className="flex gap-4">
           <div className="bg-vintage-tan rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-1">
             <span className="font-bold">3</span>
           </div>
-          <p className="font-typewriter text-lg">The more you share, the happier you will be</p>
+          <p className="font-typewriter text-lg">The more points you accumulate, the more share your favorite bites and blockbusters.</p>
         </div>
         
         <div className="flex gap-4">
           <div className="bg-vintage-tan rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-1">
             <span className="font-bold">4</span>
           </div>
-          <p className="font-typewriter text-lg">User will receive a monthly report card detailing the number of referrals shared and the number of referrals received</p>
+          <p className="font-typewriter text-lg">The more you share, the happier you will be</p>
         </div>
         
         <div className="flex gap-4">
           <div className="bg-vintage-tan rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-1">
             <span className="font-bold">5</span>
+          </div>
+          <p className="font-typewriter text-lg">User will receive a monthly report card detailing the number of referrals shared and the number of referrals received</p>
+        </div>
+        
+        <div className="flex gap-4">
+          <div className="bg-vintage-tan rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-1">
+            <span className="font-bold">6</span>
           </div>
           <div className="font-typewriter text-lg">
             <p className="mb-2">Rating scale for referrals is as follows:</p>

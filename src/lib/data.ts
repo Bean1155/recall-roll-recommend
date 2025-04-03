@@ -123,6 +123,11 @@ export const addCard = (card: Omit<CatalogCard, 'id'>): CatalogCard => {
   const updatedCards = [...cards, newCard];
   localStorage.setItem('catalogCards', JSON.stringify(updatedCards));
   
+  // Track this card addition for rewards if created by a user
+  if (card.recommendedBy) {
+    trackUserCardAdditions(card.recommendedBy, card.type);
+  }
+  
   return newCard;
 };
 
@@ -167,6 +172,20 @@ export const addUserRewardPoints = (userId: string, points: number = 1): number 
   localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
   
   return rewards[userId];
+};
+
+// Track cards added by users for rewards
+export const trackUserCardAdditions = (userId: string, cardType: 'food' | 'entertainment'): void => {
+  const key = `catalog_${userId}_${cardType}_additions`;
+  let count = parseInt(localStorage.getItem(key) || '0');
+  count += 1;
+  
+  // Every 2 cards of the same type earn 1 point
+  if (count % 2 === 0) {
+    addUserRewardPoints(userId, 1);
+  }
+  
+  localStorage.setItem(key, count.toString());
 };
 
 // Function to get all user rewards for leaderboard

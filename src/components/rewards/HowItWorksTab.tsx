@@ -59,6 +59,33 @@ const HowItWorksTab = () => {
           <p className="font-typewriter text-lg">Both users receive points if that recommendation is then forwarded to the next user, i.e. I told two friends; they told two friends and so we get more points</p>
         </div>
       </div>
+      
+      <h3 className="text-xl font-typewriter text-catalog-softBrown mb-6 underline">
+        Reward System for Adding Content
+      </h3>
+      
+      <div className="space-y-4">
+        <div className="flex gap-4">
+          <div className="bg-vintage-tan rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-1">
+            <span className="font-bold">1</span>
+          </div>
+          <p className="font-typewriter text-lg">Users earn 1 point for every 2 Bite cards added to the library</p>
+        </div>
+        
+        <div className="flex gap-4">
+          <div className="bg-vintage-tan rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-1">
+            <span className="font-bold">2</span>
+          </div>
+          <p className="font-typewriter text-lg">Users earn 1 point for every 2 Blockbuster cards added to the library</p>
+        </div>
+        
+        <div className="flex gap-4">
+          <div className="bg-vintage-tan rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 mt-1">
+            <span className="font-bold">3</span>
+          </div>
+          <p className="font-typewriter text-lg">Bites and Blockbusters are counted separately (adding 1 Bite and 1 Blockbuster = 0 points)</p>
+        </div>
+      </div>
     </div>
   );
 };
