@@ -201,6 +201,12 @@ const BlockbustersPage = () => {
             onFilteredItemsChange={handleFilteredItemsChange}
             type="entertainment"
           />
+          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+            <Link to="/create/entertainment">
+              <PlusCircle size={16} className="mr-2" />
+              Add New Blockbuster
+            </Link>
+          </Button>
         </div>
       </div>
 
@@ -230,14 +236,8 @@ const BlockbustersPage = () => {
         </div>
       ) : (
         <div className="space-y-10">
-          <div className="flex justify-between items-center pb-4">
-            <h2 className="text-xl font-medium text-[#1EAEDB] font-typewriter mx-auto">Categories</h2>
-            <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-              <Link to="/create/entertainment">
-                <PlusCircle size={16} className="mr-2" />
-                Add New Blockbuster
-              </Link>
-            </Button>
+          <div className="flex justify-center items-center pb-4">
+            <h2 className="text-xl font-medium text-[#1EAEDB] font-typewriter">Categories</h2>
           </div>
           
           {categoryPairs.map((pair, pairIndex) => (
