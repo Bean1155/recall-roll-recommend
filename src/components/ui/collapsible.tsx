@@ -23,9 +23,14 @@ export const CatalogCollapsible = React.forwardRef<
   const [isOpen, setIsOpen] = React.useState(false);
   const [isHovering, setIsHovering] = React.useState(false);
   
+  const handleToggle = () => {
+    setIsOpen(prev => !prev);
+  };
+  
   return (
     <CollapsiblePrimitive.Root 
       ref={ref}
+      open={isOpen}
       onOpenChange={setIsOpen}
       className={`catalog-drawer relative mb-4 ${className}`}
       {...props}
@@ -45,16 +50,16 @@ export const CatalogCollapsible = React.forwardRef<
             marginBottom: "-1px"
           }}
         >
-          <CollapsiblePrimitive.Trigger 
+          <div 
             className="w-full flex items-center justify-center px-4 py-2 font-typewriter font-semibold text-sm sm:text-lg"
             style={{ color: textColor }}
           >
             {label}
-          </CollapsiblePrimitive.Trigger>
+          </div>
         </div>
         
         <div 
-          className="catalog-drawer-front relative border-3 rounded-md transition-all duration-300 ease-in-out"
+          className="catalog-drawer-front relative border-3 rounded-md transition-all duration-300 ease-in-out cursor-pointer"
           style={{ 
             backgroundColor, 
             borderColor: backgroundColor,
@@ -62,6 +67,7 @@ export const CatalogCollapsible = React.forwardRef<
             transform: isOpen ? "translateY(15px)" : isHovering ? "translateY(8px)" : "translateY(0)",
             boxShadow: isOpen ? "0 5px 15px rgba(0,0,0,0.15)" : isHovering ? "0 3px 8px rgba(0,0,0,0.1)" : "none",
           }}
+          onClick={handleToggle}
         >
           <div 
             className="catalog-handle mx-auto mt-1 mb-3 flex items-center justify-center"
