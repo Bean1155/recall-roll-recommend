@@ -21,6 +21,7 @@ export const CatalogCollapsible = React.forwardRef<
   }
 >(({ className, label, backgroundColor = "#d2b48c", textColor = "#603913", children, ...props }, ref) => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [isHovering, setIsHovering] = React.useState(false);
   
   return (
     <CollapsiblePrimitive.Root 
@@ -29,12 +30,17 @@ export const CatalogCollapsible = React.forwardRef<
       className={`catalog-drawer relative mb-4 ${className}`}
       {...props}
     >
-      <div className="catalog-frame relative">
+      <div 
+        className="catalog-frame relative"
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
         <div 
-          className="catalog-label-frame border-2 mx-auto relative z-10"
+          className="catalog-label-frame border-3 mx-auto relative z-10"
           style={{ 
             width: "70%", 
             borderColor: backgroundColor,
+            borderWidth: "3px",
             backgroundColor: "white",
             marginBottom: "-1px"
           }}
@@ -48,12 +54,13 @@ export const CatalogCollapsible = React.forwardRef<
         </div>
         
         <div 
-          className="catalog-drawer-front relative border-2 rounded-md transition-all duration-300 ease-in-out"
+          className="catalog-drawer-front relative border-3 rounded-md transition-all duration-300 ease-in-out"
           style={{ 
             backgroundColor, 
             borderColor: backgroundColor,
-            transform: isOpen ? "translateY(15px)" : "translateY(0)",
-            boxShadow: isOpen ? "0 5px 15px rgba(0,0,0,0.1)" : "none",
+            borderWidth: "3px",
+            transform: isOpen ? "translateY(15px)" : isHovering ? "translateY(8px)" : "translateY(0)",
+            boxShadow: isOpen ? "0 5px 15px rgba(0,0,0,0.15)" : isHovering ? "0 3px 8px rgba(0,0,0,0.1)" : "none",
           }}
         >
           <div 
@@ -84,7 +91,7 @@ export const CatalogCollapsible = React.forwardRef<
         className="rounded-b-md bg-white overflow-hidden transition-all data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up"
         style={{ 
           marginTop: isOpen ? "8px" : "0", 
-          border: isOpen ? `2px solid ${backgroundColor}` : "none",
+          border: isOpen ? `3px solid ${backgroundColor}` : "none",
           borderTop: "none",
           zIndex: 5,
           position: "relative"

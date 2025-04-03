@@ -427,8 +427,17 @@ const BitesPage = () => {
         }
         
         .catalog-drawer:hover .catalog-drawer-front {
-          transform: translateY(5px);
-          box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+          transform: translateY(8px) !important;
+          box-shadow: 0 3px 8px rgba(0,0,0,0.1) !important;
+          cursor: pointer;
+        }
+        
+        .border-3 {
+          border-width: 3px;
+        }
+        
+        .catalog-drawer-front {
+          will-change: transform;
         }
       `}</style>
     </GridLayout>
