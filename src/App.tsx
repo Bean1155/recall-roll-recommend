@@ -16,7 +16,6 @@ import CollectionsPage from "./pages/CollectionsPage";
 import ProfilePage from "./pages/ProfilePage";
 import SearchPage from "./pages/SearchPage";
 import SettingsPage from "./pages/SettingsPage";
-import TestUserFeedbackPage from "./pages/TestUserFeedbackPage";
 
 const queryClient = new QueryClient();
 
@@ -39,7 +38,6 @@ const App = () => (
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/test-feedback" element={<TestUserFeedbackPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

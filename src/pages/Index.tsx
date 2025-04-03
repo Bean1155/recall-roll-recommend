@@ -97,25 +97,6 @@ const Index = () => {
               </Card>
             </Link>
           </div>
-          
-          {/* Add the TestUserFeedback link here */}
-          <div className="mt-6">
-            <Link to="/test-feedback" className="h-full">
-              <Card className="h-full hover:bg-catalog-cream cursor-pointer transition-all duration-200 border-catalog-softBrown">
-                <CardHeader className="bg-catalog-teal rounded-t-lg">
-                  <CardTitle className="flex items-center gap-2 text-white">
-                    <MessageSquare size={20} />
-                    Test User Feedback Feature
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <p className="text-sm text-catalog-softBrown">
-                    Try our new user feedback functionality for recommended cards.
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-          </div>
         </TabsContent>
         
         <TabsContent value="features">
