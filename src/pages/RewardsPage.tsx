@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import GridLayout from "@/components/GridLayout";
-import { Award, Share2, BarChart4, Gift } from "lucide-react";
+import { Award, BarChart4, Gift } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import RewardsCounter from "@/components/RewardsCounter";
@@ -180,27 +180,6 @@ const RewardsPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card className="bg-white shadow-md overflow-hidden border-catalog-softBrown">
             <div className="py-2 px-4 bg-catalog-teal text-white font-typewriter font-bold">
-              How Points Work
-            </div>
-            <CardContent className="p-4" style={{
-              backgroundImage: `linear-gradient(#ACC8E5 1px, transparent 1px)`,
-              backgroundSize: '100% 28px',
-              backgroundRepeat: 'repeat-y',
-              backgroundColor: '#FEF7CD'
-            }}>
-              <div className="space-y-4 pt-2">
-                <div className="flex gap-2 items-center">
-                  <Award className="text-catalog-teal h-6 w-6" />
-                  <h3 className="font-bold">Earning Points</h3>
-                </div>
-                <p>Points are earned each time you successfully share a recommendation that's accepted by a friend.</p>
-                <p>The more your recommendations spread, the more points you'll collect!</p>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-white shadow-md overflow-hidden border-catalog-softBrown">
-            <div className="py-2 px-4 bg-catalog-teal text-white font-typewriter font-bold">
               Benefits
             </div>
             <CardContent className="p-4" style={{
@@ -215,29 +194,6 @@ const RewardsPage = () => {
                   <h3 className="font-bold">Rewards Perks</h3>
                 </div>
                 <p>Sharing is caring. When you refer and share someone else receives and perhaps a place you've visited receives some more visitors helping to grow that business or a creator receives more viewers. You are spreading the love!</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="bg-white shadow-md overflow-hidden border-catalog-softBrown">
-            <div className="py-2 px-4 bg-catalog-teal text-white font-typewriter font-bold">
-              Share More
-            </div>
-            <CardContent className="p-4" style={{
-              backgroundImage: `linear-gradient(#ACC8E5 1px, transparent 1px)`,
-              backgroundSize: '100% 28px',
-              backgroundRepeat: 'repeat-y',
-              backgroundColor: '#D3E4FD'
-            }}>
-              <div className="space-y-4 pt-2">
-                <div className="flex gap-2 items-center">
-                  <Share2 className="text-catalog-teal h-6 w-6" />
-                  <h3 className="font-bold">Sharing Tips</h3>
-                </div>
-                <p>Share your favorite bites and blockbusters with friends who have similar tastes.</p>
-                <p>The more personalized your recommendation, the more likely it will be accepted!</p>
               </div>
             </CardContent>
           </Card>
