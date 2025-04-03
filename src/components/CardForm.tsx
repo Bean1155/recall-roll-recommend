@@ -456,50 +456,52 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
 
             <div className="space-y-1">
               {showRating && (
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="rating" className="flex items-center">
-                    <Star className="w-4 h-4 mr-2" />
-                    Rating
-                  </Label>
-                  
-                  <RadioGroup 
-                    value={formData.hasRating ? "rated" : "not-rated"}
-                    onValueChange={(value) => handleRatingToggle(value === "rated")}
-                    className="flex space-x-4"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="rated" id="rating-yes" />
-                      <Label htmlFor="rating-yes" className="text-sm">Rate it</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="not-rated" id="rating-no" />
-                      <Label htmlFor="rating-no" className="text-sm">No rating yet</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-                
-                {formData.hasRating && (
-                  <>
-                    <div className="flex items-center space-x-2 py-4">
-                      <Slider
-                        id="rating"
-                        min={1}
-                        max={5}
-                        step={1}
-                        value={[formData.rating]}
-                        onValueChange={handleRatingChange}
-                      />
-                      <div className="w-24 text-center">
-                        <span className="font-semibold">{formData.rating}</span>
-                        <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
+                <>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="rating" className="flex items-center">
+                      <Star className="w-4 h-4 mr-2" />
+                      Rating
+                    </Label>
+                    
+                    <RadioGroup 
+                      value={formData.hasRating ? "rated" : "not-rated"}
+                      onValueChange={(value) => handleRatingToggle(value === "rated")}
+                      className="flex space-x-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="rated" id="rating-yes" />
+                        <Label htmlFor="rating-yes" className="text-sm">Rate it</Label>
                       </div>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span>1 - Yikes</span>
-                      <span>5 - Amazing</span>
-                    </div>
-                  </>
-                )}
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="not-rated" id="rating-no" />
+                        <Label htmlFor="rating-no" className="text-sm">No rating yet</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                  
+                  {formData.hasRating && (
+                    <>
+                      <div className="flex items-center space-x-2 py-4">
+                        <Slider
+                          id="rating"
+                          min={1}
+                          max={5}
+                          step={1}
+                          value={[formData.rating]}
+                          onValueChange={handleRatingChange}
+                        />
+                        <div className="w-24 text-center">
+                          <span className="font-semibold">{formData.rating}</span>
+                          <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span>1 - Yikes</span>
+                        <span>5 - Amazing</span>
+                      </div>
+                    </>
+                  )}
+                </>
               )}
             </div>
 
@@ -676,50 +678,52 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
             
             <div className="space-y-1">
               {showRating && (
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="rating" className="flex items-center">
-                    <Star className="w-4 h-4 mr-2" />
-                    Rating
-                  </Label>
-                  
-                  <RadioGroup 
-                    value={formData.hasRating ? "rated" : "not-rated"}
-                    onValueChange={(value) => handleRatingToggle(value === "rated")}
-                    className="flex space-x-4"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="rated" id="rating-yes" />
-                      <Label htmlFor="rating-yes" className="text-sm">Rate it</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="not-rated" id="rating-no" />
-                      <Label htmlFor="rating-no" className="text-sm">No rating yet</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-                
-                {formData.hasRating && (
-                  <>
-                    <div className="flex items-center space-x-2 py-4">
-                      <Slider
-                        id="rating"
-                        min={1}
-                        max={5}
-                        step={1}
-                        value={[formData.rating]}
-                        onValueChange={handleRatingChange}
-                      />
-                      <div className="w-24 text-center">
-                        <span className="font-semibold">{formData.rating}</span>
-                        <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
+                <>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="rating" className="flex items-center">
+                      <Star className="w-4 h-4 mr-2" />
+                      Rating
+                    </Label>
+                    
+                    <RadioGroup 
+                      value={formData.hasRating ? "rated" : "not-rated"}
+                      onValueChange={(value) => handleRatingToggle(value === "rated")}
+                      className="flex space-x-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="rated" id="rating-yes" />
+                        <Label htmlFor="rating-yes" className="text-sm">Rate it</Label>
                       </div>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span>1 - Yikes</span>
-                      <span>5 - Amazing</span>
-                    </div>
-                  </>
-                )}
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="not-rated" id="rating-no" />
+                        <Label htmlFor="rating-no" className="text-sm">No rating yet</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                  
+                  {formData.hasRating && (
+                    <>
+                      <div className="flex items-center space-x-2 py-4">
+                        <Slider
+                          id="rating"
+                          min={1}
+                          max={5}
+                          step={1}
+                          value={[formData.rating]}
+                          onValueChange={handleRatingChange}
+                        />
+                        <div className="w-24 text-center">
+                          <span className="font-semibold">{formData.rating}</span>
+                          <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span>1 - Yikes</span>
+                        <span>5 - Amazing</span>
+                      </div>
+                    </>
+                  )}
+                </>
               )}
             </div>
 
@@ -768,38 +772,6 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
           </>
         )}
         
-        {isFoodCard && (
-          <>
-            <div>
-              <Label htmlFor="notes">Notes</Label>
-              <Textarea
-                id="notes"
-                name="notes"
-                value={formData.notes}
-                onChange={handleChange}
-                className="catalog-input h-20"
-                placeholder="Your thoughts, impressions, and memorable details..."
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="tags" className="flex items-center">
-                <Tag className="w-4 h-4 mr-2" />
-                Tags
-              </Label>
-              <Input
-                id="tags"
-                name="tags"
-                value={formData.tags}
-                onChange={handleChange}
-                className="catalog-input"
-                placeholder="breakfast, sandwiches, coffee, etc. (comma separated)"
-              />
-              <p className="text-xs text-muted-foreground mt-1">Separate tags with commas</p>
-            </div>
-          </>
-        )}
-
         <div className="pt-4">
           <Button 
             type="submit"
