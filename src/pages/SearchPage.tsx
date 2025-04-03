@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Button } from "@/components/ui/button";
@@ -174,7 +173,7 @@ const SearchPage = () => {
 
           <Tabs defaultValue="all" className="mb-6" onValueChange={handleTabChange}>
             <TabsList className="w-full bg-gray-100 p-1 rounded-md mb-4 h-14">
-              <div className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-8'} w-full`}>
+              <div className="grid grid-cols-4 md:grid-cols-8 gap-1 w-full">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -182,8 +181,8 @@ const SearchPage = () => {
                         value="all" 
                         className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                       >
-                        <Search size={14} className="mr-1" />
-                        All
+                        <Search size={18} />
+                        <span className="sr-only md:not-sr-only md:ml-1">All</span>
                       </TabsTrigger>
                     </TooltipTrigger>
                     <TooltipContent className="bg-white text-catalog-softBrown">
@@ -199,8 +198,8 @@ const SearchPage = () => {
                         value="favorites" 
                         className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                       >
-                        <Heart size={14} className="mr-1" />
-                        Favorites
+                        <Heart size={18} />
+                        <span className="sr-only md:not-sr-only md:ml-1">Favorites</span>
                       </TabsTrigger>
                     </TooltipTrigger>
                     <TooltipContent className="bg-white text-catalog-softBrown">
@@ -216,8 +215,8 @@ const SearchPage = () => {
                         value="topRated" 
                         className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                       >
-                        <Star size={14} className="mr-1" />
-                        Top Rated
+                        <Star size={18} />
+                        <span className="sr-only md:not-sr-only md:ml-1">Top Rated</span>
                       </TabsTrigger>
                     </TooltipTrigger>
                     <TooltipContent className="bg-white text-catalog-softBrown">
@@ -233,8 +232,8 @@ const SearchPage = () => {
                         value="newest" 
                         className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                       >
-                        <Clock size={14} className="mr-1" />
-                        Newest
+                        <Clock size={18} />
+                        <span className="sr-only md:not-sr-only md:ml-1">Newest</span>
                       </TabsTrigger>
                     </TooltipTrigger>
                     <TooltipContent className="bg-white text-catalog-softBrown">
@@ -243,157 +242,73 @@ const SearchPage = () => {
                   </Tooltip>
                 </TooltipProvider>
                 
-                {isMobile && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <TabsTrigger 
-                          value="location" 
-                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
-                        >
-                          <MapPin size={14} className="mr-1" />
-                          Location
-                        </TabsTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-white text-catalog-softBrown">
-                        {filterDescriptions.location}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TabsTrigger 
+                        value="location" 
+                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                      >
+                        <MapPin size={18} />
+                        <span className="sr-only md:not-sr-only md:ml-1">Location</span>
+                      </TabsTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-white text-catalog-softBrown">
+                      {filterDescriptions.location}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 
-                {isMobile && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <TabsTrigger 
-                          value="byStatus" 
-                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
-                        >
-                          <FileText size={14} className="mr-1" />
-                          By Status
-                        </TabsTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-white text-catalog-softBrown">
-                        {filterDescriptions.byStatus}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TabsTrigger 
+                        value="byStatus" 
+                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                      >
+                        <FileText size={18} />
+                        <span className="sr-only md:not-sr-only md:ml-1">By Status</span>
+                      </TabsTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-white text-catalog-softBrown">
+                      {filterDescriptions.byStatus}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 
-                {isMobile && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <TabsTrigger 
-                          value="keywords" 
-                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
-                        >
-                          <Tag size={14} className="mr-1" />
-                          Keywords
-                        </TabsTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-white text-catalog-softBrown">
-                        {filterDescriptions.keywords}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TabsTrigger 
+                        value="keywords" 
+                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                      >
+                        <Tag size={18} />
+                        <span className="sr-only md:not-sr-only md:ml-1">Keywords</span>
+                      </TabsTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-white text-catalog-softBrown">
+                      {filterDescriptions.keywords}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 
-                {isMobile && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <TabsTrigger 
-                          value="topReferrals" 
-                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
-                        >
-                          <Share2 size={14} className="mr-1" />
-                          Most Referred
-                        </TabsTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-white text-catalog-softBrown">
-                        {filterDescriptions.topReferrals}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-                
-                {!isMobile && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <TabsTrigger 
-                          value="location" 
-                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
-                        >
-                          <MapPin size={14} className="mr-1" />
-                          Location
-                        </TabsTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-white text-catalog-softBrown">
-                        {filterDescriptions.location}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-                
-                {!isMobile && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <TabsTrigger 
-                          value="byStatus" 
-                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
-                        >
-                          <FileText size={14} className="mr-1" />
-                          By Status
-                        </TabsTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-white text-catalog-softBrown">
-                        {filterDescriptions.byStatus}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-                
-                {!isMobile && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <TabsTrigger 
-                          value="keywords" 
-                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
-                        >
-                          <Tag size={14} className="mr-1" />
-                          Keywords
-                        </TabsTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-white text-catalog-softBrown">
-                        {filterDescriptions.keywords}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-                
-                {!isMobile && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <TabsTrigger 
-                          value="topReferrals" 
-                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
-                        >
-                          <Share2 size={14} className="mr-1" />
-                          Most Referred
-                        </TabsTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-white text-catalog-softBrown">
-                        {filterDescriptions.topReferrals}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <TabsTrigger 
+                        value="topReferrals" 
+                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                      >
+                        <Share2 size={18} />
+                        <span className="sr-only md:not-sr-only md:ml-1">Most Referred</span>
+                      </TabsTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-white text-catalog-softBrown">
+                      {filterDescriptions.topReferrals}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </TabsList>
 

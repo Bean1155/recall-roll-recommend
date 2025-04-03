@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,9 @@ import {
   Tag,
   Clock,
   Share2,
-  FileText
+  FileText,
+  ArrowDown,
+  ArrowUp
 } from "lucide-react";
 import { 
   Select,
@@ -384,16 +385,16 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                   <CollapsibleContent className="data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
                     <Tabs defaultValue="all" className="w-full mt-2" onValueChange={handleTabChange}>
                       <TabsList className="w-full bg-[#FAEBD7] p-1 rounded-md h-14 border border-[#8B7D6B]/20 relative z-20">
-                        <div className={`${isMobile ? 'grid grid-cols-4 gap-1' : 'grid grid-cols-8'} w-full`}>
+                        <div className="grid grid-cols-4 gap-1 w-full">
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <TabsTrigger 
                                   value="all" 
-                                  className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm font-typewriter"
+                                  className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
-                                  <Search size={14} className="mr-1" />
-                                  All
+                                  <Search size={18} />
+                                  <span className="sr-only">All</span>
                                 </TabsTrigger>
                               </TooltipTrigger>
                               <TooltipContent className="bg-white text-catalog-softBrown">
@@ -409,8 +410,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                   value="favorites" 
                                   className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
-                                  <Heart size={14} className="mr-1" />
-                                  Favorites
+                                  <Heart size={18} />
+                                  <span className="sr-only">Favorites</span>
                                 </TabsTrigger>
                               </TooltipTrigger>
                               <TooltipContent className="bg-white text-catalog-softBrown">
@@ -426,8 +427,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                   value="topRated" 
                                   className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
-                                  <Star size={14} className="mr-1" />
-                                  Top Rated
+                                  <Star size={18} />
+                                  <span className="sr-only">Top Rated</span>
                                 </TabsTrigger>
                               </TooltipTrigger>
                               <TooltipContent className="bg-white text-catalog-softBrown">
@@ -443,8 +444,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                   value="location" 
                                   className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
-                                  <MapPin size={14} className="mr-1" />
-                                  Location
+                                  <MapPin size={18} />
+                                  <span className="sr-only">Location</span>
                                 </TabsTrigger>
                               </TooltipTrigger>
                               <TooltipContent className="bg-white text-catalog-softBrown">
@@ -460,8 +461,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                   value="byStatus" 
                                   className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
-                                  <FileText size={14} className="mr-1" />
-                                  By Status
+                                  <FileText size={18} />
+                                  <span className="sr-only">Status</span>
                                 </TabsTrigger>
                               </TooltipTrigger>
                               <TooltipContent className="bg-white text-catalog-softBrown">
@@ -477,8 +478,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                   value="newest" 
                                   className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
-                                  <Clock size={14} className="mr-1" />
-                                  Newest
+                                  <Clock size={18} />
+                                  <span className="sr-only">Newest</span>
                                 </TabsTrigger>
                               </TooltipTrigger>
                               <TooltipContent className="bg-white text-catalog-softBrown">
@@ -494,8 +495,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                   value="keywords" 
                                   className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
-                                  <Tag size={14} className="mr-1" />
-                                  Keywords
+                                  <Tag size={18} />
+                                  <span className="sr-only">Keywords</span>
                                 </TabsTrigger>
                               </TooltipTrigger>
                               <TooltipContent className="bg-white text-catalog-softBrown">
@@ -511,8 +512,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                   value="topReferrals" 
                                   className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
-                                  <Share2 size={14} className="mr-1" />
-                                  Most Referred
+                                  <Share2 size={18} />
+                                  <span className="sr-only">Most Referred</span>
                                 </TabsTrigger>
                               </TooltipTrigger>
                               <TooltipContent className="bg-white text-catalog-softBrown">
