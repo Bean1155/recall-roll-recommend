@@ -1,9 +1,8 @@
-
 import { FoodCategory } from "@/lib/types";
 
 export const defaultCategories: FoodCategory[] = [
   "cafe", "diner", "specialty", "fine dining", "take out", 
-  "bakery", "bar", "food truck", "restaurant", "other"
+  "bakery", "bar", "food truck", "restaurant"
 ];
 
 export const getCategoryDisplayName = (category: string): string => {
@@ -16,8 +15,7 @@ export const getCategoryDisplayName = (category: string): string => {
     "bakery": "Bakeries",
     "bar": "Bars",
     "food truck": "Food Trucks",
-    "restaurant": "Restaurants",
-    "other": "Other Places"
+    "restaurant": "Restaurants"
   };
 
   return customDisplayNames[category] || 
@@ -37,8 +35,7 @@ export const getDefaultCategoryColors = (): Record<string, string> => {
     "bakery": "#9de0d0",
     "bar": "#a5b1c2",
     "food truck": "#a64b2a",
-    "restaurant": "#e18336",
-    "other": "#da7f5d",
+    "restaurant": "#e18336"
   };
 };
 
