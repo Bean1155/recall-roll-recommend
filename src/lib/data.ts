@@ -18,6 +18,29 @@ const mockCards: CatalogCard[] = [
     visitCount: 2,
     tags: ['pasta', 'italian', 'date night'],
     isFavorite: false,
+    recommendedTo: ['user2', 'user3'],
+    recommendedBy: 'Alex',
+    userNotes: [
+      {
+        userId: 'user2',
+        userName: 'Sarah',
+        notes: 'I agree this pasta is amazing! I would add that the truffle oil they use is exceptional.',
+        date: '2023-06-10',
+        userRating: 5,
+        agreementStatus: 'Agree',
+        tags: ['truffle', 'authentic']
+      },
+      {
+        userId: 'user3',
+        userName: 'Mike',
+        notes: 'The pasta was good but I found it a bit too salty for my taste.',
+        date: '2023-06-15',
+        userRating: 3,
+        agreementStatus: 'Neutral',
+        tags: ['salty'],
+        url: 'foodblog.com/italian-bistro'
+      }
+    ]
   } as FoodCard,
   {
     id: '2',
