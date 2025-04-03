@@ -1,15 +1,32 @@
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import CardForm from "@/components/CardForm";
-import { getCardById } from "@/lib/data";
+import { getCardById, deleteCard } from "@/lib/data";
 import GridLayout from "@/components/GridLayout";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const EditCardPage = () => {
   const { id } = useParams<{ id: string }>();
   const [notFound, setNotFound] = useState(false);
   const [cardType, setCardType] = useState<'food' | 'entertainment' | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
   
   useEffect(() => {
     if (id) {
@@ -21,6 +38,17 @@ const EditCardPage = () => {
       }
     }
   }, [id]);
+  
+  const handleDeleteCard = () => {
+    if (id) {
+      deleteCard(id);
+      toast({
+        title: "Card Deleted",
+        description: `Your ${cardType === 'food' ? 'bite' : 'blockbuster'} has been deleted.`,
+      });
+      navigate(cardType === 'food' ? '/bites' : '/blockbusters');
+    }
+  };
   
   if (notFound) {
     return <Navigate to="/not-found" />;
@@ -34,7 +62,38 @@ const EditCardPage = () => {
   
   return (
     <GridLayout title={title}>
-      <CardForm type={cardType} cardId={id} />
+      <div className="w-full max-w-md mx-auto">
+        <div className="flex justify-end mb-4">
+          <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="destructive" 
+                size="sm" 
+                className="flex items-center gap-2"
+              >
+                <Trash2 size={16} />
+                Delete
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete this {cardType === 'food' ? 'bite' : 'blockbuster'}.
+                  This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteCard}>
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+        <CardForm type={cardType} cardId={id} />
+      </div>
     </GridLayout>
   );
 };
