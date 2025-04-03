@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Award, Share2, BarChart4, Gift } from "lucide-react";
@@ -213,8 +214,7 @@ const RewardsPage = () => {
                   <Gift className="text-catalog-teal h-6 w-6" />
                   <h3 className="font-bold">Rewards Perks</h3>
                 </div>
-                <p>Accumulate points to unlock special features and recognition in the app.</p>
-                <p>Top recommenders may receive special badges and exclusive content access!</p>
+                <p>Sharing is caring. When you refer and share someone else receives and perhaps a place you've visited receives some more visitors helping to grow that business or a creator receives more viewers. You are spreading the love!</p>
               </div>
             </CardContent>
           </Card>
