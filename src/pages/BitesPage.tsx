@@ -35,7 +35,8 @@ import {
 import { 
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger 
+  CollapsibleTrigger,
+  CatalogCollapsible
 } from "@/components/ui/collapsible";
 
 const allCategories: FoodCategory[] = [
@@ -117,6 +118,7 @@ const BitesPage = () => {
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
   const [searchResults, setSearchResults] = useState<FoodCard[]>([]);
   const [isSearchResultsOpen, setIsSearchResultsOpen] = useState(false);
+  const [openCatalogs, setOpenCatalogs] = useState<string[]>([]);
   const { userName } = useUser();
   const isMobile = useIsMobile();
   const location = useLocation();
@@ -223,6 +225,16 @@ const BitesPage = () => {
     categoryPairs.push(pair);
   }
 
+  const handleCatalogToggle = (category: string) => {
+    setOpenCatalogs(prev => {
+      if (prev.includes(category)) {
+        return prev.filter(cat => cat !== category);
+      } else {
+        return [...prev, category];
+      }
+    });
+  };
+
   return (
     <GridLayout>
       <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mb-8 gap-4">
@@ -251,96 +263,71 @@ const BitesPage = () => {
           </Button>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-10">
           {categoryPairs.map((pair, pairIndex) => (
-            <div key={`pair-${pairIndex}`} className="grid grid-cols-2 gap-2 sm:gap-4">
+            <div key={`pair-${pairIndex}`} className="grid grid-cols-2 gap-4 sm:gap-6">
               {pair.map((category) => {
                 const categoryColor = categoryColors[category] || "#d2b48c";
                 const textColor = getTextColor(categoryColor);
                 const hasCards = cardsByCategory[category].length > 0;
+                const isOpen = openCatalogs.includes(category);
                 
                 return (
-                  <Accordion 
-                    key={category} 
-                    type="multiple" 
-                    defaultValue={initialAccordionValues.includes(category) ? [category] : []} 
-                    className="w-full"
-                  >
-                    <AccordionItem 
-                      value={category}
+                  <div key={category} className="w-full">
+                    <CatalogCollapsible
+                      label={getCategoryDisplayName(category)}
+                      backgroundColor={categoryColor}
+                      textColor={textColor}
+                      open={isOpen}
+                      onOpenChange={() => handleCatalogToggle(category)}
                     >
-                      <div 
-                        style={{ backgroundColor: categoryColor, borderRadius: "0.5rem 0.5rem 0 0" }}
-                        className="transition-colors duration-150"
-                      >
-                        <AccordionTrigger 
-                          className="px-2 sm:px-6 py-3 sm:py-6 font-typewriter font-semibold text-sm sm:text-lg"
-                          style={{ color: textColor }}
-                          data-value={category}
-                        >
-                          <div className="flex items-center justify-between w-full">
-                            <div className="flex items-center gap-1 sm:gap-3">
-                              <span className="truncate">{getCategoryDisplayName(category)}</span>
-                              {!hasCards && (
-                                <span className="text-xs sm:text-sm opacity-70 font-normal sr-only sm:not-sr-only">(No entries)</span>
-                              )}
-                            </div>
-                          </div>
-                        </AccordionTrigger>
-                      </div>
-                      
-                      <AccordionContent 
-                        className="bg-white border border-t-0 rounded-b-lg"
-                        style={{ borderColor: categoryColor }}
-                      >
-                        {hasCards ? (
-                          <Carousel className="w-full">
-                            <CarouselContent>
-                              {cardsByCategory[category].map((card) => (
-                                <CarouselItem key={card.id} className="basis-full">
-                                  <div 
-                                    className="p-1" 
-                                    id={`card-${card.id}`}
-                                    ref={location.search.includes(`highlight=${card.id}`) ? highlightedCardRef : null}
+                      {hasCards ? (
+                        <Carousel className="w-full">
+                          <CarouselContent>
+                            {cardsByCategory[category].map((card) => (
+                              <CarouselItem key={card.id} className="basis-full">
+                                <div 
+                                  className="p-1" 
+                                  id={`card-${card.id}`}
+                                  ref={location.search.includes(`highlight=${card.id}`) ? highlightedCardRef : null}
+                                >
+                                  <Envelope 
+                                    label={card.title}
+                                    backgroundColor={categoryColor}
                                   >
-                                    <Envelope 
-                                      label={card.title}
-                                      backgroundColor={categoryColor}
-                                    >
-                                      <CatalogCard card={card} />
-                                    </Envelope>
-                                  </div>
-                                </CarouselItem>
-                              ))}
-                            </CarouselContent>
-                            <div className="flex justify-end gap-2 mt-4">
-                              <CarouselPrevious 
-                                className="relative static translate-y-0 h-6 w-6 sm:h-8 sm:w-8" 
-                                style={{ backgroundColor: categoryColor, color: textColor }}
-                              />
-                              <CarouselNext 
-                                className="relative static translate-y-0 h-6 w-6 sm:h-8 sm:w-8" 
-                                style={{ backgroundColor: categoryColor, color: textColor }}
-                              />
-                            </div>
-                          </Carousel>
-                        ) : (
-                          <div className="text-center py-4 sm:py-8">
-                            <p className="text-catalog-softBrown mb-4 text-sm sm:text-base">No entries in this category yet.</p>
-                            <Button asChild 
-                              className="text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-4 h-auto" 
+                                    <CatalogCard card={card} />
+                                  </Envelope>
+                                </div>
+                              </CarouselItem>
+                            ))}
+                          </CarouselContent>
+                          <div className="flex justify-end gap-2 mt-4">
+                            <CarouselPrevious 
+                              className="relative static translate-y-0 h-6 w-6 sm:h-8 sm:w-8" 
                               style={{ backgroundColor: categoryColor, color: textColor }}
-                            >
-                              <Link to={`/create/food?category=${category}`}>
-                                <PlusCircle size={12} className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                                <span className="truncate">Add {getCategoryDisplayName(category)}</span>
-                              </Link>
-                            </Button>
+                            />
+                            <CarouselNext 
+                              className="relative static translate-y-0 h-6 w-6 sm:h-8 sm:w-8" 
+                              style={{ backgroundColor: categoryColor, color: textColor }}
+                            />
                           </div>
-                        )}
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
+                        </Carousel>
+                      ) : (
+                        <div className="text-center py-4 sm:py-8">
+                          <p className="text-catalog-softBrown mb-4 text-sm sm:text-base">No entries in this category yet.</p>
+                          <Button asChild 
+                            className="text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-4 h-auto" 
+                            style={{ backgroundColor: categoryColor, color: textColor }}
+                          >
+                            <Link to={`/create/food?category=${category}`}>
+                              <PlusCircle size={12} className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                              <span className="truncate">Add {getCategoryDisplayName(category)}</span>
+                            </Link>
+                          </Button>
+                        </div>
+                      )}
+                    </CatalogCollapsible>
+                  </div>
                 );
               })}
             </div>
@@ -433,6 +420,15 @@ const BitesPage = () => {
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
+        }
+        
+        .catalog-drawer {
+          transition: transform 0.3s ease-in-out;
+        }
+        
+        .catalog-drawer:hover .catalog-drawer-front {
+          transform: translateY(5px);
+          box-shadow: 0 3px 6px rgba(0,0,0,0.1);
         }
       `}</style>
     </GridLayout>
