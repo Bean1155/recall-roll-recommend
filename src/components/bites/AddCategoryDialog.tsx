@@ -79,7 +79,9 @@ const AddCategoryDialog = ({
       });
       
       // Add reward point for creating a new category
+      // Make sure to trigger the reward notification after category is successfully added
       if (currentUser) {
+        console.log("Adding reward points for user:", currentUser.id);
         addUserRewardPoints(currentUser.id, 1, "Creating a new food category");
       }
     } catch (error) {
