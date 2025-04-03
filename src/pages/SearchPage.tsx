@@ -9,11 +9,15 @@ import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+import CatalogSearch from "@/components/CatalogSearch";
 
 const SearchPage = () => {
   const [allCards, setAllCards] = useState<CatalogCardType[]>([]);
   const [filteredCards, setFilteredCards] = useState<CatalogCardType[]>([]);
   const [activeTab, setActiveTab] = useState<string>("food");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchType, setSearchType] = useState<'food' | 'entertainment'>('food');
   const isMobile = useIsMobile();
   const location = useLocation();
   const navigate = useNavigate();
@@ -32,8 +36,10 @@ const SearchPage = () => {
     
     if (typeParam === 'entertainment') {
       setActiveTab('entertainment');
+      setSearchType('entertainment');
     } else {
       setActiveTab('food');
+      setSearchType('food');
     }
   }, [location.search]);
 
@@ -45,10 +51,16 @@ const SearchPage = () => {
     setActiveTab(value);
     
     if (value === 'food') {
-      navigate('/bites');
+      setSearchType('food');
+      setIsSearchOpen(true);
     } else if (value === 'entertainment') {
-      navigate('/blockbusters');
+      setSearchType('entertainment');
+      setIsSearchOpen(true);
     }
+  };
+
+  const handleFilteredItemsChange = (items: CatalogCardType[]) => {
+    setFilteredCards(items);
   };
 
   return (
@@ -83,6 +95,25 @@ const SearchPage = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Search Dialog */}
+      <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+        <DialogOverlay className="bg-black/70 backdrop-blur-sm" />
+        <DialogContent 
+          className="p-0 border-0 shadow-none bg-transparent"
+          style={{ maxWidth: "90vw", width: "500px" }}
+        >
+          <CatalogSearch 
+            items={searchType === 'food' 
+              ? allCards.filter(card => card.type === 'food')
+              : allCards.filter(card => card.type === 'entertainment')
+            }
+            onFilteredItemsChange={handleFilteredItemsChange}
+            type={searchType}
+            onClose={() => setIsSearchOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </GridLayout>
   );
 };
