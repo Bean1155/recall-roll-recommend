@@ -22,7 +22,7 @@ const RewardsPage = () => {
             icon={Gift} 
             backgroundColor="#E5DEFF"
           >
-            <p>Sharing is caring. When you refer and share someone else receives and perhaps a place you've visited receives some more visitors helping to grow that business or a creator receives more viewers. You are spreading the love!</p>
+            <p>The user will increase their recall of favorite bites and blockbusters. If a user has a memory block, they will be able to access that fabulous restaurant tucked away in Portland or that scary movie they saw on Apple TV+. Our catalog is designed to help you recall, track and reward your connections. Now when a friend says, "what shows have you seen that are worth watching?" You will know!</p>
           </RewardsInfoCard>
           
           <RewardsInfoCard 
