@@ -33,6 +33,11 @@ type SharingSettings = {
   autoReceiveNotes: boolean;
 };
 
+export type UserType = {
+  id: string;
+  name: string;
+};
+
 type UserContextType = {
   userName: string;
   setUserName: (name: string) => void;
@@ -43,6 +48,7 @@ type UserContextType = {
   updateNotificationSettings: (settings: Partial<NotificationSettings>) => void;
   sharingSettings: SharingSettings;
   updateSharingSettings: (settings: Partial<SharingSettings>) => void;
+  currentUser: UserType; // Add currentUser to the context type
 };
 
 const defaultUserName = "Food Lover";
@@ -70,6 +76,12 @@ const defaultSharingSettings: SharingSettings = {
   autoReceiveNotes: true,
 };
 
+// Default current user
+const defaultCurrentUser: UserType = {
+  id: '1',
+  name: 'Food Lover'
+};
+
 const UserContext = createContext<UserContextType>({
   userName: defaultUserName,
   setUserName: () => {},
@@ -80,6 +92,7 @@ const UserContext = createContext<UserContextType>({
   updateNotificationSettings: () => {},
   sharingSettings: defaultSharingSettings,
   updateSharingSettings: () => {},
+  currentUser: defaultCurrentUser, // Add default currentUser to the context
 });
 
 export const useUser = () => useContext(UserContext);
@@ -104,6 +117,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [sharingSettings, setSharingSettings] = useState<SharingSettings>(() => {
     const savedSettings = localStorage.getItem('catalogSharingSettings');
     return savedSettings ? JSON.parse(savedSettings) : defaultSharingSettings;
+  });
+
+  // Current user state
+  const [currentUser, setCurrentUser] = useState<UserType>(() => {
+    // In a real app, this would be based on authenticated user
+    return defaultCurrentUser;
   });
 
   // Update profile
@@ -149,7 +168,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         notificationSettings,
         updateNotificationSettings,
         sharingSettings,
-        updateSharingSettings
+        updateSharingSettings,
+        currentUser // Include currentUser in the context value
       }}
     >
       {children}

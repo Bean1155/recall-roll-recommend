@@ -15,6 +15,7 @@ export interface UserNote {
   agreementStatus?: AgreementStatus;
   tags?: string[];
   url?: string;
+  updatedDate?: string; // Add updatedDate property
 }
 
 export interface CatalogCard {
@@ -31,6 +32,7 @@ export interface CatalogCard {
   userNotes?: UserNote[];
   isFavorite?: boolean; // New field to track favorite status
   tags?: string[]; // Add tags to the base CatalogCard interface
+  url?: string; // Add url property to base interface
 }
 
 export interface FoodCard extends CatalogCard {
