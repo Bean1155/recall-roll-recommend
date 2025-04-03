@@ -253,7 +253,7 @@ const BitesPage = () => {
       ) : (
         <div className="space-y-6">
           {categoryPairs.map((pair, pairIndex) => (
-            <div key={`pair-${pairIndex}`} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div key={`pair-${pairIndex}`} className="grid grid-cols-2 gap-2 sm:gap-4">
               {pair.map((category) => {
                 const categoryColor = categoryColors[category] || "#d2b48c";
                 const textColor = getTextColor(categoryColor);
@@ -274,15 +274,15 @@ const BitesPage = () => {
                         className="transition-colors duration-150"
                       >
                         <AccordionTrigger 
-                          className="px-6 py-6 font-typewriter font-semibold text-lg"
+                          className="px-2 sm:px-6 py-3 sm:py-6 font-typewriter font-semibold text-sm sm:text-lg"
                           style={{ color: textColor }}
                           data-value={category}
                         >
                           <div className="flex items-center justify-between w-full">
-                            <div className="flex items-center gap-3">
-                              <span>{getCategoryDisplayName(category)}</span>
+                            <div className="flex items-center gap-1 sm:gap-3">
+                              <span className="truncate">{getCategoryDisplayName(category)}</span>
                               {!hasCards && (
-                                <span className="text-sm opacity-70 font-normal">(No entries yet)</span>
+                                <span className="text-xs sm:text-sm opacity-70 font-normal sr-only sm:not-sr-only">(No entries)</span>
                               )}
                             </div>
                           </div>
@@ -297,7 +297,7 @@ const BitesPage = () => {
                           <Carousel className="w-full">
                             <CarouselContent>
                               {cardsByCategory[category].map((card) => (
-                                <CarouselItem key={card.id} className={isMobile ? "basis-full" : "md:basis-1/2 lg:basis-1/3"}>
+                                <CarouselItem key={card.id} className="basis-full">
                                   <div 
                                     className="p-1" 
                                     id={`card-${card.id}`}
@@ -315,22 +315,25 @@ const BitesPage = () => {
                             </CarouselContent>
                             <div className="flex justify-end gap-2 mt-4">
                               <CarouselPrevious 
-                                className="relative static translate-y-0" 
+                                className="relative static translate-y-0 h-6 w-6 sm:h-8 sm:w-8" 
                                 style={{ backgroundColor: categoryColor, color: textColor }}
                               />
                               <CarouselNext 
-                                className="relative static translate-y-0" 
+                                className="relative static translate-y-0 h-6 w-6 sm:h-8 sm:w-8" 
                                 style={{ backgroundColor: categoryColor, color: textColor }}
                               />
                             </div>
                           </Carousel>
                         ) : (
-                          <div className="text-center py-8">
-                            <p className="text-catalog-softBrown mb-4">No entries in this category yet.</p>
-                            <Button asChild style={{ backgroundColor: categoryColor, color: textColor }}>
+                          <div className="text-center py-4 sm:py-8">
+                            <p className="text-catalog-softBrown mb-4 text-sm sm:text-base">No entries in this category yet.</p>
+                            <Button asChild 
+                              className="text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-4 h-auto" 
+                              style={{ backgroundColor: categoryColor, color: textColor }}
+                            >
                               <Link to={`/create/food?category=${category}`}>
-                                <PlusCircle size={16} className="mr-2" />
-                                Add {getCategoryDisplayName(category)} Experience
+                                <PlusCircle size={12} className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                                <span className="truncate">Add {getCategoryDisplayName(category)}</span>
                               </Link>
                             </Button>
                           </div>
