@@ -72,16 +72,58 @@ const Header = () => {
             </Button>
           </div>
           
-          {/* Mobile menu */}
+          {/* Mobile menu - Fixed to ensure the Sheet opens properly */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="md:hidden relative z-10 flex items-center justify-center"
+              >
                 <Menu className="h-5 w-5 text-catalog-softBrown" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="bg-white">
+            <SheetContent side="left" className="bg-white w-[80%] max-w-[300px]">
               <div className="flex flex-col space-y-4 mt-6">
-                <NavBar />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/bites')}
+                  className="justify-start text-catalog-softBrown hover:text-catalog-teal"
+                >
+                  <Notebook className="h-5 w-5 mr-2" />
+                  Bites
+                </Button>
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/blockbusters')}
+                  className="justify-start text-catalog-softBrown hover:text-catalog-teal"
+                >
+                  <Notebook className="h-5 w-5 mr-2" />
+                  Blockbusters
+                </Button>
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/settings')}
+                  className="justify-start text-catalog-softBrown hover:text-catalog-teal"
+                >
+                  <Settings className="h-5 w-5 mr-2" />
+                  Settings
+                </Button>
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/profile')}
+                  className="justify-start text-catalog-softBrown hover:text-catalog-teal"
+                >
+                  <User className="h-5 w-5 mr-2" />
+                  {currentUser?.name || 'Profile'}
+                </Button>
               </div>
             </SheetContent>
           </Sheet>

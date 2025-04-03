@@ -22,8 +22,8 @@ const GridLayout: React.FC<GridLayoutProps> = ({ children, title }) => {
     >
       <Header />
       
-      <main className="flex-1 container mx-auto px-3 py-4 sm:px-4 sm:py-8">
-        {title && <h1 className="catalog-title text-xl sm:text-3xl mb-4 sm:mb-8 text-center">{title}</h1>}
+      <main className="flex-1 container mx-auto px-3 py-4 sm:px-4 sm:py-6 overflow-x-hidden">
+        {title && <div className="catalog-title text-xl sm:text-3xl mb-4 sm:mb-6 text-center">{title}</div>}
         {children}
       </main>
       
