@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
@@ -112,12 +113,12 @@ const Index = () => {
           <h2 className="text-2xl font-bold text-center font-typewriter text-[#4a3f35]">How It Works</h2>
         </div>
         
-        <div className="p-8 relative bg-[#F8F4E9]">
+        <div className="p-8 relative bg-[#FCFCF7]">
           <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-[#FF9999] opacity-70"></div>
           
           <div className="relative pl-12 pr-4" 
             style={{
-              backgroundImage: `repeating-linear-gradient(#F8F4E9, #F8F4E9 30px, #ACC8E5 30px, #ACC8E5 31px)`,
+              backgroundImage: `repeating-linear-gradient(#FCFCF7, #FCFCF7 30px, #ACC8E5 30px, #ACC8E5 31px)`,
               backgroundPosition: '0 10px',
               lineHeight: '31px',
               paddingTop: '10px'
