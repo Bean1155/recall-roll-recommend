@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
@@ -104,37 +105,59 @@ const Index = () => {
         </div>
       </div>
       
-      <Card className="border-2 border-catalog-softBrown rounded-lg shadow-lg mb-12 bg-catalog-cream hover:shadow-xl transition-shadow duration-300">
-        <CardContent className="p-8">
-          <h2 className="text-2xl font-bold text-center mb-8 font-typewriter text-[#5D4037]">How It Works</h2>
+      <div className="border-2 border-catalog-softBrown rounded-lg shadow-lg mb-12 bg-white overflow-hidden">
+        {/* Notebook paper header */}
+        <div className="bg-[#F8F4E9] p-4 border-b border-catalog-softBrown">
+          <h2 className="text-2xl font-bold text-center font-typewriter text-[#5D4037]">How It Works</h2>
+        </div>
+        
+        {/* Notebook paper content with blue lines and red margin */}
+        <div className="p-8 relative bg-white">
+          {/* Red margin line */}
+          <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-[#FF9999] opacity-70"></div>
           
-          <ol className="space-y-6">
-            <li className="flex items-start">
-              <span className="font-bold text-xl mr-4 text-vintage-red">1.</span>
-              <p className="text-xl">Create catalog cards for your favorite foods and entertainment.</p>
-            </li>
-            <li className="flex items-start">
-              <span className="font-bold text-xl mr-4 text-vintage-red">2.</span>
-              <p className="text-xl">Browse your personal collection to recall experiences.</p>
-            </li>
-            <li className="flex items-start">
-              <span className="font-bold text-xl mr-4 text-vintage-red">3.</span>
-              <p className="text-xl">Recommend items to friends by sharing your cards.</p>
-            </li>
-            <li className="flex items-start">
-              <span className="font-bold text-xl mr-4 text-vintage-red">4.</span>
-              <p className="text-xl">Track who recommended what to you and who you've shared with.</p>
-            </li>
-            <li className="flex items-start">
-              <span className="font-bold text-xl mr-4 text-vintage-red">5.</span>
-              <div>
-                <p className="text-xl">Collect and track points for sharing your cards and become a top Total Recall</p>
-                <p className="text-xl">Catalog Sharer!</p>
-              </div>
-            </li>
-          </ol>
-        </CardContent>
-      </Card>
+          {/* Content with lined paper background */}
+          <div className="relative pl-12 pr-4" 
+            style={{
+              backgroundImage: `repeating-linear-gradient(#fff, #fff 30px, #ACC8E5 30px, #ACC8E5 31px)`,
+              backgroundPosition: '0 10px',
+              lineHeight: '31px',
+              paddingTop: '10px'
+            }}>
+            
+            <ol className="space-y-[31px] list-none relative z-10">
+              <li className="flex items-start">
+                <span className="font-bold text-xl mr-4 text-vintage-red">1.</span>
+                <p className="text-xl">Create catalog cards for your favorite foods and entertainment.</p>
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold text-xl mr-4 text-vintage-red">2.</span>
+                <p className="text-xl">Browse your personal collection to recall experiences.</p>
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold text-xl mr-4 text-vintage-red">3.</span>
+                <p className="text-xl">Recommend items to friends by sharing your cards.</p>
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold text-xl mr-4 text-vintage-red">4.</span>
+                <p className="text-xl">Track who recommended what to you and who you've shared with.</p>
+              </li>
+              <li className="flex items-start">
+                <span className="font-bold text-xl mr-4 text-vintage-red">5.</span>
+                <div>
+                  <p className="text-xl">Collect and track points for sharing your cards and become a top Total Recall</p>
+                  <p className="text-xl" style={{lineHeight: '31px'}}>Catalog Sharer!</p>
+                </div>
+              </li>
+            </ol>
+            
+            {/* Add three punch holes for notebook effect */}
+            <div className="absolute left-2 top-[10%] h-6 w-6 rounded-full bg-white border-2 border-[#DDD] shadow-inner"></div>
+            <div className="absolute left-2 top-[50%] h-6 w-6 rounded-full bg-white border-2 border-[#DDD] shadow-inner"></div>
+            <div className="absolute left-2 bottom-[10%] h-6 w-6 rounded-full bg-white border-2 border-[#DDD] shadow-inner"></div>
+          </div>
+        </div>
+      </div>
     </GridLayout>
   );
 };
