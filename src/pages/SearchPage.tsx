@@ -68,11 +68,17 @@ const SearchPage = () => {
       <div className="max-w-5xl mx-auto">
         <Tabs value={activeTab} onValueChange={handleCatalogTypeChange} className="mb-6">
           <TabsList className="w-full bg-gray-100 p-1 rounded-md mb-4">
-            <TabsTrigger value="food" className="flex items-center gap-2 flex-1">
+            <TabsTrigger 
+              value="food" 
+              className="flex items-center gap-2 flex-1 data-[state=active]:bg-catalog-darkTeal data-[state=active]:text-white"
+            >
               <UtensilsCrossed size={16} />
               Bites
             </TabsTrigger>
-            <TabsTrigger value="entertainment" className="flex items-center gap-2 flex-1">
+            <TabsTrigger 
+              value="entertainment" 
+              className="flex items-center gap-2 flex-1 data-[state=active]:bg-catalog-darkTeal data-[state=active]:text-white"
+            >
               <Film size={16} />
               Blockbusters
             </TabsTrigger>
