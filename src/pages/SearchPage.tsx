@@ -69,7 +69,7 @@ const SearchPage = () => {
           <TabsContent value="food" className="mt-0">
             <div className="p-6 text-center">
               <p className="text-lg text-catalog-softBrown">
-                Click the Bites tab above to search your food catalog.
+                Click Bites or Blockbusters tab above to begin your search.
               </p>
             </div>
           </TabsContent>
@@ -77,7 +77,7 @@ const SearchPage = () => {
           <TabsContent value="entertainment" className="mt-0">
             <div className="p-6 text-center">
               <p className="text-lg text-catalog-softBrown">
-                Click the Blockbusters tab above to search your entertainment catalog.
+                Click Bites or Blockbusters tab above to begin your search.
               </p>
             </div>
           </TabsContent>
