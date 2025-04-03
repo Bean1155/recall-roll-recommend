@@ -50,7 +50,9 @@ export const forceRewardsRefresh = (): void => {
   console.log("Force refresh rewards event triggered");
   
   // Update localStorage with a timestamp to force refresh
-  localStorage.setItem('lastRewardUpdate', Date.now().toString());
+  const newTimestamp = Date.now();
+  localStorage.setItem('lastRewardUpdate', newTimestamp.toString());
+  console.log(`Set lastRewardUpdate to ${newTimestamp}`);
   
   // Dispatch the event multiple times with various delays to ensure it's caught
   const delays = [0, 50, 100, 200, 300, 500, 1000, 2000, 3000];
@@ -59,10 +61,10 @@ export const forceRewardsRefresh = (): void => {
     setTimeout(() => {
       try {
         const event = new CustomEvent('refreshRewards', { 
-          detail: { timestamp: Date.now() } 
+          detail: { timestamp: newTimestamp } 
         });
         window.dispatchEvent(event);
-        console.log(`Dispatched refreshRewards event with delay: ${delay}ms`);
+        console.log(`Dispatched refreshRewards event with delay: ${delay}ms and timestamp: ${newTimestamp}`);
       } catch (error) {
         console.error("Error dispatching reward refresh event:", error);
       }
@@ -72,9 +74,11 @@ export const forceRewardsRefresh = (): void => {
   // Also try to directly update any reward displays on the page
   try {
     document.querySelectorAll('[data-rewards-display]').forEach(element => {
-      element.setAttribute('data-update', Date.now().toString());
+      element.setAttribute('data-update', newTimestamp.toString());
+      console.log("Updated DOM element with data-rewards-display attribute");
     });
   } catch (e) {
     // Ignore DOM errors, this is just a bonus attempt
+    console.error("Error updating DOM elements:", e);
   }
 };

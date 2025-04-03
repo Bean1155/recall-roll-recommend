@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import CardForm from "@/components/CardForm";
 import { CardType } from "@/lib/types";
@@ -103,21 +104,23 @@ const CreateCardPage = () => {
     console.log("CreateCardPage: Manual refresh triggered");
     refreshRewards();
   };
+
+  const handleFormSubmitSuccess = () => {
+    console.log("CreateCardPage: CardForm submission success callback");
+    // Trigger rewards refresh
+    setTimeout(() => {
+      const event = new CustomEvent('catalog_action', { 
+        detail: { action: 'card_added', cardType } 
+      });
+      window.dispatchEvent(event);
+    }, 100);
+  };
   
   return (
     <GridLayout title={title}>
       <CardForm 
         type={cardType as CardType} 
-        onSubmitSuccess={() => {
-          console.log("CreateCardPage: CardForm submission success callback");
-          // Trigger rewards refresh
-          setTimeout(() => {
-            const event = new CustomEvent('catalog_action', { 
-              detail: { action: 'card_added', cardType } 
-            });
-            window.dispatchEvent(event);
-          }, 100);
-        }}
+        onSubmitSuccess={handleFormSubmitSuccess}
       />
       
       {/* Extra debug button removed from production

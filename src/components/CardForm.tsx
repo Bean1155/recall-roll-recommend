@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -33,9 +32,10 @@ import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/
 interface CardFormProps {
   type: CardType;
   cardId?: string;
+  onSubmitSuccess?: () => void; // Add this prop to fix the TypeScript error
 }
 
-const CardForm = ({ type, cardId }: CardFormProps) => {
+const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
   const navigate = useNavigate();
   const isFoodCard = type === 'food';
   const isEditMode = !!cardId;
@@ -311,6 +311,11 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
           title: isFoodCard ? "Bite Added" : "Blockbuster Added",
           description: `Your ${isFoodCard ? 'bite' : 'blockbuster'} has been added to your collection!`,
         });
+
+        // Call onSubmitSuccess callback if provided
+        if (onSubmitSuccess) {
+          onSubmitSuccess();
+        }
       }
       
       navigate(isFoodCard ? '/bites' : '/blockbusters');
