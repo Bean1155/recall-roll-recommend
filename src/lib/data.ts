@@ -140,7 +140,51 @@ export const deleteCard = (id: string): void => {
   localStorage.setItem('catalogCards', JSON.stringify(updatedCards));
 };
 
-// Add a recommendation to a card
+// Function to get user reward points
+export const getUserRewards = (userId: string): number => {
+  const rewardsData = localStorage.getItem('catalogUserRewards');
+  if (rewardsData) {
+    const rewards = JSON.parse(rewardsData);
+    return rewards[userId] || 0;
+  }
+  return 0;
+};
+
+// Function to add reward points to a user
+export const addUserRewardPoints = (userId: string, points: number = 1): number => {
+  const rewardsData = localStorage.getItem('catalogUserRewards');
+  let rewards = rewardsData ? JSON.parse(rewardsData) : {};
+  
+  // Initialize user rewards if not present
+  if (!rewards[userId]) {
+    rewards[userId] = 0;
+  }
+  
+  // Add points
+  rewards[userId] += points;
+  
+  // Save back to localStorage
+  localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
+  
+  return rewards[userId];
+};
+
+// Function to get all user rewards for leaderboard
+export const getAllUserRewards = (): Record<string, number> => {
+  const rewardsData = localStorage.getItem('catalogUserRewards');
+  return rewardsData ? JSON.parse(rewardsData) : {};
+};
+
+// Function to get user reward tier based on number of points
+export const getUserRewardTier = (points: number): string => {
+  if (points <= 25) return "Needs Improvement";
+  if (points <= 50) return "Fair";
+  if (points <= 75) return "Satisfactory";
+  if (points <= 100) return "Good";
+  return "Excellent";
+};
+
+// Updated function to add recommendation and track rewards
 export const addRecommendation = (cardId: string, userId: string, badge: string | null = null): void => {
   const cards = getAllCards();
   const cardIndex = cards.findIndex(c => c.id === cardId);
@@ -169,6 +213,14 @@ export const addRecommendation = (cardId: string, userId: string, badge: string 
       };
       
       localStorage.setItem('catalogCards', JSON.stringify(cards));
+      
+      // Add reward point for the recommender (current user)
+      if (card.recommendedBy) {
+        addUserRewardPoints(card.recommendedBy);
+      }
+      
+      // Add reward point for the receiver
+      addUserRewardPoints(userId);
     }
   }
 };

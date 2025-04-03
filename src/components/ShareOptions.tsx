@@ -32,6 +32,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useUser } from "@/contexts/UserContext";
+import { addUserRewardPoints } from "@/lib/data";
 
 interface ShareOptionsProps {
   card: CatalogCard;
@@ -47,7 +48,7 @@ const ShareOptions = ({
   buttonClassName 
 }: ShareOptionsProps) => {
   const [isCopied, setIsCopied] = useState(false);
-  const { users } = useUser();
+  const { users, currentUser } = useUser();
   
   const generateShareText = () => {
     const title = card.title;
@@ -153,9 +154,15 @@ const ShareOptions = ({
   const handleShareWithUser = (userId: string) => {
     const user = users.find(u => u.id === userId);
     if (user) {
+      if (currentUser) {
+        addUserRewardPoints(currentUser.id);
+      }
+      
+      addUserRewardPoints(userId);
+      
       toast({
         title: `Shared with ${user.name}`,
-        description: `${card.title} has been recommended to ${user.name}.`,
+        description: `${card.title} has been recommended to ${user.name}. You earned a reward point!`,
       });
     }
   };

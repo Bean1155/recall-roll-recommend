@@ -1,11 +1,9 @@
-
 import React, { useState } from "react";
 import GridLayout from "@/components/GridLayout";
-import Envelope from "@/components/Envelope";
 import { Award, Share2, BarChart4, Gift } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
+import RewardsCounter from "@/components/RewardsCounter";
 
 const RewardsPage = () => {
   const [activeTab, setActiveTab] = useState("howItWorks");
@@ -13,6 +11,10 @@ const RewardsPage = () => {
   return (
     <GridLayout title="How to Earn Rewards">
       <div className="max-w-3xl mx-auto">
+        <div className="mb-6">
+          <RewardsCounter />
+        </div>
+        
         <Tabs defaultValue="howItWorks" className="mb-8" onValueChange={setActiveTab}>
           <TabsList className="w-full flex mb-4 bg-catalog-cream border border-catalog-softBrown rounded-sm p-0 h-auto shadow-sm">
             {["howItWorks", "rewardSystem"].map((tab) => (
