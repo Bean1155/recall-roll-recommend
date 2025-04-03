@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group"
 import { type VariantProps } from "class-variance-authority"
@@ -45,6 +46,7 @@ const ToggleGroupItem = React.forwardRef<
           variant: context.variant || variant,
           size: context.size || size,
         }),
+        "bg-vintage-tan/40 hover:bg-vintage-tan/60 data-[state=on]:bg-catalog-teal data-[state=on]:text-white",
         className
       )}
       {...props}

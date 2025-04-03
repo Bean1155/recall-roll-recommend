@@ -179,7 +179,7 @@ const SearchPage = () => {
                     <TooltipTrigger asChild>
                       <TabsTrigger 
                         value="all" 
-                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                        className="text-sm py-2 data-[state=active]:bg-catalog-teal data-[state=active]:text-white bg-vintage-tan/40 hover:bg-vintage-tan/60"
                       >
                         <Search size={18} />
                         <span className="sr-only md:not-sr-only md:ml-1">All</span>
@@ -196,7 +196,7 @@ const SearchPage = () => {
                     <TooltipTrigger asChild>
                       <TabsTrigger 
                         value="favorites" 
-                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                        className="text-sm py-2 data-[state=active]:bg-catalog-teal data-[state=active]:text-white bg-vintage-tan/40 hover:bg-vintage-tan/60"
                       >
                         <Heart size={18} />
                         <span className="sr-only md:not-sr-only md:ml-1">Favorites</span>
@@ -213,7 +213,7 @@ const SearchPage = () => {
                     <TooltipTrigger asChild>
                       <TabsTrigger 
                         value="topRated" 
-                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                        className="text-sm py-2 data-[state=active]:bg-catalog-teal data-[state=active]:text-white bg-vintage-tan/40 hover:bg-vintage-tan/60"
                       >
                         <Star size={18} />
                         <span className="sr-only md:not-sr-only md:ml-1">Top Rated</span>
@@ -230,7 +230,7 @@ const SearchPage = () => {
                     <TooltipTrigger asChild>
                       <TabsTrigger 
                         value="newest" 
-                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                        className="text-sm py-2 data-[state=active]:bg-catalog-teal data-[state=active]:text-white bg-vintage-tan/40 hover:bg-vintage-tan/60"
                       >
                         <Clock size={18} />
                         <span className="sr-only md:not-sr-only md:ml-1">Newest</span>
@@ -247,7 +247,7 @@ const SearchPage = () => {
                     <TooltipTrigger asChild>
                       <TabsTrigger 
                         value="location" 
-                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                        className="text-sm py-2 data-[state=active]:bg-catalog-teal data-[state=active]:text-white bg-vintage-tan/40 hover:bg-vintage-tan/60"
                       >
                         <MapPin size={18} />
                         <span className="sr-only md:not-sr-only md:ml-1">Location</span>
@@ -264,7 +264,7 @@ const SearchPage = () => {
                     <TooltipTrigger asChild>
                       <TabsTrigger 
                         value="byStatus" 
-                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                        className="text-sm py-2 data-[state=active]:bg-catalog-teal data-[state=active]:text-white bg-vintage-tan/40 hover:bg-vintage-tan/60"
                       >
                         <FileText size={18} />
                         <span className="sr-only md:not-sr-only md:ml-1">By Status</span>
@@ -281,7 +281,7 @@ const SearchPage = () => {
                     <TooltipTrigger asChild>
                       <TabsTrigger 
                         value="keywords" 
-                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                        className="text-sm py-2 data-[state=active]:bg-catalog-teal data-[state=active]:text-white bg-vintage-tan/40 hover:bg-vintage-tan/60"
                       >
                         <Tag size={18} />
                         <span className="sr-only md:not-sr-only md:ml-1">Keywords</span>
@@ -298,7 +298,7 @@ const SearchPage = () => {
                     <TooltipTrigger asChild>
                       <TabsTrigger 
                         value="topReferrals" 
-                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                        className="text-sm py-2 data-[state=active]:bg-catalog-teal data-[state=active]:text-white bg-vintage-tan/40 hover:bg-vintage-tan/60"
                       >
                         <Share2 size={18} />
                         <span className="sr-only md:not-sr-only md:ml-1">Most Referred</span>
