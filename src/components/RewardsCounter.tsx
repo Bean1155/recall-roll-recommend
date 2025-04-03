@@ -5,6 +5,7 @@ import { useUser } from "@/contexts/UserContext";
 import { Award, Trophy } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { useNavigate } from "react-router-dom";
 
 interface RewardsCounterProps {
   variant?: "compact" | "detailed";
@@ -15,6 +16,7 @@ const RewardsCounter = ({ variant = "detailed", className = "" }: RewardsCounter
   const { currentUser } = useUser();
   const [points, setPoints] = useState(0);
   const [tier, setTier] = useState("");
+  const navigate = useNavigate();
   
   useEffect(() => {
     if (currentUser) {
@@ -22,6 +24,19 @@ const RewardsCounter = ({ variant = "detailed", className = "" }: RewardsCounter
       setPoints(userPoints);
       setTier(getUserRewardTier(userPoints));
     }
+  }, [currentUser]);
+  
+  // Update the points every 2 seconds to catch any changes
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (currentUser) {
+        const userPoints = getUserRewards(currentUser.id);
+        setPoints(userPoints);
+        setTier(getUserRewardTier(userPoints));
+      }
+    }, 2000);
+    
+    return () => clearInterval(intervalId);
   }, [currentUser]);
   
   // Function to get background color based on tier
@@ -38,7 +53,10 @@ const RewardsCounter = ({ variant = "detailed", className = "" }: RewardsCounter
   
   if (variant === "compact") {
     return (
-      <div className={`flex items-center ${className}`}>
+      <div 
+        className={`flex items-center ${className} bg-catalog-cream rounded-full px-3 py-1 shadow-sm border border-catalog-teal cursor-pointer`}
+        onClick={() => navigate('/rewards')}
+      >
         <Award className="text-catalog-teal h-5 w-5 mr-2" />
         <span className="font-typewriter text-sm font-bold">{points} Points</span>
       </div>
