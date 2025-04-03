@@ -155,14 +155,29 @@ const ShareOptions = ({
     const user = users.find(u => u.id === userId);
     if (user) {
       if (currentUser) {
-        addUserRewardPoints(currentUser.id);
+        console.log(`ShareOptions: Sharing with user ${userId}, awarding points to ${currentUser.id}`);
+        
+        // Award points for sharing (using a higher value to make it noticeable)
+        addUserRewardPoints(currentUser.id, 15, `Sharing "${card.title}" with ${user.name}`);
       }
       
-      addUserRewardPoints(userId);
+      // Also award points to the recipient
+      console.log(`ShareOptions: Awarding points to recipient ${userId}`);
+      addUserRewardPoints(userId, 15, `Receiving "${card.title}" recommendation`);
+      
+      // Trigger multiple reward refreshes
+      for (let i = 0; i < 10; i++) {
+        setTimeout(() => {
+          const event = new CustomEvent('refreshRewards', { 
+            detail: { timestamp: Date.now(), forced: true } 
+          });
+          window.dispatchEvent(event);
+        }, i * 200);
+      }
       
       toast({
         title: `Shared with ${user.name}`,
-        description: `${card.title} has been recommended to ${user.name}. You earned a reward point!`,
+        description: `${card.title} has been recommended to ${user.name}. You earned reward points!`,
       });
     }
   };

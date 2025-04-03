@@ -132,17 +132,16 @@ export const addCard = (card: Omit<CatalogCard, 'id'>): CatalogCard => {
   if (card.type && currentUser) {
     console.log(`User ${currentUser.id} added a ${card.type} card - awarding points`);
     
-    // Award points immediately 
+    // Award points immediately with a meaningful reason
     const reason = `Adding a new ${card.type === 'food' ? 'bite' : 'blockbuster'}`;
-    addUserRewardPoints(currentUser.id, 10, reason);
     
-    // Then explicitly track the card addition (which may award additional points)
-    trackUserCardAdditions(currentUser.id, card.type);
+    // IMPORTANT: We're using a higher point value (15) to make it more noticeable
+    addUserRewardPoints(currentUser.id, 15, reason);
     
     // Dispatch an event to notify other components
     try {
       const event = new CustomEvent('catalog_action', { 
-        detail: { action: 'card_added', cardType: card.type } 
+        detail: { action: 'card_added', cardType: card.type, timestamp: Date.now() } 
       });
       window.dispatchEvent(event);
       console.log(`Dispatched card_added event for ${card.type}`);
@@ -150,11 +149,8 @@ export const addCard = (card: Omit<CatalogCard, 'id'>): CatalogCard => {
       console.error("Error dispatching card added event:", error);
     }
     
-    // Update the timestamp in localStorage to force refreshes
-    localStorage.setItem('lastRewardUpdate', Date.now().toString());
-    
     // Force a refresh of rewards counters with multiple attempts
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 15; i++) {
       setTimeout(() => {
         try {
           // Direct call to force refresh
@@ -164,7 +160,7 @@ export const addCard = (card: Omit<CatalogCard, 'id'>): CatalogCard => {
           
           // Also dispatch our own event as backup
           const refreshEvent = new CustomEvent('refreshRewards', { 
-            detail: { timestamp: Date.now(), source: 'addCard' } 
+            detail: { timestamp: Date.now(), source: 'addCard', forced: true } 
           });
           window.dispatchEvent(refreshEvent);
           
@@ -172,7 +168,7 @@ export const addCard = (card: Omit<CatalogCard, 'id'>): CatalogCard => {
         } catch (error) {
           console.error(`Error refreshing rewards on attempt ${i+1}:`, error);
         }
-      }, i * 200);
+      }, i * 150);
     }
   } else {
     console.log("Cannot award points: either card type missing or no current user", { 
@@ -214,7 +210,7 @@ export const getUserRewards = (userId: string): number => {
   return 0;
 };
 
-// Function to add reward points to a user
+// Function to add reward points to a user - CRITICAL FUNCTION
 export const addUserRewardPoints = (userId: string, points: number = 1, reason: string = 'Activity'): number => {
   console.log(`REWARD TRACKING: Adding ${points} points to user ${userId} for ${reason}`);
   
@@ -235,18 +231,39 @@ export const addUserRewardPoints = (userId: string, points: number = 1, reason: 
     // Add points
     rewards[userId] += points;
     
+    // Create a unique timestamp to prevent caching issues
+    const timestamp = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    
     // Save back to localStorage
     localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
-    localStorage.setItem('lastRewardUpdate', Date.now().toString());
+    localStorage.setItem('lastRewardUpdate', timestamp);
+    
+    console.log(`REWARD TRACKING: Updated rewards in localStorage: ${JSON.stringify(rewards)}`);
+    console.log(`REWARD TRACKING: Set lastRewardUpdate to ${timestamp}`);
     
     // Show toast notification for reward
     if (typeof showRewardToast === 'function') {
       showRewardToast(userId, points, reason);
     }
     
-    // Trigger refresh event with multiple attempts to ensure it's caught
+    // Trigger refresh event to ensure UI updates
     if (typeof forceRewardsRefresh === 'function') {
       forceRewardsRefresh();
+    }
+    
+    // Manually dispatch events as well for redundancy
+    for (let i = 0; i < 5; i++) {
+      setTimeout(() => {
+        try {
+          const event = new CustomEvent('refreshRewards', {
+            detail: { timestamp, points, userId, forced: true }
+          });
+          window.dispatchEvent(event);
+          console.log(`REWARD TRACKING: Dispatched refreshRewards event (attempt ${i+1})`);
+        } catch (e) {
+          console.error(`Error dispatching refresh event (attempt ${i+1}):`, e);
+        }
+      }, i * 100);
     }
     
     console.log(`REWARD TRACKING: User ${userId} now has ${rewards[userId]} points`);
@@ -349,15 +366,30 @@ export const addRecommendation = (cardId: string, userId: string, badge: string 
       
       localStorage.setItem('catalogCards', JSON.stringify(cards));
       
+      // Get the current user from local storage directly
+      const currentUserStr = localStorage.getItem('currentUser');
+      const currentUser = currentUserStr ? JSON.parse(currentUserStr) : null;
+      
       // Add reward point for the recommender (current user)
-      if (card.recommendedBy) {
+      if (currentUser?.id) {
         const reason = `Recommending "${card.title}" to a friend`;
-        addUserRewardPoints(card.recommendedBy, 1, reason);
+        // Using higher points for referrals (15) to make it more noticeable
+        addUserRewardPoints(currentUser.id, 15, reason);
       }
       
       // Add reward point for the receiver
       const receiverReason = `Receiving a recommendation for "${card.title}"`;
-      addUserRewardPoints(userId, 1, receiverReason);
+      addUserRewardPoints(userId, 15, receiverReason);
+      
+      // Dispatch event
+      try {
+        const event = new CustomEvent('catalog_action', {
+          detail: { action: 'recommendation_added', cardId, userId }
+        });
+        window.dispatchEvent(event);
+      } catch (e) {
+        console.error("Error dispatching recommendation event:", e);
+      }
     }
   }
 };

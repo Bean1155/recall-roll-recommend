@@ -21,6 +21,7 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
   const prevUserIdRef = useRef<string | null>(null);
   const refreshCountRef = useRef(0);
   const lastUpdateRef = useRef<string | null>(null);
+  const componentMountedRef = useRef(false);
   
   const handleClick = () => {
     if (onClick) {
@@ -32,7 +33,27 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
   
   // Function to refresh rewards display
   const refreshRewards = useCallback(() => {
-    if (currentUser) {
+    if (!currentUser) return;
+    
+    console.log(`RewardsCounter: Refreshing points, current count: ${points}`);
+    
+    try {
+      // First try to get direct from localStorage for maximum reliability
+      const rewardsData = localStorage.getItem('catalogUserRewards');
+      if (rewardsData) {
+        const rewards = JSON.parse(rewardsData);
+        const storedPoints = rewards[currentUser.id] || 0;
+        
+        // Only log if points changed
+        if (points !== storedPoints) {
+          console.log(`RewardsCounter: POINTS CHANGED: ${points} → ${storedPoints} (direct localStorage check)`);
+          setPoints(storedPoints);
+          setTier(getUserRewardTier(storedPoints));
+          return; // Exit early if we updated via localStorage
+        }
+      }
+      
+      // Fallback to API call if no localStorage update
       const userPoints = getUserRewards(currentUser.id);
       const lastUpdateTime = localStorage.getItem('lastRewardUpdate');
       
@@ -57,37 +78,85 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
       
       // Update the previous user ID
       prevUserIdRef.current = currentUser.id;
+    } catch (error) {
+      console.error("Error refreshing points:", error);
     }
   }, [currentUser, points]);
   
   // Initial load of points and whenever currentUser changes
   useEffect(() => {
-    if (currentUser) {
-      // Log when user changes
-      if (prevUserIdRef.current !== currentUser.id) {
-        console.log(`RewardsCounter: User changed from ${prevUserIdRef.current} to ${currentUser.id}`);
-      }
-      
-      refreshRewards();
-      
-      // Force multiple refreshes on user change
-      for (let i = 0; i < 5; i++) {
-        setTimeout(refreshRewards, (i + 1) * 300);
-      }
+    if (!currentUser) return;
+    
+    componentMountedRef.current = true;
+    
+    // Log when user changes
+    if (prevUserIdRef.current !== currentUser.id) {
+      console.log(`RewardsCounter: User changed from ${prevUserIdRef.current} to ${currentUser.id}`);
     }
+    
+    // Initial refresh
+    refreshRewards();
+    
+    // Force multiple refreshes on user change
+    for (let i = 0; i < 5; i++) {
+      setTimeout(refreshRewards, (i + 1) * 200);
+    }
+    
+    return () => {
+      componentMountedRef.current = false;
+    };
   }, [currentUser, refreshRewards]);
   
   // Set up event listeners for points updates
   useEffect(() => {
+    if (!currentUser) return;
+    
     const handleRefreshEvent = (event: Event) => {
       console.log("RewardsCounter: Refresh event received", event);
-      refreshRewards();
+      
+      if (!componentMountedRef.current) return;
+      
+      const customEvent = event as CustomEvent;
+      // If the event was forced, refresh multiple times
+      if (customEvent.detail?.forced) {
+        for (let i = 0; i < 3; i++) {
+          setTimeout(refreshRewards, i * 100);
+        }
+      } else {
+        refreshRewards();
+      }
     };
     
+    // Listen for the custom event
     window.addEventListener('refreshRewards', handleRefreshEvent);
     
+    // For catalog actions (card added, etc)
+    const handleCatalogAction = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail?.action === 'card_added') {
+        console.log("RewardsCounter: Card added event detected, refreshing...");
+        
+        // Refresh multiple times
+        for (let i = 0; i < 10; i++) {
+          setTimeout(refreshRewards, i * 200);
+        }
+      }
+    };
+    
+    window.addEventListener('catalog_action', handleCatalogAction);
+    
+    // Also listen for storage changes
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'catalogUserRewards' || e.key === 'lastRewardUpdate') {
+        console.log("RewardsCounter: Storage event detected for rewards", e);
+        refreshRewards();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
     // Refresh on regular intervals, more frequently initially
-    const immediateIntervalId = setInterval(refreshRewards, 300);
+    const immediateIntervalId = setInterval(refreshRewards, 250);
     
     // After 10 seconds, switch to a less frequent refresh
     const timeoutId = setTimeout(() => {
@@ -101,13 +170,17 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     
     return () => {
       window.removeEventListener('refreshRewards', handleRefreshEvent);
+      window.removeEventListener('catalog_action', handleCatalogAction);
+      window.removeEventListener('storage', handleStorageChange);
       clearInterval(immediateIntervalId);
       clearTimeout(timeoutId);
     };
-  }, [refreshRewards]);
+  }, [currentUser, refreshRewards]);
   
   // Additional interval to periodically force a refresh from localStorage
   useEffect(() => {
+    if (!currentUser) return;
+    
     const checkStorageChanges = () => {
       const lastUpdateTime = localStorage.getItem('lastRewardUpdate');
       
@@ -116,29 +189,27 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
         console.log(`RewardsCounter: Detected localStorage update, refreshing`);
         lastUpdateRef.current = lastUpdateTime;
         
-        if (currentUser) {
-          // Direct check from localStorage
-          const rewardsData = localStorage.getItem('catalogUserRewards');
-          if (rewardsData) {
-            try {
-              const rewards = JSON.parse(rewardsData);
-              const storedPoints = rewards[currentUser.id] || 0;
-              
-              if (storedPoints !== points) {
-                console.log(`RewardsCounter: Storage check detected change: ${points} → ${storedPoints}`);
-                setPoints(storedPoints);
-                setTier(getUserRewardTier(storedPoints));
-              }
-            } catch (error) {
-              console.error("Error parsing rewards data:", error);
+        // Direct check from localStorage
+        const rewardsData = localStorage.getItem('catalogUserRewards');
+        if (rewardsData) {
+          try {
+            const rewards = JSON.parse(rewardsData);
+            const storedPoints = rewards[currentUser.id] || 0;
+            
+            if (storedPoints !== points) {
+              console.log(`RewardsCounter: Storage check detected change: ${points} → ${storedPoints}`);
+              setPoints(storedPoints);
+              setTier(getUserRewardTier(storedPoints));
             }
+          } catch (error) {
+            console.error("Error parsing rewards data:", error);
           }
         }
       }
     };
     
     // Check for storage changes more frequently
-    const storageCheckInterval = setInterval(checkStorageChanges, 500);
+    const storageCheckInterval = setInterval(checkStorageChanges, 300);
     
     return () => clearInterval(storageCheckInterval);
   }, [currentUser, points]);
@@ -161,6 +232,7 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
         className={`flex items-center ${className} bg-catalog-cream rounded-full px-3 py-1 shadow-sm border-2 border-catalog-teal cursor-pointer hover:bg-catalog-teal hover:text-white transition-colors`}
         onClick={handleClick}
         data-rewards-display="true"
+        data-rewards-points={points}
       >
         <Award className="text-catalog-teal h-5 w-5 mr-1 group-hover:text-white" />
         <span className="font-typewriter text-sm font-bold">{points}</span>
@@ -172,6 +244,7 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     <Card 
       className={`border-catalog-softBrown shadow-md overflow-hidden ${className}`}
       data-rewards-display="true"
+      data-rewards-points={points}
     >
       <div className="bg-catalog-teal text-white font-typewriter font-bold py-2 px-4 flex items-center">
         <Trophy className="h-5 w-5 mr-2" />

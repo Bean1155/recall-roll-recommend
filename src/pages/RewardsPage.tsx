@@ -7,14 +7,32 @@ import { CatalogCollapsible } from "@/components/ui/collapsible";
 import HowItWorksTab from "@/components/rewards/HowItWorksTab";
 import RewardSystemTab from "@/components/rewards/RewardSystemTab";
 import { forceRewardsRefresh } from "@/utils/rewardUtils";
+import { useUser } from "@/contexts/UserContext";
 
 const RewardsPage = () => {
+  const { currentUser } = useUser();
+  
   // Force rewards refresh when this page is loaded
   useEffect(() => {
+    if (!currentUser) return;
+    
     console.log("RewardsPage: Component mounted, forcing rewards refresh");
     
+    // Immediately check localStorage
+    try {
+      const rewardsData = localStorage.getItem('catalogUserRewards');
+      if (rewardsData) {
+        const rewards = JSON.parse(rewardsData);
+        console.log(`RewardsPage: Direct check shows user ${currentUser.id} has ${rewards[currentUser.id] || 0} points`);
+      } else {
+        console.log("RewardsPage: No rewards data found in localStorage");
+      }
+    } catch (e) {
+      console.error("Error checking localStorage:", e);
+    }
+    
     // Multiple refreshes to ensure it's caught
-    const delays = [0, 200, 500, 1000, 2000];
+    const delays = [0, 100, 200, 500, 1000, 2000, 5000];
     
     delays.forEach(delay => {
       setTimeout(() => {
@@ -26,12 +44,12 @@ const RewardsPage = () => {
     // Set up a regular interval for this page
     const intervalId = setInterval(() => {
       forceRewardsRefresh();
-    }, 3000);
+    }, 2000);
     
     return () => {
       clearInterval(intervalId);
     };
-  }, []);
+  }, [currentUser]);
   
   return (
     <GridLayout title={
