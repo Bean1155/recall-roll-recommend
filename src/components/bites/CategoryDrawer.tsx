@@ -23,13 +23,18 @@ const CategoryDrawer = ({
   isOpen,
   onOpenChange,
 }: CategoryDrawerProps) => {
-  const [visibleCards, setVisibleCards] = useState<FoodCard[]>(cards);
+  const [visibleCards, setVisibleCards] = useState<FoodCard[]>([]);
 
   // Filter cards that match the current category
   useEffect(() => {
     const filteredCards = cards.filter(card => card.category === category);
     setVisibleCards(filteredCards);
   }, [cards, category]);
+
+  // Only render if there are cards in this category
+  if (visibleCards.length === 0) {
+    return null;
+  }
 
   return (
     <div className="w-full">

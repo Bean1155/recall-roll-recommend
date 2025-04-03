@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,6 @@ import CategoryDrawer from "@/components/bites/CategoryDrawer";
 import SearchResultsDialog from "@/components/bites/SearchResultsDialog";
 import CardDetailDialog from "@/components/bites/CardDetailDialog";
 import { 
-  defaultCategories,
   getCategoryDisplayName,
   generateCategoryColors,
   getTextColor,
@@ -34,30 +34,13 @@ const BitesPage = () => {
   const { toast } = useToast();
   const highlightedCardRef = useRef<HTMLDivElement>(null);
   
-  // Load all categories including custom ones
+  // Load all categories
   useEffect(() => {
-    // Load custom categories
-    const savedCategories = localStorage.getItem('customFoodCategories');
-    let customCategories: FoodCategory[] = [];
+    const allCategories = getAllCategories();
     
-    if (savedCategories) {
-      try {
-        customCategories = JSON.parse(savedCategories);
-      } catch (e) {
-        console.error("Error parsing custom categories:", e);
-      }
-    }
+    // Sort categories
+    const sortedCategories = allCategories.sort((a, b) => a.localeCompare(b));
     
-    // Combine default and custom categories, filter out duplicates
-    const allCategories = [...defaultCategories, ...customCategories];
-    const uniqueCategories = [...new Set(allCategories)];
-    
-    // Sort categories but keep "other" at the end
-    const sortedCategories = uniqueCategories
-      .filter(category => category !== "other" as FoodCategory)
-      .sort((a, b) => a.localeCompare(b));
-    
-    sortedCategories.push("other");
     setCategories(sortedCategories);
     
     if (sortedCategories.length > 0) {
@@ -155,10 +138,15 @@ const BitesPage = () => {
     });
   };
 
+  // Get all categories that have cards
+  const activeCategories = categories.filter(category => 
+    filteredCards.some(card => card.category === category)
+  );
+
   // Create dynamic cardsByCategory based on available categories
   const cardsByCategory: Record<string, FoodCard[]> = {};
   
-  categories.forEach(category => {
+  activeCategories.forEach(category => {
     cardsByCategory[category] = [];
   });
   
@@ -172,10 +160,10 @@ const BitesPage = () => {
 
   // Generate category pairs for grid layout
   const categoryPairs = [];
-  for (let i = 0; i < categories.length; i += 2) {
-    const pair = [categories[i]];
-    if (i + 1 < categories.length) {
-      pair.push(categories[i + 1]);
+  for (let i = 0; i < activeCategories.length; i += 2) {
+    const pair = [activeCategories[i]];
+    if (i + 1 < activeCategories.length) {
+      pair.push(activeCategories[i + 1]);
     }
     categoryPairs.push(pair);
   }
@@ -210,6 +198,18 @@ const BitesPage = () => {
             </Link>
           </Button>
         </div>
+      ) : activeCategories.length === 0 ? (
+        <div className="text-center py-12 bg-catalog-cream rounded-lg border border-catalog-softBrown/30 shadow-md">
+          <p className="text-lg text-catalog-softBrown mb-4">
+            No matching food entries found.
+          </p>
+          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+            <Link to="/create/food">
+              <PlusCircle size={18} className="mr-2" />
+              Add New Food Experience
+            </Link>
+          </Button>
+        </div>
       ) : (
         <div className="space-y-10">
           <div className="flex justify-between items-center pb-4">
@@ -223,11 +223,17 @@ const BitesPage = () => {
                 const textColor = getTextColor(categoryColor);
                 const isOpen = openCatalogs.includes(category);
                 
+                // Only render categories that have cards
+                const categoryCards = cardsByCategory[category] || [];
+                if (categoryCards.length === 0) {
+                  return null;
+                }
+                
                 return (
                   <CategoryDrawer
                     key={category}
                     category={category}
-                    cards={cardsByCategory[category] || []}
+                    cards={categoryCards}
                     backgroundColor={categoryColor}
                     textColor={textColor}
                     categoryDisplayName={getCategoryDisplayName(category)}
