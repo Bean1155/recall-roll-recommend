@@ -3,170 +3,141 @@ import React from "react";
 import { Link } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
-  BookOpen, 
   Utensils, 
   Film, 
-  Plus, 
-  UserPlus, 
-  Heart,
-  MessageSquare 
+  Plus,
+  BookOpen 
 } from "lucide-react";
 
 const Index = () => {
+  const currentDate = new Date();
+  const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
+
   return (
-    <GridLayout title="TOTAL RECALL CATALOG">
-      <div className="flex flex-col items-center mb-8">
-        <p className="text-xl text-center text-catalog-softBrown max-w-2xl">
-          Your personal catalog for tracking all of life's bites and blockbusters. 
-          Never forget a great restaurant or movie recommendation again!
-        </p>
+    <GridLayout>
+      <div className="mb-8 text-center">
+        <h1 className="text-4xl font-bold mb-2 text-[#333333] font-typewriter">TOTAL RECALL CATALOG</h1>
+        <p className="text-xl text-vintage-red font-script">Tracking Every Bite and Blockbuster</p>
       </div>
 
-      <Tabs defaultValue="actions" className="mb-8">
-        <TabsList className="w-full mb-4">
-          <TabsTrigger value="actions" className="w-1/2">Quick Actions</TabsTrigger>
-          <TabsTrigger value="features" className="w-1/2">Featured Content</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="actions">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Link to="/create/food" className="h-full">
-              <Card className="h-full hover:bg-catalog-cream cursor-pointer transition-all duration-200 border-catalog-softBrown">
-                <CardHeader className="bg-catalog-manila rounded-t-lg">
-                  <CardTitle className="flex items-center gap-2 text-catalog-teal">
-                    <Utensils size={20} />
-                    Add New Bite
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <p className="text-sm text-catalog-softBrown">
-                    Record a new restaurant, café, or food experience.
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-            
-            <Link to="/create/entertainment" className="h-full">
-              <Card className="h-full hover:bg-catalog-cream cursor-pointer transition-all duration-200 border-catalog-softBrown">
-                <CardHeader className="bg-catalog-manila rounded-t-lg">
-                  <CardTitle className="flex items-center gap-2 text-catalog-teal">
-                    <Film size={20} />
-                    Add New Blockbuster
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <p className="text-sm text-catalog-softBrown">
-                    Log a movie, TV show, or other entertainment.
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-            
-            <Link to="/recommend" className="h-full">
-              <Card className="h-full hover:bg-catalog-cream cursor-pointer transition-all duration-200 border-catalog-softBrown">
-                <CardHeader className="bg-catalog-manila rounded-t-lg">
-                  <CardTitle className="flex items-center gap-2 text-catalog-teal">
-                    <UserPlus size={20} />
-                    Recommend
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <p className="text-sm text-catalog-softBrown">
-                    Share a recommendation with friends.
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-            
-            <Link to="/collections" className="h-full">
-              <Card className="h-full hover:bg-catalog-cream cursor-pointer transition-all duration-200 border-catalog-softBrown">
-                <CardHeader className="bg-catalog-manila rounded-t-lg">
-                  <CardTitle className="flex items-center gap-2 text-catalog-teal">
-                    <Heart size={20} />
-                    Collections
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <p className="text-sm text-catalog-softBrown">
-                    View and manage your saved collections.
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
+      {/* Two column layout for Bites and Blockbusters */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        {/* Bites Column */}
+        <div className="border rounded-lg overflow-hidden border-catalog-softBrown">
+          <div className="bg-vintage-pink p-4 text-center">
+            <h2 className="text-2xl font-bold text-[#5D4037] font-typewriter">BITES</h2>
           </div>
-        </TabsContent>
-        
-        <TabsContent value="features">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Link to="/bites" className="h-full">
-              <Card className="h-full hover:bg-catalog-cream cursor-pointer transition-all duration-200 border-catalog-softBrown">
-                <CardHeader className="bg-catalog-manila rounded-t-lg">
-                  <CardTitle className="flex items-center gap-2 text-catalog-teal">
-                    <Utensils size={20} />
-                    Explore Bites
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <p className="text-sm text-catalog-softBrown">
-                    Browse all your saved food experiences.
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-            
-            <Link to="/blockbusters" className="h-full">
-              <Card className="h-full hover:bg-catalog-cream cursor-pointer transition-all duration-200 border-catalog-softBrown">
-                <CardHeader className="bg-catalog-manila rounded-t-lg">
-                  <CardTitle className="flex items-center gap-2 text-catalog-teal">
-                    <Film size={20} />
-                    Explore Blockbusters
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <p className="text-sm text-catalog-softBrown">
-                    Browse all your saved entertainment.
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-            
-            <Link to="/search" className="h-full">
-              <Card className="h-full hover:bg-catalog-cream cursor-pointer transition-all duration-200 border-catalog-softBrown">
-                <CardHeader className="bg-catalog-manila rounded-t-lg">
-                  <CardTitle className="flex items-center gap-2 text-catalog-teal">
-                    <BookOpen size={20} />
-                    Search Catalog
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <p className="text-sm text-catalog-softBrown">
-                    Search through all your catalog entries.
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-            
-            <Link to="/profile" className="h-full">
-              <Card className="h-full hover:bg-catalog-cream cursor-pointer transition-all duration-200 border-catalog-softBrown">
-                <CardHeader className="bg-catalog-manila rounded-t-lg">
-                  <CardTitle className="flex items-center gap-2 text-catalog-teal">
-                    <Plus size={20} />
-                    My Profile
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-4">
-                  <p className="text-sm text-catalog-softBrown">
-                    View and edit your profile information.
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
+          
+          <div className="grid grid-cols-3 border-b border-catalog-softBrown">
+            <div className="border-r border-catalog-softBrown py-16"></div>
+            <div className="border-r border-catalog-softBrown py-16 flex justify-center items-center">
+              <Utensils size={60} className="text-[#333333]" />
+            </div>
+            <div className="py-16"></div>
           </div>
-        </TabsContent>
-      </Tabs>
+          
+          <Link to="/bites" className="grid grid-cols-3 border-b border-catalog-softBrown hover:bg-catalog-cream">
+            <div className="border-r border-catalog-softBrown py-6 flex items-center justify-center">
+              <BookOpen size={20} className="text-vintage-red" />
+            </div>
+            <div className="border-r border-catalog-softBrown py-6 col-span-2 flex items-center pl-4">
+              <span className="font-script text-2xl text-vintage-red">Browse</span>
+            </div>
+          </Link>
+          
+          <Link to="/create/food" className="grid grid-cols-3 border-b border-catalog-softBrown hover:bg-catalog-cream">
+            <div className="border-r border-catalog-softBrown py-6 flex items-center justify-center">
+              <Plus size={20} className="text-[#3A7D44]" />
+            </div>
+            <div className="border-r border-catalog-softBrown py-6 col-span-2 flex items-center pl-4">
+              <span className="font-script text-2xl text-[#3A7D44]">Add New</span>
+            </div>
+          </Link>
+          
+          <div className="grid grid-cols-3 border-b border-catalog-softBrown">
+            <div className="border-r border-catalog-softBrown py-4 flex items-center justify-end pr-2">
+              <span className="text-sm text-gray-600">Last updated:</span>
+            </div>
+            <div className="border-r border-catalog-softBrown py-4 col-span-2 flex items-center pl-4">
+              <span className="text-sm text-gray-600">{formattedDate}</span>
+            </div>
+          </div>
+        </div>
+        
+        {/* Blockbusters Column */}
+        <div className="border rounded-lg overflow-hidden border-catalog-softBrown">
+          <div className="bg-vintage-slate p-4 text-center">
+            <h2 className="text-2xl font-bold text-[#2C3E50] font-typewriter">BLOCKBUSTERS</h2>
+          </div>
+          
+          <div className="grid grid-cols-3 border-b border-catalog-softBrown">
+            <div className="border-r border-catalog-softBrown py-16"></div>
+            <div className="border-r border-catalog-softBrown py-16 flex justify-center items-center">
+              <Film size={60} className="text-[#333333]" />
+            </div>
+            <div className="py-16"></div>
+          </div>
+          
+          <Link to="/blockbusters" className="grid grid-cols-3 border-b border-catalog-softBrown hover:bg-catalog-cream">
+            <div className="border-r border-catalog-softBrown py-6 flex items-center justify-center">
+              <BookOpen size={20} className="text-vintage-red" />
+            </div>
+            <div className="border-r border-catalog-softBrown py-6 col-span-2 flex items-center pl-4">
+              <span className="font-script text-2xl text-vintage-red">Browse</span>
+            </div>
+          </Link>
+          
+          <Link to="/create/entertainment" className="grid grid-cols-3 border-b border-catalog-softBrown hover:bg-catalog-cream">
+            <div className="border-r border-catalog-softBrown py-6 flex items-center justify-center">
+              <Plus size={20} className="text-[#3A7D44]" />
+            </div>
+            <div className="border-r border-catalog-softBrown py-6 col-span-2 flex items-center pl-4">
+              <span className="font-script text-2xl text-[#3A7D44]">Add New</span>
+            </div>
+          </Link>
+          
+          <div className="grid grid-cols-3 border-b border-catalog-softBrown">
+            <div className="border-r border-catalog-softBrown py-4 flex items-center justify-end pr-2">
+              <span className="text-sm text-gray-600">Last updated:</span>
+            </div>
+            <div className="border-r border-catalog-softBrown py-4 col-span-2 flex items-center pl-4">
+              <span className="text-sm text-gray-600">7/4/2023</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* How It Works Section */}
+      <div className="border rounded-lg border-catalog-softBrown p-8 mb-12">
+        <h2 className="text-2xl font-bold text-center mb-8 font-typewriter">How It Works</h2>
+        
+        <ol className="space-y-6">
+          <li className="flex items-start">
+            <span className="font-bold text-xl mr-4">1.</span>
+            <p className="text-xl">Create catalog cards for your favorite foods and entertainment.</p>
+          </li>
+          <li className="flex items-start">
+            <span className="font-bold text-xl mr-4">2.</span>
+            <p className="text-xl">Browse your personal collection to recall experiences.</p>
+          </li>
+          <li className="flex items-start">
+            <span className="font-bold text-xl mr-4">3.</span>
+            <p className="text-xl">Recommend items to friends by sharing your cards.</p>
+          </li>
+          <li className="flex items-start">
+            <span className="font-bold text-xl mr-4">4.</span>
+            <p className="text-xl">Track who recommended what to you and who you've shared with.</p>
+          </li>
+          <li className="flex items-start">
+            <span className="font-bold text-xl mr-4">5.</span>
+            <div>
+              <p className="text-xl">Collect and track points for sharing your cards and become a top Total Recall</p>
+              <p className="text-xl">Catalog Sharer!</p>
+            </div>
+          </li>
+        </ol>
+      </div>
     </GridLayout>
   );
 };
