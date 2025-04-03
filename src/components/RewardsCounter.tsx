@@ -78,8 +78,8 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
         className={`flex items-center ${className} bg-catalog-cream rounded-full px-3 py-1 shadow-sm border-2 border-catalog-teal cursor-pointer hover:bg-catalog-teal hover:text-white transition-colors`}
         onClick={handleClick}
       >
-        <Award className="text-catalog-teal h-5 w-5 mr-2 group-hover:text-white" />
-        <span className="font-typewriter text-sm font-bold">{points} Points</span>
+        <Award className="text-catalog-teal h-5 w-5 mr-1 group-hover:text-white" />
+        <span className="font-typewriter text-sm font-bold">{points}</span>
       </div>
     );
   }

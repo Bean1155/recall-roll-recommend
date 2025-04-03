@@ -26,7 +26,7 @@ export const showRewardToast = (
     title: `🎉 You earned ${pointsAdded} point${pointsAdded > 1 ? 's' : ''}!`,
     description: `${reason}. You now have ${totalPoints} total points.`,
     className: "bg-catalog-cream border-catalog-teal text-catalog-darkBrown font-medium border-4 z-[2000] shadow-lg",
-    duration: 10000, // Show for 10 seconds (increased from 8)
+    duration: 10000, // Show for 10 seconds
     variant: "default",
   });
   

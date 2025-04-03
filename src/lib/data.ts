@@ -124,10 +124,15 @@ export const addCard = (card: Omit<CatalogCard, 'id'>): CatalogCard => {
   const updatedCards = [...cards, newCard];
   localStorage.setItem('catalogCards', JSON.stringify(updatedCards));
   
-  // Track this card addition for rewards if created by a user
-  if (card.recommendedBy && currentUser) {
-    console.log(`Adding card by ${card.recommendedBy} of type ${card.type}`);
-    trackUserCardAdditions(card.recommendedBy, card.type);
+  // Get current user directly from localStorage to ensure we have latest data
+  const currentUserData = localStorage.getItem('currentUser');
+  const currentUser = currentUserData ? JSON.parse(currentUserData) : null;
+  
+  // Track this card addition for rewards
+  if (card.type && currentUser) {
+    // Use the current user's ID for tracking rather than recommendedBy
+    console.log(`User ${currentUser.id} added a ${card.type} card`);
+    trackUserCardAdditions(currentUser.id, card.type);
   }
   
   return newCard;
@@ -159,7 +164,7 @@ export const getUserRewards = (userId: string): number => {
 
 // Function to add reward points to a user
 export const addUserRewardPoints = (userId: string, points: number = 1, reason: string = 'Activity'): number => {
-  console.log(`Adding ${points} points to user ${userId} for ${reason}`);
+  console.log(`REWARD TRACKING: Adding ${points} points to user ${userId} for ${reason}`);
   const rewardsData = localStorage.getItem('catalogUserRewards');
   let rewards = rewardsData ? JSON.parse(rewardsData) : {};
   
@@ -181,30 +186,18 @@ export const addUserRewardPoints = (userId: string, points: number = 1, reason: 
   const event = new CustomEvent('refreshRewards');
   window.dispatchEvent(event);
   
-  console.log(`User ${userId} now has ${rewards[userId]} points`);
+  console.log(`REWARD TRACKING: User ${userId} now has ${rewards[userId]} points`);
   
   return rewards[userId];
 };
 
 // Track cards added by users for rewards
 export const trackUserCardAdditions = (userId: string, cardType: 'food' | 'entertainment'): void => {
-  console.log(`Tracking ${cardType} addition for user ${userId}`);
-  const key = `catalog_${userId}_${cardType}_additions`;
-  let count = parseInt(localStorage.getItem(key) || '0');
-  count += 1;
-  localStorage.setItem(key, count.toString());
+  console.log(`REWARD TRACKING: User ${userId} added a ${cardType} card`);
   
-  console.log(`User has added ${count} ${cardType} items`);
-  
-  // Every 2 cards of the same type earn 1 point
-  if (count % 2 === 0) {
-    const reason = `Adding ${count} ${cardType} items`;
-    addUserRewardPoints(userId, 1, reason);
-  } else {
-    // Give a partial point for odd-numbered additions
-    const reason = `Adding your first ${cardType} item`;
-    addUserRewardPoints(userId, 1, reason);
-  }
+  // Always give points for adding a card (simplified from the previous version)
+  const reason = `Adding a new ${cardType === 'food' ? 'bite' : 'blockbuster'}`;
+  addUserRewardPoints(userId, 5, reason);  // Increased point value to make it more noticeable
 };
 
 // Get current user from localStorage or context

@@ -5,7 +5,7 @@ import NavBar from "@/components/NavBar";
 
 interface GridLayoutProps {
   children: React.ReactNode;
-  title?: React.ReactNode;  // Changed from string to ReactNode to accept both strings and elements
+  title?: React.ReactNode;
 }
 
 const GridLayout: React.FC<GridLayoutProps> = ({ children, title }) => {
@@ -22,8 +22,8 @@ const GridLayout: React.FC<GridLayoutProps> = ({ children, title }) => {
     >
       <Header />
       
-      <main className="flex-1 container mx-auto px-4 py-8">
-        {title && <h1 className="catalog-title text-3xl mb-8 text-center">{title}</h1>}
+      <main className="flex-1 container mx-auto px-3 py-4 sm:px-4 sm:py-8">
+        {title && <h1 className="catalog-title text-xl sm:text-3xl mb-4 sm:mb-8 text-center">{title}</h1>}
         {children}
       </main>
       
@@ -31,11 +31,9 @@ const GridLayout: React.FC<GridLayoutProps> = ({ children, title }) => {
         <NavBar />
         
         {/* Copyright moved directly below the NavBar component */}
-        <div className="text-center text-sm text-catalog-softBrown py-2 border-t border-catalog-softBrown/20 bg-catalog-manila/50">
+        <div className="text-center text-xs sm:text-sm text-catalog-softBrown py-2 border-t border-catalog-softBrown/20 bg-catalog-manila/50">
           <p>© {new Date().getFullYear()} TOTAL RECALL CATALOG • Tracking Every Bite and Blockbuster™</p>
         </div>
-        
-        {/* Footer removed since the copyright is now below the navbar */}
       </div>
     </div>
   );
