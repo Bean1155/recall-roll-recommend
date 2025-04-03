@@ -22,12 +22,12 @@ const GridLayout: React.FC<GridLayoutProps> = ({ children, title }) => {
     >
       <Header />
       
-      <main className="flex-1 container mx-auto px-3 py-4 sm:px-4 sm:py-6 overflow-x-hidden">
+      <main className="flex-1 container mx-auto px-3 py-4 sm:px-4 sm:py-6 overflow-x-hidden mb-16">
         {title && <div className="catalog-title text-xl sm:text-3xl mb-4 sm:mb-6 text-center">{title}</div>}
         {children}
       </main>
       
-      <div className="pb-20">
+      <div className="fixed bottom-0 left-0 right-0 z-40">
         <NavBar />
         
         {/* Copyright moved directly below the NavBar component */}

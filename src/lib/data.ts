@@ -1,6 +1,6 @@
 import { CatalogCard, FoodCard, EntertainmentCard, FoodStatus, RecommendationBadge, UserNote, AgreementStatus } from './types';
 import { appUsers } from '@/contexts/UserContext';
-import { showRewardToast } from '@/utils/rewardUtils';
+import { showRewardToast, forceRewardsRefresh } from '@/utils/rewardUtils';
 
 // Mock data
 const mockCards: CatalogCard[] = [
@@ -124,15 +124,24 @@ export const addCard = (card: Omit<CatalogCard, 'id'>): CatalogCard => {
   const updatedCards = [...cards, newCard];
   localStorage.setItem('catalogCards', JSON.stringify(updatedCards));
   
-  // Get current user directly from localStorage to ensure we have latest data
-  const currentUserData = localStorage.getItem('currentUser');
-  const currentUser = currentUserData ? JSON.parse(currentUserData) : null;
+  // Get the current user from local storage directly
+  const currentUserStr = localStorage.getItem('currentUser');
+  const currentUser = currentUserStr ? JSON.parse(currentUserStr) : null;
   
   // Track this card addition for rewards
   if (card.type && currentUser) {
-    // Use the current user's ID for tracking rather than recommendedBy
-    console.log(`User ${currentUser.id} added a ${card.type} card`);
+    console.log(`User ${currentUser.id} added a ${card.type} card - awarding points`);
+    
+    // Explicitly track the card addition
     trackUserCardAdditions(currentUser.id, card.type);
+    
+    // Force a refresh of rewards counters
+    forceRewardsRefresh();
+  } else {
+    console.log("Cannot award points: either card type missing or no current user", { 
+      cardType: card.type, 
+      hasCurrentUser: !!currentUser 
+    });
   }
   
   return newCard;
@@ -165,6 +174,12 @@ export const getUserRewards = (userId: string): number => {
 // Function to add reward points to a user
 export const addUserRewardPoints = (userId: string, points: number = 1, reason: string = 'Activity'): number => {
   console.log(`REWARD TRACKING: Adding ${points} points to user ${userId} for ${reason}`);
+  
+  if (!userId) {
+    console.error("Cannot add points: userId is empty");
+    return 0;
+  }
+  
   const rewardsData = localStorage.getItem('catalogUserRewards');
   let rewards = rewardsData ? JSON.parse(rewardsData) : {};
   
@@ -183,8 +198,7 @@ export const addUserRewardPoints = (userId: string, points: number = 1, reason: 
   showRewardToast(userId, points, reason);
   
   // Trigger refresh event
-  const event = new CustomEvent('refreshRewards');
-  window.dispatchEvent(event);
+  forceRewardsRefresh();
   
   console.log(`REWARD TRACKING: User ${userId} now has ${rewards[userId]} points`);
   
@@ -195,9 +209,14 @@ export const addUserRewardPoints = (userId: string, points: number = 1, reason: 
 export const trackUserCardAdditions = (userId: string, cardType: 'food' | 'entertainment'): void => {
   console.log(`REWARD TRACKING: User ${userId} added a ${cardType} card`);
   
-  // Always give points for adding a card (simplified from the previous version)
+  if (!userId) {
+    console.error("Cannot track card addition: userId is empty");
+    return;
+  }
+  
+  // Award points for adding a card (increased from previous version)
   const reason = `Adding a new ${cardType === 'food' ? 'bite' : 'blockbuster'}`;
-  addUserRewardPoints(userId, 5, reason);  // Increased point value to make it more noticeable
+  addUserRewardPoints(userId, 5, reason);
 };
 
 // Get current user from localStorage or context

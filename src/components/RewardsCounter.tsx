@@ -37,12 +37,17 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     }
   };
   
-  // Initial load of points
+  // Initial load of points and whenever currentUser changes
   useEffect(() => {
     refreshRewards();
+    
+    // Refresh immediately when currentUser changes
+    if (currentUser) {
+      console.log("RewardsCounter: Current user changed, refreshing points for", currentUser.id);
+    }
   }, [currentUser]);
   
-  // Listen for refreshRewards events
+  // Set up event listeners for points updates
   useEffect(() => {
     const handleRefreshEvent = () => {
       console.log("RewardsCounter: Refresh event received");
@@ -51,12 +56,23 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     
     window.addEventListener('refreshRewards', handleRefreshEvent);
     
-    // Update the points every 2 seconds to catch any changes
-    const intervalId = setInterval(refreshRewards, 2000);
+    // Update more frequently initially to catch any immediate changes
+    const immediateIntervalId = setInterval(refreshRewards, 500);
+    
+    // After 5 seconds, switch to a less frequent refresh
+    const timeoutId = setTimeout(() => {
+      clearInterval(immediateIntervalId);
+      const regularIntervalId = setInterval(refreshRewards, 3000);
+      
+      return () => {
+        clearInterval(regularIntervalId);
+      };
+    }, 5000);
     
     return () => {
       window.removeEventListener('refreshRewards', handleRefreshEvent);
-      clearInterval(intervalId);
+      clearInterval(immediateIntervalId);
+      clearTimeout(timeoutId);
     };
   }, [currentUser]);
   

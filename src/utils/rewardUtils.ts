@@ -21,7 +21,7 @@ export const showRewardToast = (
   console.log("REWARD TOAST: User earned", pointsAdded, "points for", reason);
   console.log("REWARD TOAST: Total points now", totalPoints);
   
-  // Use a more visible toast with longer duration and z-index
+  // Use a more visible toast with longer duration and higher z-index
   toast({
     title: `🎉 You earned ${pointsAdded} point${pointsAdded > 1 ? 's' : ''}!`,
     description: `${reason}. You now have ${totalPoints} total points.`,
@@ -30,13 +30,19 @@ export const showRewardToast = (
     variant: "default",
   });
   
-  // Force the toast to be visible
+  // Force the rewards counter to refresh immediately
   setTimeout(() => {
-    // Attempt to make sure the toast is shown by refreshing the rewards counter
     const event = new CustomEvent('refreshRewards');
     window.dispatchEvent(event);
-    
-    // Also log to console for debugging
     console.log(`Toast notification triggered: +${pointsAdded} points (${reason})`);
   }, 100);
+};
+
+/**
+ * Force the rewards counter to refresh
+ */
+export const forceRewardsRefresh = (): void => {
+  const event = new CustomEvent('refreshRewards');
+  window.dispatchEvent(event);
+  console.log("Force refresh rewards event triggered");
 };
