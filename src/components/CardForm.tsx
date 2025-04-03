@@ -220,14 +220,14 @@ const CardForm = ({ type, cardId }: CardFormProps) => {
             </div>
             
             <div>
-              <Label htmlFor="creator">Chef/Restaurant</Label>
+              <Label htmlFor="creator">Chef/Restauranteur</Label>
               <Input
                 id="creator"
                 name="creator"
                 value={formData.creator}
                 onChange={handleChange}
                 className="catalog-input"
-                placeholder="Chef or Restaurant name"
+                placeholder="Chef or Restauranteur name"
               />
             </div>
             
