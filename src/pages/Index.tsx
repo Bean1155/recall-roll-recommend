@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
@@ -105,21 +104,20 @@ const Index = () => {
         </div>
       </div>
       
-      <div className="border-2 border-catalog-softBrown rounded-lg shadow-lg mb-12 bg-white overflow-hidden">
-        {/* Notebook paper header */}
-        <div className="bg-[#F8F4E9] p-4 border-b border-catalog-softBrown">
-          <h2 className="text-2xl font-bold text-center font-typewriter text-[#5D4037]">How It Works</h2>
+      <div className="border-2 border-catalog-softBrown rounded-lg shadow-lg mb-12 bg-white overflow-hidden transform hover:scale-[1.02] transition-transform duration-300" 
+        style={{
+          boxShadow: "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px"
+        }}>
+        <div className="bg-[#e0c5c1] p-4 border-b-2 border-catalog-softBrown">
+          <h2 className="text-2xl font-bold text-center font-typewriter text-[#4a3f35]">How It Works</h2>
         </div>
         
-        {/* Notebook paper content with blue lines and red margin */}
-        <div className="p-8 relative bg-white">
-          {/* Red margin line */}
+        <div className="p-8 relative bg-[#F8F4E9]">
           <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-[#FF9999] opacity-70"></div>
           
-          {/* Content with lined paper background */}
           <div className="relative pl-12 pr-4" 
             style={{
-              backgroundImage: `repeating-linear-gradient(#fff, #fff 30px, #ACC8E5 30px, #ACC8E5 31px)`,
+              backgroundImage: `repeating-linear-gradient(#F8F4E9, #F8F4E9 30px, #ACC8E5 30px, #ACC8E5 31px)`,
               backgroundPosition: '0 10px',
               lineHeight: '31px',
               paddingTop: '10px'
@@ -151,10 +149,9 @@ const Index = () => {
               </li>
             </ol>
             
-            {/* Add three punch holes for notebook effect */}
-            <div className="absolute left-2 top-[10%] h-6 w-6 rounded-full bg-white border-2 border-[#DDD] shadow-inner"></div>
-            <div className="absolute left-2 top-[50%] h-6 w-6 rounded-full bg-white border-2 border-[#DDD] shadow-inner"></div>
-            <div className="absolute left-2 bottom-[10%] h-6 w-6 rounded-full bg-white border-2 border-[#DDD] shadow-inner"></div>
+            <div className="absolute left-2 top-[10%] h-6 w-6 rounded-full bg-white border-2 border-[#9E8979] shadow-inner"></div>
+            <div className="absolute left-2 top-[50%] h-6 w-6 rounded-full bg-white border-2 border-[#9E8979] shadow-inner"></div>
+            <div className="absolute left-2 bottom-[10%] h-6 w-6 rounded-full bg-white border-2 border-[#9E8979] shadow-inner"></div>
           </div>
         </div>
       </div>
