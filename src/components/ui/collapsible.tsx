@@ -24,14 +24,13 @@ export const CatalogCollapsible = React.forwardRef<
   const [isHovering, setIsHovering] = React.useState(false);
   
   const handleToggle = () => {
-    setIsOpen(prev => !prev);
+    setIsOpen(!isOpen);
   };
   
   return (
-    <CollapsiblePrimitive.Root 
+    <Collapsible 
       ref={ref}
       open={isOpen}
-      onOpenChange={setIsOpen}
       className={`catalog-drawer relative mb-4 ${className}`}
       {...props}
     >
@@ -93,12 +92,11 @@ export const CatalogCollapsible = React.forwardRef<
         </div>
       </div>
       
-      <CollapsiblePrimitive.Content 
+      <CollapsibleContent 
         className="rounded-b-md bg-white overflow-hidden transition-all data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up"
         style={{ 
           marginTop: isOpen ? "8px" : "0", 
           border: isOpen ? `3px solid ${backgroundColor}` : "none",
-          borderTop: "none",
           zIndex: 5,
           position: "relative"
         }}
@@ -106,8 +104,8 @@ export const CatalogCollapsible = React.forwardRef<
         <div className="p-4">
           {children}
         </div>
-      </CollapsiblePrimitive.Content>
-    </CollapsiblePrimitive.Root>
+      </CollapsibleContent>
+    </Collapsible>
   );
 });
 
