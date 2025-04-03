@@ -2,10 +2,11 @@
 import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Edit, Send, Star, MessageSquare, Heart } from "lucide-react";
+import { Edit, Send, Star, MessageSquare, Heart, Utensils, MapPin, Tag, Calendar, User, Film, Tv, Headphones, Award } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { updateCard } from "@/lib/data";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface CatalogCardProps {
   card: CatalogCardType;
@@ -73,21 +74,129 @@ const CatalogCard = ({ card, showActions = true }: CatalogCardProps) => {
       <div className="mb-4 space-y-2 text-sm">
         {isFoodCard ? (
           <>
-            <p><span className="font-bold">Cuisine:</span> {foodCard.cuisine}</p>
-            <p><span className="font-bold">Location:</span> {foodCard.location}</p>
-            <p><span className="font-bold">Category:</span> {foodCard.category}</p>
+            <TooltipProvider>
+              <p className="flex items-center gap-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex items-center text-catalog-teal">
+                      <Utensils size={16} className="mr-1" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    <p>Cuisine Type</p>
+                  </TooltipContent>
+                </Tooltip>
+                <span className="font-bold">Cuisine:</span> {foodCard.cuisine}
+              </p>
+              <p className="flex items-center gap-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex items-center text-catalog-teal">
+                      <MapPin size={16} className="mr-1" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    <p>Location</p>
+                  </TooltipContent>
+                </Tooltip>
+                <span className="font-bold">Location:</span> {foodCard.location}
+              </p>
+              <p className="flex items-center gap-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex items-center text-catalog-teal">
+                      <Tag size={16} className="mr-1" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    <p>Category</p>
+                  </TooltipContent>
+                </Tooltip>
+                <span className="font-bold">Category:</span> {foodCard.category}
+              </p>
+            </TooltipProvider>
           </>
         ) : (
           <>
-            <p><span className="font-bold">Genre:</span> {entertainmentCard.genre}</p>
-            <p><span className="font-bold">Medium:</span> {entertainmentCard.medium}</p>
-            <p><span className="font-bold">Category:</span> {entertainmentCard.entertainmentCategory}</p>
+            <TooltipProvider>
+              <p className="flex items-center gap-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex items-center text-catalog-teal">
+                      <Award size={16} className="mr-1" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    <p>Genre</p>
+                  </TooltipContent>
+                </Tooltip>
+                <span className="font-bold">Genre:</span> {entertainmentCard.genre}
+              </p>
+              <p className="flex items-center gap-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex items-center text-catalog-teal">
+                      {entertainmentCard.medium.toLowerCase().includes('tv') ? (
+                        <Tv size={16} className="mr-1" />
+                      ) : entertainmentCard.medium.toLowerCase().includes('podcast') ? (
+                        <Headphones size={16} className="mr-1" />
+                      ) : (
+                        <Film size={16} className="mr-1" />
+                      )}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    <p>Medium</p>
+                  </TooltipContent>
+                </Tooltip>
+                <span className="font-bold">Medium:</span> {entertainmentCard.medium}
+              </p>
+              <p className="flex items-center gap-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex items-center text-catalog-teal">
+                      <Tag size={16} className="mr-1" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    <p>Category</p>
+                  </TooltipContent>
+                </Tooltip>
+                <span className="font-bold">Category:</span> {entertainmentCard.entertainmentCategory}
+              </p>
+            </TooltipProvider>
           </>
         )}
-        <p><span className="font-bold">Date Experienced:</span> {new Date(card.date).toLocaleDateString()}</p>
-        {card.recommendedBy && (
-          <p><span className="font-bold">Recommended by:</span> {card.recommendedBy}</p>
-        )}
+        <TooltipProvider>
+          <p className="flex items-center gap-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="inline-flex items-center text-catalog-teal">
+                  <Calendar size={16} className="mr-1" />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Date Experienced</p>
+              </TooltipContent>
+            </Tooltip>
+            <span className="font-bold">Date Experienced:</span> {new Date(card.date).toLocaleDateString()}
+          </p>
+          {card.recommendedBy && (
+            <p className="flex items-center gap-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="inline-flex items-center text-catalog-teal">
+                    <User size={16} className="mr-1" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>Recommended by</p>
+                </TooltipContent>
+              </Tooltip>
+              <span className="font-bold">Recommended by:</span> {card.recommendedBy}
+            </p>
+          )}
+        </TooltipProvider>
       </div>
       
       <div className="mb-4 bg-white bg-opacity-50 p-2 rounded border border-catalog-softBrown">
