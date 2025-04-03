@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { User, Folder, Sparkles, PlusCircle, Menu, Home, Search, Settings } from "lucide-react";
@@ -50,7 +51,7 @@ export const NavBar = () => {
     }
   ];
 
-  // Special handling for search to add hover card
+  // Modified search item to point to the main search page without type filter
   const searchItem = {
     name: "Search",
     icon: Search,
@@ -109,7 +110,7 @@ export const NavBar = () => {
               );
             })}
 
-            {/* Search with tooltip and hover effect */}
+            {/* Search with tooltip and hover effect - updated to universal search */}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -139,7 +140,7 @@ export const NavBar = () => {
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent className="bg-white text-catalog-softBrown">
-                  Quick search your catalog items
+                  Search across all catalog items
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
