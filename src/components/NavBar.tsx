@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { User, Folder, Sparkles, PlusCircle, Menu, Home, Search, Settings, Utensils, Film } from "lucide-react";
+import { User, Folder, Sparkles, PlusCircle, Menu, Home, Search, Settings, Utensils, Film, Award } from "lucide-react";
 import { 
   HoverCard, 
   HoverCardContent, 
@@ -42,6 +42,12 @@ export const NavBar = () => {
       icon: Sparkles,
       path: "/recommend",
       color: "#FEF7CD" // Soft Yellow
+    },
+    {
+      name: "Rewards",
+      icon: Award,
+      path: "/rewards",
+      color: "#FADCD9" // Soft Coral/Pink
     }
   ];
 
