@@ -100,16 +100,16 @@ const SearchPage = () => {
           
           <TabsContent value="food" className="mt-0">
             <div className="p-6 text-center">
-              <p className="text-lg text-catalog-softBrown">
-                Click Bites or Blockbusters tab above to begin your search.
+              <p className="text-lg font-typewriter text-vintage-red">
+                Click, Search and Recall
               </p>
             </div>
           </TabsContent>
           
           <TabsContent value="entertainment" className="mt-0">
             <div className="p-6 text-center">
-              <p className="text-lg text-catalog-softBrown">
-                Click Bites or Blockbusters tab above to begin your search.
+              <p className="text-lg font-typewriter text-vintage-red">
+                Click, Search and Recall
               </p>
             </div>
           </TabsContent>
