@@ -27,13 +27,15 @@ const GridLayout: React.FC<GridLayoutProps> = ({ children, title }) => {
         {children}
       </main>
       
-      {/* NavBar and footer positions swapped - NavBar comes before footer now */}
       <div className="pb-20">
         <NavBar />
         
-        <footer className="bg-catalog-manila border-t border-catalog-softBrown py-4 text-center text-sm text-catalog-softBrown mt-2">
+        {/* Copyright moved directly below the NavBar component */}
+        <div className="text-center text-sm text-catalog-softBrown py-2 border-t border-catalog-softBrown/20 bg-catalog-manila/50">
           <p>© {new Date().getFullYear()} TOTAL RECALL CATALOG • Tracking Every Bite and Blockbuster™</p>
-        </footer>
+        </div>
+        
+        {/* Footer removed since the copyright is now below the navbar */}
       </div>
     </div>
   );
