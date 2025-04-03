@@ -9,7 +9,16 @@ import RewardSystemTab from "@/components/rewards/RewardSystemTab";
 
 const RewardsPage = () => {
   return (
-    <GridLayout title="How to Earn Rewards">
+    <GridLayout title={
+      <>
+        {/* Rewards Status above the title */}
+        <div className="mb-8">
+          <RewardsCounter />
+        </div>
+        
+        <div>How to Earn Rewards</div>
+      </>
+    }>
       <div className="max-w-3xl mx-auto">
         {/* Benefits and Track Progress cards side by side at the top */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -68,11 +77,6 @@ const RewardsPage = () => {
           >
             <RewardSystemTab />
           </CatalogCollapsible>
-        </div>
-        
-        {/* Rewards Status at the bottom */}
-        <div className="mb-6">
-          <RewardsCounter />
         </div>
       </div>
     </GridLayout>
