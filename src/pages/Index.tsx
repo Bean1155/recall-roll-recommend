@@ -18,11 +18,14 @@ const Index = () => {
     <GridLayout>
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold mb-2 text-[#333333] font-typewriter">TOTAL RECALL CATALOG</h1>
-        <p className="text-xl text-vintage-red font-script">Tracking Every Bite and Blockbuster</p>
+        <p className="text-xl text-vintage-red font-typewriter">Tracking Every Bite and Blockbuster</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        <div className="border rounded-lg overflow-hidden border-catalog-softBrown">
+        <div className="border rounded-lg overflow-hidden border-catalog-softBrown shadow-lg transform hover:scale-[1.02] transition-transform duration-300"
+          style={{
+            boxShadow: "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px"
+          }}>
           <div className="bg-[#FFDEE2] p-4 text-center">
             <h2 className="text-2xl font-bold text-[#5D4037] font-typewriter">BITES</h2>
           </div>
@@ -63,7 +66,10 @@ const Index = () => {
           </div>
         </div>
         
-        <div className="border rounded-lg overflow-hidden border-catalog-softBrown">
+        <div className="border rounded-lg overflow-hidden border-catalog-softBrown shadow-lg transform hover:scale-[1.02] transition-transform duration-300"
+          style={{
+            boxShadow: "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px"
+          }}>
           <div className="bg-[#D3E4FD] p-4 text-center">
             <h2 className="text-2xl font-bold text-[#5D4037] font-typewriter">BLOCKBUSTERS</h2>
           </div>
@@ -109,7 +115,7 @@ const Index = () => {
         style={{
           boxShadow: "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px"
         }}>
-        <div className="bg-[#e0c5c1] p-4 border-b-2 border-catalog-softBrown">
+        <div className="bg-vintage-orange p-4 border-b-2 border-catalog-softBrown">
           <h2 className="text-2xl font-bold text-center font-typewriter text-[#4a3f35]">How It Works</h2>
         </div>
         
