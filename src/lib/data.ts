@@ -196,10 +196,10 @@ export const getAllUserRewards = (): Record<string, number> => {
 
 // Function to get user reward tier based on number of points
 export const getUserRewardTier = (points: number): string => {
-  if (points <= 25) return "Needs Improvement";
-  if (points <= 50) return "Fair";
-  if (points <= 75) return "Satisfactory";
-  if (points <= 100) return "Good";
+  if (points <= 50) return "Needs Improvement";
+  if (points <= 100) return "Fair";
+  if (points <= 150) return "Satisfactory";
+  if (points <= 200) return "Good";
   return "Excellent";
 };
 

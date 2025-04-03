@@ -64,23 +64,23 @@ const RewardSystemTab = () => {
             <p className="mb-2">Rating scale for referrals is as follows:</p>
             <ul className="space-y-2 pl-6">
               <li className="flex items-center gap-2">
-                <span className="w-32">1-25 Referrals</span>
+                <span className="w-32">1-50 Points</span>
                 <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded">Needs Improvement</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="w-32">26-50 Referrals</span>
+                <span className="w-32">51-100 Points</span>
                 <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Fair</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="w-32">51-75 Referrals</span>
+                <span className="w-32">101-150 Points</span>
                 <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">Satisfactory</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="w-32">76-100 Referrals</span>
+                <span className="w-32">151-200 Points</span>
                 <span className="bg-green-100 text-green-800 px-2 py-1 rounded">Good</span>
               </li>
               <li className="flex items-center gap-2">
-                <span className="w-32">Over 101+ Referrals</span>
+                <span className="w-32">201+ Points</span>
                 <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded">Excellent</span>
               </li>
             </ul>
