@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,14 @@ import {
 import { 
   UtensilsCrossed,
   Film,
-  Search
+  Search,
+  Star,
+  Heart,
+  MapPin,
+  Tag,
+  Clock,
+  Share2,
+  FileText
 } from "lucide-react";
 import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
@@ -174,6 +182,7 @@ const SearchPage = () => {
                         value="all" 
                         className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                       >
+                        <Search size={14} className="mr-1" />
                         All
                       </TabsTrigger>
                     </TooltipTrigger>
@@ -190,6 +199,7 @@ const SearchPage = () => {
                         value="favorites" 
                         className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                       >
+                        <Heart size={14} className="mr-1" />
                         Favorites
                       </TabsTrigger>
                     </TooltipTrigger>
@@ -206,6 +216,7 @@ const SearchPage = () => {
                         value="topRated" 
                         className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                       >
+                        <Star size={14} className="mr-1" />
                         Top Rated
                       </TabsTrigger>
                     </TooltipTrigger>
@@ -222,6 +233,7 @@ const SearchPage = () => {
                         value="newest" 
                         className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                       >
+                        <Clock size={14} className="mr-1" />
                         Newest
                       </TabsTrigger>
                     </TooltipTrigger>
@@ -239,6 +251,7 @@ const SearchPage = () => {
                           value="location" 
                           className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
+                          <MapPin size={14} className="mr-1" />
                           Location
                         </TabsTrigger>
                       </TooltipTrigger>
@@ -257,6 +270,7 @@ const SearchPage = () => {
                           value="byStatus" 
                           className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
+                          <FileText size={14} className="mr-1" />
                           By Status
                         </TabsTrigger>
                       </TooltipTrigger>
@@ -275,6 +289,7 @@ const SearchPage = () => {
                           value="keywords" 
                           className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
+                          <Tag size={14} className="mr-1" />
                           Keywords
                         </TabsTrigger>
                       </TooltipTrigger>
@@ -293,6 +308,7 @@ const SearchPage = () => {
                           value="topReferrals" 
                           className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
+                          <Share2 size={14} className="mr-1" />
                           Most Referred
                         </TabsTrigger>
                       </TooltipTrigger>
@@ -311,6 +327,7 @@ const SearchPage = () => {
                           value="location" 
                           className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
+                          <MapPin size={14} className="mr-1" />
                           Location
                         </TabsTrigger>
                       </TooltipTrigger>
@@ -329,6 +346,7 @@ const SearchPage = () => {
                           value="byStatus" 
                           className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
+                          <FileText size={14} className="mr-1" />
                           By Status
                         </TabsTrigger>
                       </TooltipTrigger>
@@ -347,6 +365,7 @@ const SearchPage = () => {
                           value="keywords" 
                           className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
+                          <Tag size={14} className="mr-1" />
                           Keywords
                         </TabsTrigger>
                       </TooltipTrigger>
@@ -365,6 +384,7 @@ const SearchPage = () => {
                           value="topReferrals" 
                           className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
+                          <Share2 size={14} className="mr-1" />
                           Most Referred
                         </TabsTrigger>
                       </TooltipTrigger>

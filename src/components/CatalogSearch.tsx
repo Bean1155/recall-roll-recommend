@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,13 @@ import {
   Search, 
   X,
   ChevronDown,
+  Star,
+  Heart,
+  MapPin,
+  Tag,
+  Clock,
+  Share2,
+  FileText
 } from "lucide-react";
 import { 
   Select,
@@ -384,6 +392,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                   value="all" 
                                   className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm font-typewriter"
                                 >
+                                  <Search size={14} className="mr-1" />
                                   All
                                 </TabsTrigger>
                               </TooltipTrigger>
@@ -400,6 +409,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                   value="favorites" 
                                   className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
+                                  <Heart size={14} className="mr-1" />
                                   Favorites
                                 </TabsTrigger>
                               </TooltipTrigger>
@@ -416,6 +426,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                   value="topRated" 
                                   className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
+                                  <Star size={14} className="mr-1" />
                                   Top Rated
                                 </TabsTrigger>
                               </TooltipTrigger>
@@ -432,6 +443,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                   value="location" 
                                   className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
+                                  <MapPin size={14} className="mr-1" />
                                   Location
                                 </TabsTrigger>
                               </TooltipTrigger>
@@ -448,6 +460,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                   value="byStatus" 
                                   className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
+                                  <FileText size={14} className="mr-1" />
                                   By Status
                                 </TabsTrigger>
                               </TooltipTrigger>
@@ -464,6 +477,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                   value="newest" 
                                   className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
+                                  <Clock size={14} className="mr-1" />
                                   Newest
                                 </TabsTrigger>
                               </TooltipTrigger>
@@ -480,6 +494,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                   value="keywords" 
                                   className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
+                                  <Tag size={14} className="mr-1" />
                                   Keywords
                                 </TabsTrigger>
                               </TooltipTrigger>
@@ -496,6 +511,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                   value="topReferrals" 
                                   className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
                                 >
+                                  <Share2 size={14} className="mr-1" />
                                   Most Referred
                                 </TabsTrigger>
                               </TooltipTrigger>
