@@ -9,15 +9,9 @@ import {
   TooltipTrigger 
 } from "@/components/ui/tooltip";
 import { 
-  Heart, 
-  Star, 
-  MapPin, 
-  TrendingUp,
-  Clock,
-  Search,
-  Calendar,
   UtensilsCrossed,
-  Film
+  Film,
+  Search
 } from "lucide-react";
 import { CatalogCard as CatalogCardType, FoodCard, EntertainmentCard } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
@@ -194,10 +188,9 @@ const SearchPage = () => {
                     <TooltipTrigger asChild>
                       <TabsTrigger 
                         value="favorites" 
-                        className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                       >
-                        <Heart size={14} className="text-pink-500" /> 
-                        {!isMobile && <span>Favorites</span>}
+                        Favorites
                       </TabsTrigger>
                     </TooltipTrigger>
                     <TooltipContent className="bg-white text-catalog-softBrown">
@@ -211,10 +204,9 @@ const SearchPage = () => {
                     <TooltipTrigger asChild>
                       <TabsTrigger 
                         value="topRated" 
-                        className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                       >
-                        <Star size={14} className="text-amber-500" /> 
-                        {!isMobile && <span>Top Rated</span>}
+                        Top Rated
                       </TabsTrigger>
                     </TooltipTrigger>
                     <TooltipContent className="bg-white text-catalog-softBrown">
@@ -228,10 +220,9 @@ const SearchPage = () => {
                     <TooltipTrigger asChild>
                       <TabsTrigger 
                         value="newest" 
-                        className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                        className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                       >
-                        <Calendar size={14} className="text-green-600" /> 
-                        {!isMobile && <span>Newest</span>}
+                        Newest
                       </TabsTrigger>
                     </TooltipTrigger>
                     <TooltipContent className="bg-white text-catalog-softBrown">
@@ -246,9 +237,9 @@ const SearchPage = () => {
                       <TooltipTrigger asChild>
                         <TabsTrigger 
                           value="location" 
-                          className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
-                          <MapPin size={14} className="text-blue-500" />
+                          Location
                         </TabsTrigger>
                       </TooltipTrigger>
                       <TooltipContent className="bg-white text-catalog-softBrown">
@@ -264,9 +255,9 @@ const SearchPage = () => {
                       <TooltipTrigger asChild>
                         <TabsTrigger 
                           value="byStatus" 
-                          className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
-                          <Clock size={14} className="text-purple-500" />
+                          By Status
                         </TabsTrigger>
                       </TooltipTrigger>
                       <TooltipContent className="bg-white text-catalog-softBrown">
@@ -282,9 +273,9 @@ const SearchPage = () => {
                       <TooltipTrigger asChild>
                         <TabsTrigger 
                           value="keywords" 
-                          className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
-                          <Search size={14} className="text-gray-500" />
+                          Keywords
                         </TabsTrigger>
                       </TooltipTrigger>
                       <TooltipContent className="bg-white text-catalog-softBrown">
@@ -300,9 +291,9 @@ const SearchPage = () => {
                       <TooltipTrigger asChild>
                         <TabsTrigger 
                           value="topReferrals" 
-                          className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
-                          <TrendingUp size={14} className="text-green-500" />
+                          Most Referred
                         </TabsTrigger>
                       </TooltipTrigger>
                       <TooltipContent className="bg-white text-catalog-softBrown">
@@ -318,9 +309,9 @@ const SearchPage = () => {
                       <TooltipTrigger asChild>
                         <TabsTrigger 
                           value="location" 
-                          className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
-                          <MapPin size={14} className="text-blue-500" /> Location
+                          Location
                         </TabsTrigger>
                       </TooltipTrigger>
                       <TooltipContent className="bg-white text-catalog-softBrown">
@@ -336,9 +327,9 @@ const SearchPage = () => {
                       <TooltipTrigger asChild>
                         <TabsTrigger 
                           value="byStatus" 
-                          className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
-                          <Clock size={14} className="text-purple-500" /> By Status
+                          By Status
                         </TabsTrigger>
                       </TooltipTrigger>
                       <TooltipContent className="bg-white text-catalog-softBrown">
@@ -354,9 +345,9 @@ const SearchPage = () => {
                       <TooltipTrigger asChild>
                         <TabsTrigger 
                           value="keywords" 
-                          className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
-                          <Search size={14} className="text-gray-500" /> Keywords
+                          Keywords
                         </TabsTrigger>
                       </TooltipTrigger>
                       <TooltipContent className="bg-white text-catalog-softBrown">
@@ -372,9 +363,9 @@ const SearchPage = () => {
                       <TooltipTrigger asChild>
                         <TabsTrigger 
                           value="topReferrals" 
-                          className="flex items-center justify-center gap-1 text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
+                          className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-catalog-teal data-[state=active]:shadow-sm"
                         >
-                          <TrendingUp size={14} className="text-green-500" /> Most Referred
+                          Most Referred
                         </TabsTrigger>
                       </TooltipTrigger>
                       <TooltipContent className="bg-white text-catalog-softBrown">
