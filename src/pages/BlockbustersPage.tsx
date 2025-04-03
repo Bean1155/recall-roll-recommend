@@ -1,28 +1,16 @@
+
 import { useEffect, useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import CatalogCard from "@/components/CatalogCard";
-import Envelope from "@/components/Envelope";
 import { Button } from "@/components/ui/button";
 import { EntertainmentCard } from "@/lib/types";
 import { getCardsByType } from "@/lib/data";
+import { useUser } from "@/contexts/UserContext";
 import { PlusCircle } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
-import { useUser } from "@/contexts/UserContext";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { 
-  Accordion, 
-  AccordionContent, 
-  AccordionItem, 
-  AccordionTrigger 
-} from "@/components/ui/accordion";
+import { useToast } from "@/hooks/use-toast";
 import CatalogSearch from "@/components/CatalogSearch";
+import EntertainmentCategoryDrawer from "@/components/blockbusters/EntertainmentCategoryDrawer";
+import EntertainmentDetailDialog from "@/components/blockbusters/EntertainmentDetailDialog";
 import {
   Dialog,
   DialogContent,
@@ -30,14 +18,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import ShareOptions from "@/components/ShareOptions";
-import { toast } from "@/components/ui/use-toast";
+import Envelope from "@/components/Envelope";
+import CatalogCard from "@/components/CatalogCard";
 
+// Entertainment categories
 const allCategories = [
   "movies", "tv shows", "documentaries", "concerts", 
   "theater", "musicals", "podcasts", "comedy", "etc."
 ];
 
+// Category colors
 const categoryColors: Record<string, string> = {
   "movies": "#f5c4d3",
   "tv shows": "#e0c5c1",
@@ -71,17 +61,16 @@ const getTextColor = (backgroundColor: string): string => {
 const BlockbustersPage = () => {
   const [entertainmentCards, setEntertainmentCards] = useState<EntertainmentCard[]>([]);
   const [filteredCards, setFilteredCards] = useState<EntertainmentCard[]>([]);
+  const [selectedCard, setSelectedCard] = useState<EntertainmentCard | null>(null);
+  const [isCardModalOpen, setIsCardModalOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState<EntertainmentCard[]>([]);
+  const [isSearchResultsOpen, setIsSearchResultsOpen] = useState(false);
+  const [openCatalogs, setOpenCatalogs] = useState<string[]>([]);
   const { userName } = useUser();
-  const isMobile = useIsMobile();
   const location = useLocation();
   const navigate = useNavigate();
-  const [openCategories, setOpenCategories] = useState<string[]>([]);
-  const [highlightedCardId, setHighlightedCardId] = useState<string | null>(null);
-  const [showSearchResultsDialog, setShowSearchResultsDialog] = useState(false);
-  const [searchResults, setSearchResults] = useState<EntertainmentCard[]>([]);
-  const [selectedCard, setSelectedCard] = useState<EntertainmentCard | null>(null);
-  const [showCardDialog, setShowCardDialog] = useState(false);
-  const accordionRefs = useRef<Record<string, HTMLElement | null>>({});
+  const { toast } = useToast();
+  const highlightedCardRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     const cards = getCardsByType('entertainment') as EntertainmentCard[];
@@ -89,92 +78,124 @@ const BlockbustersPage = () => {
     setFilteredCards(cards);
     
     const searchParams = new URLSearchParams(location.search);
-    const highlight = searchParams.get('highlight');
-    const category = searchParams.get('category');
-    const fromSearch = searchParams.get('fromSearch') === 'true';
-    const searchResultsParam = searchParams.get('searchResults');
+    const highlightId = searchParams.get('highlight');
+    const categoryParam = searchParams.get('category');
+    const fromSearch = searchParams.get('fromSearch');
     
-    if (searchResultsParam) {
-      const resultIds = searchResultsParam.split(',');
-      const results = cards.filter(card => resultIds.includes(card.id));
-      if (results.length > 0) {
-        setSearchResults(results);
-        setShowSearchResultsDialog(true);
-      }
-    } else if (highlight) {
-      const card = cards.find(c => c.id === highlight);
-      if (card) {
-        if (fromSearch) {
-          setSelectedCard(card);
-          setShowCardDialog(true);
+    if (highlightId) {
+      const cardToHighlight = cards.find(card => card.id === highlightId);
+      
+      if (cardToHighlight) {
+        const category = categoryParam || (cardToHighlight.entertainmentCategory?.toLowerCase() || 'etc.');
+        
+        // Open the category drawer
+        setOpenCatalogs([category]);
+        
+        if (fromSearch === 'true') {
+          setSelectedCard(cardToHighlight);
+          setIsCardModalOpen(true);
         } else {
-          const category = card.entertainmentCategory?.toLowerCase() || 'etc.';
-          setOpenCategories([category]);
-          setHighlightedCardId(card.id);
           setTimeout(() => {
-            if (accordionRefs.current[category]) {
-              accordionRefs.current[category]?.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-              });
+            const accordionItem = document.querySelector(`[data-value="${category}"]`);
+            if (accordionItem && !accordionItem.closest('[data-state="open"]')) {
+              (accordionItem as HTMLElement).click();
             }
+            
+            setTimeout(() => {
+              const cardElement = document.getElementById(`card-${highlightId}`);
+              if (cardElement) {
+                cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                cardElement.classList.add('highlight-pulse');
+                setTimeout(() => {
+                  cardElement.classList.remove('highlight-pulse');
+                }, 2000);
+                
+                toast({
+                  title: "Card found",
+                  description: `Showing ${cardToHighlight.title}`,
+                });
+              }
+            }, 500);
           }, 300);
         }
       }
-    } else if (category) {
-      setOpenCategories([category.toLowerCase()]);
-    } else if (cards.length > 0) {
-      for (const category of allCategories) {
-        const hasCards = cards.some(c => 
-          (c.entertainmentCategory?.toLowerCase() || 'etc.') === category
-        );
-        if (hasCards) {
-          setOpenCategories([category]);
-          break;
+    }
+    
+    const searchResultsParam = searchParams.get('searchResults');
+    if (searchResultsParam) {
+      try {
+        const ids = searchResultsParam.split(',');
+        const matchingCards = cards.filter(card => ids.includes(card.id));
+        if (matchingCards.length > 0) {
+          setSearchResults(matchingCards);
+          setIsSearchResultsOpen(true);
+          
+          toast({
+            title: `Found ${matchingCards.length} results`,
+            description: "Click on a card to view details",
+          });
         }
+      } catch (error) {
+        console.error("Error parsing search results:", error);
       }
     }
-  }, [location.search]);
-  
-  const cardsByCategory: Record<string, EntertainmentCard[]> = {};
-  
-  allCategories.forEach(category => {
-    cardsByCategory[category] = [];
-  });
-  
-  filteredCards.forEach(card => {
-    const category = card.entertainmentCategory?.toLowerCase() || 'etc.';
-    if (cardsByCategory[category]) {
-      cardsByCategory[category].push(card);
-    } else {
-      cardsByCategory['etc.'].push(card);
-    }
-  });
+  }, [location.search, toast]);
 
   const handleFilteredItemsChange = (items: EntertainmentCard[]) => {
     setFilteredCards(items);
   };
   
-  const handleAccordionChange = (value: string[]) => {
-    setOpenCategories(value);
-  };
-  
-  const handleCardClick = (card: EntertainmentCard) => {
+  const handleSearchResultCardClick = (card: EntertainmentCard) => {
+    setIsSearchResultsOpen(false);
     setSelectedCard(card);
-    setShowCardDialog(true);
+    setIsCardModalOpen(true);
   };
+
+  const handleCatalogToggle = (category: string, isOpen: boolean) => {
+    setOpenCatalogs(prev => {
+      if (isOpen) {
+        if (prev.includes(category)) return prev;
+        return [...prev, category];
+      } else {
+        return prev.filter(cat => cat !== category);
+      }
+    });
+  };
+
+  // Get all categories that have cards
+  const activeCategories = allCategories.filter(category => 
+    filteredCards.some(card => 
+      (card.entertainmentCategory?.toLowerCase() || 'etc.') === category
+    )
+  );
+
+  // Create dynamic cardsByCategory based on available categories
+  const cardsByCategory: Record<string, EntertainmentCard[]> = {};
   
-  const handleSearchResultClick = (card: EntertainmentCard) => {
-    setShowSearchResultsDialog(false);
-    setSelectedCard(card);
-    setShowCardDialog(true);
-  };
+  activeCategories.forEach(category => {
+    cardsByCategory[category] = [];
+  });
   
-  const handleCloseSearchResults = () => {
-    setShowSearchResultsDialog(false);
-    const newUrl = location.pathname;
-    navigate(newUrl, { replace: true });
-  };
+  filteredCards.forEach(card => {
+    const category = card.entertainmentCategory?.toLowerCase() || 'etc.';
+    
+    // If the category doesn't exist in our map yet, add it
+    if (!cardsByCategory[category]) {
+      cardsByCategory[category] = [];
+    }
+    cardsByCategory[category].push(card);
+  });
+
+  // Generate category pairs for grid layout
+  const categoryPairs = [];
+  for (let i = 0; i < activeCategories.length; i += 2) {
+    const pair = [activeCategories[i]];
+    if (i + 1 < activeCategories.length) {
+      pair.push(activeCategories[i + 1]);
+    }
+    categoryPairs.push(pair);
+  }
 
   return (
     <GridLayout>
@@ -182,14 +203,12 @@ const BlockbustersPage = () => {
         <h1 className="catalog-title text-3xl">
           From the Library of <span className="font-typewriter font-bold text-black">{userName}</span>
         </h1>
-        <div className="flex flex-wrap gap-2">
-          <div>
-            <CatalogSearch 
-              items={entertainmentCards} 
-              onFilteredItemsChange={handleFilteredItemsChange}
-              type="entertainment"
-            />
-          </div>
+        <div className="flex flex-wrap gap-2 w-full md:w-auto">
+          <CatalogSearch 
+            items={entertainmentCards}
+            onFilteredItemsChange={handleFilteredItemsChange}
+            type="entertainment"
+          />
         </div>
       </div>
 
@@ -205,101 +224,57 @@ const BlockbustersPage = () => {
             </Link>
           </Button>
         </div>
+      ) : activeCategories.length === 0 ? (
+        <div className="text-center py-12 bg-catalog-cream rounded-lg border border-catalog-softBrown/30 shadow-md">
+          <p className="text-lg text-catalog-softBrown mb-4">
+            No matching entertainment entries found.
+          </p>
+          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
+            <Link to="/create/entertainment">
+              <PlusCircle size={18} className="mr-2" />
+              Add New Entertainment Experience
+            </Link>
+          </Button>
+        </div>
       ) : (
-        <div className="space-y-6">
-          <Accordion 
-            type="multiple" 
-            value={openCategories} 
-            onValueChange={handleAccordionChange}
-            className="w-full"
-          >
-            {allCategories.map((category) => {
-              const categoryColor = categoryColors[category] || "#d2b48c";
-              const textColor = getTextColor(categoryColor);
-              const hasCards = cardsByCategory[category].length > 0;
-              
-              return (
-                <AccordionItem 
-                  key={category} 
-                  value={category}
-                  ref={el => accordionRefs.current[category] = el}
-                >
-                  <div 
-                    style={{ backgroundColor: categoryColor, borderRadius: "0.5rem 0.5rem 0 0" }}
-                    className="transition-colors duration-150"
-                  >
-                    <AccordionTrigger 
-                      className="px-6 py-6 font-typewriter font-semibold text-lg"
-                      style={{ color: textColor }}
-                    >
-                      <div className="flex items-center justify-between w-full">
-                        <div className="flex items-center gap-3">
-                          <span>{getCategoryDisplayName(category)}</span>
-                          {!hasCards && (
-                            <span className="text-sm opacity-70 font-normal">(No entries yet)</span>
-                          )}
-                        </div>
-                      </div>
-                    </AccordionTrigger>
-                  </div>
-                  
-                  <AccordionContent 
-                    className="bg-white border border-t-0 rounded-b-lg"
-                    style={{ borderColor: categoryColor }}
-                  >
-                    {hasCards ? (
-                      <Carousel className="w-full">
-                        <CarouselContent>
-                          {cardsByCategory[category].map((card) => (
-                            <CarouselItem 
-                              key={card.id} 
-                              className={isMobile ? "basis-full" : "md:basis-1/2 lg:basis-1/3"}
-                            >
-                              <div 
-                                className={`p-1 ${highlightedCardId === card.id ? 'animate-pulse' : ''}`}
-                                onClick={() => handleCardClick(card)}
-                              >
-                                <Envelope 
-                                  label={card.title}
-                                  backgroundColor={categoryColor}
-                                >
-                                  <CatalogCard card={card} />
-                                </Envelope>
-                              </div>
-                            </CarouselItem>
-                          ))}
-                        </CarouselContent>
-                        <div className="flex justify-end gap-2 mt-4">
-                          <CarouselPrevious 
-                            className="relative static translate-y-0" 
-                            style={{ backgroundColor: categoryColor, color: textColor }}
-                          />
-                          <CarouselNext 
-                            className="relative static translate-y-0" 
-                            style={{ backgroundColor: categoryColor, color: textColor }}
-                          />
-                        </div>
-                      </Carousel>
-                    ) : (
-                      <div className="text-center py-8">
-                        <p className="text-catalog-softBrown mb-4">No entries in this category yet.</p>
-                        <Button asChild style={{ backgroundColor: categoryColor, color: textColor }}>
-                          <Link to={`/create/entertainment?category=${category}`}>
-                            <PlusCircle size={16} className="mr-2" />
-                            Add {getCategoryDisplayName(category)} Experience
-                          </Link>
-                        </Button>
-                      </div>
-                    )}
-                  </AccordionContent>
-                </AccordionItem>
-              );
-            })}
-          </Accordion>
+        <div className="space-y-10">
+          <div className="flex justify-center items-center pb-4">
+            <h2 className="text-xl font-medium text-[#1EAEDB] font-typewriter">Categories</h2>
+          </div>
+          
+          {categoryPairs.map((pair, pairIndex) => (
+            <div key={`pair-${pairIndex}`} className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              {pair.map((category) => {
+                const categoryColor = categoryColors[category] || "#d2b48c";
+                const textColor = getTextColor(categoryColor);
+                const isOpen = openCatalogs.includes(category);
+                
+                // Only render categories that have cards
+                const categoryCards = cardsByCategory[category] || [];
+                if (categoryCards.length === 0) {
+                  return null;
+                }
+                
+                return (
+                  <EntertainmentCategoryDrawer
+                    key={category}
+                    category={category}
+                    cards={categoryCards}
+                    backgroundColor={categoryColor}
+                    textColor={textColor}
+                    categoryDisplayName={getCategoryDisplayName(category)}
+                    isOpen={isOpen}
+                    onOpenChange={(open) => handleCatalogToggle(category, open)}
+                  />
+                );
+              })}
+            </div>
+          ))}
         </div>
       )}
-      
-      <Dialog open={showSearchResultsDialog} onOpenChange={setShowSearchResultsDialog}>
+
+      {/* Dialog for search results */}
+      <Dialog open={isSearchResultsOpen} onOpenChange={setIsSearchResultsOpen}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>Search Results</DialogTitle>
@@ -317,7 +292,7 @@ const BlockbustersPage = () => {
                 <div 
                   key={card.id}
                   className="cursor-pointer transition-transform hover:scale-[1.02]"
-                  onClick={() => handleSearchResultClick(card)}
+                  onClick={() => handleSearchResultCardClick(card)}
                 >
                   <Envelope 
                     label={card.title}
@@ -333,66 +308,51 @@ const BlockbustersPage = () => {
           <div className="flex justify-between mt-4">
             <Button 
               variant="outline"
-              onClick={handleCloseSearchResults}
+              onClick={() => {
+                setIsSearchResultsOpen(false);
+                navigate('/blockbusters', { replace: true });
+              }}
             >
               Close Results
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-      
-      <Dialog open={showCardDialog} onOpenChange={setShowCardDialog}>
-        <DialogContent className="sm:max-w-lg">
-          {selectedCard && (
-            <>
-              <DialogHeader>
-                <DialogTitle>{selectedCard.title}</DialogTitle>
-                <DialogDescription>
-                  {selectedCard.creator} • {selectedCard.entertainmentCategory}
-                </DialogDescription>
-              </DialogHeader>
-              
-              <div className="mt-4">
-                <CatalogCard card={selectedCard} />
-              </div>
-              
-              <div className="flex flex-wrap justify-between mt-4 gap-2">
-                <Button 
-                  variant="outline" 
-                  onClick={() => {
-                    setShowCardDialog(false);
-                    navigate('/blockbusters', { replace: true });
-                  }}
-                >
-                  Close
-                </Button>
-                
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      toast({
-                        title: "Card location saved",
-                        description: "Direct link copied to clipboard"
-                      });
-                      const url = `${window.location.origin}/blockbusters?highlight=${selectedCard.id}&fromSearch=true`;
-                      navigator.clipboard.writeText(url);
-                    }}
-                  >
-                    Copy Direct Link
-                  </Button>
-                  
-                  <ShareOptions 
-                    card={selectedCard} 
-                    variant="dialog" 
-                    mode="external"
-                  />
-                </div>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+
+      {/* Dialog for card details */}
+      <EntertainmentDetailDialog
+        isOpen={isCardModalOpen}
+        onOpenChange={setIsCardModalOpen}
+        card={selectedCard}
+        categoryColors={categoryColors}
+      />
+
+      <style>{`
+        .highlight-pulse {
+          animation: pulse 2s;
+        }
+        
+        @keyframes pulse {
+          0% {
+            box-shadow: 0 0 0 0 rgba(0, 128, 128, 0.7);
+          }
+          70% {
+            box-shadow: 0 0 0 15px rgba(0, 128, 128, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(0, 128, 128, 0);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+      `}</style>
     </GridLayout>
   );
 };
