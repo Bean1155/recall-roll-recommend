@@ -18,14 +18,25 @@ export const showRewardToast = (
   // Get the updated total points
   const totalPoints = getUserRewards(userId);
   
-  // Use a more visible toast with longer duration
+  console.log("REWARD TOAST: User earned", pointsAdded, "points for", reason);
+  console.log("REWARD TOAST: Total points now", totalPoints);
+  
+  // Use a more visible toast with longer duration and z-index
   toast({
     title: `🎉 You earned ${pointsAdded} point${pointsAdded > 1 ? 's' : ''}!`,
     description: `${reason}. You now have ${totalPoints} total points.`,
-    className: "bg-catalog-cream border-catalog-teal text-catalog-darkBrown font-medium border-2",
-    duration: 5000, // Show for 5 seconds
+    className: "bg-catalog-cream border-catalog-teal text-catalog-darkBrown font-medium border-2 z-[1000]",
+    duration: 8000, // Show for 8 seconds (increased from 5)
+    variant: "default",
   });
   
-  // Also log to console for debugging
-  console.log(`Toast notification sent: +${pointsAdded} points (${reason})`);
+  // Force the toast to be visible
+  setTimeout(() => {
+    // Attempt to make sure the toast is shown by refreshing the rewards counter
+    const event = new CustomEvent('refreshRewards');
+    window.dispatchEvent(event);
+    
+    // Also log to console for debugging
+    console.log(`Toast notification triggered: +${pointsAdded} points (${reason})`);
+  }, 100);
 };

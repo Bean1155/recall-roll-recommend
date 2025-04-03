@@ -10,34 +10,47 @@ import { useNavigate } from "react-router-dom";
 interface RewardsCounterProps {
   variant?: "compact" | "detailed";
   className?: string;
+  onClick?: () => void;
 }
 
-const RewardsCounter = ({ variant = "detailed", className = "" }: RewardsCounterProps) => {
+const RewardsCounter = ({ variant = "detailed", className = "", onClick }: RewardsCounterProps) => {
   const { currentUser } = useUser();
   const [points, setPoints] = useState(0);
   const [tier, setTier] = useState("");
   const navigate = useNavigate();
+  
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      navigate('/rewards');
+    }
+  };
   
   useEffect(() => {
     if (currentUser) {
       const userPoints = getUserRewards(currentUser.id);
       setPoints(userPoints);
       setTier(getUserRewardTier(userPoints));
+      console.log("RewardsCounter: User has", userPoints, "points");
     }
   }, [currentUser]);
   
-  // Update the points every 2 seconds to catch any changes
+  // Update the points every 1 second to catch any changes
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (currentUser) {
         const userPoints = getUserRewards(currentUser.id);
-        setPoints(userPoints);
-        setTier(getUserRewardTier(userPoints));
+        if (userPoints !== points) {
+          console.log("RewardsCounter: Points updated from", points, "to", userPoints);
+          setPoints(userPoints);
+          setTier(getUserRewardTier(userPoints));
+        }
       }
-    }, 2000);
+    }, 1000);
     
     return () => clearInterval(intervalId);
-  }, [currentUser]);
+  }, [currentUser, points]);
   
   // Function to get background color based on tier
   const getTierColor = () => {
@@ -54,10 +67,10 @@ const RewardsCounter = ({ variant = "detailed", className = "" }: RewardsCounter
   if (variant === "compact") {
     return (
       <div 
-        className={`flex items-center ${className} bg-catalog-cream rounded-full px-3 py-1 shadow-sm border border-catalog-teal cursor-pointer`}
-        onClick={() => navigate('/rewards')}
+        className={`flex items-center ${className} bg-catalog-cream rounded-full px-3 py-1 shadow-sm border-2 border-catalog-teal cursor-pointer hover:bg-catalog-teal hover:text-white transition-colors`}
+        onClick={handleClick}
       >
-        <Award className="text-catalog-teal h-5 w-5 mr-2" />
+        <Award className="text-catalog-teal h-5 w-5 mr-2 group-hover:text-white" />
         <span className="font-typewriter text-sm font-bold">{points} Points</span>
       </div>
     );

@@ -69,6 +69,14 @@ const AddCategoryDialog = ({
       customCategories.push(formattedCategory);
       localStorage.setItem('customFoodCategories', JSON.stringify(customCategories));
       
+      // Add reward point for creating a new category
+      // Make sure to trigger the reward notification BEFORE closing the dialog
+      if (currentUser) {
+        console.log("Adding reward points for user:", currentUser.id);
+        addUserRewardPoints(currentUser.id, 1, "Creating a new food category");
+        console.log("Reward points should have been added!");
+      }
+      
       onCategoryAdded(formattedCategory);
       setNewCategory("");
       onOpenChange(false);
@@ -77,13 +85,6 @@ const AddCategoryDialog = ({
         title: "Success",
         description: `Added new category: ${formattedCategory}`,
       });
-      
-      // Add reward point for creating a new category
-      // Make sure to trigger the reward notification after category is successfully added
-      if (currentUser) {
-        console.log("Adding reward points for user:", currentUser.id);
-        addUserRewardPoints(currentUser.id, 1, "Creating a new food category");
-      }
     } catch (error) {
       console.error("Error saving category:", error);
       toast({
