@@ -9,7 +9,6 @@ import {
   Award
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import RewardsCounter from "@/components/RewardsCounter";
 
 const Index = () => {
   const currentDate = new Date();
@@ -20,10 +19,6 @@ const Index = () => {
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold mb-2 text-[#333333] font-typewriter">TOTAL RECALL CATALOG</h1>
         <p className="text-xl text-vintage-red font-typewriter">Tracking Every Bite and Blockbuster</p>
-        
-        <div className="mt-4 flex justify-center">
-          <RewardsCounter variant="compact" className="transform scale-110" />
-        </div>
       </div>
 
       <div className="flex justify-center mb-4">
