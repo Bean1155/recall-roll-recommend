@@ -4,7 +4,7 @@ import CardForm from "@/components/CardForm";
 import { CardType } from "@/lib/types";
 import GridLayout from "@/components/GridLayout";
 import { useEffect, useRef, useCallback } from "react";
-import { forceRewardsRefresh } from "@/utils/rewardUtils";
+import { forceRewardsRefresh, showRewardToast } from "@/utils/rewardUtils";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "@/hooks/use-toast";
 
@@ -28,7 +28,7 @@ const CreateCardPage = () => {
       // CRITICAL ADDITION: Dispatch an event specifically for the rewards page
       try {
         const event = new CustomEvent('card_reward_update', { 
-          detail: { timestamp: Date.now(), source: 'CreateCardPage' } 
+          detail: { timestamp: Date.now(), source: 'CreateCardPage', forced: true } 
         });
         window.dispatchEvent(event);
         console.log("CreateCardPage: Dispatched card_reward_update event");
@@ -134,6 +134,12 @@ const CreateCardPage = () => {
           const trackingKey = `last_${cardType}_added_${currentUser.id}`;
           localStorage.setItem(trackingKey, Date.now().toString());
           console.log(`CreateCardPage: Marked card addition time in ${trackingKey}`);
+          
+          // Direct toast notification for immediate feedback
+          if (typeof showRewardToast === 'function') {
+            // Show toast with points for adding a card
+            showRewardToast(currentUser.id, 15, `Adding a new ${cardType === 'food' ? 'bite' : 'blockbuster'}`);
+          }
         }
         
         // Give the data.ts function time to complete adding the rewards
@@ -149,9 +155,9 @@ const CreateCardPage = () => {
               window.dispatchEvent(event);
               
               console.log(`CreateCardPage: Post-submission refresh attempt ${i+1}`);
-            }, i * 300);
+            }, i * 150);
           }
-        }, 200);
+        }, 100);
       }
     };
     
@@ -169,7 +175,7 @@ const CreateCardPage = () => {
       if (currentUser) {
         // Force multiple refreshes with increasing delays
         for (let i = 0; i < 10; i++) {
-          const delay = 200 * i;
+          const delay = 100 * i; // Reduced delay for faster feedback
           setTimeout(() => {
             console.log(`CreateCardPage: Unmount refresh attempt ${i+1} with ${delay}ms delay`);
             forceRewardsRefresh();
@@ -190,10 +196,17 @@ const CreateCardPage = () => {
     
     // CRITICAL FIX: Create a direct toast notification here for visibility
     if (currentUser) {
+      // Show the reward toast immediately
+      if (typeof showRewardToast === 'function') {
+        // Show toast with points for adding a card
+        showRewardToast(currentUser.id, 15, `Adding a new ${cardType === 'food' ? 'bite' : 'blockbuster'}`);
+      }
+      
       toast({
-        title: "Card Created",
-        description: "Your card has been added and rewards points calculated.",
-        className: "bg-catalog-cream border-catalog-teal text-catalog-darkBrown font-medium z-[2000]",
+        title: "Card Created!",
+        description: `Your ${cardType === 'food' ? 'bite' : 'blockbuster'} has been added and you earned points!`,
+        className: "bg-catalog-cream border-catalog-teal border-4 text-catalog-darkBrown font-medium z-[2000]",
+        duration: 5000,
       });
     }
     
@@ -204,7 +217,9 @@ const CreateCardPage = () => {
       console.log(`CreateCardPage: Marked card addition time in ${trackingKey}`);
     }
     
-    // Trigger rewards refresh
+    // Trigger rewards refresh immediately and multiple times
+    refreshRewards();
+    
     setTimeout(() => {
       const event = new CustomEvent('catalog_action', { 
         detail: { action: 'card_added', cardType } 
@@ -216,9 +231,9 @@ const CreateCardPage = () => {
         setTimeout(() => {
           forceRewardsRefresh();
           console.log(`CreateCardPage: Form success refresh attempt ${i+1}`);
-        }, i * 200);
+        }, i * 100); // Faster refresh intervals
       }
-    }, 100);
+    }, 50); // Reduced delay for faster feedback
   };
   
   return (

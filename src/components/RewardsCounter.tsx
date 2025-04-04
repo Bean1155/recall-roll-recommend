@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { getUserRewards, getUserRewardTier } from "@/lib/data";
 import { useUser } from "@/contexts/UserContext";
@@ -33,7 +32,7 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     }
   };
   
-  // Function to refresh rewards display
+  // Function to refresh rewards display with improved reliability
   const refreshRewards = useCallback(() => {
     if (!currentUser) return;
     
@@ -43,24 +42,28 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
       // First try to get direct from localStorage for maximum reliability
       const rewardsData = localStorage.getItem('catalogUserRewards');
       if (rewardsData) {
-        const rewards = JSON.parse(rewardsData);
-        const storedPoints = rewards[currentUser.id] || 0;
-        
-        // Only log if points changed
-        if (points !== storedPoints) {
-          console.log(`RewardsCounter: POINTS CHANGED: ${points} → ${storedPoints} (direct localStorage check)`);
-          setPoints(storedPoints);
-          setTier(getUserRewardTier(storedPoints));
+        try {
+          const rewards = JSON.parse(rewardsData);
+          const storedPoints = rewards[currentUser.id] || 0;
           
-          // Animate if points increased and not the initial load
-          if (storedPoints > points && prevUserIdRef.current === currentUser.id) {
-            animateRef.current = true;
-            setTimeout(() => {
-              animateRef.current = false;
-            }, 2000);
+          // Only log if points changed
+          if (points !== storedPoints) {
+            console.log(`RewardsCounter: POINTS CHANGED: ${points} → ${storedPoints} (direct localStorage check)`);
+            setPoints(storedPoints);
+            setTier(getUserRewardTier(storedPoints));
+            
+            // Animate if points increased and not the initial load
+            if (storedPoints > points && prevUserIdRef.current === currentUser.id) {
+              animateRef.current = true;
+              setTimeout(() => {
+                animateRef.current = false;
+              }, 2000);
+            }
+            
+            return; // Exit early if we updated via localStorage
           }
-          
-          return; // Exit early if we updated via localStorage
+        } catch (e) {
+          console.error("Error parsing localStorage rewards:", e);
         }
       }
       
@@ -122,7 +125,7 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     
     // Force multiple refreshes on user change
     for (let i = 0; i < 5; i++) {
-      setTimeout(refreshRewards, (i + 1) * 200);
+      setTimeout(refreshRewards, (i + 1) * 100); // Faster initial refreshes
     }
     
     return () => {
@@ -142,8 +145,8 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
       const customEvent = event as CustomEvent;
       // If the event was forced, refresh multiple times
       if (customEvent.detail?.forced) {
-        for (let i = 0; i < 3; i++) {
-          setTimeout(refreshRewards, i * 100);
+        for (let i = 0; i < 5; i++) {
+          setTimeout(refreshRewards, i * 50); // Faster refresh intervals
         }
       } else {
         refreshRewards();
@@ -174,7 +177,7 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
         } else {
           // If no points provided, force multiple refreshes
           for (let i = 0; i < 5; i++) {
-            setTimeout(refreshRewards, i * 100);
+            setTimeout(refreshRewards, i * 50);
           }
         }
       }
@@ -184,15 +187,15 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     window.addEventListener('refreshRewards', handleRefreshEvent);
     window.addEventListener('realtime_rewards_update', handleRealTimeUpdate);
     
-    // For catalog actions (card added, etc)
+    // For catalog actions (card added, etc) - high priority
     const handleCatalogAction = (event: Event) => {
       const customEvent = event as CustomEvent;
       if (customEvent.detail?.action === 'card_added') {
         console.log("RewardsCounter: Card added event detected, refreshing...");
         
-        // Refresh multiple times
-        for (let i = 0; i < 10; i++) {
-          setTimeout(refreshRewards, i * 200);
+        // Refresh multiple times with faster timing
+        for (let i = 0; i < 15; i++) {
+          setTimeout(refreshRewards, i * 100);
         }
       }
     };
@@ -212,12 +215,12 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     window.addEventListener('storage', handleStorageChange);
     
     // Refresh on regular intervals, more frequently initially
-    const immediateIntervalId = setInterval(refreshRewards, 250);
+    const immediateIntervalId = setInterval(refreshRewards, 150); // Much faster initial refresh
     
     // After 10 seconds, switch to a less frequent refresh
     const timeoutId = setTimeout(() => {
       clearInterval(immediateIntervalId);
-      const regularIntervalId = setInterval(refreshRewards, 2000);
+      const regularIntervalId = setInterval(refreshRewards, 1500); // Faster ongoing refresh
       
       return () => {
         clearInterval(regularIntervalId);
@@ -276,8 +279,8 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
       }
     };
     
-    // Check for storage changes more frequently
-    const storageCheckInterval = setInterval(checkStorageChanges, 300);
+    // Check for storage changes more frequently for better responsiveness
+    const storageCheckInterval = setInterval(checkStorageChanges, 150);
     
     return () => clearInterval(storageCheckInterval);
   }, [currentUser, points]);
