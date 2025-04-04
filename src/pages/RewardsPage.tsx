@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { BarChart4, Gift } from "lucide-react";
@@ -19,39 +18,19 @@ const RewardsPage = () => {
     
     console.log("RewardsPage: Component mounted, forcing rewards refresh");
     
-    // Immediately check localStorage
-    try {
-      const rewardsData = localStorage.getItem('catalogUserRewards');
-      if (rewardsData) {
-        const rewards = JSON.parse(rewardsData);
-        console.log(`RewardsPage: Direct check shows user ${currentUser.id} has ${rewards[currentUser.id] || 0} points`);
-      } else {
-        console.log("RewardsPage: No rewards data found in localStorage");
-      }
-    } catch (e) {
-      console.error("Error checking localStorage:", e);
-    }
+    // Single refresh with two retries is sufficient
+    forceRewardsRefresh();
     
-    // Multiple refreshes to ensure it's caught
-    const delays = [0, 100, 200, 500, 1000, 2000, 5000];
-    
-    delays.forEach(delay => {
-      setTimeout(() => {
-        forceRewardsRefresh();
-        console.log(`RewardsPage: Forced refresh with delay ${delay}ms`);
-      }, delay);
-    });
+    // Set up a much less aggressive refresh interval
+    const intervalId = setInterval(() => {
+      forceRewardsRefresh();
+    }, 5000); // Reduced from 2000ms to 5000ms
     
     // CRITICAL ADDITION: Listen specifically for card creation reward events
     const handleCardRewardUpdate = () => {
       console.log("RewardsPage: Received card_reward_update event");
-      // Run multiple refreshes with increasing delays
-      for (let i = 0; i < 10; i++) {
-        setTimeout(() => {
-          forceRewardsRefresh();
-          console.log(`RewardsPage: Card reward update refresh attempt ${i+1}`);
-        }, i * 200);
-      }
+      // Single refresh is enough
+      forceRewardsRefresh();
     };
     
     window.addEventListener('card_reward_update', handleCardRewardUpdate);
@@ -62,11 +41,6 @@ const RewardsPage = () => {
         handleCardRewardUpdate();
       }
     });
-    
-    // Set up a regular interval for this page
-    const intervalId = setInterval(() => {
-      forceRewardsRefresh();
-    }, 2000);
     
     return () => {
       clearInterval(intervalId);

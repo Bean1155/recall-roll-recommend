@@ -19,10 +19,9 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
   const [tier, setTier] = useState("");
   const navigate = useNavigate();
   const prevUserIdRef = useRef<string | null>(null);
-  const refreshCountRef = useRef(0);
-  const lastUpdateRef = useRef<string | null>(null);
-  const componentMountedRef = useRef(false);
   const animateRef = useRef(false);
+  const refreshTimeoutRef = useRef<number | null>(null);
+  const lastUpdateTimestampRef = useRef<string | null>(null);
   
   const handleClick = () => {
     if (onClick) {
@@ -69,23 +68,10 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
       
       // Fallback to API call if no localStorage update
       const userPoints = getUserRewards(currentUser.id);
-      const lastUpdateTime = localStorage.getItem('lastRewardUpdate');
       
-      // Also check user-specific timestamp for more granular updates
-      const userSpecificTimestamp = localStorage.getItem(`user_${currentUser.id}_last_reward`);
-      
-      // Check if there's been an update since last refresh
-      const hasUpdate = lastUpdateTime !== lastUpdateRef.current || 
-                        userSpecificTimestamp !== lastUpdateRef.current;
-      
-      // Only log if points changed or there's been an update
-      const shouldLog = points !== userPoints || hasUpdate;
-      
-      if (shouldLog) {
+      // Only update if points changed
+      if (points !== userPoints) {
         console.log(`RewardsCounter: Points refreshed to ${userPoints} (from ${points}) for user ${currentUser.id}`);
-        console.log(`RewardsCounter: Update triggered by ${hasUpdate ? 'localStorage update' : 'regular check'}`);
-        refreshCountRef.current = 0;
-        lastUpdateRef.current = lastUpdateTime;
         
         // Animate if points increased and not the initial load
         if (userPoints > points && prevUserIdRef.current === currentUser.id) {
@@ -94,13 +80,11 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
             animateRef.current = false;
           }, 2000);
         }
+        
+        // Update state with new values
+        setPoints(userPoints);
+        setTier(getUserRewardTier(userPoints));
       }
-      
-      refreshCountRef.current++;
-      
-      // Always update the points to ensure UI is synchronized
-      setPoints(userPoints);
-      setTier(getUserRewardTier(userPoints));
       
       // Update the previous user ID
       prevUserIdRef.current = currentUser.id;
@@ -113,8 +97,6 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
   useEffect(() => {
     if (!currentUser) return;
     
-    componentMountedRef.current = true;
-    
     // Log when user changes
     if (prevUserIdRef.current !== currentUser.id) {
       console.log(`RewardsCounter: User changed from ${prevUserIdRef.current} to ${currentUser.id}`);
@@ -123,167 +105,65 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     // Initial refresh
     refreshRewards();
     
-    // Force multiple refreshes on user change
-    for (let i = 0; i < 5; i++) {
-      setTimeout(refreshRewards, (i + 1) * 100); // Faster initial refreshes
-    }
-    
-    return () => {
-      componentMountedRef.current = false;
-    };
+    prevUserIdRef.current = currentUser.id;
   }, [currentUser, refreshRewards]);
   
-  // Set up event listeners for points updates
+  // Set up event listeners for points updates with debouncing
   useEffect(() => {
     if (!currentUser) return;
     
-    const handleRefreshEvent = (event: Event) => {
-      console.log("RewardsCounter: Refresh event received", event);
+    const handleRefreshEvent = () => {
+      console.log("RewardsCounter: Refresh event received");
       
-      if (!componentMountedRef.current) return;
+      // Debounce refresh calls
+      if (refreshTimeoutRef.current) {
+        window.clearTimeout(refreshTimeoutRef.current);
+      }
       
-      const customEvent = event as CustomEvent;
-      // If the event was forced, refresh multiple times
-      if (customEvent.detail?.forced) {
-        for (let i = 0; i < 5; i++) {
-          setTimeout(refreshRewards, i * 50); // Faster refresh intervals
-        }
-      } else {
+      refreshTimeoutRef.current = window.setTimeout(() => {
         refreshRewards();
-      }
+        refreshTimeoutRef.current = null;
+      }, 300); // 300ms debounce
     };
     
-    // Add listener for the new real-time event
-    const handleRealTimeUpdate = (event: Event) => {
-      console.log("RewardsCounter: Real-time update event received", event);
-      
-      const customEvent = event as CustomEvent;
-      if (customEvent.detail?.userId === currentUser.id) {
-        console.log("RewardsCounter: Real-time update for current user");
-        
-        if (customEvent.detail?.points !== undefined) {
-          const newPoints = customEvent.detail.points;
-          console.log(`RewardsCounter: Setting points directly to ${newPoints} from real-time event`);
-          setPoints(newPoints);
-          setTier(getUserRewardTier(newPoints));
-          
-          // Animate if this was a points increase
-          if (newPoints > points) {
-            animateRef.current = true;
-            setTimeout(() => {
-              animateRef.current = false;
-            }, 2000);
-          }
-        } else {
-          // If no points provided, force multiple refreshes
-          for (let i = 0; i < 5; i++) {
-            setTimeout(refreshRewards, i * 50);
-          }
-        }
-      }
-    };
-    
-    // Listen for the custom events
+    // Add listeners for all relevant events
     window.addEventListener('refreshRewards', handleRefreshEvent);
-    window.addEventListener('realtime_rewards_update', handleRealTimeUpdate);
-    
-    // For catalog actions (card added, etc) - high priority
-    const handleCatalogAction = (event: Event) => {
-      const customEvent = event as CustomEvent;
-      if (customEvent.detail?.action === 'card_added') {
-        console.log("RewardsCounter: Card added event detected, refreshing...");
-        
-        // Refresh multiple times with faster timing
-        for (let i = 0; i < 15; i++) {
-          setTimeout(refreshRewards, i * 100);
-        }
-      }
-    };
-    
-    window.addEventListener('catalog_action', handleCatalogAction);
+    window.addEventListener('realtime_rewards_update', handleRefreshEvent);
     window.addEventListener('card_reward_update', handleRefreshEvent);
+    window.addEventListener('catalog_action', (e) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail?.action === 'card_added') {
+        handleRefreshEvent();
+      }
+    });
     
-    // Also listen for storage changes
+    // Check for storage changes
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'catalogUserRewards' || e.key === 'lastRewardUpdate' || 
           e.key === `user_${currentUser.id}_last_reward`) {
-        console.log("RewardsCounter: Storage event detected for rewards", e);
-        refreshRewards();
+        handleRefreshEvent();
       }
     };
     
     window.addEventListener('storage', handleStorageChange);
     
-    // Refresh on regular intervals, more frequently initially
-    const immediateIntervalId = setInterval(refreshRewards, 150); // Much faster initial refresh
-    
-    // After 10 seconds, switch to a less frequent refresh
-    const timeoutId = setTimeout(() => {
-      clearInterval(immediateIntervalId);
-      const regularIntervalId = setInterval(refreshRewards, 1500); // Faster ongoing refresh
-      
-      return () => {
-        clearInterval(regularIntervalId);
-      };
-    }, 10000);
+    // Refresh on a less frequent interval
+    const intervalId = setInterval(refreshRewards, 5000); // Changed from 150ms to 5000ms
     
     return () => {
       window.removeEventListener('refreshRewards', handleRefreshEvent);
-      window.removeEventListener('realtime_rewards_update', handleRealTimeUpdate);
-      window.removeEventListener('catalog_action', handleCatalogAction);
+      window.removeEventListener('realtime_rewards_update', handleRefreshEvent);
       window.removeEventListener('card_reward_update', handleRefreshEvent);
+      window.removeEventListener('catalog_action', handleRefreshEvent);
       window.removeEventListener('storage', handleStorageChange);
-      clearInterval(immediateIntervalId);
-      clearTimeout(timeoutId);
-    };
-  }, [currentUser, refreshRewards, points]);
-  
-  // Additional interval to periodically force a refresh from localStorage
-  useEffect(() => {
-    if (!currentUser) return;
-    
-    const checkStorageChanges = () => {
-      const lastUpdateTime = localStorage.getItem('lastRewardUpdate');
-      const userSpecificTimestamp = localStorage.getItem(`user_${currentUser.id}_last_reward`);
       
-      // If there's been an update since our last check
-      if (lastUpdateTime !== lastUpdateRef.current || 
-          userSpecificTimestamp !== lastUpdateRef.current) {
-        console.log(`RewardsCounter: Detected localStorage update, refreshing`);
-        lastUpdateRef.current = lastUpdateTime;
-        
-        // Direct check from localStorage
-        const rewardsData = localStorage.getItem('catalogUserRewards');
-        if (rewardsData) {
-          try {
-            const rewards = JSON.parse(rewardsData);
-            const storedPoints = rewards[currentUser.id] || 0;
-            
-            if (storedPoints !== points) {
-              console.log(`RewardsCounter: Storage check detected change: ${points} → ${storedPoints}`);
-              setPoints(storedPoints);
-              setTier(getUserRewardTier(storedPoints));
-              
-              // Animate if points increased
-              if (storedPoints > points) {
-                animateRef.current = true;
-                setTimeout(() => {
-                  animateRef.current = false;
-                }, 2000);
-              }
-            }
-          } catch (error) {
-            console.error("Error parsing rewards data:", error);
-          }
-        }
+      if (refreshTimeoutRef.current) {
+        window.clearTimeout(refreshTimeoutRef.current);
       }
+      
+      clearInterval(intervalId);
     };
-    
-    // Check for storage changes more frequently for better responsiveness
-    const storageCheckInterval = setInterval(checkStorageChanges, 150);
-    
-    return () => clearInterval(storageCheckInterval);
-  }, [currentUser, points]);
+  }, [currentUser, refreshRewards]);
   
   // Function to get background color based on tier
   const getTierColor = () => {

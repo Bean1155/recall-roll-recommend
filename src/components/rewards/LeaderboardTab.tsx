@@ -56,16 +56,21 @@ const LeaderboardTab = () => {
     refreshLeaderboard();
     forceRewardsRefresh();
     
-    // Aggressive initial refreshing
-    const delays = [100, 300, 500, 1000, 2000, 3000];
-    delays.forEach(delay => {
-      setTimeout(refreshLeaderboard, delay);
-    });
-
-    // Set up listeners for reward updates
+    // Set up listeners for reward updates with debouncing
+    let refreshTimeout: number | null = null;
+    
     const handleRewardUpdate = () => {
       console.log("LeaderboardTab: Detected reward update event");
-      refreshLeaderboard();
+      
+      // Clear any existing timeout
+      if (refreshTimeout) {
+        window.clearTimeout(refreshTimeout);
+      }
+      
+      // Set a new timeout to debounce rapid updates
+      refreshTimeout = window.setTimeout(() => {
+        refreshLeaderboard();
+      }, 300);
     };
     
     // Listen for ALL possible reward-related events
@@ -86,14 +91,14 @@ const LeaderboardTab = () => {
       if (e.key === 'catalogUserRewards' || e.key === 'lastRewardUpdate' ||
           e.key?.startsWith('user_') && e.key?.endsWith('_last_reward')) {
         console.log("LeaderboardTab: Storage event detected for rewards");
-        refreshLeaderboard();
+        handleRewardUpdate();
       }
     };
     
     window.addEventListener('storage', handleStorageChange);
     
-    // Regular interval refresh
-    const intervalId = setInterval(refreshLeaderboard, 2000);
+    // Regular interval refresh with longer timeout
+    const intervalId = setInterval(refreshLeaderboard, 10000); // Reduced from 2000ms to 10000ms
     
     return () => {
       window.removeEventListener('refreshRewards', handleRewardUpdate);
@@ -101,6 +106,9 @@ const LeaderboardTab = () => {
       window.removeEventListener('realtime_rewards_update', handleRewardUpdate);
       window.removeEventListener('catalog_action', handleRewardUpdate);
       window.removeEventListener('storage', handleStorageChange);
+      if (refreshTimeout) {
+        window.clearTimeout(refreshTimeout);
+      }
       clearInterval(intervalId);
     };
   }, []);

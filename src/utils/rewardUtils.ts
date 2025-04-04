@@ -54,13 +54,8 @@ export const showRewardToast = (
     variant: "default",
   });
   
-  // Force the rewards counter to refresh immediately and repeatedly
-  for (let i = 0; i < 15; i++) {
-    setTimeout(() => {
-      forceRewardsRefresh();
-      console.log(`Toast notification triggered: +${pointsAdded} points (${reason}) - refresh attempt ${i+1}`);
-    }, i * 150);
-  }
+  // Force the rewards counter to refresh immediately - only once, not repeatedly
+  forceRewardsRefresh();
   
   // Also update any DOM elements directly if possible
   try {
@@ -73,7 +68,7 @@ export const showRewardToast = (
     console.error("Error updating DOM elements:", e);
   }
   
-  // Dispatch a new custom event specifically for real-time updates
+  // Dispatch a single custom event for real-time updates
   try {
     const realTimeEvent = new CustomEvent('realtime_rewards_update', {
       detail: { 
@@ -142,29 +137,23 @@ export const forceRewardsRefresh = (): void => {
     console.error("Error updating user-specific timestamp:", e);
   }
   
-  // Dispatch the event multiple times with various delays to ensure it's caught
-  const delays = [0, 50, 100, 200, 300, 500, 1000, 2000];
+  // Dispatch events once, not repeatedly
+  try {
+    const event = new CustomEvent('refreshRewards', { 
+      detail: { timestamp: newTimestamp, forced: true } 
+    });
+    window.dispatchEvent(event);
+    console.log(`Dispatched refreshRewards event with timestamp: ${newTimestamp}`);
+    
+    // Also directly trigger DOM update
+    document.querySelectorAll('[data-rewards-display]').forEach(element => {
+      element.setAttribute('data-update', newTimestamp);
+    });
+  } catch (error) {
+    console.error("Error dispatching reward refresh event:", error);
+  }
   
-  delays.forEach(delay => {
-    setTimeout(() => {
-      try {
-        const event = new CustomEvent('refreshRewards', { 
-          detail: { timestamp: newTimestamp, forced: true } 
-        });
-        window.dispatchEvent(event);
-        console.log(`Dispatched refreshRewards event with delay: ${delay}ms and timestamp: ${newTimestamp}`);
-        
-        // Also directly trigger DOM update
-        document.querySelectorAll('[data-rewards-display]').forEach(element => {
-          element.setAttribute('data-update', newTimestamp);
-        });
-      } catch (error) {
-        console.error("Error dispatching reward refresh event:", error);
-      }
-    }, delay);
-  });
-  
-  // CRITICAL FIX: Manual dispatch of event that's specifically for card creation
+  // Dispatch card reward update event once
   try {
     const cardAddedEvent = new CustomEvent('card_reward_update', { 
       detail: { timestamp: newTimestamp, forced: true } 
