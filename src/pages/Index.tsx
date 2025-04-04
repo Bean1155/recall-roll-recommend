@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
@@ -6,9 +5,11 @@ import {
   Utensils, 
   Film, 
   Plus,
-  Search 
+  Search,
+  Award
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import RewardsCounter from "@/components/RewardsCounter";
 
 const Index = () => {
   const currentDate = new Date();
@@ -19,6 +20,20 @@ const Index = () => {
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-bold mb-2 text-[#333333] font-typewriter">TOTAL RECALL CATALOG</h1>
         <p className="text-xl text-vintage-red font-typewriter">Tracking Every Bite and Blockbuster</p>
+        
+        <div className="mt-4 flex justify-center">
+          <RewardsCounter variant="compact" className="transform scale-110" />
+        </div>
+      </div>
+
+      <div className="flex justify-center mb-4">
+        <Link 
+          to="/rewards" 
+          className="bg-catalog-cream hover:bg-catalog-teal text-catalog-softBrown hover:text-white px-4 py-2 rounded-md flex items-center gap-2 transition-colors border-2 border-catalog-softBrown"
+        >
+          <Award className="h-5 w-5" />
+          <span className="font-typewriter">View My Rewards</span>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">

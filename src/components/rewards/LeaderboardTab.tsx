@@ -3,22 +3,51 @@ import React, { useEffect, useState } from "react";
 import { getAllUserRewards, getUserRewardTier } from "@/lib/data";
 import { appUsers } from "@/contexts/UserContext";
 import { Separator } from "@/components/ui/separator";
-import { Trophy, Medal, Award } from "lucide-react";
+import { Trophy, Medal, Award, RefreshCw } from "lucide-react";
 import { forceRewardsRefresh } from "@/utils/rewardUtils";
+import { toast } from "@/hooks/use-toast";
+import { useUser } from "@/contexts/UserContext";
 
 const LeaderboardTab = () => {
   const [rewardsData, setRewardsData] = useState<Record<string, number>>({});
   const [lastUpdated, setLastUpdated] = useState<string>(new Date().toLocaleTimeString());
+  const { currentUser } = useUser();
+  const [loading, setLoading] = useState(false);
 
   // Function to refresh leaderboard data
   const refreshLeaderboard = () => {
     console.log("LeaderboardTab: Refreshing leaderboard data");
-    const rewards = getAllUserRewards();
-    setRewardsData(rewards);
-    setLastUpdated(new Date().toLocaleTimeString());
     
-    // This will help debug if we're getting data
-    console.log("LeaderboardTab: Current rewards data:", rewards);
+    // Show loading state
+    setLoading(true);
+    
+    // Direct check from localStorage for maximum reliability
+    try {
+      const rewardsDataStr = localStorage.getItem('catalogUserRewards');
+      if (rewardsDataStr) {
+        const rewards = JSON.parse(rewardsDataStr);
+        console.log("LeaderboardTab: Direct localStorage check:", rewards);
+        setRewardsData(rewards);
+      } else {
+        console.log("LeaderboardTab: No rewards data in localStorage, using API");
+        const rewards = getAllUserRewards();
+        setRewardsData(rewards);
+      }
+    } catch (e) {
+      console.error("Error parsing localStorage rewards:", e);
+      // Fallback to API
+      const rewards = getAllUserRewards();
+      setRewardsData(rewards);
+    }
+    
+    setLastUpdated(new Date().toLocaleTimeString());
+    setLoading(false);
+    
+    // Display current user points in console for debugging
+    if (currentUser) {
+      const userPoints = rewardsData[currentUser.id] || 0;
+      console.log(`LeaderboardTab: Current user (${currentUser.id}) has ${userPoints} points`);
+    }
   };
 
   // Initial load and set up refresh interval
@@ -39,19 +68,23 @@ const LeaderboardTab = () => {
       refreshLeaderboard();
     };
     
+    // Listen for ALL possible reward-related events
     window.addEventListener('refreshRewards', handleRewardUpdate);
     window.addEventListener('card_reward_update', handleRewardUpdate);
+    window.addEventListener('realtime_rewards_update', handleRewardUpdate);
     window.addEventListener('catalog_action', (e) => {
       const customEvent = e as CustomEvent;
-      if (customEvent.detail?.action === 'card_added') {
-        console.log("LeaderboardTab: Detected card_added event");
+      if (customEvent.detail?.action === 'card_added' || 
+          customEvent.detail?.action === 'recommendation_added') {
+        console.log(`LeaderboardTab: Detected ${customEvent.detail.action} event`);
         handleRewardUpdate();
       }
     });
     
     // Also refresh on storage changes
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'catalogUserRewards' || e.key === 'lastRewardUpdate') {
+      if (e.key === 'catalogUserRewards' || e.key === 'lastRewardUpdate' ||
+          e.key?.startsWith('user_') && e.key?.endsWith('_last_reward')) {
         console.log("LeaderboardTab: Storage event detected for rewards");
         refreshLeaderboard();
       }
@@ -65,6 +98,7 @@ const LeaderboardTab = () => {
     return () => {
       window.removeEventListener('refreshRewards', handleRewardUpdate);
       window.removeEventListener('card_reward_update', handleRewardUpdate);
+      window.removeEventListener('realtime_rewards_update', handleRewardUpdate);
       window.removeEventListener('catalog_action', handleRewardUpdate);
       window.removeEventListener('storage', handleStorageChange);
       clearInterval(intervalId);
@@ -79,10 +113,28 @@ const LeaderboardTab = () => {
         userId,
         userName: user?.name || 'Unknown User',
         points,
-        tier: getUserRewardTier(points)
+        tier: getUserRewardTier(points),
+        isCurrentUser: currentUser?.id === userId
       };
     })
     .sort((a, b) => b.points - a.points);
+    
+  // Force a manual refresh with visual feedback
+  const handleManualRefresh = () => {
+    setLoading(true);
+    toast({
+      title: "Refreshing leaderboard...",
+      description: "Getting the latest points data",
+    });
+    
+    // Force multiple refreshes
+    forceRewardsRefresh();
+    
+    setTimeout(() => {
+      refreshLeaderboard();
+      setLoading(false);
+    }, 500);
+  };
 
   return (
     <div className="space-y-4">
@@ -92,12 +144,11 @@ const LeaderboardTab = () => {
           <h3 className="font-bold">Live Leaderboard</h3>
         </div>
         <button 
-          onClick={() => {
-            forceRewardsRefresh();
-            refreshLeaderboard();
-          }}
-          className="text-xs bg-catalog-cream px-2 py-1 rounded hover:bg-catalog-teal hover:text-white transition-colors"
+          onClick={handleManualRefresh}
+          className={`text-xs bg-catalog-cream px-2 py-1 rounded hover:bg-catalog-teal hover:text-white transition-colors flex items-center gap-1 ${loading ? 'opacity-70' : ''}`}
+          disabled={loading}
         >
+          <RefreshCw className={`h-3 w-3 ${loading ? 'animate-spin' : ''}`} />
           Refresh Now
         </button>
       </div>
@@ -108,24 +159,35 @@ const LeaderboardTab = () => {
         {leaderboardEntries.length > 0 ? (
           <div className="space-y-3">
             {leaderboardEntries.map((entry, index) => (
-              <div key={entry.userId} className="flex items-center justify-between">
+              <div 
+                key={entry.userId} 
+                className={`flex items-center justify-between p-2 ${
+                  entry.isCurrentUser 
+                    ? 'bg-yellow-50 border border-yellow-200 rounded-md' 
+                    : ''
+                }`}
+              >
                 <div className="flex items-center gap-2">
                   {index === 0 && <Medal className="text-yellow-500 h-5 w-5" />}
                   {index === 1 && <Medal className="text-gray-400 h-5 w-5" />}
                   {index === 2 && <Medal className="text-amber-700 h-5 w-5" />}
                   {index > 2 && <span className="w-5 text-center text-xs">{index + 1}</span>}
-                  <span className="font-medium">{entry.userName}</span>
+                  <span className={`font-medium ${entry.isCurrentUser ? 'font-bold' : ''}`}>
+                    {entry.isCurrentUser ? `${entry.userName} (You)` : entry.userName}
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-sm bg-catalog-cream px-2 py-0.5 rounded">{entry.tier}</span>
-                  <span className="font-bold">{entry.points}</span>
+                  <span className={`font-bold ${entry.isCurrentUser ? 'text-yellow-600' : ''}`}>
+                    {entry.points}
+                  </span>
                 </div>
               </div>
             ))}
           </div>
         ) : (
           <div className="text-center py-4 text-catalog-softBrown">
-            No rewards data available yet.
+            No rewards data available yet. Try adding cards or making recommendations!
           </div>
         )}
       </div>
