@@ -10,84 +10,18 @@ import { useToast } from "@/hooks/use-toast";
 import CatalogSearch from "@/components/CatalogSearch";
 import EntertainmentCategoryDrawer from "@/components/blockbusters/EntertainmentCategoryDrawer";
 import EntertainmentDetailDialog from "@/components/blockbusters/EntertainmentDetailDialog";
+import SearchResultsDialog from "@/components/blockbusters/SearchResultsDialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import Envelope from "@/components/Envelope";
-import CatalogCard from "@/components/CatalogCard";
+  getCategoryDisplayName,
+  generateCategoryColors,
+  getTextColor,
+  getAllCategories
+} from "@/utils/categoryUtils";
 
 const defaultCategories = [
   "movies", "tv shows", "documentaries", "concerts", 
   "theater", "musicals", "podcasts", "comedy", "etc."
 ];
-
-const getAllCategories = (): string[] => {
-  const customCategories: string[] = [];
-  try {
-    const savedCategories = localStorage.getItem('customEntertainmentCategories');
-    if (savedCategories) {
-      const parsed = JSON.parse(savedCategories);
-      customCategories.push(...parsed);
-    }
-  } catch (e) {
-    console.error("Error loading custom entertainment categories:", e);
-  }
-  
-  return [...defaultCategories, ...customCategories];
-};
-
-const categoryColors: Record<string, string> = {
-  "movies": "#f5c4d3",
-  "tv shows": "#e0c5c1",
-  "documentaries": "#ddb892",
-  "concerts": "#e9b44c",
-  "theater": "#c1cc99",
-  "musicals": "#9de0d0",
-  "podcasts": "#a5b1c2",
-  "comedy": "#a64b2a",
-  "etc.": "#da7f5d",
-};
-
-const generateCategoryColors = (categories: string[]): Record<string, string> => {
-  const colors = {...categoryColors};
-  
-  const extraColors = [
-    "#cc7f43", "#d35843", "#4d583c", "#8c9e5e", "#358f8f",
-    "#6b798e", "#2f5d60", "#1a535c", "#4a3f35", "#232e33",
-  ];
-  
-  let colorIndex = 0;
-  categories.forEach(category => {
-    if (!colors[category]) {
-      colors[category] = extraColors[colorIndex % extraColors.length];
-      colorIndex++;
-    }
-  });
-  
-  return colors;
-};
-
-const getCategoryDisplayName = (category: string): string => {
-  return category
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-};
-
-const getTextColor = (backgroundColor: string): string => {
-  const hex = backgroundColor.replace('#', '');
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-  
-  return brightness > 145 ? "#603913" : "#ffffff";
-};
 
 const BlockbustersPage = () => {
   const [entertainmentCards, setEntertainmentCards] = useState<EntertainmentCard[]>([]);
@@ -307,50 +241,13 @@ const BlockbustersPage = () => {
         </div>
       )}
 
-      <Dialog open={isSearchResultsOpen} onOpenChange={setIsSearchResultsOpen}>
-        <DialogContent className="sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Search Results</DialogTitle>
-            <DialogDescription>
-              Found {searchResults.length} matching items
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            {searchResults.map(card => {
-              const category = card.entertainmentCategory?.toLowerCase() || 'etc.';
-              const categoryColor = allCategoryColors[category] || "#d2b48c";
-              
-              return (
-                <div 
-                  key={card.id}
-                  className="cursor-pointer transition-transform hover:scale-[1.02]"
-                  onClick={() => handleSearchResultCardClick(card)}
-                >
-                  <Envelope 
-                    label={card.title}
-                    backgroundColor={categoryColor}
-                  >
-                    <CatalogCard card={card} />
-                  </Envelope>
-                </div>
-              );
-            })}
-          </div>
-          
-          <div className="flex justify-between mt-4">
-            <Button 
-              variant="outline"
-              onClick={() => {
-                setIsSearchResultsOpen(false);
-                navigate('/blockbusters', { replace: true });
-              }}
-            >
-              Close Results
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <SearchResultsDialog
+        isOpen={isSearchResultsOpen}
+        onOpenChange={setIsSearchResultsOpen}
+        results={searchResults}
+        categoryColors={allCategoryColors}
+        onCardClick={handleSearchResultCardClick}
+      />
 
       <EntertainmentDetailDialog
         isOpen={isCardModalOpen}

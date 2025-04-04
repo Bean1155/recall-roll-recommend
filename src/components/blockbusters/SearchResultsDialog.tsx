@@ -1,6 +1,6 @@
 
 import { X } from "lucide-react";
-import { FoodCard } from "@/lib/types";
+import { EntertainmentCard } from "@/lib/types";
 import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -24,9 +24,9 @@ import {
 interface SearchResultsDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  results: FoodCard[];
+  results: EntertainmentCard[];
   categoryColors: Record<string, string>;
-  onCardClick: (card: FoodCard) => void;
+  onCardClick: (card: EntertainmentCard) => void;
 }
 
 const SearchResultsDialog = ({
@@ -52,21 +52,26 @@ const SearchResultsDialog = ({
             </DrawerDescription>
           </div>
           
-          <div className="grid grid-cols-1 gap-4 animate-fade-in overflow-y-auto pb-16" style={{ height: 'auto', maxHeight: 'calc(80vh - 100px)' }}>
-            {results.map((card) => (
-              <div 
-                key={card.id}
-                className="cursor-pointer transition-transform active:scale-95"
-                onClick={() => onCardClick(card)}
-              >
-                <Envelope 
-                  label={card.title}
-                  backgroundColor={categoryColors[card.category]}
+          <div className="grid grid-cols-1 gap-4 animate-fade-in pb-16 overflow-y-auto" style={{ height: 'auto', maxHeight: 'calc(80vh - 100px)' }}>
+            {results.map((card) => {
+              const category = card.entertainmentCategory?.toLowerCase() || 'etc.';
+              const backgroundColor = categoryColors[category] || "#d2b48c";
+              
+              return (
+                <div 
+                  key={card.id}
+                  className="cursor-pointer transition-transform active:scale-95"
+                  onClick={() => onCardClick(card)}
                 >
-                  <CatalogCard card={card} showActions={false} />
-                </Envelope>
-              </div>
-            ))}
+                  <Envelope 
+                    label={card.title}
+                    backgroundColor={backgroundColor}
+                  >
+                    <CatalogCard card={card} showActions={false} />
+                  </Envelope>
+                </div>
+              );
+            })}
           </div>
           
           <DrawerClose className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 shadow-md hover:bg-gray-100">
@@ -77,7 +82,7 @@ const SearchResultsDialog = ({
     );
   }
   
-  // Desktop view stays the same
+  // Desktop view
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogOverlay className="bg-black/80 backdrop-blur-sm" />
@@ -93,20 +98,25 @@ const SearchResultsDialog = ({
         </DialogDescription>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in">
-          {results.map((card) => (
-            <div 
-              key={card.id}
-              className="cursor-pointer transition-transform hover:scale-105"
-              onClick={() => onCardClick(card)}
-            >
-              <Envelope 
-                label={card.title}
-                backgroundColor={categoryColors[card.category]}
+          {results.map((card) => {
+            const category = card.entertainmentCategory?.toLowerCase() || 'etc.';
+            const backgroundColor = categoryColors[category] || "#d2b48c";
+            
+            return (
+              <div 
+                key={card.id}
+                className="cursor-pointer transition-transform hover:scale-105"
+                onClick={() => onCardClick(card)}
               >
-                <CatalogCard card={card} showActions={false} />
-              </Envelope>
-            </div>
-          ))}
+                <Envelope 
+                  label={card.title}
+                  backgroundColor={backgroundColor}
+                >
+                  <CatalogCard card={card} showActions={false} />
+                </Envelope>
+              </div>
+            );
+          })}
         </div>
         
         <DialogClose className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 shadow-md hover:bg-gray-100">
