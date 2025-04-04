@@ -44,12 +44,12 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
     <Dialog open={open || forcedOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md md:max-w-lg p-0 border-catalog-softBrown border-2 overflow-hidden bg-white">
         <div 
-          className="flex flex-col items-center justify-center p-4 relative"
+          className="flex flex-col items-center justify-start p-4 relative"
           style={{
             backgroundImage: 'linear-gradient(#F1F0FB 1.1rem, #D3E4FD 1.2rem)',
             backgroundSize: '100% 1.2rem',
             backgroundRepeat: 'repeat',
-            paddingTop: '1.5rem',
+            paddingTop: '1rem',
             minHeight: '450px'
           }}
         >
