@@ -7,7 +7,7 @@ interface LaunchScreenTitleProps {
 
 const LaunchScreenTitle: React.FC<LaunchScreenTitleProps> = ({ stamped }) => {
   const [displayText, setDisplayText] = useState("");
-  const fullText = "TOTAL RECALL CATALOG";
+  const fullText = "TOTAL RECALL   CATALOG";
   
   // Typewriter effect for the title
   useEffect(() => {

@@ -46,7 +46,7 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
         <div 
           className="flex flex-col items-center justify-center p-4 relative"
           style={{
-            backgroundImage: 'linear-gradient(#F1F0FB 1.1rem, #D2B48C 1.2rem)',
+            backgroundImage: 'linear-gradient(#F1F0FB 1.1rem, #D3E4FD 1.2rem)',
             backgroundSize: '100% 1.2rem',
             backgroundRepeat: 'repeat',
             paddingTop: '1.5rem',
