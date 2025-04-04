@@ -26,6 +26,24 @@ export const showRewardToast = (
   localStorage.setItem('lastRewardUpdate', timestamp);
   localStorage.setItem(`user_${userId}_last_reward`, timestamp);
   
+  // Ensure rewards data exists for this user
+  try {
+    const rewardsData = localStorage.getItem('catalogUserRewards');
+    if (rewardsData) {
+      const rewards = JSON.parse(rewardsData);
+      if (!rewards[userId]) {
+        rewards[userId] = pointsAdded;
+        localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
+      }
+    } else {
+      // Initialize rewards data if it doesn't exist
+      const initialRewards = { [userId]: pointsAdded };
+      localStorage.setItem('catalogUserRewards', JSON.stringify(initialRewards));
+    }
+  } catch (e) {
+    console.error("Error ensuring user rewards exist:", e);
+  }
+  
   // Use a visible toast with reasonable duration
   toast({
     title: `🎉 You earned ${pointsAdded} point${pointsAdded > 1 ? 's' : ''}!`,
@@ -76,12 +94,12 @@ export const forceRewardsRefresh = (): void => {
         if (rewardsData) {
           const rewards = JSON.parse(rewardsData);
           if (typeof rewards[currentUser.id] === 'undefined') {
-            rewards[currentUser.id] = 0;
+            rewards[currentUser.id] = 1; // Initialize with 1 point instead of 0
             localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
           }
         } else {
           // Initialize rewards data if it doesn't exist
-          const initialRewards = { [currentUser.id]: 0 };
+          const initialRewards = { [currentUser.id]: 1 }; // Start with 1 point
           localStorage.setItem('catalogUserRewards', JSON.stringify(initialRewards));
         }
       }
@@ -110,3 +128,22 @@ export const forceRewardsRefresh = (): void => {
     console.error("Error dispatching reward events:", error);
   }
 };
+
+// Function to directly set reward points to ensure they're properly initialized
+export const ensureUserHasRewards = (userId: string): void => {
+  if (!userId) return;
+  
+  try {
+    const rewardsData = localStorage.getItem('catalogUserRewards');
+    let rewards = rewardsData ? JSON.parse(rewardsData) : {};
+    
+    // If user doesn't have rewards, initialize with 1
+    if (typeof rewards[userId] === 'undefined') {
+      rewards[userId] = 1;
+      localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
+      console.log(`Initialized rewards for user ${userId} with 1 point`);
+    }
+  } catch (e) {
+    console.error("Error ensuring user rewards exist:", e);
+  }
+}

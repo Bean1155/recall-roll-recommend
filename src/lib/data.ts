@@ -128,13 +128,23 @@ export const addCard = (card: Omit<CatalogCard, 'id'>): CatalogCard => {
   const currentUserStr = localStorage.getItem('currentUser');
   const currentUser = currentUserStr ? JSON.parse(currentUserStr) : null;
   
-  // Track this card addition for rewards - SIMPLIFIED
+  // Track this card addition for rewards - IMPROVED
   if (card.type && currentUser) {
     console.log(`User ${currentUser.id} added a ${card.type} card - awarding 1 point`);
     
-    // Award exactly 1 point with a clear reason
-    const reason = `Adding a new ${card.type === 'food' ? 'bite' : 'blockbuster'}`;
-    addUserRewardPoints(currentUser.id, 1, reason);
+    // Make sure the user has rewards initialized
+    const rewardsData = localStorage.getItem('catalogUserRewards');
+    let rewards = rewardsData ? JSON.parse(rewardsData) : {};
+    
+    // Initialize user rewards if not present
+    if (!rewards[currentUser.id]) {
+      rewards[currentUser.id] = 1; // Start with 1 point
+      localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
+    } else {
+      // Award exactly 1 point with a clear reason
+      const reason = `Adding a new ${card.type === 'food' ? 'bite' : 'blockbuster'}`;
+      addUserRewardPoints(currentUser.id, 1, reason);
+    }
     
     // Dispatch a single event to notify other components
     const event = new CustomEvent('catalog_action', { 
@@ -174,15 +184,26 @@ export const getUserRewards = (userId: string): number => {
     const rewardsData = localStorage.getItem('catalogUserRewards');
     if (rewardsData) {
       const rewards = JSON.parse(rewardsData);
+      // Make sure we return at least 1 if the user exists
+      if (rewards[userId] === undefined) {
+        rewards[userId] = 1;  // Initialize with 1 point if missing
+        localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
+        return 1;
+      }
       return rewards[userId] || 0;
+    } else {
+      // Initialize rewards data if completely missing
+      const initialRewards = { [userId]: 1 };
+      localStorage.setItem('catalogUserRewards', JSON.stringify(initialRewards));
+      return 1;
     }
   } catch (error) {
     console.error("Error getting user rewards:", error);
   }
-  return 0;
+  return 1; // Return 1 as a default minimum
 };
 
-// Function to add reward points to a user - SIMPLIFIED
+// Function to add reward points to a user - IMPROVED
 export const addUserRewardPoints = (userId: string, points: number = 1, reason: string = 'Activity'): number => {
   console.log(`REWARD TRACKING: Adding ${points} points to user ${userId} for ${reason}`);
   
@@ -196,7 +217,7 @@ export const addUserRewardPoints = (userId: string, points: number = 1, reason: 
     let rewards = rewardsData ? JSON.parse(rewardsData) : {};
     
     // Initialize user rewards if not present
-    if (!rewards[userId]) {
+    if (rewards[userId] === undefined) {
       rewards[userId] = 0;
     }
     
@@ -209,6 +230,7 @@ export const addUserRewardPoints = (userId: string, points: number = 1, reason: 
     // Save back to localStorage
     localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
     localStorage.setItem('lastRewardUpdate', timestamp);
+    localStorage.setItem(`user_${userId}_last_reward`, timestamp);
     
     console.log(`REWARD TRACKING: User ${userId} now has ${rewards[userId]} points`);
     

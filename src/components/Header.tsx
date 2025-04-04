@@ -1,15 +1,26 @@
 
 import { useNavigate, Link } from "react-router-dom";
-import { BookOpen, Menu, Notebook, Settings, User } from "lucide-react";
+import { BookOpen, Menu, Notebook, Settings, User, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import NavBar from "./NavBar";
 import { Toaster } from "@/components/ui/toaster";
+import RewardsCounter from "./RewardsCounter";
+import { useEffect } from "react";
+import { ensureUserHasRewards, forceRewardsRefresh } from "@/utils/rewardUtils";
 
 const Header = () => {
   const navigate = useNavigate();
   const { currentUser } = useUser();
+  
+  // Initialize user rewards when header loads
+  useEffect(() => {
+    if (currentUser?.id) {
+      ensureUserHasRewards(currentUser.id);
+      forceRewardsRefresh();
+    }
+  }, [currentUser]);
   
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -24,6 +35,13 @@ const Header = () => {
             <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-catalog-teal" />
             <span className="font-typewriter text-catalog-teal font-bold text-lg sm:text-xl">Catalog</span>
           </Link>
+          
+          {/* Rewards counter in header */}
+          <div className="flex items-center">
+            <Link to="/rewards" className="mr-2">
+              <RewardsCounter variant="compact" />
+            </Link>
+          </div>
           
           {/* Navigation */}
           <div className="hidden md:flex items-center space-x-2">
@@ -45,6 +63,16 @@ const Header = () => {
             >
               <Notebook className="h-5 w-5 mr-1" />
               Blockbusters
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleNavigation('/rewards')}
+              className="text-catalog-softBrown hover:text-catalog-teal"
+            >
+              <Award className="h-5 w-5 mr-1" />
+              Rewards
             </Button>
             
             <Button
@@ -99,6 +127,16 @@ const Header = () => {
                 >
                   <Notebook className="h-5 w-5 mr-2" />
                   Blockbusters
+                </Button>
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleNavigation('/rewards')}
+                  className="justify-start text-catalog-softBrown hover:text-catalog-teal w-full px-4"
+                >
+                  <Award className="h-5 w-5 mr-2" />
+                  Rewards
                 </Button>
                 
                 <Button
