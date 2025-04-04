@@ -89,19 +89,22 @@ export const forceRewardsRefresh = (): void => {
       if (currentUser?.id) {
         localStorage.setItem(`user_${currentUser.id}_last_reward`, timestamp);
         
-        // Ensure rewards data exists for this user
+        // CRITICAL FIX: Directly increment the user's points in localStorage
         const rewardsData = localStorage.getItem('catalogUserRewards');
+        let rewards = {};
+        
         if (rewardsData) {
-          const rewards = JSON.parse(rewardsData);
+          rewards = JSON.parse(rewardsData);
+          // If the user doesn't have any rewards yet, initialize with 1
           if (typeof rewards[currentUser.id] === 'undefined') {
-            rewards[currentUser.id] = 1; // Initialize with 1 point instead of 0
-            localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
+            rewards[currentUser.id] = 1; 
           }
         } else {
           // Initialize rewards data if it doesn't exist
-          const initialRewards = { [currentUser.id]: 1 }; // Start with 1 point
-          localStorage.setItem('catalogUserRewards', JSON.stringify(initialRewards));
+          rewards = { [currentUser.id]: 1 };
         }
+        
+        localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
       }
     }
   } catch (e) {
@@ -145,5 +148,35 @@ export const ensureUserHasRewards = (userId: string): void => {
     }
   } catch (e) {
     console.error("Error ensuring user rewards exist:", e);
+  }
+}
+
+// NEW: Direct function to add points for card creation
+export const addPointsForCardCreation = (userId: string, cardType: string): void => {
+  if (!userId) return;
+  
+  try {
+    const rewardsData = localStorage.getItem('catalogUserRewards');
+    let rewards = rewardsData ? JSON.parse(rewardsData) : {};
+    
+    // Initialize or update user rewards
+    if (typeof rewards[userId] === 'undefined') {
+      rewards[userId] = 1;
+    } else {
+      // Add exactly 1 point per card creation
+      rewards[userId] += 1;
+    }
+    
+    // Save back to localStorage
+    localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
+    console.log(`Added 1 point to user ${userId} for creating a ${cardType} card. Total: ${rewards[userId]}`);
+    
+    // Show toast notification
+    showRewardToast(userId, 1, `Creating a new ${cardType === 'food' ? 'bite' : 'blockbuster'}`);
+    
+    // Trigger a refresh
+    forceRewardsRefresh();
+  } catch (e) {
+    console.error("Error adding points for card creation:", e);
   }
 }

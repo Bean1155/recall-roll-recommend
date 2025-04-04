@@ -8,7 +8,7 @@ import NavBar from "./NavBar";
 import { Toaster } from "@/components/ui/toaster";
 import RewardsCounter from "./RewardsCounter";
 import { useEffect } from "react";
-import { ensureUserHasRewards, forceRewardsRefresh } from "@/utils/rewardUtils";
+import { ensureUserHasRewards, forceRewardsRefresh, addPointsForCardCreation } from "@/utils/rewardUtils";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -17,9 +17,34 @@ const Header = () => {
   // Initialize user rewards when header loads
   useEffect(() => {
     if (currentUser?.id) {
+      console.log("Header: Initializing rewards for user", currentUser.id);
       ensureUserHasRewards(currentUser.id);
+      
+      // Force a refresh of rewards immediately and then dispatch event
       forceRewardsRefresh();
+      
+      // Dispatch a custom event to ensure all components know rewards should update
+      window.dispatchEvent(new CustomEvent('rewards_init_complete', { 
+        detail: { userId: currentUser.id, timestamp: Date.now() } 
+      }));
     }
+  }, [currentUser]);
+  
+  // Listen for card creation events
+  useEffect(() => {
+    const handleCardCreationEvent = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail?.action === 'card_added' && currentUser) {
+        console.log("Header detected card_added event, adding points");
+        addPointsForCardCreation(currentUser.id, customEvent.detail.cardType || 'unknown');
+      }
+    };
+    
+    window.addEventListener('catalog_action', handleCardCreationEvent);
+    
+    return () => {
+      window.removeEventListener('catalog_action', handleCardCreationEvent);
+    };
   }, [currentUser]);
   
   const handleNavigation = (path: string) => {

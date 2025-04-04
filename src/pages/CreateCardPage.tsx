@@ -4,7 +4,7 @@ import CardForm from "@/components/CardForm";
 import { CardType } from "@/lib/types";
 import GridLayout from "@/components/GridLayout";
 import { useEffect, useRef, useCallback } from "react";
-import { forceRewardsRefresh, showRewardToast } from "@/utils/rewardUtils";
+import { forceRewardsRefresh, showRewardToast, addPointsForCardCreation } from "@/utils/rewardUtils";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "@/hooks/use-toast";
 
@@ -24,7 +24,7 @@ const CreateCardPage = () => {
       console.log("CreateCardPage: Manually forcing rewards refresh");
       forceRewardsRefresh();
       
-      // CRITICAL ADDITION: Dispatch an event specifically for the rewards page
+      // Dispatch an event specifically for the rewards page
       try {
         const event = new CustomEvent('card_reward_update', { 
           detail: { timestamp: Date.now(), source: 'CreateCardPage', forced: true } 
@@ -71,7 +71,8 @@ const CreateCardPage = () => {
   // Add a message event listener to catch CardForm submissions
   useEffect(() => {
     const handleCardSubmit = (event: Event) => {
-      if ((event as CustomEvent).detail?.action === 'card_added') {
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail?.action === 'card_added') {
         console.log("CreateCardPage: Card submission event detected, refreshing rewards");
         
         // Mark the time of card addition
@@ -80,14 +81,11 @@ const CreateCardPage = () => {
           localStorage.setItem(trackingKey, Date.now().toString());
           console.log(`CreateCardPage: Marked card addition time in ${trackingKey}`);
           
-          // Direct toast notification for immediate feedback
-          if (typeof showRewardToast === 'function') {
-            // Show toast with points for adding a card
-            showRewardToast(currentUser.id, 15, `Adding a new ${cardType === 'food' ? 'bite' : 'blockbuster'}`);
-          }
+          // IMPORTANT FIX: Directly call the function to add points
+          addPointsForCardCreation(currentUser.id, cardType);
         }
         
-        // Single refresh after card addition is sufficient
+        // Single refresh after card addition
         setTimeout(() => {
           forceRewardsRefresh();
           
@@ -112,7 +110,6 @@ const CreateCardPage = () => {
     return () => {
       console.log("CreateCardPage: Unmounting, forcing rewards refresh");
       if (currentUser) {
-        // Single refresh is sufficient
         forceRewardsRefresh();
       }
     };
@@ -122,11 +119,8 @@ const CreateCardPage = () => {
     console.log("CreateCardPage: CardForm submission success callback");
     
     if (currentUser) {
-      // Show the reward toast immediately
-      if (typeof showRewardToast === 'function') {
-        // Show toast with points for adding a card
-        showRewardToast(currentUser.id, 15, `Adding a new ${cardType === 'food' ? 'bite' : 'blockbuster'}`);
-      }
+      // IMPORTANT FIX: Directly call the function to add points
+      addPointsForCardCreation(currentUser.id, cardType);
       
       toast({
         title: "Card Created!",
@@ -135,16 +129,6 @@ const CreateCardPage = () => {
         duration: 5000,
       });
     }
-    
-    // Mark the time of card addition
-    if (currentUser) {
-      const trackingKey = `last_${cardType}_added_${currentUser.id}`;
-      localStorage.setItem(trackingKey, Date.now().toString());
-      console.log(`CreateCardPage: Marked card addition time in ${trackingKey}`);
-    }
-    
-    // Trigger rewards refresh once
-    refreshRewards();
     
     // Dispatch a single event
     setTimeout(() => {
