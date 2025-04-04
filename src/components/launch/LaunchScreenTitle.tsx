@@ -36,17 +36,18 @@ const LaunchScreenTitle: React.FC<LaunchScreenTitleProps> = ({ stamped }) => {
         fontFamily: "'American Typewriter', 'Courier New', monospace",
       }}
     >
-      <div className="mb-2 border-b border-catalog-softBrown pb-2">
+      <div className="mb-4">
         <div className="flex justify-between items-start">
           <div className="w-full">
             <h1 
-              className="text-3xl font-bold font-typewriter"
+              className="text-4xl font-bold font-typewriter"
               style={{
-                color: "#000000",
+                color: "#0EA5E9",
+                textShadow: "1px 1px 3px rgba(0,0,0,0.2)",
                 lineHeight: '1.2',
               }}
             >
-              <div className="mb-2">
+              <div className="mb-3">
                 {displayTextLine1}
                 <span className={`inline-block ${displayTextLine1.length < fullTextLine1.length ? 'animate-pulse' : 'opacity-0'}`}>|</span>
               </div>
@@ -58,7 +59,7 @@ const LaunchScreenTitle: React.FC<LaunchScreenTitleProps> = ({ stamped }) => {
           </div>
         </div>
       </div>
-      <p className="text-lg text-vintage-red font-typewriter mt-2">
+      <p className="text-xl text-vintage-red font-typewriter mt-3 font-bold">
         Tracking Every Bite and Blockbuster
       </p>
     </div>

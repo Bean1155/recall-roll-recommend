@@ -41,7 +41,7 @@ const LaunchScreenAnimation: React.FC<LaunchScreenAnimationProps> = ({
     <div 
       className={`relative flex flex-col items-center justify-center transition-all duration-1000 transform mb-6 ${stamped ? 'scale-100 opacity-100' : 'scale-150 opacity-0'}`}
     >
-      <div className="bg-white bg-opacity-50 p-4 rounded border border-catalog-softBrown w-full">
+      <div className="bg-white bg-opacity-70 p-6 rounded-lg border-2 border-catalog-softBrown w-full shadow-lg">
         <LaunchScreenTitle stamped={stamped} />
       </div>
     </div>

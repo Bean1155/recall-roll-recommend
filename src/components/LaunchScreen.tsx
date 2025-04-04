@@ -49,11 +49,6 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
             minHeight: '450px'
           }}
         >
-          {/* Catalog Card Header Line */}
-          <div className="w-full mb-4 border-b border-catalog-softBrown pb-2">
-            <div className="catalog-line"></div>
-          </div>
-          
           <LaunchScreenAnimation 
             open={open}
             forcedOpen={forcedOpen}
