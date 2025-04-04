@@ -36,6 +36,9 @@ type SharingSettings = {
 export type UserType = {
   id: string;
   name: string;
+  email?: string;
+  avatar?: string;
+  createdAt?: string;
 };
 
 type UserContextType = {
@@ -48,7 +51,8 @@ type UserContextType = {
   updateNotificationSettings: (settings: Partial<NotificationSettings>) => void;
   sharingSettings: SharingSettings;
   updateSharingSettings: (settings: Partial<SharingSettings>) => void;
-  currentUser: UserType; // Add currentUser to the context type
+  currentUser: UserType;
+  setCurrentUser: (user: UserType) => void; // Add this line to fix the error
 };
 
 const defaultUserName = "Food Lover";
@@ -92,7 +96,8 @@ const UserContext = createContext<UserContextType>({
   updateNotificationSettings: () => {},
   sharingSettings: defaultSharingSettings,
   updateSharingSettings: () => {},
-  currentUser: defaultCurrentUser, // Add default currentUser to the context
+  currentUser: defaultCurrentUser,
+  setCurrentUser: () => {}, // Add this line to include in the default context value
 });
 
 export const useUser = () => useContext(UserContext);
@@ -121,8 +126,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Current user state
   const [currentUser, setCurrentUser] = useState<UserType>(() => {
+    // Try to load from localStorage
+    const savedUser = localStorage.getItem('currentUser');
     // In a real app, this would be based on authenticated user
-    return defaultCurrentUser;
+    return savedUser ? JSON.parse(savedUser) : defaultCurrentUser;
   });
 
   // Update profile
@@ -157,6 +164,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('catalogSharingSettings', JSON.stringify(sharingSettings));
   }, [sharingSettings]);
 
+  useEffect(() => {
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+  }, [currentUser]);
+
   return (
     <UserContext.Provider 
       value={{ 
@@ -169,7 +180,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateNotificationSettings,
         sharingSettings,
         updateSharingSettings,
-        currentUser // Include currentUser in the context value
+        currentUser,
+        setCurrentUser // Include setCurrentUser in the context value
       }}
     >
       {children}
