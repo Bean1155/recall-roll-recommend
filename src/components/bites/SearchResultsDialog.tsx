@@ -52,7 +52,8 @@ const SearchResultsDialog = ({
             </DrawerDescription>
           </div>
           
-          <div className="grid grid-cols-1 gap-4 animate-fade-in pb-16 overflow-y-auto max-h-[65vh]">
+          {/* Changed fixed max-height to min-height to ensure cards are fully visible */}
+          <div className="grid grid-cols-1 gap-4 animate-fade-in pb-16 overflow-y-auto" style={{ minHeight: '50vh', maxHeight: '80vh' }}>
             {results.map((card) => (
               <div 
                 key={card.id}
