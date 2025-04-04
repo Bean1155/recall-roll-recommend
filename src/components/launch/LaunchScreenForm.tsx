@@ -76,7 +76,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
 
   return (
     <div 
-      className={`w-full mt-6 transition-all duration-500 transform ${stamped ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}
+      className={`w-full mt-2 transition-all duration-500 transform ${stamped ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -89,7 +89,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
                 <FormControl>
                   <Input 
                     placeholder="Enter your name" 
-                    className="bg-white border-catalog-softBrown" 
+                    className="bg-white/80 border-catalog-softBrown" 
                     {...field} 
                   />
                 </FormControl>
@@ -107,7 +107,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
                 <FormControl>
                   <Input 
                     placeholder="Enter your email" 
-                    className="bg-white border-catalog-softBrown" 
+                    className="bg-white/80 border-catalog-softBrown" 
                     {...field} 
                   />
                 </FormControl>
@@ -116,7 +116,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
             )}
           />
           
-          <div className="pt-4">
+          <div className="pt-3">
             <Button 
               type="submit" 
               className="w-full bg-catalog-teal hover:bg-catalog-darkTeal text-white font-medium"
@@ -127,7 +127,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
         </form>
       </Form>
 
-      <div className="mt-4 text-center text-sm text-vintage-red">
+      <div className="mt-3 text-center text-sm text-vintage-red">
         <p>Start tracking your favorites and sharing recommendations!</p>
       </div>
     </div>

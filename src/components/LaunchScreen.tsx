@@ -42,8 +42,8 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
 
   return (
     <Dialog open={open || forcedOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md md:max-w-xl p-0 border-catalog-softBrown border-2 overflow-hidden retro-striped-bg">
-        <div className="flex flex-col items-center justify-center p-6">
+      <DialogContent className="sm:max-w-md md:max-w-lg p-0 border-catalog-softBrown border-2 overflow-hidden bg-vintage-tan">
+        <div className="flex flex-col items-center justify-center p-4">
           <LaunchScreenAnimation 
             open={open}
             forcedOpen={forcedOpen}
