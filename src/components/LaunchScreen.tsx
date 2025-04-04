@@ -27,10 +27,29 @@ const formSchema = z.object({
   }),
 });
 
-const LaunchScreen: React.FC = () => {
+interface LaunchScreenProps {
+  forcedOpen?: boolean;
+  onClose?: () => void;
+}
+
+const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose }) => {
   const [open, setOpen] = useState(true);
   const [stamped, setStamped] = useState(false);
   const { setCurrentUser } = useUser();
+
+  // Reset stamped state when forcedOpen changes
+  useEffect(() => {
+    if (forcedOpen) {
+      setOpen(true);
+      setStamped(false);
+      
+      const timer = setTimeout(() => {
+        setStamped(true);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [forcedOpen]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,14 +61,14 @@ const LaunchScreen: React.FC = () => {
 
   // Animation sequence for the stamp effect
   useEffect(() => {
-    if (open) {
+    if (open && !stamped) {
       const timer = setTimeout(() => {
         setStamped(true);
       }, 1000);
       
       return () => clearTimeout(timer);
     }
-  }, [open]);
+  }, [open, stamped]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     // Create a new user with the form data
@@ -67,6 +86,9 @@ const LaunchScreen: React.FC = () => {
     // Save to localStorage
     localStorage.setItem("currentUser", JSON.stringify(newUser));
     
+    // Mark that the user has seen the launch screen
+    localStorage.setItem("hasSeenLaunch", "true");
+    
     // Show success toast
     toast({
       title: "Welcome to Total Recall Catalog!",
@@ -76,12 +98,25 @@ const LaunchScreen: React.FC = () => {
     
     // Close the launch screen
     setOpen(false);
+    
+    // Call onClose if provided
+    if (onClose) {
+      onClose();
+    }
   };
 
-  if (!open) return null;
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    if (!newOpen && onClose) {
+      onClose();
+    }
+  };
+
+  // Don't render anything if not open and not forcibly opened
+  if (!open && !forcedOpen) return null;
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open || forcedOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md md:max-w-xl bg-[#F5F1E6] p-0 border-catalog-softBrown border-2 overflow-hidden">
         <div className="flex flex-col items-center justify-center p-6">
           <div 

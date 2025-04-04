@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Settings } from 'lucide-react';
+import { Settings, Stamp } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,12 +10,15 @@ import {
   MenubarTrigger,
   MenubarContent,
   MenubarItem,
+  MenubarSeparator,
 } from '@/components/ui/menubar';
 import { toast } from '@/components/ui/use-toast';
+import LaunchScreen from './LaunchScreen';
 
 const SettingsMenu = () => {
   const { userName, setUserName } = useUser();
   const [newName, setNewName] = useState(userName);
+  const [showLaunchScreen, setShowLaunchScreen] = useState(false);
 
   const handleSaveName = () => {
     if (newName.trim()) {
@@ -27,47 +30,78 @@ const SettingsMenu = () => {
     }
   };
 
+  const handleShowLaunchScreen = () => {
+    setShowLaunchScreen(true);
+  };
+
   return (
-    <Menubar className="border-none bg-transparent p-0">
-      <MenubarMenu>
-        <MenubarTrigger className="p-1 data-[state=open]:bg-catalog-softBrown/20 rounded-md">
-          <Settings size={20} className="text-catalog-softBrown" />
-        </MenubarTrigger>
-        <MenubarContent className="bg-white border border-catalog-softBrown min-w-[300px]">
-          <div className="p-4">
-            <h3 className="font-bold mb-4 text-catalog-softBrown">Settings</h3>
-            
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="userName" className="text-sm font-medium block mb-1">
-                  Your Name
-                </label>
-                <Input
-                  id="userName"
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  placeholder="Enter your name"
-                  className="catalog-input"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Your name will appear in the catalog header
-                </p>
-              </div>
+    <>
+      {showLaunchScreen && (
+        <LaunchScreen 
+          forcedOpen={true} 
+          onClose={() => setShowLaunchScreen(false)} 
+        />
+      )}
+      
+      <Menubar className="border-none bg-transparent p-0">
+        <MenubarMenu>
+          <MenubarTrigger className="p-1 data-[state=open]:bg-catalog-softBrown/20 rounded-md">
+            <Settings size={20} className="text-catalog-softBrown" />
+          </MenubarTrigger>
+          <MenubarContent className="bg-white border border-catalog-softBrown min-w-[300px]">
+            <div className="p-4">
+              <h3 className="font-bold mb-4 text-catalog-softBrown">Settings</h3>
               
-              <div className="flex justify-end">
-                <Button 
-                  onClick={handleSaveName}
-                  className="bg-catalog-teal hover:bg-catalog-darkTeal"
-                  size="sm"
-                >
-                  Save Settings
-                </Button>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="userName" className="text-sm font-medium block mb-1">
+                    Your Name
+                  </label>
+                  <Input
+                    id="userName"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    placeholder="Enter your name"
+                    className="catalog-input"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Your name will appear in the catalog header
+                  </p>
+                </div>
+                
+                <div className="flex justify-end">
+                  <Button 
+                    onClick={handleSaveName}
+                    className="bg-catalog-teal hover:bg-catalog-darkTeal"
+                    size="sm"
+                  >
+                    Save Settings
+                  </Button>
+                </div>
+                
+                <MenubarSeparator />
+                
+                <div>
+                  <h4 className="text-sm font-medium mb-2">Developer Options</h4>
+                  <Button 
+                    onClick={handleShowLaunchScreen}
+                    variant="outline" 
+                    size="sm"
+                    className="w-full border-dashed border-catalog-softBrown flex items-center justify-center gap-2"
+                  >
+                    <Stamp size={16} />
+                    Preview Launch Screen
+                  </Button>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    View and test the app's onboarding experience
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        </MenubarContent>
-      </MenubarMenu>
-    </Menubar>
+          </MenubarContent>
+        </MenubarMenu>
+      </Menubar>
+    </>
   );
 };
 

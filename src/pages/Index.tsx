@@ -21,14 +21,14 @@ const Index = () => {
   // Check if the user has seen the launch screen before
   useEffect(() => {
     const hasSeenLaunch = localStorage.getItem("hasSeenLaunch");
-    if (!hasSeenLaunch && !currentUser) {
+    if (!hasSeenLaunch && !currentUser.email) {
       setShowLaunch(true);
     }
   }, [currentUser]);
 
   return (
     <>
-      {showLaunch && <LaunchScreen />}
+      {showLaunch && <LaunchScreen onClose={() => setShowLaunch(false)} />}
       <GridLayout>
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold mb-2 text-[#333333] font-typewriter">TOTAL RECALL CATALOG</h1>
