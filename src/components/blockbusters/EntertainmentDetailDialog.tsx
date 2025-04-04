@@ -44,16 +44,20 @@ const EntertainmentDetailDialog = ({
       <Drawer open={isOpen} onOpenChange={onOpenChange}>
         <DrawerOverlay className="bg-black/80 backdrop-blur-sm" />
         <DrawerContent 
-          className="p-0 border-t-2 border-catalog-softBrown rounded-t-xl max-h-[90vh] overflow-y-auto"
-          style={{ backgroundColor }}
+          className="p-0 border-t-2 border-catalog-softBrown rounded-t-xl overflow-y-auto"
+          style={{ 
+            backgroundColor,
+            height: "85vh", // Set fixed height for mobile
+            maxHeight: "85vh" // Cap max height at 85% of viewport
+          }}
         >
           <DrawerTitle className="sr-only">Card Details</DrawerTitle>
-          <div className="relative">
+          <div className="relative h-full">
             <DrawerClose className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 shadow-md hover:bg-gray-100">
               <X size={18} />
             </DrawerClose>
             
-            <div className="p-6 animate-fade-in overflow-y-auto" style={{ maxHeight: 'calc(90vh - 20px)' }}>
+            <div className="p-6 animate-fade-in overflow-y-auto pb-16" style={{ height: "100%" }}>
               <Envelope label={card.title} backgroundColor={backgroundColor}>
                 <CatalogCard card={card} />
               </Envelope>

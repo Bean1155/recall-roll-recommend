@@ -42,7 +42,13 @@ const SearchResultsDialog = ({
     return (
       <Drawer open={isOpen} onOpenChange={onOpenChange}>
         <DrawerOverlay className="bg-black/80 backdrop-blur-sm" />
-        <DrawerContent className="p-4 border-t-2 border-catalog-softBrown bg-[#f8f8f8] rounded-t-xl max-h-[90vh]">
+        <DrawerContent 
+          className="p-4 border-t-2 border-catalog-softBrown bg-[#f8f8f8] rounded-t-xl"
+          style={{ 
+            height: "85vh", // Set fixed height for mobile
+            maxHeight: "85vh" // Cap max height at 85% of viewport
+          }}
+        >
           <div className="mb-4">
             <DrawerTitle className="text-xl font-typewriter text-catalog-teal">
               Search Results
@@ -52,7 +58,8 @@ const SearchResultsDialog = ({
             </DrawerDescription>
           </div>
           
-          <div className="grid grid-cols-1 gap-4 animate-fade-in pb-16 overflow-y-auto" style={{ height: 'auto', maxHeight: 'calc(80vh - 100px)' }}>
+          <div className="grid grid-cols-1 gap-4 animate-fade-in pb-16 overflow-y-auto" 
+               style={{ height: "calc(100% - 80px)" }}>
             {results.map((card) => {
               const category = card.entertainmentCategory?.toLowerCase() || 'etc.';
               const backgroundColor = categoryColors[category] || "#d2b48c";
@@ -82,7 +89,7 @@ const SearchResultsDialog = ({
     );
   }
   
-  // Desktop view
+  // Desktop view stays the same
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogOverlay className="bg-black/80 backdrop-blur-sm" />
