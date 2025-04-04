@@ -31,7 +31,7 @@ const Index = () => {
       {showLaunch && <LaunchScreen onClose={() => setShowLaunch(false)} />}
       <GridLayout>
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-2 text-[#333333] font-typewriter">TOTAL RECALL CATALOG</h1>
+          <h1 className="text-4xl font-bold mb-2 text-black font-typewriter">TOTAL RECALL CATALOG</h1>
           <p className="text-xl text-vintage-red font-typewriter">Tracking Every Bite and Blockbuster</p>
         </div>
 

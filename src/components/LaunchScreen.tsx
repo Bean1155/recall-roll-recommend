@@ -163,16 +163,16 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
                 fontFamily: "'American Typewriter', 'Courier New', monospace",
               }}
             >
-              <h1 className="text-4xl font-bold mb-2 text-[#333333] font-typewriter"
+              <h1 className="text-4xl font-bold mb-2 font-typewriter"
                 style={{
                   textShadow: "1px 1px 0px rgba(50, 50, 93, 0.25)",
-                  color: "#AA3333",
+                  color: "#000000", // Changed from #AA3333 to black
                   minHeight: "48px", // Ensure height doesn't jump during animation
                 }}>
                 {displayText}
                 <span className={`inline-block ${displayText.length < fullText.length ? 'animate-pulse' : 'opacity-0'}`}>|</span>
               </h1>
-              <p className="text-xl text-catalog-softBrown font-typewriter mb-4">
+              <p className="text-xl text-vintage-red font-typewriter mb-4">
                 Tracking Every Bite and Blockbuster
               </p>
             </div>
@@ -231,7 +231,7 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
               </form>
             </Form>
 
-            <div className="mt-4 text-center text-sm text-catalog-softBrown">
+            <div className="mt-4 text-center text-sm text-vintage-red">
               <p>Start tracking your favorites and sharing recommendations!</p>
             </div>
           </div>
