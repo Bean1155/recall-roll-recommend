@@ -8,6 +8,7 @@ import { getAllCards } from "@/lib/data";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerOverlay } from "@/components/ui/drawer";
 import CatalogSearch from "@/components/CatalogSearch";
 
 const SearchPage = () => {
@@ -114,24 +115,48 @@ const SearchPage = () => {
         </Tabs>
       </div>
 
-      {/* Search Dialog */}
-      <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
-        <DialogOverlay className="bg-black/70 backdrop-blur-sm" />
-        <DialogContent 
-          className="p-0 border-0 shadow-none bg-transparent"
-          style={{ maxWidth: "90vw", width: "500px" }}
+      {/* Conditional rendering based on device type */}
+      {isMobile ? (
+        // Mobile: Bottom drawer for better access
+        <Drawer
+          open={isSearchOpen}
+          onOpenChange={setIsSearchOpen}
         >
-          <CatalogSearch 
-            items={searchType === 'food' 
-              ? allCards.filter(card => card.type === 'food')
-              : allCards.filter(card => card.type === 'entertainment')
-            }
-            onFilteredItemsChange={handleFilteredItemsChange}
-            type={searchType}
-            onClose={() => setIsSearchOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
+          <DrawerOverlay className="bg-black/70 backdrop-blur-sm" />
+          <DrawerContent className="p-0 border-t-2 border-catalog-softBrown bg-[#FAF3E3] rounded-t-xl">
+            <div className="max-h-[85vh] overflow-y-auto">
+              <CatalogSearch 
+                items={searchType === 'food' 
+                  ? allCards.filter(card => card.type === 'food')
+                  : allCards.filter(card => card.type === 'entertainment')
+                }
+                onFilteredItemsChange={handleFilteredItemsChange}
+                type={searchType}
+                onClose={() => setIsSearchOpen(false)}
+              />
+            </div>
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        // Desktop: Dialog in center of screen
+        <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+          <DialogOverlay className="bg-black/70 backdrop-blur-sm" />
+          <DialogContent 
+            className="p-0 border-0 shadow-none bg-transparent"
+            style={{ maxWidth: "90vw", width: "500px" }}
+          >
+            <CatalogSearch 
+              items={searchType === 'food' 
+                ? allCards.filter(card => card.type === 'food')
+                : allCards.filter(card => card.type === 'entertainment')
+              }
+              onFilteredItemsChange={handleFilteredItemsChange}
+              type={searchType}
+              onClose={() => setIsSearchOpen(false)}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </GridLayout>
   );
 };

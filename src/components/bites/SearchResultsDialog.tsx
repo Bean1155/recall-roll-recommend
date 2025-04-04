@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { FoodCard } from "@/lib/types";
 import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +12,14 @@ import {
   DialogOverlay,
   DialogClose,
 } from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerClose,
+  DrawerOverlay,
+} from "@/components/ui/drawer";
 
 interface SearchResultsDialogProps {
   isOpen: boolean;
@@ -27,6 +36,48 @@ const SearchResultsDialog = ({
   categoryColors,
   onCardClick,
 }: SearchResultsDialogProps) => {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <Drawer open={isOpen} onOpenChange={onOpenChange}>
+        <DrawerOverlay className="bg-black/80 backdrop-blur-sm" />
+        <DrawerContent className="p-4 border-t-2 border-catalog-softBrown bg-[#f8f8f8] rounded-t-xl">
+          <div className="mb-4">
+            <DrawerTitle className="text-xl font-typewriter text-catalog-teal">
+              Search Results
+            </DrawerTitle>
+            <DrawerDescription className="text-sm text-catalog-softBrown">
+              We found {results.length} matches. Tap a card to view details.
+            </DrawerDescription>
+          </div>
+          
+          <div className="grid grid-cols-1 gap-4 animate-fade-in pb-16 overflow-y-auto max-h-[65vh]">
+            {results.map((card) => (
+              <div 
+                key={card.id}
+                className="cursor-pointer transition-transform active:scale-95"
+                onClick={() => onCardClick(card)}
+              >
+                <Envelope 
+                  label={card.title}
+                  backgroundColor={categoryColors[card.category]}
+                >
+                  <CatalogCard card={card} showActions={false} />
+                </Envelope>
+              </div>
+            ))}
+          </div>
+          
+          <DrawerClose className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 shadow-md hover:bg-gray-100">
+            <X size={18} />
+          </DrawerClose>
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+  
+  // Desktop view stays the same
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogOverlay className="bg-black/80 backdrop-blur-sm" />
