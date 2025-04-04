@@ -25,6 +25,7 @@ const LaunchScreenTitle: React.FC<LaunchScreenTitleProps> = ({ stamped }) => {
       className={`text-center transform transition-all duration-700 mb-2 ${stamped ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
       style={{
         fontFamily: "'American Typewriter', 'Courier New', monospace",
+        marginTop: "1rem"
       }}
     >
       <h1 
@@ -33,6 +34,7 @@ const LaunchScreenTitle: React.FC<LaunchScreenTitleProps> = ({ stamped }) => {
           color: "#000000",
           minHeight: "40px",
           lineHeight: '1.2rem',
+          marginBottom: "0.75rem" // Add more space here
         }}
       >
         {displayText}
