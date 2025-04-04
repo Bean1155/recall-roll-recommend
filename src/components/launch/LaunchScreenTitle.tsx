@@ -31,28 +31,33 @@ const LaunchScreenTitle: React.FC<LaunchScreenTitleProps> = ({ stamped }) => {
 
   return (
     <div 
-      className={`text-center transform transition-all duration-700 mb-2 ${stamped ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+      className="text-center transition-all duration-700"
       style={{
         fontFamily: "'American Typewriter', 'Courier New', monospace",
       }}
     >
-      <h1 
-        className="text-3xl font-bold mb-0 font-typewriter"
-        style={{
-          color: "#000000",
-          minHeight: "2.4rem",
-          lineHeight: '1.2rem',
-        }}
-      >
-        <div className="mb-4">
-          {displayTextLine1}
-          <span className={`inline-block ${displayTextLine1.length < fullTextLine1.length ? 'animate-pulse' : 'opacity-0'}`}>|</span>
+      <div className="mb-2 border-b border-catalog-softBrown pb-2">
+        <div className="flex justify-between items-start">
+          <div className="w-full">
+            <h1 
+              className="text-3xl font-bold font-typewriter"
+              style={{
+                color: "#000000",
+                lineHeight: '1.2',
+              }}
+            >
+              <div className="mb-2">
+                {displayTextLine1}
+                <span className={`inline-block ${displayTextLine1.length < fullTextLine1.length ? 'animate-pulse' : 'opacity-0'}`}>|</span>
+              </div>
+              <div>
+                {displayTextLine2}
+                <span className={`inline-block ${displayTextLine1.length === fullTextLine1.length && displayTextLine2.length < fullTextLine2.length ? 'animate-pulse' : 'opacity-0'}`}>|</span>
+              </div>
+            </h1>
+          </div>
         </div>
-        <div>
-          {displayTextLine2}
-          <span className={`inline-block ${displayTextLine1.length === fullTextLine1.length && displayTextLine2.length < fullTextLine2.length ? 'animate-pulse' : 'opacity-0'}`}>|</span>
-        </div>
-      </h1>
+      </div>
       <p className="text-lg text-vintage-red font-typewriter mt-2">
         Tracking Every Bite and Blockbuster
       </p>

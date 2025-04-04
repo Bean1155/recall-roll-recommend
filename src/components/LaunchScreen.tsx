@@ -42,22 +42,17 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
 
   return (
     <Dialog open={open || forcedOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md md:max-w-lg p-0 border-catalog-softBrown border-2 overflow-hidden bg-white">
+      <DialogContent className="sm:max-w-md md:max-w-lg p-0 border-catalog-softBrown border-2 overflow-hidden bg-catalog-cream rounded-lg">
         <div 
-          className="flex flex-col items-center justify-start p-4 relative"
+          className="flex flex-col items-center justify-start p-6 relative"
           style={{
-            backgroundImage: 'linear-gradient(#F1F0FB 1.1rem, #D3E4FD 1.2rem)',
-            backgroundSize: '100% 1.2rem',
-            backgroundRepeat: 'repeat',
-            paddingTop: '1rem',
             minHeight: '450px'
           }}
         >
-          {/* Red margin line */}
-          <div 
-            className="absolute left-10 top-0 bottom-0 w-0.5 bg-vintage-red opacity-70"
-            aria-hidden="true"
-          />
+          {/* Catalog Card Header Line */}
+          <div className="w-full mb-4 border-b border-catalog-softBrown pb-2">
+            <div className="catalog-line"></div>
+          </div>
           
           <LaunchScreenAnimation 
             open={open}
