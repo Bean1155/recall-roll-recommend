@@ -10,7 +10,7 @@ const LaunchScreenLogo: React.FC<LaunchScreenLogoProps> = ({ stamped }) => {
     <div 
       className={`relative flex items-center justify-center mb-8 transition-all duration-500 ${stamped ? 'rotate-0' : 'rotate-45'}`}
     >
-      <div className="absolute inset-0 rounded-md opacity-20 shadow-xl"></div>
+      <div className="absolute inset-0 rounded-md opacity-0"></div>
       
       <div className="relative w-40 h-40 mb-3 flex items-center justify-center">
         <img 
@@ -21,7 +21,8 @@ const LaunchScreenLogo: React.FC<LaunchScreenLogoProps> = ({ stamped }) => {
             mixBlendMode: 'multiply',
             maxWidth: '100%',
             maxHeight: '100%',
-            filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))'
+            filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))',
+            backgroundColor: 'transparent'
           }}
         />
       </div>
