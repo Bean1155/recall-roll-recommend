@@ -42,8 +42,23 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
 
   return (
     <Dialog open={open || forcedOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md md:max-w-lg p-0 border-catalog-softBrown border-2 overflow-hidden bg-vintage-tan">
-        <div className="flex flex-col items-center justify-center p-4">
+      <DialogContent className="sm:max-w-md md:max-w-lg p-0 border-catalog-softBrown border-2 overflow-hidden bg-white">
+        <div 
+          className="flex flex-col items-center justify-center p-4 relative"
+          style={{
+            backgroundImage: 'linear-gradient(#F1F0FB 1.1rem, #D2B48C 1.2rem)',
+            backgroundSize: '100% 1.2rem',
+            backgroundRepeat: 'repeat',
+            paddingTop: '1.5rem',
+            minHeight: '450px'
+          }}
+        >
+          {/* Red margin line */}
+          <div 
+            className="absolute left-10 top-0 bottom-0 w-0.5 bg-vintage-red opacity-70"
+            aria-hidden="true"
+          />
+          
           <LaunchScreenAnimation 
             open={open}
             forcedOpen={forcedOpen}

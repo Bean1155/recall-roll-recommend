@@ -40,7 +40,7 @@ const LaunchScreenAnimation: React.FC<LaunchScreenAnimationProps> = ({
 
   return (
     <div 
-      className={`relative flex flex-col items-center justify-center transition-all duration-1000 transform ${stamped ? 'scale-100 opacity-100' : 'scale-150 opacity-0'}`}
+      className={`relative flex flex-col items-center justify-center transition-all duration-1000 transform mb-3 ${stamped ? 'scale-100 opacity-100' : 'scale-150 opacity-0'}`}
     >
       <LaunchScreenLogo stamped={stamped} />
       <LaunchScreenTitle stamped={stamped} />

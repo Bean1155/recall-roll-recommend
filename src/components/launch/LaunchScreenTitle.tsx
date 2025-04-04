@@ -22,21 +22,23 @@ const LaunchScreenTitle: React.FC<LaunchScreenTitleProps> = ({ stamped }) => {
 
   return (
     <div 
-      className={`text-center transform transition-all duration-700 ${stamped ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+      className={`text-center transform transition-all duration-700 mb-2 ${stamped ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
       style={{
         fontFamily: "'American Typewriter', 'Courier New', monospace",
       }}
     >
-      <h1 className="text-4xl font-bold mb-2 font-typewriter"
+      <h1 
+        className="text-3xl font-bold mb-0 font-typewriter"
         style={{
-          textShadow: "1px 1px 0px rgba(50, 50, 93, 0.25)",
           color: "#000000",
-          minHeight: "48px",
-        }}>
+          minHeight: "40px",
+          lineHeight: '1.2rem',
+        }}
+      >
         {displayText}
         <span className={`inline-block ${displayText.length < fullText.length ? 'animate-pulse' : 'opacity-0'}`}>|</span>
       </h1>
-      <p className="text-xl text-vintage-red font-typewriter mb-4">
+      <p className="text-lg text-vintage-red font-typewriter">
         Tracking Every Bite and Blockbuster
       </p>
     </div>

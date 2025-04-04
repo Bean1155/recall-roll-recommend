@@ -76,24 +76,28 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
 
   return (
     <div 
-      className={`w-full mt-2 transition-all duration-500 transform ${stamped ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}
+      className={`w-full transition-all duration-500 transform ${stamped ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-0">
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-vintage-red font-medium">This Catalog belongs to</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="Enter your name" 
-                    className="bg-white/80 border-catalog-softBrown" 
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
+              <FormItem className="mb-2.4">
+                <div className="flex items-center">
+                  <FormLabel className="text-vintage-red font-medium mr-2 w-40">This Catalog belongs to:</FormLabel>
+                  <div className="flex-1">
+                    <FormControl>
+                      <Input 
+                        placeholder="Enter your name" 
+                        className="bg-transparent border-0 border-b border-dashed border-catalog-softBrown focus:border-catalog-teal rounded-none pl-0 focus-visible:ring-0 focus-visible:ring-offset-0" 
+                        {...field} 
+                      />
+                    </FormControl>
+                  </div>
+                </div>
+                <FormMessage className="pl-40 text-xs" />
               </FormItem>
             )}
           />
@@ -102,24 +106,28 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-vintage-red font-medium">Correspondence</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="Enter your email" 
-                    className="bg-white/80 border-catalog-softBrown" 
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
+              <FormItem className="mb-2.4">
+                <div className="flex items-center">
+                  <FormLabel className="text-vintage-red font-medium mr-2 w-40">Correspondence:</FormLabel>
+                  <div className="flex-1">
+                    <FormControl>
+                      <Input 
+                        placeholder="Enter your email" 
+                        className="bg-transparent border-0 border-b border-dashed border-catalog-softBrown focus:border-catalog-teal rounded-none pl-0 focus-visible:ring-0 focus-visible:ring-offset-0" 
+                        {...field} 
+                      />
+                    </FormControl>
+                  </div>
+                </div>
+                <FormMessage className="pl-40 text-xs" />
               </FormItem>
             )}
           />
           
-          <div className="pt-3">
+          <div className="pt-6 flex justify-center">
             <Button 
               type="submit" 
-              className="w-full bg-catalog-teal hover:bg-catalog-darkTeal text-white font-medium"
+              className="w-3/4 bg-catalog-teal hover:bg-catalog-darkTeal text-white font-medium"
             >
               Get Started
             </Button>
