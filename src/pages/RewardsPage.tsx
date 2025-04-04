@@ -12,44 +12,26 @@ import LeaderboardTab from "@/components/rewards/LeaderboardTab";
 const RewardsPage = () => {
   const { currentUser } = useUser();
   
-  // Force rewards refresh when this page is loaded - critical for real-time updates
+  // Simplified refresh logic when page loads
   useEffect(() => {
     if (!currentUser) return;
     
     console.log("RewardsPage: Component mounted, forcing rewards refresh");
     
-    // Single refresh with two retries is sufficient
+    // Single initial refresh is sufficient
     forceRewardsRefresh();
     
-    // Set up a much less aggressive refresh interval
+    // Less frequent refresh interval
     const intervalId = setInterval(() => {
       forceRewardsRefresh();
-    }, 5000); // Reduced from 2000ms to 5000ms
-    
-    // CRITICAL ADDITION: Listen specifically for card creation reward events
-    const handleCardRewardUpdate = () => {
-      console.log("RewardsPage: Received card_reward_update event");
-      // Single refresh is enough
-      forceRewardsRefresh();
-    };
-    
-    window.addEventListener('card_reward_update', handleCardRewardUpdate);
-    window.addEventListener('catalog_action', (e) => {
-      const customEvent = e as CustomEvent;
-      if (customEvent.detail?.action === 'card_added') {
-        console.log("RewardsPage: Detected card_added event, triggering refresh");
-        handleCardRewardUpdate();
-      }
-    });
+    }, 30000); // 30 seconds - much less frequent
     
     return () => {
       clearInterval(intervalId);
-      window.removeEventListener('card_reward_update', handleCardRewardUpdate);
-      window.removeEventListener('catalog_action', handleCardRewardUpdate);
     };
   }, [currentUser]);
   
-  // Manual refresh function (useful for debugging)
+  // Manual refresh function
   const triggerManualRefresh = () => {
     if (!currentUser) return;
     console.log("RewardsPage: Manual refresh triggered by user action");
@@ -76,7 +58,7 @@ const RewardsPage = () => {
           <span className="text-sm font-medium">Click to refresh your points</span>
         </div>
       
-        {/* Live Leaderboard section (new addition) */}
+        {/* Live Leaderboard section */}
         <div className="mb-8">
           <CatalogCollapsible 
             label="Live Leaderboard" 
@@ -88,7 +70,7 @@ const RewardsPage = () => {
           </CatalogCollapsible>
         </div>
         
-        {/* Collapsible How It Works section */}
+        {/* Keep remaining UI components unchanged */}
         <div className="mb-8">
           <CatalogCollapsible 
             label="How It Works" 
@@ -99,7 +81,6 @@ const RewardsPage = () => {
           </CatalogCollapsible>
         </div>
         
-        {/* Collapsible Reward System section */}
         <div className="mb-8">
           <CatalogCollapsible 
             label="Reward System" 
@@ -110,7 +91,6 @@ const RewardsPage = () => {
           </CatalogCollapsible>
         </div>
         
-        {/* Benefits section */}
         <div className="mb-8">
           <CatalogCollapsible 
             label="Benefits" 
@@ -132,7 +112,6 @@ const RewardsPage = () => {
           </CatalogCollapsible>
         </div>
         
-        {/* Track Progress section */}
         <div className="mb-8">
           <CatalogCollapsible 
             label="Track Progress" 

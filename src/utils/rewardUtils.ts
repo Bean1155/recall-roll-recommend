@@ -21,54 +21,21 @@ export const showRewardToast = (
   console.log("REWARD TOAST: User earned", pointsAdded, "points for", reason);
   console.log("REWARD TOAST: Total points now", totalPoints);
   
-  // Use a timestamp with a random suffix to prevent caching
-  const timestamp = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  // Simple timestamp to prevent caching
+  const timestamp = Date.now().toString();
   localStorage.setItem('lastRewardUpdate', timestamp);
-  
-  // CRITICAL: Also directly update a user-specific timestamp to force refresh
   localStorage.setItem(`user_${userId}_last_reward`, timestamp);
   
-  // Directly update the rewards in localStorage as a backup mechanism
-  try {
-    const rewardsData = localStorage.getItem('catalogUserRewards');
-    if (rewardsData) {
-      const rewards = JSON.parse(rewardsData);
-      console.log("Direct rewards data check:", rewards);
-      // Ensure this user's rewards are set correctly
-      if (rewards[userId] !== totalPoints) {
-        console.log(`Correcting rewards discrepancy: localStorage has ${rewards[userId]}, should be ${totalPoints}`);
-        rewards[userId] = totalPoints;
-        localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
-      }
-    }
-  } catch (e) {
-    console.error("Error directly updating rewards:", e);
-  }
-  
-  // Use a more visible toast with longer duration and higher z-index
+  // Use a visible toast with reasonable duration
   toast({
     title: `🎉 You earned ${pointsAdded} point${pointsAdded > 1 ? 's' : ''}!`,
     description: `${reason}. You now have ${totalPoints} total points.`,
     className: "bg-catalog-cream border-catalog-teal text-catalog-darkBrown font-medium border-4 z-[2000] shadow-lg",
-    duration: 10000, // Show for 10 seconds
+    duration: 5000, // Show for 5 seconds
     variant: "default",
   });
   
-  // Force the rewards counter to refresh immediately - only once, not repeatedly
-  forceRewardsRefresh();
-  
-  // Also update any DOM elements directly if possible
-  try {
-    document.querySelectorAll('[data-rewards-display]').forEach(element => {
-      element.setAttribute('data-rewards-points', totalPoints.toString());
-      element.setAttribute('data-update', timestamp);
-      console.log("Updated DOM element directly with new points:", totalPoints);
-    });
-  } catch (e) {
-    console.error("Error updating DOM elements:", e);
-  }
-  
-  // Dispatch a single custom event for real-time updates
+  // Dispatch one event for real-time updates
   try {
     const realTimeEvent = new CustomEvent('realtime_rewards_update', {
       detail: { 
@@ -87,47 +54,33 @@ export const showRewardToast = (
 };
 
 /**
- * Force the rewards counter to refresh
+ * Force the rewards counter to refresh - SIMPLIFIED
  */
 export const forceRewardsRefresh = (): void => {
   console.log("Force refresh rewards event triggered");
   
-  // Update localStorage with a unique timestamp to force refresh
-  const newTimestamp = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-  localStorage.setItem('lastRewardUpdate', newTimestamp);
-  console.log(`Set lastRewardUpdate to ${newTimestamp}`);
+  // Simple timestamp to force refresh
+  const timestamp = Date.now().toString();
+  localStorage.setItem('lastRewardUpdate', timestamp);
   
-  // CRITICAL: Get current user ID and update user-specific timestamp 
+  // Get current user and update user-specific timestamp
   try {
     const currentUserStr = localStorage.getItem('currentUser');
     if (currentUserStr) {
       const currentUser = JSON.parse(currentUserStr);
       if (currentUser?.id) {
-        localStorage.setItem(`user_${currentUser.id}_last_reward`, newTimestamp);
-        console.log(`Updated user-specific timestamp for user ${currentUser.id}`);
+        localStorage.setItem(`user_${currentUser.id}_last_reward`, timestamp);
         
-        // Ensure rewards are correctly set in localStorage
+        // Ensure rewards data exists for this user
         const rewardsData = localStorage.getItem('catalogUserRewards');
         if (rewardsData) {
           const rewards = JSON.parse(rewardsData);
-          const currentPoints = rewards[currentUser.id] || 0;
-          console.log(`Current points for user ${currentUser.id}: ${currentPoints}`);
-          
-          // Ensure user has an entry in rewards data
           if (typeof rewards[currentUser.id] === 'undefined') {
-            console.log(`Creating rewards entry for user ${currentUser.id}`);
             rewards[currentUser.id] = 0;
             localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
           }
-          
-          // Update any DOM elements with this information
-          document.querySelectorAll('[data-rewards-display]').forEach(element => {
-            element.setAttribute('data-rewards-points', String(currentPoints));
-            element.setAttribute('data-update', newTimestamp);
-          });
         } else {
-          // If no rewards data exists yet, initialize it
-          console.log("No rewards data found, initializing");
+          // Initialize rewards data if it doesn't exist
           const initialRewards = { [currentUser.id]: 0 };
           localStorage.setItem('catalogUserRewards', JSON.stringify(initialRewards));
         }
@@ -137,61 +90,23 @@ export const forceRewardsRefresh = (): void => {
     console.error("Error updating user-specific timestamp:", e);
   }
   
-  // Dispatch events once, not repeatedly
+  // Dispatch events just once
   try {
+    // Primary refresh event
     const event = new CustomEvent('refreshRewards', { 
-      detail: { timestamp: newTimestamp, forced: true } 
+      detail: { timestamp: timestamp } 
     });
     window.dispatchEvent(event);
-    console.log(`Dispatched refreshRewards event with timestamp: ${newTimestamp}`);
     
-    // Also directly trigger DOM update
-    document.querySelectorAll('[data-rewards-display]').forEach(element => {
-      element.setAttribute('data-update', newTimestamp);
-    });
+    // Secondary events for redundancy
+    window.dispatchEvent(new CustomEvent('card_reward_update', { 
+      detail: { timestamp: timestamp } 
+    }));
+    
+    window.dispatchEvent(new CustomEvent('realtime_rewards_update', {
+      detail: { timestamp: timestamp }
+    }));
   } catch (error) {
-    console.error("Error dispatching reward refresh event:", error);
-  }
-  
-  // Dispatch card reward update event once
-  try {
-    const cardAddedEvent = new CustomEvent('card_reward_update', { 
-      detail: { timestamp: newTimestamp, forced: true } 
-    });
-    window.dispatchEvent(cardAddedEvent);
-    console.log("Dispatched special card_reward_update event");
-  } catch (error) {
-    console.error("Error dispatching card reward update event:", error);
-  }
-  
-  // Add event for real-time updates 
-  try {
-    const realTimeEvent = new CustomEvent('realtime_rewards_update', {
-      detail: { timestamp: newTimestamp, forced: true }
-    });
-    window.dispatchEvent(realTimeEvent);
-    console.log("Dispatched realtime_rewards_update event");
-  } catch (error) {
-    console.error("Error dispatching realtime event:", error);
-  }
-  
-  // Ensure any reward displays are updated by manually checking localStorage
-  try {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-    if (currentUser?.id) {
-      const rewardsData = localStorage.getItem('catalogUserRewards');
-      if (rewardsData) {
-        const rewards = JSON.parse(rewardsData);
-        const points = rewards[currentUser.id] || 0;
-        
-        document.querySelectorAll('[data-rewards-display]').forEach(element => {
-          element.setAttribute('data-rewards-points', String(points));
-          element.setAttribute('data-update', newTimestamp);
-          console.log(`Directly updated DOM with ${points} points for user ${currentUser.id}`);
-        });
-      }
-    }
-  } catch (e) {
-    console.error("Error directly updating reward displays:", e);
+    console.error("Error dispatching reward events:", error);
   }
 };
