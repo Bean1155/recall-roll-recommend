@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-import { Stamp } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,12 +35,15 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
   const [open, setOpen] = useState(true);
   const [stamped, setStamped] = useState(false);
   const { setCurrentUser } = useUser();
+  const [displayText, setDisplayText] = useState("");
+  const fullText = "TOTAL RECALL CATALOG";
 
   // Reset stamped state when forcedOpen changes
   useEffect(() => {
     if (forcedOpen) {
       setOpen(true);
       setStamped(false);
+      setDisplayText("");
       
       const timer = setTimeout(() => {
         setStamped(true);
@@ -69,6 +71,17 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
       return () => clearTimeout(timer);
     }
   }, [open, stamped]);
+
+  // Typewriter effect for the title
+  useEffect(() => {
+    if (stamped && displayText.length < fullText.length) {
+      const typeTimer = setTimeout(() => {
+        setDisplayText(fullText.substring(0, displayText.length + 1));
+      }, 100);
+      
+      return () => clearTimeout(typeTimer);
+    }
+  }, [stamped, displayText]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     // Create a new user with the form data
@@ -117,27 +130,28 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
 
   return (
     <Dialog open={open || forcedOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md md:max-w-xl bg-[#F5F1E6] p-0 border-catalog-softBrown border-2 overflow-hidden">
+      <DialogContent className="sm:max-w-md md:max-w-xl bg-[#FFDEE2] p-0 border-catalog-softBrown border-2 overflow-hidden">
         <div className="flex flex-col items-center justify-center p-6">
           <div 
             className={`relative flex flex-col items-center justify-center mb-4 transition-all duration-1000 transform ${stamped ? 'scale-100 opacity-100' : 'scale-150 opacity-0'}`}
           >
-            {/* Stamp Container */}
+            {/* Logo Container */}
             <div 
               className={`relative flex items-center justify-center mb-8 transition-all duration-500 ${stamped ? 'rotate-0' : 'rotate-45'}`}
             >
-              <div className="absolute inset-0 bg-vintage-red rounded-md opacity-20 shadow-xl"></div>
+              <div className="absolute inset-0 rounded-md opacity-20 shadow-xl"></div>
               
-              {/* Stamp Icon */}
-              <div className="relative">
-                <Stamp 
-                  size={60} 
-                  className="text-vintage-red mb-3 mx-auto"
+              {/* Logo Image */}
+              <div className="relative w-40 h-40 mb-3">
+                <img 
+                  src="/lovable-uploads/051572e4-ca2a-4eef-81be-0463d9c5ec0a.png" 
+                  alt="Total Recall Catalog Logo" 
+                  className="w-full h-full object-contain"
                 />
               </div>
             </div>
             
-            {/* Stamped Content */}
+            {/* Typed Content */}
             <div 
               className={`text-center transform transition-all duration-700 ${stamped ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
               style={{
@@ -147,9 +161,11 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
               <h1 className="text-4xl font-bold mb-2 text-[#333333] font-typewriter"
                 style={{
                   textShadow: "1px 1px 0px rgba(50, 50, 93, 0.25)",
-                  color: "#AA3333"
+                  color: "#AA3333",
+                  minHeight: "48px", // Ensure height doesn't jump during animation
                 }}>
-                TOTAL RECALL CATALOG
+                {displayText}
+                <span className={`inline-block ${displayText.length < fullText.length ? 'animate-pulse' : 'opacity-0'}`}>|</span>
               </h1>
               <p className="text-xl text-catalog-softBrown font-typewriter mb-4">
                 Tracking Every Bite and Blockbuster
