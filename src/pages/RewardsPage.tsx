@@ -8,11 +8,12 @@ import HowItWorksTab from "@/components/rewards/HowItWorksTab";
 import RewardSystemTab from "@/components/rewards/RewardSystemTab";
 import { forceRewardsRefresh } from "@/utils/rewardUtils";
 import { useUser } from "@/contexts/UserContext";
+import LeaderboardTab from "@/components/rewards/LeaderboardTab";
 
 const RewardsPage = () => {
   const { currentUser } = useUser();
   
-  // Force rewards refresh when this page is loaded
+  // Force rewards refresh when this page is loaded - critical for real-time updates
   useEffect(() => {
     if (!currentUser) return;
     
@@ -93,15 +94,27 @@ const RewardsPage = () => {
       </>
     }>
       <div className="max-w-3xl mx-auto">
-        {/* Clickable area to force refresh - hidden but useful for debugging */}
+        {/* Clickable area to force refresh */}
         <div 
-          className="mb-4 p-2 text-center cursor-pointer hover:bg-catalog-cream/50 rounded-md transition-colors"
+          className="mb-4 p-2 text-center cursor-pointer bg-catalog-cream hover:bg-catalog-teal hover:text-white rounded-md transition-colors"
           onClick={triggerManualRefresh}
         >
-          <span className="text-sm text-catalog-softBrown">Click to refresh your points</span>
+          <span className="text-sm font-medium">Click to refresh your points</span>
         </div>
       
-        {/* Collapsible How It Works section (now first) */}
+        {/* Live Leaderboard section (new addition) */}
+        <div className="mb-8">
+          <CatalogCollapsible 
+            label="Live Leaderboard" 
+            backgroundColor="#FFD700" 
+            textColor="#603913"
+            defaultOpen={true}
+          >
+            <LeaderboardTab />
+          </CatalogCollapsible>
+        </div>
+        
+        {/* Collapsible How It Works section */}
         <div className="mb-8">
           <CatalogCollapsible 
             label="How It Works" 
@@ -112,7 +125,7 @@ const RewardsPage = () => {
           </CatalogCollapsible>
         </div>
         
-        {/* Collapsible Reward System section (now second) */}
+        {/* Collapsible Reward System section */}
         <div className="mb-8">
           <CatalogCollapsible 
             label="Reward System" 
@@ -123,7 +136,7 @@ const RewardsPage = () => {
           </CatalogCollapsible>
         </div>
         
-        {/* Benefits section (now third) */}
+        {/* Benefits section */}
         <div className="mb-8">
           <CatalogCollapsible 
             label="Benefits" 
@@ -145,7 +158,7 @@ const RewardsPage = () => {
           </CatalogCollapsible>
         </div>
         
-        {/* Track Progress section (now fourth) */}
+        {/* Track Progress section */}
         <div className="mb-8">
           <CatalogCollapsible 
             label="Track Progress" 

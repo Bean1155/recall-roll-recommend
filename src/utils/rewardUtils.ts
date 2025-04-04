@@ -72,6 +72,23 @@ export const showRewardToast = (
   } catch (e) {
     console.error("Error updating DOM elements:", e);
   }
+  
+  // Dispatch a new custom event specifically for real-time updates
+  try {
+    const realTimeEvent = new CustomEvent('realtime_rewards_update', {
+      detail: { 
+        userId,
+        points: totalPoints,
+        added: pointsAdded,
+        reason,
+        timestamp
+      }
+    });
+    window.dispatchEvent(realTimeEvent);
+    console.log("Dispatched realtime_rewards_update event");
+  } catch (e) {
+    console.error("Error dispatching realtime event:", e);
+  }
 };
 
 /**
@@ -101,11 +118,23 @@ export const forceRewardsRefresh = (): void => {
           const currentPoints = rewards[currentUser.id] || 0;
           console.log(`Current points for user ${currentUser.id}: ${currentPoints}`);
           
+          // Ensure user has an entry in rewards data
+          if (typeof rewards[currentUser.id] === 'undefined') {
+            console.log(`Creating rewards entry for user ${currentUser.id}`);
+            rewards[currentUser.id] = 0;
+            localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
+          }
+          
           // Update any DOM elements with this information
           document.querySelectorAll('[data-rewards-display]').forEach(element => {
             element.setAttribute('data-rewards-points', String(currentPoints));
             element.setAttribute('data-update', newTimestamp);
           });
+        } else {
+          // If no rewards data exists yet, initialize it
+          console.log("No rewards data found, initializing");
+          const initialRewards = { [currentUser.id]: 0 };
+          localStorage.setItem('catalogUserRewards', JSON.stringify(initialRewards));
         }
       }
     }
@@ -144,6 +173,17 @@ export const forceRewardsRefresh = (): void => {
     console.log("Dispatched special card_reward_update event");
   } catch (error) {
     console.error("Error dispatching card reward update event:", error);
+  }
+  
+  // Add event for real-time updates 
+  try {
+    const realTimeEvent = new CustomEvent('realtime_rewards_update', {
+      detail: { timestamp: newTimestamp, forced: true }
+    });
+    window.dispatchEvent(realTimeEvent);
+    console.log("Dispatched realtime_rewards_update event");
+  } catch (error) {
+    console.error("Error dispatching realtime event:", error);
   }
   
   // Ensure any reward displays are updated by manually checking localStorage
