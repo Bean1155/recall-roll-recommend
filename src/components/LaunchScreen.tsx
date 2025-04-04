@@ -141,16 +141,17 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
             >
               <div className="absolute inset-0 rounded-md opacity-20 shadow-xl"></div>
               
-              {/* Logo Image - with background removed */}
+              {/* Logo Image - improved background removal */}
               <div className="relative w-40 h-40 mb-3 flex items-center justify-center">
                 <img 
                   src="/lovable-uploads/051572e4-ca2a-4eef-81be-0463d9c5ec0a.png" 
                   alt="Total Recall Catalog Logo" 
                   className="w-full h-full object-contain"
                   style={{ 
-                    mixBlendMode: 'multiply', // This helps remove white backgrounds
+                    mixBlendMode: 'multiply',
                     maxWidth: '100%',
-                    maxHeight: '100%'
+                    maxHeight: '100%',
+                    filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))'
                   }}
                 />
               </div>
@@ -189,7 +190,7 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-catalog-softBrown font-medium">This Catalog belongs to</FormLabel>
+                      <FormLabel className="text-vintage-red font-medium">This Catalog belongs to</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="Enter your name" 
@@ -207,7 +208,7 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-catalog-softBrown font-medium">Correspondence</FormLabel>
+                      <FormLabel className="text-vintage-red font-medium">Correspondence</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="Enter your email" 
