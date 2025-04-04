@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -110,6 +109,20 @@
   
   .envelope {
     @apply relative transition-all duration-300;
+  }
+  
+  .retro-striped-bg {
+    background: repeating-linear-gradient(
+      45deg,
+      #FFDEE2,
+      #FFDEE2 20px,
+      #FDE1D3 20px,
+      #FDE1D3 40px,
+      #D3E4FD 40px,
+      #D3E4FD 60px,
+      #F1F0FB 60px,
+      #F1F0FB 80px
+    );
   }
 }
 

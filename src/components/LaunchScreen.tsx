@@ -130,7 +130,7 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
 
   return (
     <Dialog open={open || forcedOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md md:max-w-xl bg-[#FFDEE2] p-0 border-catalog-softBrown border-2 overflow-hidden">
+      <DialogContent className="sm:max-w-md md:max-w-xl p-0 border-catalog-softBrown border-2 overflow-hidden retro-striped-bg">
         <div className="flex flex-col items-center justify-center p-6">
           <div 
             className={`relative flex flex-col items-center justify-center mb-4 transition-all duration-1000 transform ${stamped ? 'scale-100 opacity-100' : 'scale-150 opacity-0'}`}
@@ -141,12 +141,17 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
             >
               <div className="absolute inset-0 rounded-md opacity-20 shadow-xl"></div>
               
-              {/* Logo Image */}
-              <div className="relative w-40 h-40 mb-3">
+              {/* Logo Image - with background removed */}
+              <div className="relative w-40 h-40 mb-3 flex items-center justify-center">
                 <img 
                   src="/lovable-uploads/051572e4-ca2a-4eef-81be-0463d9c5ec0a.png" 
                   alt="Total Recall Catalog Logo" 
                   className="w-full h-full object-contain"
+                  style={{ 
+                    mixBlendMode: 'multiply', // This helps remove white backgrounds
+                    maxWidth: '100%',
+                    maxHeight: '100%'
+                  }}
                 />
               </div>
             </div>
@@ -184,7 +189,7 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-catalog-softBrown font-medium">Name</FormLabel>
+                      <FormLabel className="text-catalog-softBrown font-medium">This Catalog belongs to</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="Enter your name" 
@@ -202,7 +207,7 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-catalog-softBrown font-medium">Email</FormLabel>
+                      <FormLabel className="text-catalog-softBrown font-medium">Correspondence</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="Enter your email" 
