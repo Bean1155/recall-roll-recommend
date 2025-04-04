@@ -5,12 +5,15 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import NavBar from "./NavBar";
-import RewardsCounter from "./RewardsCounter";
 import { Toaster } from "@/components/ui/toaster";
 
 const Header = () => {
   const navigate = useNavigate();
   const { currentUser } = useUser();
+  
+  const handleNavigation = (path: string) => {
+    navigate(path);
+  };
   
   return (
     <>
@@ -22,19 +25,12 @@ const Header = () => {
             <span className="font-typewriter text-catalog-teal font-bold text-lg sm:text-xl">Catalog</span>
           </Link>
           
-          {/* Center area - Rewards Counter - Mobile optimized */}
-          <RewardsCounter 
-            variant="compact" 
-            className="flex cursor-pointer mx-1" 
-            onClick={() => navigate('/rewards')}
-          />
-          
           {/* Navigation */}
           <div className="hidden md:flex items-center space-x-2">
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/bites')}
+              onClick={() => handleNavigation('/bites')}
               className="text-catalog-softBrown hover:text-catalog-teal"
             >
               <Notebook className="h-5 w-5 mr-1" />
@@ -44,7 +40,7 @@ const Header = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/blockbusters')}
+              onClick={() => handleNavigation('/blockbusters')}
               className="text-catalog-softBrown hover:text-catalog-teal"
             >
               <Notebook className="h-5 w-5 mr-1" />
@@ -54,7 +50,7 @@ const Header = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/settings')}
+              onClick={() => handleNavigation('/settings')}
               className="text-catalog-softBrown hover:text-catalog-teal"
             >
               <Settings className="h-5 w-5 mr-1" />
@@ -64,7 +60,7 @@ const Header = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/profile')}
+              onClick={() => handleNavigation('/profile')}
               className="text-catalog-softBrown hover:text-catalog-teal"
             >
               <User className="h-5 w-5 mr-1" />
@@ -83,13 +79,13 @@ const Header = () => {
                 <Menu className="h-5 w-5 text-catalog-softBrown" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="bg-white w-[80%] max-w-[300px]">
-              <div className="flex flex-col space-y-4 mt-6">
+            <SheetContent side="left" className="bg-white w-[80%] max-w-[300px] p-4">
+              <div className="flex flex-col space-y-4 mt-8">
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => navigate('/bites')}
-                  className="justify-start text-catalog-softBrown hover:text-catalog-teal"
+                  onClick={() => handleNavigation('/bites')}
+                  className="justify-start text-catalog-softBrown hover:text-catalog-teal w-full px-4"
                 >
                   <Notebook className="h-5 w-5 mr-2" />
                   Bites
@@ -98,8 +94,8 @@ const Header = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => navigate('/blockbusters')}
-                  className="justify-start text-catalog-softBrown hover:text-catalog-teal"
+                  onClick={() => handleNavigation('/blockbusters')}
+                  className="justify-start text-catalog-softBrown hover:text-catalog-teal w-full px-4"
                 >
                   <Notebook className="h-5 w-5 mr-2" />
                   Blockbusters
@@ -108,8 +104,8 @@ const Header = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => navigate('/settings')}
-                  className="justify-start text-catalog-softBrown hover:text-catalog-teal"
+                  onClick={() => handleNavigation('/settings')}
+                  className="justify-start text-catalog-softBrown hover:text-catalog-teal w-full px-4"
                 >
                   <Settings className="h-5 w-5 mr-2" />
                   Settings
@@ -118,8 +114,8 @@ const Header = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => navigate('/profile')}
-                  className="justify-start text-catalog-softBrown hover:text-catalog-teal"
+                  onClick={() => handleNavigation('/profile')}
+                  className="justify-start text-catalog-softBrown hover:text-catalog-teal w-full px-4"
                 >
                   <User className="h-5 w-5 mr-2" />
                   {currentUser?.name || 'Profile'}
@@ -130,7 +126,6 @@ const Header = () => {
         </div>
       </header>
       
-      {/* Add Toaster here to make it always visible */}
       <Toaster />
     </>
   );

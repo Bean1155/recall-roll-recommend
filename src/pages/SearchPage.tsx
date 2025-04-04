@@ -5,8 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UtensilsCrossed, Film } from "lucide-react";
 import { CatalogCard as CatalogCardType } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
-import CatalogCard from "@/components/CatalogCard";
-import Envelope from "@/components/Envelope";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
