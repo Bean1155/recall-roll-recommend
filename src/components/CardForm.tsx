@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -383,7 +383,6 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
     setIsExternalSearchDialogOpen(false);
   };
   
-  // Handler for web search results selection
   const handleWebSearchResultSelect = (result: FoodCard | EntertainmentCard) => {
     console.log("Selected web search item:", result);
     
@@ -668,7 +667,6 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
                   </div>
                 </div>
                 
-                {/* Integrated WebSearchAutofill component here */}
                 <WebSearchAutofill 
                   type={isFoodCard ? 'food' : 'entertainment'}
                   onResultSelect={handleWebSearchResultSelect}
@@ -932,3 +930,412 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
               <div>
                 <Label htmlFor="tags" className="flex items-center">
                   <Tag className="w-4 h-4 mr-2" />
+                  Tags
+                </Label>
+                <Input
+                  id="tags"
+                  name="tags"
+                  value={formData.tags}
+                  onChange={handleChange}
+                  className="catalog-input"
+                  placeholder="Enter tags separated by commas"
+                />
+                <p className="text-xs text-muted-foreground mt-1">e.g., spicy, family-friendly, outdoor seating</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <Label htmlFor="title" className="text-base">Title <span className="text-red-500">*</span></Label>
+                    <p className="text-xs italic mb-1">Movie/Show/Book/Game Title</p>
+                  </div>
+                </div>
+
+                <WebSearchAutofill 
+                  type="entertainment"
+                  onResultSelect={handleWebSearchResultSelect}
+                  className="mb-4"
+                />
+                
+                <Input
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  required
+                  className="catalog-input"
+                  placeholder="Entertainment Title"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="creator">Creator</Label>
+                <Input
+                  id="creator"
+                  name="creator"
+                  value={formData.creator}
+                  onChange={handleChange}
+                  className="catalog-input"
+                  placeholder="Director, Author, Developer..."
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="entertainmentCategory">Category <span className="text-red-500">*</span> <span className="text-xs text-muted-foreground">(Select from menu)</span></Label>
+                <Select
+                  value={formData.entertainmentCategory}
+                  onValueChange={(value) => handleSelectChange('entertainmentCategory', value)}
+                  required
+                >
+                  <SelectTrigger className="catalog-input">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {defaultEntertainmentCategories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category.charAt(0).toUpperCase() + category.slice(1)}
+                      </SelectItem>
+                    ))}
+                    
+                    {customEntertainmentCategories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category.charAt(0).toUpperCase() + category.slice(1)}
+                      </SelectItem>
+                    ))}
+                    
+                    <SelectItem value="add_new_category" className="text-catalog-teal font-semibold">
+                      + Add Category
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="genre">Genre</Label>
+                <Input
+                  id="genre"
+                  name="genre"
+                  value={formData.genre}
+                  onChange={handleChange}
+                  className="catalog-input"
+                  placeholder="Action, Drama, RPG, etc."
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="medium">Platform/Medium</Label>
+                <Input
+                  id="medium"
+                  name="medium"
+                  value={formData.medium}
+                  onChange={handleChange}
+                  className="catalog-input"
+                  placeholder="Netflix, Hulu, PlayStation, etc."
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="status">Status <span className="text-xs text-muted-foreground">(Select from menu)</span></Label>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => handleSelectChange('status', value)}
+                >
+                  <SelectTrigger className="catalog-input">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Watched">Watched</SelectItem>
+                    <SelectItem value="Want to Watch">Want to Watch</SelectItem>
+                    <SelectItem value="Currently Watching">Currently Watching</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1">
+                <Label htmlFor="date" className="flex items-center">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Date Experienced
+                </Label>
+                <Input
+                  id="date"
+                  name="date"
+                  type="date"
+                  value={formData.date}
+                  onChange={handleChange}
+                  className="catalog-input"
+                />
+              </div>
+
+              <div className="space-y-1">
+                {showRating && (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="rating" className="flex items-center">
+                        <Star className="w-4 h-4 mr-2" />
+                        Rating
+                      </Label>
+                      
+                      <RadioGroup 
+                        value={formData.hasRating ? "rated" : "not-rated"}
+                        onValueChange={(value) => handleRatingToggle(value === "rated")}
+                        className="flex space-x-4"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="rated" id="rating-yes" />
+                          <Label htmlFor="rating-yes" className="text-sm">Rate it</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="not-rated" id="rating-no" />
+                          <Label htmlFor="rating-no" className="text-sm">No rating yet</Label>
+                        </div>
+                      </RadioGroup>
+                    </div>
+                    
+                    {formData.hasRating && (
+                      <>
+                        <div className="flex items-center space-x-2 py-4">
+                          <Slider
+                            id="rating"
+                            min={1}
+                            max={5}
+                            step={1}
+                            value={[formData.rating]}
+                            onValueChange={handleRatingChange}
+                          />
+                          <div className="w-24 text-center">
+                            <span className="font-semibold">{formData.rating}</span>
+                            <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
+                          </div>
+                        </div>
+                        <div className="flex justify-between text-xs">
+                          <span>1 - Yikes</span>
+                          <span>5 - Amazing</span>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="url" className="flex items-center">
+                  <LinkIcon className="w-4 h-4 mr-2" />
+                  URL
+                </Label>
+                <Input
+                  id="url"
+                  name="url"
+                  value={formData.url}
+                  onChange={handleChange}
+                  className="catalog-input"
+                  placeholder="Website or streaming link"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="notes">Notes</Label>
+                <Textarea
+                  id="notes"
+                  name="notes"
+                  value={formData.notes}
+                  onChange={handleChange}
+                  className="catalog-input h-20"
+                  placeholder="Your thoughts, impressions, and memorable details..."
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="tags" className="flex items-center">
+                  <Tag className="w-4 h-4 mr-2" />
+                  Tags
+                </Label>
+                <Input
+                  id="tags"
+                  name="tags"
+                  value={formData.tags}
+                  onChange={handleChange}
+                  className="catalog-input"
+                  placeholder="Enter tags separated by commas"
+                />
+                <p className="text-xs text-muted-foreground mt-1">e.g., action, sci-fi, sequel</p>
+              </div>
+            </>
+          )}
+          
+          <div className="flex justify-end space-x-4 mt-8">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate(isFoodCard ? '/bites' : '/blockbusters')}
+            >
+              Cancel
+            </Button>
+            <Button type="submit">
+              {isEditMode ? 'Update' : 'Save'}
+            </Button>
+          </div>
+        </div>
+      </form>
+      
+      <Dialog open={isSearchDialogOpen} onOpenChange={setIsSearchDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Search for {isFoodCard ? 'Food' : 'Entertainment'}</DialogTitle>
+            <DialogDescription>
+              Find and import information from our database or the web.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <Tabs defaultValue="web" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="web" onClick={() => handleSearchTypeChange("web")} className="flex items-center gap-2">
+                  <Globe className="h-4 w-4" /> Web
+                </TabsTrigger>
+                <TabsTrigger value="local" onClick={() => handleSearchTypeChange("local")} className="flex items-center gap-2">
+                  <Database className="h-4 w-4" /> Local
+                </TabsTrigger>
+              </TabsList>
+              
+              <div className="mt-4">
+                <div className="flex w-full items-center space-x-2">
+                  <Input
+                    value={searchQuery}
+                    onChange={handleSearchQueryChange}
+                    placeholder={`Search for ${isFoodCard ? 'restaurants, cafes...' : 'movies, shows, games...'}`}
+                    className="flex-1"
+                  />
+                  <Button 
+                    onClick={() => handleSearch(searchQuery)} 
+                    disabled={!searchQuery.trim() || isSearching}
+                  >
+                    {isSearching ? "Searching..." : "Search"}
+                  </Button>
+                </div>
+              </div>
+            </Tabs>
+            
+            {isSearching && (
+              <div className="flex justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+              </div>
+            )}
+            
+            {!isSearching && hasPerformedSearch && searchResults.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                No results found. Try a different search term or source.
+              </div>
+            )}
+            
+            {!isSearching && searchResults.length > 0 && (
+              <div className="max-h-[300px] overflow-y-auto space-y-2">
+                {searchResults.map((item) => (
+                  <div 
+                    key={item.id} 
+                    className="p-3 border rounded-md hover:bg-accent cursor-pointer"
+                    onClick={() => handleSearchItemSelect(item)}
+                  >
+                    <div className="font-medium">{item.title}</div>
+                    {item.creator && <div className="text-sm text-muted-foreground">{item.creator}</div>}
+                    {isFoodCard ? (
+                      <div className="text-xs mt-1 flex flex-wrap gap-1">
+                        {item.cuisine && <span className="bg-blue-100 px-2 py-0.5 rounded">{item.cuisine}</span>}
+                        {item.location && <span className="bg-green-100 px-2 py-0.5 rounded">{item.location}</span>}
+                      </div>
+                    ) : (
+                      <div className="text-xs mt-1 flex flex-wrap gap-1">
+                        {item.genre && <span className="bg-purple-100 px-2 py-0.5 rounded">{item.genre}</span>}
+                        {item.medium && <span className="bg-indigo-100 px-2 py-0.5 rounded">{item.medium}</span>}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="sm:justify-between">
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button 
+              type="button" 
+              variant="outline"
+              onClick={handleExternalSearchClick}
+              className="flex items-center"
+            >
+              <Globe className="mr-2 h-4 w-4" /> Search on Google
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={isExternalSearchDialogOpen} onOpenChange={setIsExternalSearchDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Search on Google</DialogTitle>
+            <DialogDescription>
+              Open a Google search in a new tab.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleExternalSearchSubmit}>
+            <div className="grid gap-4 py-4">
+              <div>
+                <Label htmlFor="externalSearch">Search Term</Label>
+                <Input
+                  id="externalSearch"
+                  value={searchQuery}
+                  onChange={handleSearchQueryChange}
+                  placeholder={isFoodCard ? "Restaurant or food name" : "Movie or show name"}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="secondary" onClick={() => setIsExternalSearchDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">Search Google</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Category</DialogTitle>
+            <DialogDescription>
+              Create a custom category for your {isFoodCard ? 'food' : 'entertainment'} items.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div>
+              <Label htmlFor="newCategory">Category Name</Label>
+              <Input
+                id="newCategory"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                placeholder="Enter new category name"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button type="button" variant="secondary" onClick={() => setIsAddCategoryDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={handleAddNewCategory}>Add Category</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default CardForm;
