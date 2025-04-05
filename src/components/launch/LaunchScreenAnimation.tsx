@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-import LaunchScreenTitle from "./LaunchScreenTitle";
 import LaunchScreenLogo from "./LaunchScreenLogo";
 
 interface LaunchScreenAnimationProps {
@@ -40,7 +39,7 @@ const LaunchScreenAnimation: React.FC<LaunchScreenAnimationProps> = ({
 
   return (
     <div 
-      className={`relative flex flex-col items-center justify-center transition-all duration-1000 transform mb-6 w-full ${stamped ? 'scale-100 opacity-100' : 'scale-150 opacity-0'}`}
+      className={`relative flex flex-col items-center justify-center transition-all duration-1000 transform mt-6 w-full ${stamped ? 'scale-100 opacity-100' : 'scale-150 opacity-0'}`}
     >
       {/* Envelope container */}
       <div className="w-full max-w-sm">
@@ -53,12 +52,7 @@ const LaunchScreenAnimation: React.FC<LaunchScreenAnimationProps> = ({
           }}
         >
           <div className="font-bold text-amber-900 uppercase tracking-wider text-sm">TOTAL RECALL CATALOG</div>
-          <div className="mt-1 text-xs text-amber-800">Your Personal Library</div>
-        </div>
-        
-        {/* Logo */}
-        <div className="flex justify-center -mt-2">
-          <LaunchScreenLogo stamped={stamped} />
+          <div className="mt-1 text-xs text-amber-800">Tracking Every Bite and Blockbuster</div>
         </div>
       </div>
     </div>

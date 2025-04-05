@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import LaunchScreenAnimation from "./launch/LaunchScreenAnimation";
 import LaunchScreenForm from "./launch/LaunchScreenForm";
+import LaunchScreenTitle from "./launch/LaunchScreenTitle";
 
 interface LaunchScreenProps {
   forcedOpen?: boolean;
@@ -53,16 +54,22 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
             minHeight: '550px'
           }}
         >
-          <LaunchScreenAnimation 
-            open={open}
-            forcedOpen={forcedOpen}
-            setStamped={setStamped}
+          {/* Add the title component at the top */}
+          <LaunchScreenTitle 
             stamped={stamped}
           />
           
           <LaunchScreenForm 
             stamped={stamped}
             onSubmitSuccess={handleFormSubmit}
+          />
+          
+          {/* Move the animation (envelope part) to the bottom */}
+          <LaunchScreenAnimation 
+            open={open}
+            forcedOpen={forcedOpen}
+            setStamped={setStamped}
+            stamped={stamped}
           />
         </div>
       </DialogContent>

@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from "react";
+import LaunchScreenLogo from "./LaunchScreenLogo";
 
 interface LaunchScreenTitleProps {
   stamped: boolean;
@@ -30,12 +31,10 @@ const LaunchScreenTitle: React.FC<LaunchScreenTitleProps> = ({ stamped }) => {
   }, [stamped, displayTextLine1, displayTextLine2]);
 
   return (
-    <div 
-      className="text-center transition-all duration-700"
-      style={{
-        fontFamily: "'American Typewriter', 'Courier New', monospace",
-      }}
-    >
+    <div className="text-center mb-6 transition-all duration-700">
+      {/* Add the new logo at the top */}
+      <LaunchScreenLogo stamped={stamped} />
+      
       <div className="mb-4">
         <div className="flex justify-between items-start">
           <div className="w-full">

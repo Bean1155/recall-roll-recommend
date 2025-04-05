@@ -13,9 +13,9 @@ const LaunchScreenLogo: React.FC<LaunchScreenLogoProps> = ({ stamped }) => {
     >
       <div className="absolute inset-0 rounded-md opacity-0"></div>
       
-      <div className="relative w-24 h-24 flex items-center justify-center">
+      <div className="relative w-32 h-32 flex items-center justify-center">
         <img 
-          src="/lovable-uploads/c1229700-5ec5-4c21-baef-dc535d219a0e.png" 
+          src="/lovable-uploads/8408dab2-58e0-488d-927d-f0930cf39585.png" 
           alt="Total Recall Catalog Logo" 
           className="w-full h-full object-contain"
           style={{ 
