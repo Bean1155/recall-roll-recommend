@@ -10,10 +10,12 @@ import {
 import { Link } from "react-router-dom";
 import LaunchScreen from "@/components/LaunchScreen";
 import { useUser } from "@/contexts/UserContext";
+import { CatalogCollapsible } from "@/components/ui/collapsible";
 
 const Index = () => {
   const { currentUser } = useUser();
   const [showLaunch, setShowLaunch] = useState(false);
+  const [howItWorksOpen, setHowItWorksOpen] = useState(false);
   
   const currentDate = new Date();
   const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
@@ -54,20 +56,20 @@ const Index = () => {
             </div>
             
             <Link to="/bites" className="grid grid-cols-3 border-b border-catalog-softBrown hover:bg-catalog-cream">
-              <div className="border-r border-catalog-softBrown py-6 flex items-center justify-center">
-                <Search size={20} className="text-vintage-red" />
+              <div className="border-r border-catalog-softBrown py-8 flex items-center justify-center">
+                <Search size={24} className="text-vintage-red" />
               </div>
-              <div className="border-r border-catalog-softBrown py-6 col-span-2 flex items-center pl-4">
-                <span className="font-script text-2xl text-vintage-red">Browse</span>
+              <div className="border-r border-catalog-softBrown py-8 col-span-2 flex items-center pl-6">
+                <span className="font-script text-3xl text-vintage-red">Browse</span>
               </div>
             </Link>
             
             <Link to="/create/food" className="grid grid-cols-3 border-b border-catalog-softBrown hover:bg-catalog-cream">
-              <div className="border-r border-catalog-softBrown py-6 flex items-center justify-center">
-                <Plus size={20} className="text-[#3A7D44]" />
+              <div className="border-r border-catalog-softBrown py-8 flex items-center justify-center">
+                <Plus size={24} className="text-[#3A7D44]" />
               </div>
-              <div className="border-r border-catalog-softBrown py-6 col-span-2 flex items-center pl-4">
-                <span className="font-script text-2xl text-[#3A7D44]">Add New</span>
+              <div className="border-r border-catalog-softBrown py-8 col-span-2 flex items-center pl-6">
+                <span className="font-script text-3xl text-[#3A7D44]">Add New</span>
               </div>
             </Link>
             
@@ -99,20 +101,20 @@ const Index = () => {
             </div>
             
             <Link to="/blockbusters" className="grid grid-cols-3 border-b border-catalog-softBrown hover:bg-catalog-cream">
-              <div className="border-r border-catalog-softBrown py-6 flex items-center justify-center">
-                <Search size={20} className="text-vintage-red" />
+              <div className="border-r border-catalog-softBrown py-8 flex items-center justify-center">
+                <Search size={24} className="text-vintage-red" />
               </div>
-              <div className="border-r border-catalog-softBrown py-6 col-span-2 flex items-center pl-4">
-                <span className="font-script text-2xl text-vintage-red">Browse</span>
+              <div className="border-r border-catalog-softBrown py-8 col-span-2 flex items-center pl-6">
+                <span className="font-script text-3xl text-vintage-red">Browse</span>
               </div>
             </Link>
             
             <Link to="/create/entertainment" className="grid grid-cols-3 border-b border-catalog-softBrown hover:bg-catalog-cream">
-              <div className="border-r border-catalog-softBrown py-6 flex items-center justify-center">
-                <Plus size={20} className="text-[#3A7D44]" />
+              <div className="border-r border-catalog-softBrown py-8 flex items-center justify-center">
+                <Plus size={24} className="text-[#3A7D44]" />
               </div>
-              <div className="border-r border-catalog-softBrown py-6 col-span-2 flex items-center pl-4">
-                <span className="font-script text-2xl text-[#3A7D44]">Add New</span>
+              <div className="border-r border-catalog-softBrown py-8 col-span-2 flex items-center pl-6">
+                <span className="font-script text-3xl text-[#3A7D44]">Add New</span>
               </div>
             </Link>
             
@@ -127,16 +129,16 @@ const Index = () => {
           </div>
         </div>
         
-        {/* How It Works Section */}
-        <div className="border-2 border-catalog-softBrown rounded-lg shadow-lg mb-12 bg-white overflow-hidden transform hover:scale-[1.02] transition-transform duration-300" 
-          style={{
-            boxShadow: "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px"
-          }}>
-          <div className="bg-vintage-orange p-4 border-b-2 border-catalog-softBrown">
-            <h2 className="text-2xl font-bold text-center font-typewriter text-[#4a3f35]">How It Works</h2>
-          </div>
-          
-          <div className="p-8 relative bg-[#FCFCF7]">
+        {/* How It Works Section - now collapsible */}
+        <CatalogCollapsible
+          label="How It Works"
+          backgroundColor="#e18336" 
+          textColor="#4a3f35"
+          open={howItWorksOpen}
+          onOpenChange={setHowItWorksOpen}
+          className="mb-12"
+        >
+          <div className="relative bg-[#FCFCF7] p-8">
             <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-[#FF9999] opacity-70"></div>
             
             <div className="relative pl-12 pr-4" 
@@ -178,7 +180,7 @@ const Index = () => {
               <div className="absolute left-2 bottom-[10%] h-6 w-6 rounded-full bg-white border-2 border-[#9E8979] shadow-inner"></div>
             </div>
           </div>
-        </div>
+        </CatalogCollapsible>
       </GridLayout>
     </>
   );
