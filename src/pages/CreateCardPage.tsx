@@ -1,12 +1,12 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import CardForm from "@/components/CardForm";
 import { CardType } from "@/lib/types";
 import GridLayout from "@/components/GridLayout";
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { forceRewardsRefresh, showRewardToast, addPointsForCardCreation } from "@/utils/rewardUtils";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "@/components/ui/use-toast";
+import { ArrowLeft } from "lucide-react";
 
 const CreateCardPage = () => {
   const { type } = useParams<{ type: string }>();
@@ -15,6 +15,7 @@ const CreateCardPage = () => {
   const { currentUser } = useUser();
   const hasInitializedRef = useRef(false);
   const rewardRefreshIntervalRef = useRef<number | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
   
   const title = cardType === 'food' ? 'Add Bite' : 'Add Blockbuster';
   
@@ -115,6 +116,30 @@ const CreateCardPage = () => {
     };
   }, [currentUser]);
 
+  // Listen for window blur/focus events to detect when user goes to browser search
+  useEffect(() => {
+    const handleBlur = () => {
+      console.log("User left the page - likely for browser search");
+      setIsSearching(true);
+    };
+    
+    const handleFocus = () => {
+      console.log("User returned to the page");
+      // Keep the button visible for a moment after return
+      setTimeout(() => {
+        setIsSearching(false);
+      }, 3000);
+    };
+    
+    window.addEventListener('blur', handleBlur);
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      window.removeEventListener('blur', handleBlur);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
+
   const handleFormSubmitSuccess = () => {
     console.log("CreateCardPage: CardForm submission success callback");
     
@@ -146,6 +171,19 @@ const CreateCardPage = () => {
         type={cardType as CardType} 
         onSubmitSuccess={handleFormSubmitSuccess}
       />
+      
+      {/* Floating button that appears when user is searching in browser */}
+      {isSearching && (
+        <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-[1000] animate-bounce">
+          <button
+            onClick={() => setIsSearching(false)}
+            className="flex items-center gap-2 bg-catalog-teal text-white px-4 py-3 rounded-full shadow-lg hover:bg-catalog-teal/90 transition-all"
+          >
+            <ArrowLeft size={18} />
+            <span>Back to {cardType === 'food' ? 'Bite' : 'Blockbuster'} Form</span>
+          </button>
+        </div>
+      )}
     </GridLayout>
   );
 };
