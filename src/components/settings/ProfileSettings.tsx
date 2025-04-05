@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useUser } from "@/contexts/UserContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,17 +7,66 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UploadCloud } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 export const ProfileSettings = () => {
-  const { userName, setUserName } = useUser();
+  const { userName, setUserName, profile, updateProfile } = useUser();
   const [name, setName] = useState(userName);
-  const [bio, setBio] = useState("Food and movie enthusiast");
-  const [displayImage, setDisplayImage] = useState("https://i.pravatar.cc/150?img=32");
+  const [bio, setBio] = useState(profile.bio);
+  const [displayImage, setDisplayImage] = useState(profile.avatar);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     // Update name if userName changes in context
     setName(userName);
-  }, [userName]);
+    setBio(profile.bio);
+    setDisplayImage(profile.avatar);
+  }, [userName, profile.bio, profile.avatar]);
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  };
+
+  const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setBio(e.target.value);
+  };
+
+  const handleSaveChanges = () => {
+    // Save name to user context
+    setUserName(name);
+    
+    // Save bio and avatar to profile
+    updateProfile({
+      bio: bio,
+      avatar: displayImage
+    });
+    
+    toast({
+      title: "Profile updated",
+      description: "Your profile information has been saved.",
+    });
+  };
+
+  const handlePhotoClick = () => {
+    // Programmatically click the hidden file input
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Convert the selected file to a data URL
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          setDisplayImage(event.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -27,10 +76,23 @@ export const ProfileSettings = () => {
         <div className="flex flex-col items-center gap-3">
           <Avatar className="w-24 h-24 border-2 border-catalog-teal">
             <AvatarImage src={displayImage} />
-            <AvatarFallback>{userName.split(" ").map(n => n[0]).join("")}</AvatarFallback>
+            <AvatarFallback>{name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
           </Avatar>
           
-          <Button variant="outline" size="sm" className="text-xs">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            className="hidden"
+          />
+          
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="text-xs"
+            onClick={handlePhotoClick}
+          >
             <UploadCloud className="h-3 w-3 mr-1" />
             Change Photo
           </Button>
@@ -42,7 +104,7 @@ export const ProfileSettings = () => {
             <Input 
               id="displayName" 
               value={name} 
-              onChange={(e) => setName(e.target.value)} 
+              onChange={handleNameChange} 
               className="catalog-input"
             />
           </div>
@@ -52,12 +114,19 @@ export const ProfileSettings = () => {
             <Textarea 
               id="bio" 
               value={bio} 
-              onChange={(e) => setBio(e.target.value)} 
+              onChange={handleBioChange} 
               className="catalog-input resize-none" 
               placeholder="Tell us about yourself..." 
               rows={3}
             />
           </div>
+
+          <Button 
+            className="bg-catalog-teal hover:bg-catalog-darkTeal mt-2"
+            onClick={handleSaveChanges}
+          >
+            Save Profile Changes
+          </Button>
         </div>
       </div>
     </div>

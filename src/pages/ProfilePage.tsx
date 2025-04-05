@@ -1,30 +1,79 @@
 
-import React from "react";
+import React, { useRef } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Edit, Settings, Share2, BookmarkPlus } from "lucide-react";
+import { Edit, Settings, Share2, BookmarkPlus, Camera } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { getCardsByType } from "@/lib/data";
+import { toast } from "@/components/ui/use-toast";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const { userName, profile } = useUser();
+  const { userName, profile, updateProfile } = useUser();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Get stats for the user's cards
   const bites = getCardsByType('food');
   const blockbusters = getCardsByType('entertainment');
 
+  const handlePhotoClick = () => {
+    // Programmatically click the hidden file input
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Convert the selected file to a data URL
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          updateProfile({
+            avatar: event.target.result as string
+          });
+          
+          toast({
+            title: "Profile photo updated",
+            description: "Your profile photo has been changed.",
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <GridLayout title="My Profile">
       <div className="max-w-md mx-auto catalog-card p-6">
         <div className="flex flex-col items-center space-y-4">
-          <Avatar className="w-24 h-24 border-2 border-catalog-teal">
-            <AvatarImage src={profile.avatar} />
-            <AvatarFallback>{userName.split(" ").map(n => n[0]).join("")}</AvatarFallback>
-          </Avatar>
+          <div className="relative">
+            <Avatar className="w-24 h-24 border-2 border-catalog-teal">
+              <AvatarImage src={profile.avatar} />
+              <AvatarFallback>{userName.split(" ").map(n => n[0]).join("")}</AvatarFallback>
+            </Avatar>
+            
+            <Button 
+              size="icon" 
+              variant="outline" 
+              className="absolute bottom-0 right-0 rounded-full w-8 h-8 bg-white shadow-md"
+              onClick={handlePhotoClick}
+            >
+              <Camera className="h-4 w-4" />
+            </Button>
+            
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              className="hidden"
+            />
+          </div>
           
           <div className="text-center">
             <h2 className="text-2xl font-semibold">{userName}</h2>
@@ -50,7 +99,7 @@ const ProfilePage = () => {
             <Button 
               className="flex-1" 
               variant="outline"
-              onClick={() => navigate('/settings')}
+              onClick={() => navigate('/settings?tab=profile')}
             >
               <Edit className="mr-2 h-4 w-4" />
               Edit Profile
@@ -96,7 +145,7 @@ const ProfilePage = () => {
             </p>
             <Button 
               className="w-full bg-catalog-teal hover:bg-catalog-darkTeal"
-              onClick={() => navigate('/settings')}
+              onClick={() => navigate('/settings?tab=account')}
             >
               Sign Up Now
             </Button>
