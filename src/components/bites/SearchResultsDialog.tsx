@@ -1,6 +1,6 @@
 
 import { X, MapPin, Globe } from "lucide-react";
-import { FoodCard } from "@/lib/types";
+import { FoodCard, EntertainmentCard } from "@/lib/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Dialog,
@@ -30,9 +30,9 @@ import { toast } from "@/components/ui/use-toast";
 interface SearchResultsDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  results: FoodCard[];
+  results: (FoodCard | EntertainmentCard)[];
   categoryColors: Record<string, string>;
-  onCardClick: (card: FoodCard) => void;
+  onCardClick: (card: FoodCard | EntertainmentCard) => void;
   isLoading?: boolean;
   searchSource?: "web" | "local";
 }
@@ -70,50 +70,69 @@ const SearchResultsDialog = ({
         <Command className="rounded-lg border shadow-md overflow-hidden bg-white">
           <CommandList className="max-h-[350px] overflow-y-auto p-2">
             <CommandGroup heading={`${searchSource === "web" ? "Web Search Results" : "Search Results"}`}>
-              {results.map((card) => (
-                <CommandItem
-                  key={card.id}
-                  onSelect={() => {
-                    console.log("Selected card from search results:", card);
-                    onCardClick(card);
-                  }}
-                  className="cursor-pointer p-4 hover:bg-slate-100 data-[selected=true]:bg-slate-100 rounded-md flex flex-col gap-2"
-                  data-testid={`search-result-${card.id}`}
-                >
-                  <div className="flex flex-col w-full">
-                    <div className="font-medium text-base">{card.title}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {card.creator && <span>{card.creator} • </span>}
-                      {card.category || 'Various'}
-                      {card.cuisine && <span> • {card.cuisine}</span>}
+              {results.map((card) => {
+                // Determine card type and set appropriate category value
+                const cardType = card.type;
+                const categoryKey = cardType === 'food' 
+                  ? (card as FoodCard).category 
+                  : (card as EntertainmentCard).entertainmentCategory;
+                
+                return (
+                  <CommandItem
+                    key={card.id}
+                    onSelect={() => {
+                      console.log("Selected card from search results:", card);
+                      onCardClick(card);
+                    }}
+                    className="cursor-pointer p-4 hover:bg-slate-100 data-[selected=true]:bg-slate-100 rounded-md flex flex-col gap-2"
+                    data-testid={`search-result-${card.id}`}
+                  >
+                    <div className="flex flex-col w-full">
+                      <div className="font-medium text-base">{card.title}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {card.creator && <span>{card.creator} • </span>}
+                        {cardType === 'food' 
+                          ? (card as FoodCard).category || 'Various'
+                          : (card as EntertainmentCard).entertainmentCategory || 'Various'}
+                        {cardType === 'food' && (card as FoodCard).cuisine && 
+                          <span> • {(card as FoodCard).cuisine}</span>}
+                        {cardType === 'entertainment' && (card as EntertainmentCard).genre && 
+                          <span> • {(card as EntertainmentCard).genre}</span>}
+                      </div>
+                      
+                      {cardType === 'food' && (card as FoodCard).location && (
+                        <div className="text-xs text-muted-foreground mt-1 flex items-center">
+                          <MapPin className="h-3 w-3 mr-1" />
+                          {(card as FoodCard).location}
+                        </div>
+                      )}
+                      
+                      {cardType === 'entertainment' && (card as EntertainmentCard).medium && (
+                        <div className="text-xs text-muted-foreground mt-1">
+                          Available on: {(card as EntertainmentCard).medium}
+                        </div>
+                      )}
+                      
+                      {card.url && (
+                        <div className="mt-2 text-xs text-blue-500 flex items-center">
+                          <Globe className="h-3 w-3 mr-1" />
+                          <a href={card.url} target="_blank" rel="noopener noreferrer" 
+                             className="hover:underline truncate max-w-[250px]"
+                             onClick={(e) => e.stopPropagation()}>
+                            {card.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}
+                          </a>
+                        </div>
+                      )}
+                      
+                      {searchSource === "web" && (
+                        <div className="mt-1 text-xs text-green-600">
+                          Click to add to your catalog
+                        </div>
+                      )}
                     </div>
-                    
-                    {card.location && (
-                      <div className="text-xs text-muted-foreground mt-1 flex items-center">
-                        <MapPin className="h-3 w-3 mr-1" />
-                        {card.location}
-                      </div>
-                    )}
-                    
-                    {card.url && (
-                      <div className="mt-2 text-xs text-blue-500 flex items-center">
-                        <Globe className="h-3 w-3 mr-1" />
-                        <a href={card.url} target="_blank" rel="noopener noreferrer" 
-                           className="hover:underline truncate max-w-[250px]"
-                           onClick={(e) => e.stopPropagation()}>
-                          {card.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}
-                        </a>
-                      </div>
-                    )}
-                    
-                    {searchSource === "web" && (
-                      <div className="mt-1 text-xs text-green-600">
-                        Click to add to your catalog
-                      </div>
-                    )}
-                  </div>
-                </CommandItem>
-              ))}
+                  </CommandItem>
+                );
+              })}
             </CommandGroup>
           </CommandList>
           <CommandEmpty className="p-4 text-center">

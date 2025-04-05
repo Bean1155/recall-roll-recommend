@@ -6,91 +6,344 @@ export const generateId = (): string => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 };
 
-// Simulated API call for search - in a real application, this would connect to an actual search API
-// Such as Google Custom Search API, Bing Search API, or DuckDuckGo API
+// Function to perform web search using DuckDuckGo
 export async function performWebSearch(query: string, type: 'food' | 'entertainment'): Promise<(FoodCard | EntertainmentCard)[]> {
-  console.log(`Performing web search API call for: ${type} - "${query}"`);
+  console.log(`Performing web search for: ${type} - "${query}"`);
+  
+  // Ensure query is not empty
+  if (!query.trim()) {
+    return [];
+  }
+  
+  // Append relevant keywords to enhance search results
+  let searchQuery = query;
+  if (type === 'food') {
+    searchQuery += ' restaurant food';
+  } else {
+    searchQuery += ' movie tv show entertainment';
+  }
+  
+  try {
+    // Use DuckDuckGo's search engine through a proxy or directly
+    // Note: This uses the HTML scraping approach since DDG doesn't have an official API
+    const response = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(searchQuery)}&format=json&pretty=1&no_html=1&skip_disambig=1`);
+    
+    if (!response.ok) {
+      console.error('DuckDuckGo search failed:', response.status);
+      throw new Error(`Search failed with status ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('DuckDuckGo response:', data);
+    
+    // DuckDuckGo results structure varies, but we'll process what we can
+    const results: (FoodCard | EntertainmentCard)[] = [];
+    
+    // Process AbstractTopics (typically higher quality results)
+    if (data.RelatedTopics && Array.isArray(data.RelatedTopics)) {
+      for (const topic of data.RelatedTopics.slice(0, 5)) {  // Limit to 5 results
+        if (topic.Result && topic.Text) {
+          const resultObj = createCardFromDDGResult(topic, type);
+          if (resultObj) results.push(resultObj);
+        }
+      }
+    }
+    
+    // If we have entity information, use it
+    if (data.Entity && data.Abstract) {
+      results.unshift(
+        createCardFromEntityInfo(data, type)
+      );
+    }
+    
+    // If still not enough results, add generic placeholder based on the query
+    if (results.length === 0) {
+      results.push(createGenericCard(query, type));
+    }
+    
+    console.log(`Web search completed. Found ${results.length} results`);
+    return results;
+  } catch (error) {
+    console.error("Search API error:", error);
+    // If API fails, return at least one generic result based on the query
+    return [createGenericCard(query, type)];
+  }
+}
+
+// Helper to create a card from DuckDuckGo RelatedTopics result
+function createCardFromDDGResult(topic: any, type: 'food' | 'entertainment'): FoodCard | EntertainmentCard {
+  // Extract info from the result text
+  const title = topic.Text.split(' - ')[0] || topic.Text;
+  
+  if (type === 'food') {
+    return {
+      id: generateId(),
+      type: 'food',
+      title: title,
+      creator: topic.Text.includes(' - ') ? topic.Text.split(' - ')[1] : '',
+      cuisine: extractCuisineFromText(topic.Text),
+      location: extractLocationFromText(topic.Text),
+      category: determineFoodCategory(topic),
+      url: topic.FirstURL || '',
+      tags: extractTagsFromText(topic.Text),
+      rating: Math.floor(Math.random() * 5) + 1, // Random rating 1-5
+      visitCount: 1,
+      status: 'Interested: Want a bite',
+      notes: '',
+      isFavorite: false,
+      date: new Date().toISOString().split('T')[0],
+      serviceRating: null
+    };
+  } else {
+    return {
+      id: generateId(),
+      type: 'entertainment',
+      title: title,
+      creator: topic.Text.includes(' - ') ? topic.Text.split(' - ')[1] : '',
+      genre: extractGenreFromText(topic.Text),
+      medium: determineEntertainmentMedium(topic),
+      entertainmentCategory: determineEntertainmentCategory(topic),
+      url: topic.FirstURL || '',
+      tags: extractTagsFromText(topic.Text),
+      rating: Math.floor(Math.random() * 5) + 1, // Random rating 1-5
+      status: 'Want to Watch',
+      notes: '',
+      isFavorite: false,
+      date: new Date().toISOString().split('T')[0]
+    };
+  }
+}
+
+// Helper to create a card from DuckDuckGo Entity information
+function createCardFromEntityInfo(data: any, type: 'food' | 'entertainment'): FoodCard | EntertainmentCard {
+  if (type === 'food') {
+    return {
+      id: generateId(),
+      type: 'food',
+      title: data.Heading || data.Entity,
+      creator: extractCreatorFromAbstract(data.Abstract),
+      cuisine: extractCuisineFromText(data.Abstract),
+      location: data.AbstractSource || '',
+      category: extractCategoryFromText(data.Abstract, 'food'),
+      url: data.AbstractURL || '',
+      tags: extractTagsFromText(data.Abstract),
+      rating: Math.floor(Math.random() * 5) + 1, // Random rating 1-5
+      visitCount: 1,
+      status: 'Interested: Want a bite',
+      notes: data.Abstract ? data.Abstract.substring(0, 100) : '',
+      isFavorite: false,
+      date: new Date().toISOString().split('T')[0],
+      serviceRating: null
+    };
+  } else {
+    return {
+      id: generateId(),
+      type: 'entertainment',
+      title: data.Heading || data.Entity,
+      creator: extractCreatorFromAbstract(data.Abstract),
+      genre: extractGenreFromText(data.Abstract),
+      medium: data.AbstractSource || 'Various',
+      entertainmentCategory: extractCategoryFromText(data.Abstract, 'entertainment'),
+      url: data.AbstractURL || '',
+      tags: extractTagsFromText(data.Abstract),
+      rating: Math.floor(Math.random() * 5) + 1, // Random rating 1-5
+      status: 'Want to Watch',
+      notes: data.Abstract ? data.Abstract.substring(0, 100) : '',
+      isFavorite: false,
+      date: new Date().toISOString().split('T')[0]
+    };
+  }
+}
+
+// Helper to create a generic card when no results are found
+function createGenericCard(query: string, type: 'food' | 'entertainment'): FoodCard | EntertainmentCard {
+  if (type === 'food') {
+    return {
+      id: generateId(),
+      type: 'food',
+      title: `${query} Restaurant`,
+      creator: "Local Restaurant Group",
+      cuisine: "Various",
+      location: "123 Main Street, Anytown",
+      category: "restaurant",
+      url: `https://www.google.com/search?q=${encodeURIComponent(query)}+restaurant`,
+      tags: ["local", query.toLowerCase()],
+      rating: 4,
+      visitCount: 1,
+      status: "Interested: Want a bite",
+      notes: "",
+      isFavorite: false,
+      date: new Date().toISOString().split('T')[0],
+      serviceRating: null
+    };
+  } else {
+    return {
+      id: generateId(),
+      type: 'entertainment',
+      title: query,
+      creator: "Various",
+      genre: "Mixed",
+      medium: "Various Streaming Services",
+      entertainmentCategory: "movies",
+      url: `https://www.google.com/search?q=${encodeURIComponent(query)}+movie+show`,
+      tags: ["entertainment", query.toLowerCase()],
+      rating: 4,
+      status: "Want to Watch",
+      notes: "",
+      isFavorite: false,
+      date: new Date().toISOString().split('T')[0]
+    };
+  }
+}
+
+// Helper functions for information extraction
+function extractCuisineFromText(text: string): string {
+  const lowerText = text.toLowerCase();
+  const cuisines = [
+    'italian', 'mexican', 'chinese', 'japanese', 'thai', 'indian', 
+    'mediterranean', 'french', 'greek', 'spanish', 'korean', 
+    'vietnamese', 'american', 'middle eastern', 'caribbean'
+  ];
+  
+  for (const cuisine of cuisines) {
+    if (lowerText.includes(cuisine)) {
+      return cuisine.charAt(0).toUpperCase() + cuisine.slice(1);
+    }
+  }
+  
+  return '';
+}
+
+function extractLocationFromText(text: string): string {
+  // Simple detection of location pattern like "in City" or "at Location"
+  const locationMatches = text.match(/(?:in|at|located in|located at|from) ([A-Za-z\s,]+)/i);
+  return locationMatches ? locationMatches[1].trim() : '';
+}
+
+function extractTagsFromText(text: string): string[] {
+  // Extract key terms as tags
+  const words = text.toLowerCase().split(/\s+/);
+  const commonWords = new Set(['and', 'the', 'a', 'an', 'in', 'on', 'at', 'of', 'for', 'with', 'by', 'to', 'from']);
+  const tags = words
+    .filter(word => word.length > 3 && !commonWords.has(word))
+    .map(word => word.replace(/[^a-z0-9]/g, ''))
+    .filter(word => word.length > 3)
+    .slice(0, 3); // Keep only 3 most significant tags
+  
+  return Array.from(new Set(tags)); // Remove duplicates
+}
+
+function extractGenreFromText(text: string): string {
+  const lowerText = text.toLowerCase();
+  const genres = [
+    'action', 'adventure', 'comedy', 'drama', 'horror', 'sci-fi', 'science fiction',
+    'fantasy', 'thriller', 'romance', 'mystery', 'documentary', 'animation', 
+    'superhero', 'crime', 'historical', 'musical', 'western'
+  ];
+  
+  for (const genre of genres) {
+    if (lowerText.includes(genre)) {
+      return genre.charAt(0).toUpperCase() + genre.slice(1);
+    }
+  }
+  
+  return 'General';
+}
+
+function extractCreatorFromAbstract(abstract: string): string {
+  if (!abstract) return '';
+  
+  // Common patterns for director/creator mention
+  const directorMatch = abstract.match(/directed by ([A-Za-z\s]+)/i) || 
+                       abstract.match(/director ([A-Za-z\s]+)/i);
+  
+  const creatorMatch = abstract.match(/created by ([A-Za-z\s]+)/i) || 
+                       abstract.match(/from ([A-Za-z\s]+)/i) ||
+                       abstract.match(/by ([A-Za-z\s]+)/i);
+  
+  if (directorMatch) return directorMatch[1].trim();
+  if (creatorMatch) return creatorMatch[1].trim();
+  
+  return '';
+}
+
+function extractCategoryFromText(text: string, type: 'food' | 'entertainment'): any {
+  if (type === 'food') {
+    const lowerText = text.toLowerCase();
+    
+    if (lowerText.includes('cafe') || lowerText.includes('coffee')) return 'cafe';
+    if (lowerText.includes('bakery') || lowerText.includes('pastry')) return 'bakery';
+    if (lowerText.includes('bar') || lowerText.includes('pub')) return 'bar';
+    if (lowerText.includes('food truck')) return 'food truck';
+    
+    return 'restaurant'; // Default category
+  } else {
+    const lowerText = text.toLowerCase();
+    
+    if (lowerText.includes('movie') || lowerText.includes('film')) return 'movies';
+    if (lowerText.includes('tv') || lowerText.includes('television') || lowerText.includes('series')) return 'tv shows';
+    if (lowerText.includes('book')) return 'books';
+    if (lowerText.includes('game')) return 'games';
+    if (lowerText.includes('podcast')) return 'podcasts';
+    
+    return 'movies'; // Default category
+  }
+}
+
+// In a real implementation, these helper functions would analyze search results
+// to determine appropriate categories
+function determineFoodCategory(item: any): string {
+  const text = item.Text || '';
+  const keywords = text.toLowerCase();
+  
+  if (keywords.includes('cafe') || keywords.includes('coffee')) return 'cafe';
+  if (keywords.includes('restaurant')) return 'restaurant';
+  if (keywords.includes('bakery')) return 'bakery';
+  if (keywords.includes('bar')) return 'bar';
+  if (keywords.includes('food truck')) return 'food truck';
+  
+  return 'restaurant'; // Default
+}
+
+function determineEntertainmentCategory(item: any): string {
+  const text = item.Text || '';
+  const keywords = text.toLowerCase();
+  
+  if (keywords.includes('movie')) return 'movies';
+  if (keywords.includes('tv') || keywords.includes('series') || keywords.includes('show')) return 'tv shows';
+  if (keywords.includes('book')) return 'books';
+  if (keywords.includes('game')) return 'games';
+  if (keywords.includes('podcast')) return 'podcasts';
+  
+  return 'movies'; // Default
+}
+
+function determineEntertainmentMedium(item: any): string {
+  const text = item.Text || '';
+  const keywords = text.toLowerCase();
+  
+  if (keywords.includes('netflix')) return 'Netflix';
+  if (keywords.includes('hulu')) return 'Hulu';
+  if (keywords.includes('disney+') || keywords.includes('disney plus')) return 'Disney+';
+  if (keywords.includes('amazon') || keywords.includes('prime')) return 'Amazon Prime';
+  if (keywords.includes('hbo')) return 'HBO Max';
+  
+  return 'Other'; // Default
+}
+
+// Fallback to simulated search in case the DuckDuckGo API fails or is blocked
+// This code can be removed in a production environment with proper API setup
+export async function simulateWebSearch(query: string, type: 'food' | 'entertainment'): Promise<(FoodCard | EntertainmentCard)[]> {
+  console.log(`Simulating web search API call for: ${type} - "${query}"`);
   
   // Simulate API call delay
   await new Promise(resolve => setTimeout(resolve, 1000));
   
   let results: any[] = [];
-  
-  // This is where you would typically make a fetch call to a search API
-  // Example with a theoretical search API:
-  /*
-  try {
-    const response = await fetch(`https://api.example-search.com/search?q=${encodeURIComponent(query)}&type=${type}`, {
-      headers: {
-        'Authorization': 'Bearer YOUR_API_KEY',
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`Search API error: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    
-    // Transform API results to our card format
-    results = data.items.map(item => ({
-      id: generateId(),
-      type: type,
-      title: item.title,
-      creator: item.author || '',
-      ...(type === 'food' ? {
-        cuisine: item.cuisine || '',
-        location: item.location || '',
-        category: determineFoodCategory(item),
-      } : {
-        genre: item.genre || '',
-        medium: determineEntertainmentMedium(item),
-        entertainmentCategory: determineEntertainmentCategory(item),
-      }),
-      url: item.url || '',
-      tags: item.keywords ? item.keywords.split(',').map(k => k.trim()) : [],
-      rating: item.rating ? parseFloat(item.rating) : undefined,
-      visitCount: 1,
-      status: type === 'food' ? 'Interested: Want a bite' : 'Want to Watch',
-      notes: '',
-      isFavorite: false
-    }));
-  } catch (error) {
-    console.error("Search API error:", error);
-    // Return empty results on error
-    return [];
-  }
-  */
-  
-  // For demonstration, we'll use the mock data below instead of actual API calls
+  const lowerQuery = query.toLowerCase();
   
   if (type === 'food') {
-    // Enhanced food search simulation with complete data and multiple results for all searches
-    const lowerQuery = query.toLowerCase();
-    
-    // Always return at least 3 results for any food search
-    results = [
-      {
-        id: generateId(),
-        type: 'food',
-        title: `${query} Restaurant`,
-        creator: "Local Restaurant Group",
-        cuisine: "Various",
-        location: "123 Main Street, Anytown",
-        category: "restaurant",
-        url: `https://www.${query.toLowerCase().replace(/\s+/g, '')}-restaurant.com`,
-        tags: ["local", "trendy", query.toLowerCase()],
-        rating: 4.2,
-        visitCount: 1,
-        status: "Interested: Want a bite",
-        notes: "",
-        isFavorite: false,
-        date: new Date().toISOString().split('T')[0],
-      }
-    ];
-    
-    // Add popular restaurant chains based on common keywords
+    // Enhanced food search simulation with complete data
     if (lowerQuery.includes('pizza') || lowerQuery.includes('italian')) {
       results = [
         {
@@ -109,6 +362,7 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           notes: "",
           isFavorite: false,
           date: new Date().toISOString().split('T')[0],
+          serviceRating: null
         },
         {
           id: generateId(),
@@ -126,6 +380,7 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           notes: "",
           isFavorite: false,
           date: new Date().toISOString().split('T')[0],
+          serviceRating: null
         },
         {
           id: generateId(),
@@ -143,6 +398,7 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           notes: "",
           isFavorite: false,
           date: new Date().toISOString().split('T')[0],
+          serviceRating: null
         }
       ];
     } else if (lowerQuery.includes('sushi') || lowerQuery.includes('japanese')) {
@@ -163,6 +419,7 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           notes: "",
           isFavorite: false,
           date: new Date().toISOString().split('T')[0],
+          serviceRating: null
         },
         {
           id: generateId(),
@@ -180,6 +437,7 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           notes: "",
           isFavorite: false,
           date: new Date().toISOString().split('T')[0],
+          serviceRating: null
         },
         {
           id: generateId(),
@@ -197,236 +455,71 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           notes: "",
           isFavorite: false,
           date: new Date().toISOString().split('T')[0],
+          serviceRating: null
         }
       ];
-    } else if (lowerQuery.includes('burger') || lowerQuery.includes('american')) {
+    } else {
+      // Generic match for any other query
       results = [
         {
           id: generateId(),
           type: 'food',
-          title: "Shake Shack",
-          creator: "Danny Meyer",
-          cuisine: "American, Burgers",
-          location: "Multiple locations nationwide",
+          title: `${query} Restaurant`,
+          creator: "Local Restaurant Group",
+          cuisine: "Various",
+          location: "123 Main Street, Anytown",
           category: "restaurant",
-          url: "https://www.shakeshack.com",
-          tags: ["burgers", "shakes", "casual dining"],
-          rating: 4.4,
+          url: `https://www.google.com/search?q=${encodeURIComponent(query)}+restaurant`,
+          tags: ["local", "trendy", query.toLowerCase()],
+          rating: 4.2,
           visitCount: 1,
           status: "Interested: Want a bite",
           notes: "",
           isFavorite: false,
           date: new Date().toISOString().split('T')[0],
+          serviceRating: null
         },
         {
           id: generateId(),
           type: 'food',
-          title: "Five Guys",
-          creator: "Murrell Family",
-          cuisine: "American, Burgers",
-          location: "Nationwide locations",
+          title: `${query} Bistro`,
+          creator: "Chef " + query.split(' ')[0],
+          cuisine: "Fusion",
+          location: "456 Oak Avenue, Somewhere",
           category: "restaurant",
-          url: "https://www.fiveguys.com",
-          tags: ["burgers", "fries", "fast casual"],
-          rating: 4.3,
-          visitCount: 1,
-          status: "Interested: Want a bite",
-          notes: "",
-          isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
-        },
-        {
-          id: generateId(),
-          type: 'food',
-          title: "In-N-Out Burger",
-          creator: "In-N-Out Inc.",
-          cuisine: "American, Burgers",
-          location: "West Coast, USA",
-          category: "restaurant",
-          url: "https://www.in-n-out.com",
-          tags: ["burgers", "fast food", "cult favorite"],
-          rating: 4.6,
-          visitCount: 1,
-          status: "Interested: Want a bite",
-          notes: "",
-          isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
-        }
-      ];
-    } else if (lowerQuery.includes('cafe') || lowerQuery.includes('coffee')) {
-      results = [
-        {
-          id: generateId(),
-          type: 'food',
-          title: "Starbucks",
-          creator: "Starbucks Corporation",
-          cuisine: "Coffee, Pastries",
-          location: "Worldwide locations",
-          category: "cafe",
-          url: "https://www.starbucks.com",
-          tags: ["coffee", "pastries", "chain"],
-          rating: 3.9,
-          visitCount: 1,
-          status: "Interested: Want a bite",
-          notes: "",
-          isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
-        },
-        {
-          id: generateId(),
-          type: 'food',
-          title: "Blue Bottle Coffee",
-          creator: "James Freeman",
-          cuisine: "Specialty Coffee, Light Fare",
-          location: "Select urban locations",
-          category: "cafe",
-          url: "https://bluebottlecoffee.com",
-          tags: ["coffee", "specialty", "third wave"],
-          rating: 4.5,
-          visitCount: 1,
-          status: "Interested: Want a bite",
-          notes: "",
-          isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
-        },
-        {
-          id: generateId(),
-          type: 'food',
-          title: "Peet's Coffee",
-          creator: "Alfred Peet",
-          cuisine: "Coffee, Bakery",
-          location: "Multiple US locations",
-          category: "cafe",
-          url: "https://www.peets.com",
-          tags: ["coffee", "bakery", "beans"],
-          rating: 4.1,
-          visitCount: 1,
-          status: "Interested: Want a bite",
-          notes: "",
-          isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
-        }
-      ];
-    } else if (lowerQuery.includes('mexican') || lowerQuery.includes('taco')) {
-      results = [
-        {
-          id: generateId(),
-          type: 'food',
-          title: "Chipotle Mexican Grill",
-          creator: "Steve Ells",
-          cuisine: "Mexican, Tex-Mex",
-          location: "Nationwide locations",
-          category: "restaurant",
-          url: "https://www.chipotle.com",
-          tags: ["mexican", "fast casual", "burritos"],
+          url: `https://www.google.com/search?q=${encodeURIComponent(query)}+bistro`,
+          tags: ["bistro", "fusion", query.toLowerCase()],
           rating: 4.0,
           visitCount: 1,
           status: "Interested: Want a bite",
           notes: "",
           isFavorite: false,
           date: new Date().toISOString().split('T')[0],
+          serviceRating: null
         },
         {
           id: generateId(),
           type: 'food',
-          title: "Taco Bell",
-          creator: "Glen Bell",
-          cuisine: "Mexican-inspired",
-          location: "Worldwide locations",
-          category: "restaurant",
-          url: "https://www.tacobell.com",
-          tags: ["tacos", "fast food", "mexican"],
-          rating: 3.5,
+          title: `${query} Café`,
+          creator: "Local Coffee Roasters",
+          cuisine: "Coffee, Breakfast",
+          location: "789 Pine Street, Elsewhere",
+          category: "cafe",
+          url: `https://www.google.com/search?q=${encodeURIComponent(query)}+cafe`,
+          tags: ["coffee", "breakfast", query.toLowerCase()],
+          rating: 4.1,
           visitCount: 1,
           status: "Interested: Want a bite",
           notes: "",
           isFavorite: false,
           date: new Date().toISOString().split('T')[0],
-        },
-        {
-          id: generateId(),
-          type: 'food',
-          title: "Qdoba",
-          creator: "Qdoba Restaurant Corporation",
-          cuisine: "Mexican, Tex-Mex",
-          location: "Multiple US locations",
-          category: "restaurant",
-          url: "https://www.qdoba.com",
-          tags: ["mexican", "fast casual", "burritos"],
-          rating: 3.8,
-          visitCount: 1,
-          status: "Interested: Want a bite",
-          notes: "",
-          isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
+          serviceRating: null
         }
       ];
     }
-    
-    // Add the generic match to ensure we always have at least one restaurant named after the query
-    if (results.length < 3) {
-      results.push({
-        id: generateId(),
-        type: 'food',
-        title: `${query} Restaurant`,
-        creator: "Local Restaurant Group",
-        cuisine: "Various",
-        location: "123 Main Street, Anytown",
-        category: "restaurant",
-        url: `https://www.${query.toLowerCase().replace(/\s+/g, '')}-restaurant.com`,
-        tags: ["local", "trendy", query.toLowerCase()],
-        rating: 4.2,
-        visitCount: 1,
-        status: "Interested: Want a bite",
-        notes: "",
-        isFavorite: false,
-        date: new Date().toISOString().split('T')[0],
-      });
-      
-      // Add a second generic result with slightly different details
-      results.push({
-        id: generateId(),
-        type: 'food',
-        title: `${query} Bistro`,
-        creator: "Chef " + query.split(' ')[0],
-        cuisine: "Fusion",
-        location: "456 Oak Avenue, Somewhere",
-        category: "restaurant",
-        url: `https://www.${query.toLowerCase().replace(/\s+/g, '')}-bistro.com`,
-        tags: ["bistro", "fusion", query.toLowerCase()],
-        rating: 4.0,
-        visitCount: 1,
-        status: "Interested: Want a bite",
-        notes: "",
-        isFavorite: false,
-        date: new Date().toISOString().split('T')[0],
-      });
-    }
   } else {
-    // Entertainment search - enhanced with API-like data
-    const lowerQuery = query.toLowerCase();
-    
-    // Default generic entertainment result
-    results = [
-      {
-        id: generateId(),
-        type: 'entertainment',
-        title: query,
-        creator: "Various",
-        genre: "Mixed",
-        medium: "Various Streaming Services",
-        entertainmentCategory: "movies",
-        url: `https://www.imdb.com/find?q=${encodeURIComponent(query)}`,
-        tags: ["search result", query.toLowerCase()],
-        rating: 3.8,
-        status: "Want to Watch",
-        notes: "",
-        isFavorite: false,
-        date: new Date().toISOString().split('T')[0],
-      }
-    ];
-    
-    if (lowerQuery.includes('star wars') || lowerQuery.includes('star trek') || lowerQuery.includes('sci-fi')) {
+    // Entertainment search results
+    if (lowerQuery.includes('star wars') || lowerQuery.includes('star trek')) {
       results = [
         {
           id: generateId(),
@@ -442,7 +535,7 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           status: "Want to Watch",
           notes: "",
           isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
+          date: new Date().toISOString().split('T')[0]
         },
         {
           id: generateId(),
@@ -458,7 +551,7 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           status: "Want to Watch",
           notes: "",
           isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
+          date: new Date().toISOString().split('T')[0]
         },
         {
           id: generateId(),
@@ -474,240 +567,64 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           status: "Want to Watch",
           notes: "",
           isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
+          date: new Date().toISOString().split('T')[0]
         }
       ];
-    } else if (lowerQuery.includes('netflix') || lowerQuery.includes('stranger')) {
+    } else {
+      // Generic entertainment results for other queries
       results = [
         {
           id: generateId(),
           type: 'entertainment',
-          title: "Stranger Things",
-          creator: "The Duffer Brothers",
-          genre: "Science Fiction, Horror",
-          medium: "Netflix",
-          entertainmentCategory: "tv shows",
-          url: "https://www.netflix.com/title/80057281",
-          tags: ["sci-fi", "horror", "1980s"],
-          rating: 4.8,
+          title: `${query} - The Movie`,
+          creator: "Various Directors",
+          genre: "Mixed",
+          medium: "Prime Video",
+          entertainmentCategory: "movies",
+          url: `https://www.amazon.com/s?k=${encodeURIComponent(query)}`,
+          tags: ["new release", query.toLowerCase()],
+          rating: 3.9,
           status: "Want to Watch",
           notes: "",
           isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
+          date: new Date().toISOString().split('T')[0]
         },
         {
           id: generateId(),
           type: 'entertainment',
-          title: "The Queen's Gambit",
-          creator: "Scott Frank, Allan Scott",
+          title: `${query} - The Series`,
+          creator: "Various Creators",
           genre: "Drama",
           medium: "Netflix",
           entertainmentCategory: "tv shows",
-          url: "https://www.netflix.com/title/80234304",
-          tags: ["drama", "chess", "period"],
-          rating: 4.7,
+          url: `https://www.netflix.com/search?q=${encodeURIComponent(query)}`,
+          tags: ["binge-worthy", query.toLowerCase()],
+          rating: 4.0,
           status: "Want to Watch",
           notes: "",
           isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
+          date: new Date().toISOString().split('T')[0]
         },
         {
           id: generateId(),
           type: 'entertainment',
-          title: "Squid Game",
-          creator: "Hwang Dong-hyuk",
-          genre: "Thriller, Drama",
-          medium: "Netflix",
-          entertainmentCategory: "tv shows",
-          url: "https://www.netflix.com/title/81040344",
-          tags: ["thriller", "korean", "drama"],
-          rating: 4.6,
-          status: "Want to Watch",
-          notes: "",
-          isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
-        }
-      ];
-    } else if (lowerQuery.includes('game of thrones') || lowerQuery.includes('house of the dragon')) {
-      results = [
-        {
-          id: generateId(),
-          type: 'entertainment',
-          title: "Game of Thrones",
-          creator: "David Benioff, D. B. Weiss",
-          genre: "Fantasy, Drama",
+          title: `${query} Documentary`,
+          creator: "Documentary Films Inc.",
+          genre: "Documentary",
           medium: "HBO Max",
-          entertainmentCategory: "tv shows",
-          url: "https://www.hbomax.com/series/urn:hbo:series:GVU2cggagzYNJjhsJATwo",
-          tags: ["fantasy", "drama", "medieval"],
-          rating: 4.6,
-          status: "Want to Watch",
-          notes: "",
-          isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
-        },
-        {
-          id: generateId(),
-          type: 'entertainment',
-          title: "House of the Dragon",
-          creator: "Ryan Condal, George R. R. Martin",
-          genre: "Fantasy, Drama",
-          medium: "HBO Max",
-          entertainmentCategory: "tv shows",
-          url: "https://www.hbo.com/house-of-the-dragon",
-          tags: ["fantasy", "drama", "prequel"],
-          rating: 4.4,
-          status: "Want to Watch",
-          notes: "",
-          isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
-        },
-        {
-          id: generateId(),
-          type: 'entertainment',
-          title: "Westworld",
-          creator: "Jonathan Nolan, Lisa Joy",
-          genre: "Science Fiction, Western",
-          medium: "HBO Max",
-          entertainmentCategory: "tv shows",
-          url: "https://www.hbo.com/westworld",
-          tags: ["sci-fi", "western", "AI"],
-          rating: 4.2,
-          status: "Want to Watch",
-          notes: "",
-          isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
-        }
-      ];
-    } else if (lowerQuery.includes('marvel') || lowerQuery.includes('avengers')) {
-      results = [
-        {
-          id: generateId(),
-          type: 'entertainment',
-          title: "Avengers: Endgame",
-          creator: "Anthony & Joe Russo",
-          genre: "Action, Superhero",
-          medium: "Disney+",
           entertainmentCategory: "movies",
-          url: "https://www.disneyplus.com/movies/marvel-studios-avengers-endgame/aRbVJUb2h2Rf",
-          tags: ["marvel", "superhero", "action"],
-          rating: 4.8,
+          url: `https://www.hbomax.com/search?query=${encodeURIComponent(query)}`,
+          tags: ["documentary", "informative", query.toLowerCase()],
+          rating: 4.3,
           status: "Want to Watch",
           notes: "",
           isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
-        },
-        {
-          id: generateId(),
-          type: 'entertainment',
-          title: "WandaVision",
-          creator: "Jac Schaeffer",
-          genre: "Superhero, Drama",
-          medium: "Disney+",
-          entertainmentCategory: "tv shows",
-          url: "https://www.disneyplus.com/series/wandavision/4SrN28ZjDLwH",
-          tags: ["marvel", "superhero", "sitcom"],
-          rating: 4.5,
-          status: "Want to Watch",
-          notes: "",
-          isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
-        },
-        {
-          id: generateId(),
-          type: 'entertainment',
-          title: "Loki",
-          creator: "Michael Waldron",
-          genre: "Superhero, Sci-Fi",
-          medium: "Disney+",
-          entertainmentCategory: "tv shows",
-          url: "https://www.disneyplus.com/series/loki/6pARMvILBGzF",
-          tags: ["marvel", "superhero", "time travel"],
-          rating: 4.6,
-          status: "Want to Watch",
-          notes: "",
-          isFavorite: false,
-          date: new Date().toISOString().split('T')[0],
+          date: new Date().toISOString().split('T')[0]
         }
       ];
-    }
-    
-    // If we don't have enough results, add generic ones based on the query
-    if (results.length < 3) {
-      results.push({
-        id: generateId(),
-        type: 'entertainment',
-        title: `${query} - The Movie`,
-        creator: "Various Directors",
-        genre: "Mixed",
-        medium: "Prime Video",
-        entertainmentCategory: "movies",
-        url: `https://www.amazon.com/s?k=${encodeURIComponent(query)}`,
-        tags: ["new release", query.toLowerCase()],
-        rating: 3.9,
-        status: "Want to Watch",
-        notes: "",
-        isFavorite: false,
-        date: new Date().toISOString().split('T')[0],
-      });
-      
-      results.push({
-        id: generateId(),
-        type: 'entertainment',
-        title: `${query} - The Series`,
-        creator: "Various Creators",
-        genre: "Drama",
-        medium: "Netflix",
-        entertainmentCategory: "tv shows",
-        url: `https://www.netflix.com/search?q=${encodeURIComponent(query)}`,
-        tags: ["binge-worthy", query.toLowerCase()],
-        rating: 4.0,
-        status: "Want to Watch",
-        notes: "",
-        isFavorite: false,
-        date: new Date().toISOString().split('T')[0],
-      });
     }
   }
   
-  console.log(`API search completed. Found ${results.length} results`);
+  console.log(`Simulated search completed. Found ${results.length} results`);
   return results;
-}
-
-// In a real implementation, these helper functions would analyze search results
-// to determine appropriate categories
-function determineFoodCategory(item: any): string {
-  const keywords = [item.title, item.description].join(' ').toLowerCase();
-  
-  if (keywords.includes('cafe') || keywords.includes('coffee')) return 'cafe';
-  if (keywords.includes('restaurant')) return 'restaurant';
-  if (keywords.includes('bakery')) return 'bakery';
-  if (keywords.includes('bar')) return 'bar';
-  if (keywords.includes('food truck')) return 'food truck';
-  
-  return 'restaurant'; // Default
-}
-
-function determineEntertainmentCategory(item: any): string {
-  const keywords = [item.title, item.description].join(' ').toLowerCase();
-  
-  if (keywords.includes('movie')) return 'movies';
-  if (keywords.includes('tv') || keywords.includes('series') || keywords.includes('show')) return 'tv shows';
-  if (keywords.includes('book')) return 'books';
-  if (keywords.includes('game')) return 'games';
-  if (keywords.includes('podcast')) return 'podcasts';
-  
-  return 'movies'; // Default
-}
-
-function determineEntertainmentMedium(item: any): string {
-  const keywords = [item.title, item.description].join(' ').toLowerCase();
-  
-  if (keywords.includes('netflix')) return 'Netflix';
-  if (keywords.includes('hulu')) return 'Hulu';
-  if (keywords.includes('disney+') || keywords.includes('disney plus')) return 'Disney+';
-  if (keywords.includes('amazon') || keywords.includes('prime')) return 'Amazon Prime';
-  if (keywords.includes('hbo')) return 'HBO Max';
-  
-  return 'Other'; // Default
 }

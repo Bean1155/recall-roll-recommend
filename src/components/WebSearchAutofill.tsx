@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Globe, MapPin } from "lucide-react";
-import { performWebSearch } from "@/utils/webSearch";
+import { performWebSearch, simulateWebSearch } from "@/utils/webSearch";
 import SearchResultsDialog from "@/components/bites/SearchResultsDialog";
 import { FoodCard, EntertainmentCard } from "@/lib/types";
 
@@ -42,13 +42,21 @@ const WebSearchAutofill = ({ type, onResultSelect, className }: WebSearchAutofil
     setDialogOpen(true);
     
     try {
-      // Search for multiple results
+      // Search for multiple results using DuckDuckGo API
       const searchResults = await performWebSearch(query, type);
       console.log(`Web search returned ${searchResults.length} results:`, searchResults);
       setResults(searchResults);
     } catch (error) {
       console.error("Error fetching search results:", error);
-      setResults([]);
+      // Fallback to simulated search if API fails
+      try {
+        const fallbackResults = await simulateWebSearch(query, type);
+        console.log(`Fallback search returned ${fallbackResults.length} results`);
+        setResults(fallbackResults);
+      } catch (fallbackError) {
+        console.error("Even fallback search failed:", fallbackError);
+        setResults([]);
+      }
     } finally {
       setIsLoading(false);
     }
