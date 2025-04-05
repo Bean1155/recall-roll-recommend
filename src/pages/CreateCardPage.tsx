@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import CardForm from "@/components/CardForm";
 import { CardType } from "@/lib/types";
@@ -137,7 +136,6 @@ const CreateCardPage = () => {
     };
   }, []);
 
-  // Modified to include cardId in the success event and redirect to the card
   const handleFormSubmitSuccess = (cardId: string) => {
     console.log("CreateCardPage: CardForm submission success callback with ID:", cardId);
     

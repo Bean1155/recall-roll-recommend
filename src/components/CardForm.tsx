@@ -47,7 +47,7 @@ import WebSearchAutofill from "@/components/WebSearchAutofill";
 interface CardFormProps {
   type: CardType;
   cardId?: string;
-  onSubmitSuccess?: () => void;
+  onSubmitSuccess?: (cardId: string) => void;
 }
 
 const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
@@ -619,8 +619,8 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
           description: `Your ${isFoodCard ? 'bite' : 'blockbuster'} has been added to your collection!`,
         });
 
-        if (onSubmitSuccess) {
-          onSubmitSuccess();
+        if (onSubmitSuccess && savedCard.id) {
+          onSubmitSuccess(savedCard.id);
         }
       }
       
