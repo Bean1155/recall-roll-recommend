@@ -60,6 +60,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [hasPerformedSearch, setHasPerformedSearch] = useState(false);
   
   useEffect(() => {
     const savedFoodCategories = localStorage.getItem('customFoodCategories');
@@ -174,6 +175,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
     if (!query.trim()) return;
     
     setIsSearching(true);
+    setHasPerformedSearch(true);
     
     try {
       await new Promise(resolve => setTimeout(resolve, 800));
@@ -300,6 +302,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
         }
       }
       
+      console.log("Search results:", results);
       setSearchResults(results);
     } catch (error) {
       console.error("Error performing search:", error);
@@ -315,6 +318,8 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
   }, [isFoodCard]);
   
   const handleSearchItemSelect = (item: any) => {
+    console.log("Selected search item:", item);
+    
     if (currentUser?.id) {
       addPointsForSearch(currentUser.id, isFoodCard ? 'food' : 'entertainment');
     }
@@ -335,6 +340,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
     
     setIsSearchDialogOpen(false);
     setSearchQuery('');
+    setHasPerformedSearch(false);
     
     toast({
       title: "Information Added",
@@ -440,6 +446,9 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
   
   const handleSearchClick = () => {
     setIsSearchDialogOpen(true);
+    setSearchResults([]);
+    setSearchQuery('');
+    setHasPerformedSearch(false);
   };
   
   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1121,7 +1130,14 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
           </DialogContent>
         </Dialog>
         
-        <Dialog open={isSearchDialogOpen} onOpenChange={setIsSearchDialogOpen}>
+        <Dialog open={isSearchDialogOpen} onOpenChange={(open) => {
+          if (!open) {
+            setSearchResults([]);
+            setSearchQuery('');
+            setHasPerformedSearch(false);
+          }
+          setIsSearchDialogOpen(open);
+        }}>
           <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Search for {isFoodCard ? 'Restaurants' : 'Entertainment'}</DialogTitle>
@@ -1149,7 +1165,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
                   <p className="text-muted-foreground">Searching...</p>
                 </div>
               ) : searchResults.length > 0 ? (
-                <div className="border rounded-md">
+                <div className="border rounded-md bg-white shadow-sm">
                   <Command>
                     <CommandList className="max-h-[300px] overflow-y-auto">
                       <CommandGroup heading="Results">
@@ -1157,7 +1173,8 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
                           <CommandItem
                             key={index}
                             onSelect={() => handleSearchItemSelect(result)}
-                            className="cursor-pointer hover:bg-slate-100 p-2"
+                            className="cursor-pointer hover:bg-slate-100 p-2 flex items-center"
+                            data-testid={`search-result-${index}`}
                           >
                             <div className="flex flex-col w-full">
                               <span className="font-medium">{result.title}</span>
@@ -1175,10 +1192,10 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
                     <CommandEmpty>No results found.</CommandEmpty>
                   </Command>
                 </div>
-              ) : searchQuery ? (
+              ) : hasPerformedSearch ? (
                 <p className="text-center py-4 text-muted-foreground">No results found. Try a different search term.</p>
               ) : (
-                <p className="text-center py-4 text-muted-foreground">Type a search term above to find information.</p>
+                <p className="text-center py-4 text-muted-foreground">Type a search term above and click Search to find information.</p>
               )}
             </div>
             
