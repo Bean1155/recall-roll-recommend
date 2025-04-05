@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,7 +10,6 @@ import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerOverlay } from "@/components/ui/drawer";
 import CatalogSearch from "@/components/CatalogSearch";
 import { useUser } from "@/contexts/UserContext";
-import { addPointsForSearch } from "@/utils/rewardUtils";
 
 const SearchPage = () => {
   const [allCards, setAllCards] = useState<CatalogCardType[]>([]);
@@ -55,17 +53,9 @@ const SearchPage = () => {
     if (value === 'food') {
       setSearchType('food');
       setIsSearchOpen(true);
-      // Award points for using search
-      if (currentUser?.id) {
-        addPointsForSearch(currentUser.id, 'food');
-      }
     } else if (value === 'entertainment') {
       setSearchType('entertainment');
       setIsSearchOpen(true);
-      // Award points for using search
-      if (currentUser?.id) {
-        addPointsForSearch(currentUser.id, 'entertainment');
-      }
     }
   };
 
@@ -73,7 +63,6 @@ const SearchPage = () => {
     setFilteredCards(items);
   };
 
-  // Colors that match the navigation bar in the home page header
   const foodTabBgColor = "#FDE1D3";  // Pink (Bites) from the header
   const entertainmentTabBgColor = "#D6E5F0"; // Blue (Blockbusters) from the header
 
@@ -126,9 +115,7 @@ const SearchPage = () => {
         </Tabs>
       </div>
 
-      {/* Conditional rendering based on device type */}
       {isMobile ? (
-        // Mobile: Bottom drawer for better access
         <Drawer
           open={isSearchOpen}
           onOpenChange={setIsSearchOpen}
@@ -149,7 +136,6 @@ const SearchPage = () => {
           </DrawerContent>
         </Drawer>
       ) : (
-        // Desktop: Dialog in center of screen
         <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
           <DialogOverlay className="bg-black/70 backdrop-blur-sm" />
           <DialogContent 

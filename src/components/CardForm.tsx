@@ -38,7 +38,6 @@ import { defaultCategories, getCategoryDisplayName } from "@/utils/categoryUtils
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 import { useUser } from "@/contexts/UserContext";
-import { addPointsForSearch } from "@/utils/rewardUtils";
 import SearchResultsDialog from "@/components/bites/SearchResultsDialog";
 import { performWebSearch } from "@/utils/webSearch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -386,10 +385,6 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
   const handleWebSearchResultSelect = (result: FoodCard | EntertainmentCard) => {
     console.log("Selected web search item:", result);
     
-    if (currentUser?.id) {
-      addPointsForSearch(currentUser.id, isFoodCard ? 'food' : 'entertainment');
-    }
-    
     setFormData(prev => ({
       ...prev,
       title: result.title || prev.title,
@@ -413,10 +408,6 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
   
   const handleSearchItemSelect = (item: any) => {
     console.log("Selected search item:", item);
-    
-    if (currentUser?.id) {
-      addPointsForSearch(currentUser.id, isFoodCard ? 'food' : 'entertainment');
-    }
     
     setFormData(prev => ({
       ...prev,
