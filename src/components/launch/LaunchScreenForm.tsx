@@ -109,7 +109,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
               render={({ field }) => (
                 <FormItem className="mb-4">
                   <div className="flex flex-col sm:flex-row items-start">
-                    <FormLabel className="text-vintage-red font-mono font-bold text-sm sm:min-w-[100px] mt-2">BORROWER:</FormLabel>
+                    <FormLabel className="text-vintage-red font-mono font-bold text-sm sm:min-w-[100px] mt-2">LIBRARY OF:</FormLabel>
                     <div className="flex-1 w-full mt-1 sm:mt-0">
                       <FormControl>
                         <Input 
@@ -157,7 +157,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
             </div>
             
             <div className="text-center text-xs sm:text-sm text-vintage-red mt-2">
-              <p>Catalog, share, and checkout your favorites.</p>
+              <p>CATALOG. SHARE. RECALL.</p>
             </div>
           </form>
         </Form>
