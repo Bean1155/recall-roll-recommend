@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { 
@@ -59,25 +60,24 @@ const Index = () => {
               <ol className="space-y-[31px] list-none relative z-10">
                 <li className="flex items-start">
                   <span className="font-bold text-xl mr-4 text-vintage-red">1.</span>
-                  <p className="text-xl">Create catalog cards for your favorite foods and entertainment.</p>
+                  <p className="text-xl">Add your favorite BITES and BLOCKBUSTERS and create individual catalog cards.</p>
                 </li>
                 <li className="flex items-start">
                   <span className="font-bold text-xl mr-4 text-vintage-red">2.</span>
-                  <p className="text-xl">Browse your personal collection to recall experiences.</p>
+                  <p className="text-xl">Build your personal library and browse collections.</p>
                 </li>
                 <li className="flex items-start">
                   <span className="font-bold text-xl mr-4 text-vintage-red">3.</span>
-                  <p className="text-xl">Recommend items to friends by sharing your cards.</p>
+                  <p className="text-xl">Recommend Bites and Blockbusters by sharing individual catalog cards.</p>
                 </li>
                 <li className="flex items-start">
                   <span className="font-bold text-xl mr-4 text-vintage-red">4.</span>
-                  <p className="text-xl">Track who recommended what to you and who you've shared with.</p>
+                  <p className="text-xl">Track referrals and notifications from in app users and compare recommendations.</p>
                 </li>
                 <li className="flex items-start">
                   <span className="font-bold text-xl mr-4 text-vintage-red">5.</span>
                   <div>
-                    <p className="text-xl">Collect and track points for sharing your cards and become a top Total Recall</p>
-                    <p className="text-xl" style={{lineHeight: '31px'}}>Catalog Sharer!</p>
+                    <p className="text-xl">Collect and track points for adding and sharing cards and become a Happy Sharer!</p>
                   </div>
                 </li>
               </ol>
