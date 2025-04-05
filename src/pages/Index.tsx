@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { 
@@ -36,6 +35,59 @@ const Index = () => {
           <h1 className="text-4xl font-bold mb-2 text-black font-typewriter">TOTAL RECALL CATALOG</h1>
           <p className="text-xl text-vintage-red font-typewriter">Tracking Every Bite and Blockbuster</p>
         </div>
+        
+        {/* How It Works Section - Moved above Bites/Blockbusters grid */}
+        <CatalogCollapsible
+          label="How It Works"
+          backgroundColor="#e18336" 
+          textColor="#4a3f35"
+          open={howItWorksOpen}
+          onOpenChange={setHowItWorksOpen}
+          className="mb-12"
+        >
+          <div className="relative bg-[#FCFCF7] p-8">
+            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-[#FF9999] opacity-70"></div>
+            
+            <div className="relative pl-12 pr-4" 
+              style={{
+                backgroundImage: `repeating-linear-gradient(#FCFCF7, #FCFCF7 30px, #ACC8E5 30px, #ACC8E5 31px)`,
+                backgroundPosition: '0 10px',
+                lineHeight: '31px',
+                paddingTop: '10px'
+              }}>
+              
+              <ol className="space-y-[31px] list-none relative z-10">
+                <li className="flex items-start">
+                  <span className="font-bold text-xl mr-4 text-vintage-red">1.</span>
+                  <p className="text-xl">Create catalog cards for your favorite foods and entertainment.</p>
+                </li>
+                <li className="flex items-start">
+                  <span className="font-bold text-xl mr-4 text-vintage-red">2.</span>
+                  <p className="text-xl">Browse your personal collection to recall experiences.</p>
+                </li>
+                <li className="flex items-start">
+                  <span className="font-bold text-xl mr-4 text-vintage-red">3.</span>
+                  <p className="text-xl">Recommend items to friends by sharing your cards.</p>
+                </li>
+                <li className="flex items-start">
+                  <span className="font-bold text-xl mr-4 text-vintage-red">4.</span>
+                  <p className="text-xl">Track who recommended what to you and who you've shared with.</p>
+                </li>
+                <li className="flex items-start">
+                  <span className="font-bold text-xl mr-4 text-vintage-red">5.</span>
+                  <div>
+                    <p className="text-xl">Collect and track points for sharing your cards and become a top Total Recall</p>
+                    <p className="text-xl" style={{lineHeight: '31px'}}>Catalog Sharer!</p>
+                  </div>
+                </li>
+              </ol>
+              
+              <div className="absolute left-2 top-[10%] h-6 w-6 rounded-full bg-white border-2 border-[#9E8979] shadow-inner"></div>
+              <div className="absolute left-2 top-[50%] h-6 w-6 rounded-full bg-white border-2 border-[#9E8979] shadow-inner"></div>
+              <div className="absolute left-2 bottom-[10%] h-6 w-6 rounded-full bg-white border-2 border-[#9E8979] shadow-inner"></div>
+            </div>
+          </div>
+        </CatalogCollapsible>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {/* Bites Card */}
@@ -128,59 +180,6 @@ const Index = () => {
             </div>
           </div>
         </div>
-        
-        {/* How It Works Section - now collapsible */}
-        <CatalogCollapsible
-          label="How It Works"
-          backgroundColor="#e18336" 
-          textColor="#4a3f35"
-          open={howItWorksOpen}
-          onOpenChange={setHowItWorksOpen}
-          className="mb-12"
-        >
-          <div className="relative bg-[#FCFCF7] p-8">
-            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-[#FF9999] opacity-70"></div>
-            
-            <div className="relative pl-12 pr-4" 
-              style={{
-                backgroundImage: `repeating-linear-gradient(#FCFCF7, #FCFCF7 30px, #ACC8E5 30px, #ACC8E5 31px)`,
-                backgroundPosition: '0 10px',
-                lineHeight: '31px',
-                paddingTop: '10px'
-              }}>
-              
-              <ol className="space-y-[31px] list-none relative z-10">
-                <li className="flex items-start">
-                  <span className="font-bold text-xl mr-4 text-vintage-red">1.</span>
-                  <p className="text-xl">Create catalog cards for your favorite foods and entertainment.</p>
-                </li>
-                <li className="flex items-start">
-                  <span className="font-bold text-xl mr-4 text-vintage-red">2.</span>
-                  <p className="text-xl">Browse your personal collection to recall experiences.</p>
-                </li>
-                <li className="flex items-start">
-                  <span className="font-bold text-xl mr-4 text-vintage-red">3.</span>
-                  <p className="text-xl">Recommend items to friends by sharing your cards.</p>
-                </li>
-                <li className="flex items-start">
-                  <span className="font-bold text-xl mr-4 text-vintage-red">4.</span>
-                  <p className="text-xl">Track who recommended what to you and who you've shared with.</p>
-                </li>
-                <li className="flex items-start">
-                  <span className="font-bold text-xl mr-4 text-vintage-red">5.</span>
-                  <div>
-                    <p className="text-xl">Collect and track points for sharing your cards and become a top Total Recall</p>
-                    <p className="text-xl" style={{lineHeight: '31px'}}>Catalog Sharer!</p>
-                  </div>
-                </li>
-              </ol>
-              
-              <div className="absolute left-2 top-[10%] h-6 w-6 rounded-full bg-white border-2 border-[#9E8979] shadow-inner"></div>
-              <div className="absolute left-2 top-[50%] h-6 w-6 rounded-full bg-white border-2 border-[#9E8979] shadow-inner"></div>
-              <div className="absolute left-2 bottom-[10%] h-6 w-6 rounded-full bg-white border-2 border-[#9E8979] shadow-inner"></div>
-            </div>
-          </div>
-        </CatalogCollapsible>
       </GridLayout>
     </>
   );
