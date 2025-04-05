@@ -119,7 +119,8 @@ const CreateCardPage = () => {
     console.log("CreateCardPage: CardForm submission success callback");
     
     if (currentUser) {
-      // IMPORTANT FIX: Directly call the function to add points
+      // Only add points here when directly submitting the form
+      // NOT when using search selection which has its own reward mechanism
       addPointsForCardCreation(currentUser.id, cardType);
       
       toast({
