@@ -37,6 +37,8 @@ import {
 import { defaultCategories, getCategoryDisplayName } from "@/utils/categoryUtils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
+import { useUser } from "@/contexts/UserContext";
+import { addPointsForSearch } from "@/utils/rewardUtils";
 
 interface CardFormProps {
   type: CardType;
@@ -46,6 +48,7 @@ interface CardFormProps {
 
 const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
   const navigate = useNavigate();
+  const { currentUser } = useUser();
   const isFoodCard = type === 'food';
   const isEditMode = !!cardId;
   const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
@@ -312,6 +315,10 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
   }, [isFoodCard]);
   
   const handleSearchItemSelect = (item: any) => {
+    if (currentUser?.id) {
+      addPointsForSearch(currentUser.id, isFoodCard ? 'food' : 'entertainment');
+    }
+    
     setFormData(prev => ({
       ...prev,
       title: item.title || prev.title,
@@ -1129,6 +1136,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
                 onChange={handleSearchQueryChange}
                 placeholder={isFoodCard ? "Search for restaurants..." : "Search for movies, TV shows..."}
                 className="flex-1"
+                autoFocus
               />
               <Button type="submit" disabled={isSearching}>
                 {isSearching ? "Searching..." : "Search"}
@@ -1141,30 +1149,32 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
                   <p className="text-muted-foreground">Searching...</p>
                 </div>
               ) : searchResults.length > 0 ? (
-                <Command>
-                  <CommandList>
-                    <CommandGroup heading="Results">
-                      {searchResults.map((result, index) => (
-                        <CommandItem
-                          key={index}
-                          onSelect={() => handleSearchItemSelect(result)}
-                          className="cursor-pointer"
-                        >
-                          <div className="flex flex-col w-full">
-                            <span className="font-medium">{result.title}</span>
-                            <span className="text-sm text-muted-foreground">
-                              {isFoodCard 
-                                ? `${result.cuisine || ''} ${result.cuisine && result.location ? '•' : ''} ${result.location || ''}`
-                                : `${result.genre || ''} ${result.genre && result.medium ? '•' : ''} ${result.medium || ''}`
-                              }
-                            </span>
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                  <CommandEmpty>No results found.</CommandEmpty>
-                </Command>
+                <div className="border rounded-md">
+                  <Command>
+                    <CommandList className="max-h-[300px] overflow-y-auto">
+                      <CommandGroup heading="Results">
+                        {searchResults.map((result, index) => (
+                          <CommandItem
+                            key={index}
+                            onSelect={() => handleSearchItemSelect(result)}
+                            className="cursor-pointer hover:bg-slate-100 p-2"
+                          >
+                            <div className="flex flex-col w-full">
+                              <span className="font-medium">{result.title}</span>
+                              <span className="text-sm text-muted-foreground">
+                                {isFoodCard 
+                                  ? `${result.cuisine || ''} ${result.cuisine && result.location ? '•' : ''} ${result.location || ''}`
+                                  : `${result.genre || ''} ${result.genre && result.medium ? '•' : ''} ${result.medium || ''}`
+                                }
+                              </span>
+                            </div>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                    <CommandEmpty>No results found.</CommandEmpty>
+                  </Command>
+                </div>
               ) : searchQuery ? (
                 <p className="text-center py-4 text-muted-foreground">No results found. Try a different search term.</p>
               ) : (
