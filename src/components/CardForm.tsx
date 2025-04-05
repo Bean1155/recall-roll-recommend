@@ -176,8 +176,10 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
     
     setIsSearching(true);
     setHasPerformedSearch(true);
+    console.log("Performing search for:", query);
     
     try {
+      // Simulate a network request delay
       await new Promise(resolve => setTimeout(resolve, 800));
       
       let results = [];
@@ -302,7 +304,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
         }
       }
       
-      console.log("Search results:", results);
+      console.log("Search completed. Found results:", results.length);
       setSearchResults(results);
     } catch (error) {
       console.error("Error performing search:", error);
@@ -315,7 +317,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
     } finally {
       setIsSearching(false);
     }
-  }, [isFoodCard]);
+  }, [isFoodCard, toast]);
   
   const handleSearchItemSelect = (item: any) => {
     console.log("Selected search item:", item);
@@ -445,6 +447,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
   };
   
   const handleSearchClick = () => {
+    console.log("Search button clicked, opening dialog");
     setIsSearchDialogOpen(true);
     setSearchResults([]);
     setSearchQuery('');
@@ -457,6 +460,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
   
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Search form submitted with query:", searchQuery);
     performSearch(searchQuery);
   };
   
@@ -963,252 +967,3 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
                 <Label htmlFor="status">Status <span className="text-xs text-muted-foreground">(Select from menu)</span></Label>
                 <Select
                   value={formData.status}
-                  onValueChange={(value) => handleSelectChange('status', value)}
-                >
-                  <SelectTrigger className="catalog-input">
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Watched">Watched</SelectItem>
-                    <SelectItem value="Want to Watch">Want to Watch</SelectItem>
-                    <SelectItem value="Currently Watching">Currently Watching</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="date" className="flex items-center">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Date Experienced
-                </Label>
-                <Input
-                  id="date"
-                  name="date"
-                  type="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  className="catalog-input"
-                />
-              </div>
-              
-              <div className="space-y-1">
-                {showRating && (
-                  <>
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="rating" className="flex items-center">
-                        <Star className="w-4 h-4 mr-2" />
-                        Rating
-                      </Label>
-                      
-                      <RadioGroup 
-                        value={formData.hasRating ? "rated" : "not-rated"}
-                        onValueChange={(value) => handleRatingToggle(value === "rated")}
-                        className="flex space-x-4"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="rated" id="rating-yes" />
-                          <Label htmlFor="rating-yes" className="text-sm">Rate it</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="not-rated" id="rating-no" />
-                          <Label htmlFor="rating-no" className="text-sm">No rating yet</Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-                    
-                    {formData.hasRating && (
-                      <>
-                        <div className="flex items-center space-x-2 py-4">
-                          <Slider
-                            id="rating"
-                            min={1}
-                            max={5}
-                            step={1}
-                            value={[formData.rating]}
-                            onValueChange={handleRatingChange}
-                          />
-                          <div className="w-24 text-center">
-                            <span className="font-semibold">{formData.rating}</span>
-                            <span className="block text-sm">{getRatingLabel(formData.rating)}</span>
-                          </div>
-                        </div>
-                        <div className="flex justify-between text-xs">
-                          <span>1 - Yikes</span>
-                          <span>5 - Amazing</span>
-                        </div>
-                      </>
-                    )}
-                  </>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="url" className="flex items-center">
-                  <Link className="w-4 h-4 mr-2" />
-                  URL
-                </Label>
-                <Input
-                  id="url"
-                  name="url"
-                  value={formData.url}
-                  onChange={handleChange}
-                  className="catalog-input"
-                  placeholder="Website or streaming link"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="notes">Notes</Label>
-                <Textarea
-                  id="notes"
-                  name="notes"
-                  value={formData.notes}
-                  onChange={handleChange}
-                  className="catalog-input h-20"
-                  placeholder="Your thoughts, impressions, and memorable details..."
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="tags" className="flex items-center">
-                  <Tag className="w-4 h-4 mr-2" />
-                  Tags
-                </Label>
-                <Input
-                  id="tags"
-                  name="tags"
-                  value={formData.tags}
-                  onChange={handleChange}
-                  className="catalog-input"
-                  placeholder="comedy, sci-fi, 90s, etc. (comma separated)"
-                />
-                <p className="text-xs text-muted-foreground mt-1">Separate tags with commas</p>
-              </div>
-            </>
-          )}
-          
-          <div className="pt-4">
-            <Button 
-              type="submit"
-              className="w-full bg-catalog-softBrown hover:bg-catalog-darkBrown text-white"
-            >
-              {isEditMode 
-                ? (isFoodCard ? 'Update Bite' : 'Update Blockbuster') 
-                : (isFoodCard ? 'Save Bite' : 'Save Blockbuster')}
-            </Button>
-          </div>
-        </div>
-        
-        <Dialog open={isAddCategoryDialogOpen} onOpenChange={setIsAddCategoryDialogOpen}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Add New Category</DialogTitle>
-              <DialogDescription>
-                Create a custom category for your {isFoodCard ? 'food' : 'entertainment'} entries.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="new-category" className="text-right col-span-1">
-                  Name
-                </Label>
-                <Input
-                  id="new-category"
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  className="col-span-3"
-                  placeholder={`e.g., ${isFoodCard ? 'Ice Cream Shop' : 'Anime'}`}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DialogClose>
-              <Button type="button" onClick={handleAddNewCategory}>Add Category</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-        
-        <Dialog open={isSearchDialogOpen} onOpenChange={(open) => {
-          if (!open) {
-            setSearchResults([]);
-            setSearchQuery('');
-            setHasPerformedSearch(false);
-          }
-          setIsSearchDialogOpen(open);
-        }}>
-          <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Search for {isFoodCard ? 'Restaurants' : 'Entertainment'}</DialogTitle>
-              <DialogDescription>
-                Enter a name to search for {isFoodCard ? 'restaurant' : 'movie/show'} information.
-              </DialogDescription>
-            </DialogHeader>
-            
-            <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 py-2">
-              <Input 
-                value={searchQuery}
-                onChange={handleSearchQueryChange}
-                placeholder={isFoodCard ? "Search for restaurants..." : "Search for movies, TV shows..."}
-                className="flex-1"
-                autoFocus
-              />
-              <Button type="submit" disabled={isSearching}>
-                {isSearching ? "Searching..." : "Search"}
-              </Button>
-            </form>
-            
-            <div className="py-2">
-              {isSearching ? (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">Searching...</p>
-                </div>
-              ) : searchResults.length > 0 ? (
-                <div className="border rounded-md bg-white shadow-sm">
-                  <Command>
-                    <CommandList className="max-h-[300px] overflow-y-auto">
-                      <CommandGroup heading="Results">
-                        {searchResults.map((result, index) => (
-                          <CommandItem
-                            key={index}
-                            onSelect={() => handleSearchItemSelect(result)}
-                            className="cursor-pointer hover:bg-slate-100 p-2 flex items-center"
-                            data-testid={`search-result-${index}`}
-                          >
-                            <div className="flex flex-col w-full">
-                              <span className="font-medium">{result.title}</span>
-                              <span className="text-sm text-muted-foreground">
-                                {isFoodCard 
-                                  ? `${result.cuisine || ''} ${result.cuisine && result.location ? '•' : ''} ${result.location || ''}`
-                                  : `${result.genre || ''} ${result.genre && result.medium ? '•' : ''} ${result.medium || ''}`
-                                }
-                              </span>
-                            </div>
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                    <CommandEmpty>No results found.</CommandEmpty>
-                  </Command>
-                </div>
-              ) : hasPerformedSearch ? (
-                <p className="text-center py-4 text-muted-foreground">No results found. Try a different search term.</p>
-              ) : (
-                <p className="text-center py-4 text-muted-foreground">Type a search term above and click Search to find information.</p>
-              )}
-            </div>
-            
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Close</Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </form>
-    </div>
-  );
-};
-
-export default CardForm;

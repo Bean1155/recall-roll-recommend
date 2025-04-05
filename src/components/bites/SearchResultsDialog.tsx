@@ -1,8 +1,6 @@
 
 import { X } from "lucide-react";
 import { FoodCard } from "@/lib/types";
-import CatalogCard from "@/components/CatalogCard";
-import Envelope from "@/components/Envelope";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Dialog,
@@ -24,7 +22,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
@@ -60,8 +57,11 @@ const SearchResultsDialog = ({
               {results.map((card) => (
                 <CommandItem
                   key={card.id}
-                  onSelect={() => onCardClick(card)}
-                  className="cursor-pointer p-2 hover:bg-slate-100 data-[selected=true]:bg-slate-100 rounded-md flex flex-col gap-2"
+                  onSelect={() => {
+                    console.log("Selected card from search results:", card);
+                    onCardClick(card);
+                  }}
+                  className="cursor-pointer p-4 hover:bg-slate-100 data-[selected=true]:bg-slate-100 rounded-md flex flex-col gap-2"
                   data-testid={`search-result-${card.id}`}
                 >
                   <div className="flex flex-row items-center w-full">
@@ -70,6 +70,11 @@ const SearchResultsDialog = ({
                       <div className="text-sm text-muted-foreground">
                         {card.category} • {card.cuisine || 'Various'}
                       </div>
+                      {card.location && (
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {card.location}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </CommandItem>
