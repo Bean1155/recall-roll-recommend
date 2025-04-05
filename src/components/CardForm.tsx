@@ -1242,7 +1242,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
             </TabsList>
             
             <TabsContent value="web" className="mt-0">
-              <form onSubmit={handleSearchSubmit} className="space-y-4 py-4">
+              <form onSubmit={(e) => { e.preventDefault(); handleSearch(searchQuery); }} className="space-y-4 py-4">
                 <div className="flex space-x-2">
                   <Input
                     value={searchQuery}
@@ -1300,7 +1300,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
             </TabsContent>
             
             <TabsContent value="local" className="mt-0">
-              <form onSubmit={handleSearchSubmit} className="space-y-4 py-4">
+              <form onSubmit={(e) => { e.preventDefault(); handleSearch(searchQuery); }} className="space-y-4 py-4">
                 <div className="flex space-x-2">
                   <Input
                     value={searchQuery}
