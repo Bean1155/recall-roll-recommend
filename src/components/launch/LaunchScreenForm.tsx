@@ -82,7 +82,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
     >
       {/* Library card appearance */}
       <div 
-        className="bg-white border border-gray-300 rounded-md shadow-md overflow-hidden mb-8"
+        className="bg-white border border-gray-300 rounded-md shadow-md overflow-hidden mb-6"
         style={{
           backgroundImage: `
             linear-gradient(180deg, rgba(220,252,231,0.1) 0%, rgba(255,255,255,1) 3%, rgba(255,255,255,1) 97%, rgba(220,252,231,0.1) 100%),
@@ -152,7 +152,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
             </div>
             
             <div className="text-center text-sm text-vintage-red mt-4 font-typewriter">
-              <p>Start cataloging your favorites and sharing your recommendations! It's the app that recalls, when you don't.</p>
+              <p>Catalog, share and checkout your favorites. It's the app that recalls, when you don't!</p>
             </div>
           </form>
         </Form>

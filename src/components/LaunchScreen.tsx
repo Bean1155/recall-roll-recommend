@@ -66,8 +66,8 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
             />
           </div>
           
-          {/* Remove the bottom margin to ensure the envelope is fully visible */}
-          <div className="w-full mt-0" style={{ marginBottom: "-25px" }}>
+          {/* Position envelope higher to be fully visible on mobile */}
+          <div className="w-full mt-0" style={{ marginBottom: "-40px" }}>
             <LaunchScreenAnimation 
               open={open}
               forcedOpen={forcedOpen}
