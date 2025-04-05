@@ -1,5 +1,5 @@
 
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 import { getUserRewards } from "@/lib/data";
 
 /**
@@ -72,7 +72,7 @@ export const showRewardToast = (
 };
 
 /**
- * Force the rewards counter to refresh - SIMPLIFIED
+ * Force the rewards counter to refresh
  */
 export const forceRewardsRefresh = (): void => {
   console.log("Force refresh rewards event triggered");
@@ -88,23 +88,6 @@ export const forceRewardsRefresh = (): void => {
       const currentUser = JSON.parse(currentUserStr);
       if (currentUser?.id) {
         localStorage.setItem(`user_${currentUser.id}_last_reward`, timestamp);
-        
-        // CRITICAL FIX: Directly increment the user's points in localStorage
-        const rewardsData = localStorage.getItem('catalogUserRewards');
-        let rewards = {};
-        
-        if (rewardsData) {
-          rewards = JSON.parse(rewardsData);
-          // If the user doesn't have any rewards yet, initialize with 1
-          if (typeof rewards[currentUser.id] === 'undefined') {
-            rewards[currentUser.id] = 1; 
-          }
-        } else {
-          // Initialize rewards data if it doesn't exist
-          rewards = { [currentUser.id]: 1 };
-        }
-        
-        localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
       }
     }
   } catch (e) {
@@ -140,20 +123,34 @@ export const ensureUserHasRewards = (userId: string): void => {
     const rewardsData = localStorage.getItem('catalogUserRewards');
     let rewards = rewardsData ? JSON.parse(rewardsData) : {};
     
-    // If user doesn't have rewards, initialize with 1
+    // If user doesn't have rewards, initialize with 0
     if (typeof rewards[userId] === 'undefined') {
-      rewards[userId] = 1;
+      rewards[userId] = 0;
       localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
-      console.log(`Initialized rewards for user ${userId} with 1 point`);
+      console.log(`Initialized rewards for user ${userId}`);
     }
   } catch (e) {
     console.error("Error ensuring user rewards exist:", e);
   }
 }
 
-// Direct function to add points for card creation - modified to only add points after form submission
+// Direct function to add points for card creation - fixed to ONLY add points during explicit save
 export const addPointsForCardCreation = (userId: string, cardType: string): void => {
   if (!userId) return;
+  
+  // Check if we've already added points for this exact card creation action
+  const trackingKey = `last_${cardType}_added_${userId}`;
+  const lastAdded = localStorage.getItem(trackingKey);
+  const now = Date.now();
+  
+  if (lastAdded) {
+    const timeSinceLastAdd = now - Number(lastAdded);
+    // If we've added points in the last 5 seconds, don't add more
+    if (timeSinceLastAdd < 5000) {
+      console.log(`Skipping duplicate points for ${userId} - already added recently`);
+      return;
+    }
+  }
   
   try {
     const rewardsData = localStorage.getItem('catalogUserRewards');
@@ -169,6 +166,8 @@ export const addPointsForCardCreation = (userId: string, cardType: string): void
     
     // Save back to localStorage
     localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
+    localStorage.setItem(trackingKey, now.toString());
+    
     console.log(`Added 1 point to user ${userId} for creating a ${cardType} card. Total: ${rewards[userId]}`);
     
     // Show toast notification
@@ -181,30 +180,4 @@ export const addPointsForCardCreation = (userId: string, cardType: string): void
   }
 }
 
-// Add points for using search feature - but don't automatically trigger form submission
-export const addPointsForSearch = (userId: string, type: string): void => {
-  if (!userId) return;
-  
-  try {
-    const rewardsData = localStorage.getItem('catalogUserRewards');
-    let rewards = rewardsData ? JSON.parse(rewardsData) : {};
-    
-    // Initialize or update user rewards
-    if (typeof rewards[userId] === 'undefined') {
-      rewards[userId] = 1;
-    } else {
-      rewards[userId] += 1;
-    }
-    
-    // Save back to localStorage
-    localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
-    
-    // Show toast notification
-    showRewardToast(userId, 1, `Using search for ${type === 'food' ? 'bite' : 'blockbuster'} information`);
-    
-    // Trigger a refresh
-    forceRewardsRefresh();
-  } catch (e) {
-    console.error("Error adding points for search:", e);
-  }
-}
+// Remove the addPointsForSearch function as we don't want to award points for search

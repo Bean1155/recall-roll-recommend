@@ -128,35 +128,25 @@ export const addCard = (card: Omit<CatalogCard, 'id'>): CatalogCard => {
   const currentUserStr = localStorage.getItem('currentUser');
   const currentUser = currentUserStr ? JSON.parse(currentUserStr) : null;
   
-  // Track this card addition for rewards - IMPROVED
-  if (card.type && currentUser) {
-    console.log(`User ${currentUser.id} added a ${card.type} card - awarding 1 point`);
+  // Track this card addition for rewards - ONLY on explicit save
+  if (card.type && currentUser?.id) {
+    console.log(`User ${currentUser.id} added a ${card.type} card - tracked for rewards`);
     
-    // Make sure the user has rewards initialized
-    const rewardsData = localStorage.getItem('catalogUserRewards');
-    let rewards = rewardsData ? JSON.parse(rewardsData) : {};
-    
-    // Initialize user rewards if not present
-    if (!rewards[currentUser.id]) {
-      rewards[currentUser.id] = 1; // Start with 1 point
-      localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
-    } else {
-      // Award exactly 1 point with a clear reason
-      const reason = `Adding a new ${card.type === 'food' ? 'bite' : 'blockbuster'}`;
-      addUserRewardPoints(currentUser.id, 1, reason);
-    }
+    // Store timestamp to prevent duplicate rewards
+    const trackingKey = `last_${card.type}_added_${currentUser.id}`;
+    localStorage.setItem(trackingKey, Date.now().toString());
     
     // Dispatch a single event to notify other components
     const event = new CustomEvent('catalog_action', { 
-      detail: { action: 'card_added', cardType: card.type, timestamp: Date.now() } 
+      detail: { 
+        action: 'card_added', 
+        cardType: card.type, 
+        cardId: newCard.id,
+        timestamp: Date.now() 
+      } 
     });
     window.dispatchEvent(event);
-    console.log(`Dispatched card_added event for ${card.type}`);
-    
-    // Force a single refresh of rewards counters
-    setTimeout(() => {
-      forceRewardsRefresh();
-    }, 50);
+    console.log(`Dispatched card_added event for ${card.type} with ID ${newCard.id}`);
   }
   
   return newCard;

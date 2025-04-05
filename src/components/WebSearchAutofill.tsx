@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Globe, MapPin } from "lucide-react";
+import { Search, Globe } from "lucide-react";
 import { performWebSearch, simulateWebSearch } from "@/utils/webSearch";
 import SearchResultsDialog from "@/components/bites/SearchResultsDialog";
 import { FoodCard, EntertainmentCard } from "@/lib/types";
@@ -15,7 +15,6 @@ interface WebSearchAutofillProps {
 
 const WebSearchAutofill = ({ type, onResultSelect, className }: WebSearchAutofillProps) => {
   const [query, setQuery] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
   const [results, setResults] = useState<(FoodCard | EntertainmentCard)[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
