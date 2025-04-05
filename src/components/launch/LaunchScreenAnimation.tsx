@@ -89,7 +89,7 @@ const LaunchScreenAnimation: React.FC<LaunchScreenAnimationProps> = ({
             backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"100\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"none\" stroke=\"%23000000\" stroke-opacity=\"0.05\" stroke-width=\"0.5\" /><rect width=\"50\" height=\"50\" fill=\"none\" stroke=\"%23000000\" stroke-opacity=\"0.05\" stroke-width=\"0.3\" /><rect width=\"25\" height=\"25\" fill=\"none\" stroke=\"%23000000\" stroke-opacity=\"0.05\" stroke-width=\"0.2\" /></svg>')",
             backgroundSize: "100px",
             borderWidth: "3px",
-            marginTop: "65px", /* Further increased margin to align with the bottom of the card */
+            marginTop: "0", /* Reset margin to make envelope visible */
             position: "relative",
             zIndex: "10" /* Make envelope appear above the catalog card */
           }}

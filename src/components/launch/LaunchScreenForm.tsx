@@ -82,7 +82,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
     >
       {/* Library card appearance */}
       <div 
-        className="bg-white border border-gray-300 rounded-md shadow-md overflow-hidden"
+        className="bg-white border border-gray-300 rounded-md shadow-md overflow-hidden mb-8"
         style={{
           backgroundImage: `
             linear-gradient(180deg, rgba(220,252,231,0.1) 0%, rgba(255,255,255,1) 3%, rgba(255,255,255,1) 97%, rgba(220,252,231,0.1) 100%),
@@ -103,9 +103,9 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
               name="name"
               render={({ field }) => (
                 <FormItem className="mb-6">
-                  <div className="flex items-start">
-                    <FormLabel className="text-vintage-red font-mono font-bold text-sm min-w-[130px] mt-2">FROM THE LIBRARY OF:</FormLabel>
-                    <div className="flex-1">
+                  <div className="flex flex-col sm:flex-row items-start">
+                    <FormLabel className="text-vintage-red font-mono font-bold text-sm sm:min-w-[130px] mt-2">FROM THE<br />LIBRARY OF:</FormLabel>
+                    <div className="flex-1 w-full mt-2 sm:mt-0">
                       <FormControl>
                         <Input 
                           placeholder="Enter your name" 
@@ -125,9 +125,9 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
               name="email"
               render={({ field }) => (
                 <FormItem className="mb-6">
-                  <div className="flex items-start">
-                    <FormLabel className="text-vintage-red font-mono font-bold text-sm min-w-[130px] mt-2">CORRESPONDENCE:</FormLabel>
-                    <div className="flex-1">
+                  <div className="flex flex-col sm:flex-row items-start">
+                    <FormLabel className="text-vintage-red font-mono font-bold text-sm sm:min-w-[130px] mt-2">CORRESPONDENCE:</FormLabel>
+                    <div className="flex-1 w-full mt-2 sm:mt-0">
                       <FormControl>
                         <Input 
                           placeholder="Enter your email" 

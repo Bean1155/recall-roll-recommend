@@ -66,8 +66,8 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
             />
           </div>
           
-          {/* Adjust margin to make envelope touch the bottom of the card */}
-          <div className="w-full mt-8" style={{ marginBottom: "-62px" }}>
+          {/* Remove the bottom margin to ensure the envelope is fully visible */}
+          <div className="w-full mt-0" style={{ marginBottom: "-25px" }}>
             <LaunchScreenAnimation 
               open={open}
               forcedOpen={forcedOpen}
