@@ -66,8 +66,8 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
             />
           </div>
           
-          {/* Significantly increase the negative margin to fully overlap the PF.3 line */}
-          <div className="w-full mt-8" style={{ marginBottom: "-42px" }}>
+          {/* Adjust margin to make envelope touch the bottom of the card */}
+          <div className="w-full mt-8" style={{ marginBottom: "-62px" }}>
             <LaunchScreenAnimation 
               open={open}
               forcedOpen={forcedOpen}

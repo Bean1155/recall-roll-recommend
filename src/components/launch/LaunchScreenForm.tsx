@@ -104,7 +104,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
               render={({ field }) => (
                 <FormItem className="mb-6">
                   <div className="flex items-start">
-                    <FormLabel className="text-vintage-red font-mono font-bold text-sm min-w-[130px] mt-2">PATRON NAME:</FormLabel>
+                    <FormLabel className="text-vintage-red font-mono font-bold text-sm min-w-[130px] mt-2">FROM THE LIBRARY OF:</FormLabel>
                     <div className="flex-1">
                       <FormControl>
                         <Input 
@@ -147,7 +147,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
                 type="submit" 
                 className="w-3/4 bg-catalog-teal hover:bg-catalog-darkTeal text-white font-medium"
               >
-                Get Started
+                Checkout
               </Button>
             </div>
             
