@@ -14,7 +14,7 @@ import {
 import { CardType, CatalogCard, FoodCard, EntertainmentCard, FoodCategory, FoodStatus, EntertainmentStatus, ServiceRating } from "@/lib/types";
 import { addCard, updateCard, getCardById } from "@/lib/data";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Minus, Calendar, Link, Tag, Star, Smile, Meh, Frown, Search } from "lucide-react";
+import { Plus, Minus, Calendar, Link as LinkIcon, Tag, Star, Smile, Meh, Frown, Search, Globe, Database } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import {
   Dialog,
@@ -39,7 +39,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 import { useUser } from "@/contexts/UserContext";
 import { addPointsForSearch } from "@/utils/rewardUtils";
-import SearchResultsDialog from "./bites/SearchResultsDialog";
+import SearchResultsDialog from "@/components/bites/SearchResultsDialog";
+import { performWebSearch } from "@/utils/webSearch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CardFormProps {
   type: CardType;
@@ -62,6 +64,8 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasPerformedSearch, setHasPerformedSearch] = useState(false);
+  const [searchSource, setSearchSource] = useState<"web" | "local">("local");
+  const [searchType, setSearchType] = useState<"web" | "local">("web");
   
   useEffect(() => {
     const savedFoodCategories = localStorage.getItem('customFoodCategories');
@@ -172,15 +176,14 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
     }
   }, [formData.status, isFoodCard, showRating]);
 
-  const performSearch = useCallback(async (query: string) => {
+  const performLocalSearch = useCallback(async (query: string) => {
     if (!query.trim()) return;
     
     setIsSearching(true);
     setHasPerformedSearch(true);
-    console.log("Performing search for:", query);
+    console.log("Performing local search for:", query);
     
     try {
-      // Simulate a network request delay
       await new Promise(resolve => setTimeout(resolve, 800));
       
       let results = [];
@@ -318,7 +321,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
       console.log("Search completed. Found results:", results.length);
       setSearchResults(results);
     } catch (error) {
-      console.error("Error performing search:", error);
+      console.error("Error performing local search:", error);
       toast({
         title: "Search Error",
         description: "Failed to perform search. Please try again.",
@@ -329,6 +332,39 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
       setIsSearching(false);
     }
   }, [isFoodCard]);
+  
+  const handleSearch = useCallback(async (query: string) => {
+    if (!query.trim()) return;
+    
+    setIsSearching(true);
+    setHasPerformedSearch(true);
+    console.log(`Performing ${searchType} search for:`, query);
+    
+    try {
+      let results;
+      if (searchType === "web") {
+        results = await performWebSearch(query, isFoodCard ? 'food' : 'entertainment');
+        setSearchSource("web");
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 800));
+        results = await performLocalSearch(query);
+        setSearchSource("local");
+      }
+      
+      console.log(`${searchType} search completed. Found results:`, results.length);
+      setSearchResults(results);
+    } catch (error) {
+      console.error(`Error performing ${searchType} search:`, error);
+      toast({
+        title: "Search Error",
+        description: `Failed to perform ${searchType} search. Please try again.`,
+        variant: "destructive",
+      });
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, [isFoodCard, performLocalSearch, searchType]);
   
   const handleSearchItemSelect = (item: any) => {
     console.log("Selected search item:", item);
@@ -463,16 +499,23 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
     setSearchResults([]);
     setSearchQuery('');
     setHasPerformedSearch(false);
+    setSearchType("web");
   };
   
   const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
   
+  const handleSearchTypeChange = (value: "web" | "local") => {
+    setSearchType(value);
+    setSearchResults([]);
+    setHasPerformedSearch(false);
+  };
+  
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Search form submitted with query:", searchQuery);
-    performSearch(searchQuery);
+    handleSearch(searchQuery);
   };
   
   const handleSubmit = (e: React.FormEvent) => {
@@ -590,8 +633,8 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
                     onClick={handleSearchClick}
                     className="flex items-center gap-1 border-catalog-softBrown text-catalog-darkBrown"
                   >
-                    <Search className="w-4 h-4" />
-                    <span>Search</span>
+                    <Globe className="w-4 h-4" />
+                    <span>Web Search</span>
                   </Button>
                 </div>
                 <Input
@@ -823,7 +866,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
 
               <div>
                 <Label htmlFor="url" className="flex items-center">
-                  <Link className="w-4 h-4 mr-2" />
+                  <LinkIcon className="w-4 h-4 mr-2" />
                   URL
                 </Label>
                 <Input
@@ -879,8 +922,8 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
                     onClick={handleSearchClick}
                     className="flex items-center gap-1 border-catalog-softBrown text-catalog-darkBrown"
                   >
-                    <Search className="w-4 h-4" />
-                    <span>Search</span>
+                    <Globe className="w-4 h-4" />
+                    <span>Web Search</span>
                   </Button>
                 </div>
                 <Input
@@ -1059,7 +1102,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
 
               <div>
                 <Label htmlFor="url" className="flex items-center">
-                  <Link className="w-4 h-4 mr-2" />
+                  <LinkIcon className="w-4 h-4 mr-2" />
                   URL
                 </Label>
                 <Input
@@ -1143,66 +1186,141 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
         </DialogContent>
       </Dialog>
 
-      <SearchResultsDialog
-        isOpen={isSearchDialogOpen}
-        onOpenChange={setIsSearchDialogOpen}
-        results={searchResults}
-        categoryColors={{}}
-        onCardClick={handleSearchItemSelect}
-      />
-
       <Dialog open={isSearchDialogOpen} onOpenChange={setIsSearchDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Search for {isFoodCard ? 'Food' : 'Entertainment'}</DialogTitle>
             <DialogDescription>
-              Find and add existing {isFoodCard ? 'restaurants and dishes' : 'movies, shows, and more'} to your catalog.
+              Find and add {isFoodCard ? 'restaurants and dishes' : 'movies, shows, and more'} to your catalog.
             </DialogDescription>
           </DialogHeader>
           
-          <form onSubmit={handleSearchSubmit} className="space-y-4 py-4">
-            <div className="flex space-x-2">
-              <Input
-                value={searchQuery}
-                onChange={handleSearchQueryChange}
-                placeholder={`Search for ${isFoodCard ? 'restaurants, dishes, etc.' : 'movies, shows, etc.'}`}
-                className="flex-grow"
-              />
-              <Button type="submit" disabled={isSearching}>
-                {isSearching ? 'Searching...' : 'Search'}
-              </Button>
-            </div>
+          <Tabs defaultValue="web" className="mt-2" onValueChange={(value) => handleSearchTypeChange(value as "web" | "local")}>
+            <TabsList className="grid grid-cols-2 mb-4">
+              <TabsTrigger value="web" className="flex items-center gap-2">
+                <Globe className="w-4 h-4" />
+                Web Search
+              </TabsTrigger>
+              <TabsTrigger value="local" className="flex items-center gap-2">
+                <Database className="w-4 h-4" />
+                Local Search
+              </TabsTrigger>
+            </TabsList>
             
-            {hasPerformedSearch && searchResults.length === 0 && !isSearching && (
-              <div className="text-center text-muted-foreground py-4">
-                No results found. Try a different search term.
-              </div>
-            )}
-            
-            {searchResults.length > 0 && (
-              <div className="mt-4">
-                <h3 className="text-sm font-medium mb-2">Results:</h3>
-                <div className="max-h-[300px] overflow-y-auto space-y-2">
-                  {searchResults.map((item) => (
-                    <div 
-                      key={item.id}
-                      onClick={() => handleSearchItemSelect(item)}
-                      className="p-3 border rounded-md hover:bg-slate-100 cursor-pointer"
-                    >
-                      <div className="font-medium">{item.title}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {isFoodCard ? `${item.cuisine || 'Various'} • ${getCategoryDisplayName(item.category as string)}` : 
-                        `${item.genre || 'Various'} • ${item.medium || 'Unknown'}`}
-                      </div>
-                      {item.location && <div className="text-xs mt-1">{item.location}</div>}
-                    </div>
-                  ))}
+            <TabsContent value="web" className="mt-0">
+              <form onSubmit={handleSearchSubmit} className="space-y-4 py-4">
+                <div className="flex space-x-2">
+                  <Input
+                    value={searchQuery}
+                    onChange={handleSearchQueryChange}
+                    placeholder={`Search the web for ${isFoodCard ? 'restaurants, dishes, etc.' : 'movies, shows, etc.'}`}
+                    className="flex-grow"
+                  />
+                  <Button type="submit" disabled={isSearching}>
+                    {isSearching ? 'Searching...' : 'Search'}
+                  </Button>
                 </div>
-              </div>
-            )}
-          </form>
+                
+                {isSearching && (
+                  <div className="text-center py-4">
+                    <div className="animate-pulse flex space-x-4 justify-center mb-4">
+                      <div className="rounded-full bg-slate-300 h-10 w-10"></div>
+                      <div className="flex-1 space-y-2 max-w-[300px]">
+                        <div className="h-2 bg-slate-300 rounded"></div>
+                        <div className="h-2 bg-slate-300 rounded w-3/4"></div>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground">Searching the web...</p>
+                  </div>
+                )}
+                
+                {hasPerformedSearch && searchResults.length === 0 && !isSearching && (
+                  <div className="text-center text-muted-foreground py-4">
+                    No results found. Try a different search term.
+                  </div>
+                )}
+                
+                {searchResults.length > 0 && !isSearching && (
+                  <div className="mt-4">
+                    <h3 className="text-sm font-medium mb-2">Web Results:</h3>
+                    <div className="max-h-[300px] overflow-y-auto space-y-2">
+                      {searchResults.map((item) => (
+                        <div 
+                          key={item.id}
+                          onClick={() => handleSearchItemSelect(item)}
+                          className="p-3 border rounded-md hover:bg-slate-100 cursor-pointer"
+                        >
+                          <div className="font-medium">{item.title}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {isFoodCard ? `${item.cuisine || 'Various'} • ${getCategoryDisplayName(item.category as string)}` : 
+                            `${item.genre || 'Various'} • ${item.medium || 'Unknown'}`}
+                          </div>
+                          {item.location && <div className="text-xs mt-1">{item.location}</div>}
+                          {item.url && <div className="text-xs text-blue-500 mt-1 truncate">{item.url}</div>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </form>
+            </TabsContent>
+            
+            <TabsContent value="local" className="mt-0">
+              <form onSubmit={handleSearchSubmit} className="space-y-4 py-4">
+                <div className="flex space-x-2">
+                  <Input
+                    value={searchQuery}
+                    onChange={handleSearchQueryChange}
+                    placeholder={`Search your catalog for ${isFoodCard ? 'restaurants, dishes, etc.' : 'movies, shows, etc.'}`}
+                    className="flex-grow"
+                  />
+                  <Button type="submit" disabled={isSearching}>
+                    {isSearching ? 'Searching...' : 'Search'}
+                  </Button>
+                </div>
+                
+                {hasPerformedSearch && searchResults.length === 0 && !isSearching && (
+                  <div className="text-center text-muted-foreground py-4">
+                    No results found in your catalog. Try a different search term.
+                  </div>
+                )}
+                
+                {searchResults.length > 0 && !isSearching && (
+                  <div className="mt-4">
+                    <h3 className="text-sm font-medium mb-2">Catalog Results:</h3>
+                    <div className="max-h-[300px] overflow-y-auto space-y-2">
+                      {searchResults.map((item) => (
+                        <div 
+                          key={item.id}
+                          onClick={() => handleSearchItemSelect(item)}
+                          className="p-3 border rounded-md hover:bg-slate-100 cursor-pointer"
+                        >
+                          <div className="font-medium">{item.title}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {isFoodCard ? `${item.cuisine || 'Various'} • ${getCategoryDisplayName(item.category as string)}` : 
+                            `${item.genre || 'Various'} • ${item.medium || 'Unknown'}`}
+                          </div>
+                          {item.location && <div className="text-xs mt-1">{item.location}</div>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </form>
+            </TabsContent>
+          </Tabs>
         </DialogContent>
       </Dialog>
+      
+      <SearchResultsDialog
+        isOpen={false}
+        onOpenChange={setIsSearchDialogOpen}
+        results={searchResults}
+        categoryColors={{}}
+        onCardClick={handleSearchItemSelect}
+        isLoading={isSearching}
+        searchSource={searchSource}
+      />
     </div>
   );
 };

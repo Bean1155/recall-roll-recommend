@@ -32,6 +32,8 @@ interface SearchResultsDialogProps {
   results: FoodCard[];
   categoryColors: Record<string, string>;
   onCardClick: (card: FoodCard) => void;
+  isLoading?: boolean;
+  searchSource?: "web" | "local";
 }
 
 const SearchResultsDialog = ({
@@ -40,20 +42,33 @@ const SearchResultsDialog = ({
   results,
   categoryColors,
   onCardClick,
+  isLoading = false,
+  searchSource = "local",
 }: SearchResultsDialogProps) => {
   const isMobile = useIsMobile();
 
   // Helper function to render results consistently
   const renderResults = () => (
     <div className="overflow-hidden">
-      {results.length === 0 ? (
+      {isLoading ? (
+        <div className="p-6 text-center">
+          <div className="animate-pulse flex space-x-4 justify-center mb-4">
+            <div className="w-6 h-6 rounded-full bg-slate-300"></div>
+            <div className="flex-1 max-w-[200px] space-y-2">
+              <div className="h-2 bg-slate-300 rounded"></div>
+              <div className="h-2 bg-slate-300 rounded w-3/4"></div>
+            </div>
+          </div>
+          <p className="text-muted-foreground">Searching the web...</p>
+        </div>
+      ) : results.length === 0 ? (
         <div className="p-6 text-center text-muted-foreground">
           No results found
         </div>
       ) : (
         <Command className="rounded-lg border shadow-md overflow-hidden bg-white">
           <CommandList className="max-h-[350px] overflow-y-auto p-2">
-            <CommandGroup heading="Search Results">
+            <CommandGroup heading={`${searchSource === "web" ? "Web Search Results" : "Search Results"}`}>
               {results.map((card) => (
                 <CommandItem
                   key={card.id}
@@ -73,6 +88,11 @@ const SearchResultsDialog = ({
                       {card.location && (
                         <div className="text-xs text-muted-foreground mt-1">
                           {card.location}
+                        </div>
+                      )}
+                      {searchSource === "web" && (
+                        <div className="mt-2 text-xs text-blue-500">
+                          {card.url ? "Source: Web" : "Add to catalog"}
                         </div>
                       )}
                     </div>
@@ -102,10 +122,13 @@ const SearchResultsDialog = ({
         >
           <div className="mb-4">
             <DrawerTitle className="text-xl font-typewriter text-catalog-teal">
-              Search Results
+              {searchSource === "web" ? "Web Search Results" : "Search Results"}
             </DrawerTitle>
             <DrawerDescription className="text-sm text-catalog-softBrown">
-              We found {results.length} matches. Tap a result to select it.
+              {isLoading 
+                ? "Searching the web for matches..."
+                : `We found ${results.length} matches. Tap a result to select it.`
+              }
             </DrawerDescription>
           </div>
           
@@ -129,10 +152,13 @@ const SearchResultsDialog = ({
         className="sm:max-w-[700px] p-6 border-2 border-catalog-softBrown rounded-xl overflow-hidden bg-[#f8f8f8]"
       >
         <DialogTitle className="text-xl font-typewriter text-catalog-teal">
-          Search Results
+          {searchSource === "web" ? "Web Search Results" : "Search Results"}
         </DialogTitle>
         <DialogDescription className="text-sm text-catalog-softBrown mb-4">
-          We found {results.length} matches. Click on a result to select it.
+          {isLoading 
+            ? "Searching the web for matches..."
+            : `We found ${results.length} matches. Click on a result to select it.`
+          }
         </DialogDescription>
         
         <div className="animate-fade-in">
