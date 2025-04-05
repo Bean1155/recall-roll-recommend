@@ -81,7 +81,7 @@ const CreateCardPage = () => {
           localStorage.setItem(trackingKey, Date.now().toString());
           console.log(`CreateCardPage: Marked card addition time in ${trackingKey}`);
           
-          // IMPORTANT FIX: Directly call the function to add points
+          // Points are only added when the form is submitted, not on search selection
           addPointsForCardCreation(currentUser.id, cardType);
         }
         

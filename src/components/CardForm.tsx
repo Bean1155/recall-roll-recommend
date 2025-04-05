@@ -14,7 +14,7 @@ import {
 import { CardType, CatalogCard, FoodCard, EntertainmentCard, FoodCategory, FoodStatus, EntertainmentStatus, ServiceRating } from "@/lib/types";
 import { addCard, updateCard, getCardById } from "@/lib/data";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Minus, Calendar, Link as LinkIcon, Tag, Star, Smile, Meh, Frown, Search, Globe, Database } from "lucide-react";
+import { Plus, Minus, Calendar, Link as LinkIcon, Tag, Star, Smile, Meh, Frown, Search, Globe, Database, ExternalLink } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import {
   Dialog,
@@ -66,7 +66,8 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
   const [hasPerformedSearch, setHasPerformedSearch] = useState(false);
   const [searchSource, setSearchSource] = useState<"web" | "local">("local");
   const [searchType, setSearchType] = useState<"web" | "local">("web");
-  
+  const [isExternalSearchDialogOpen, setIsExternalSearchDialogOpen] = useState(false);
+
   useEffect(() => {
     const savedFoodCategories = localStorage.getItem('customFoodCategories');
     if (savedFoodCategories) {
@@ -366,6 +367,21 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
     }
   }, [isFoodCard, performLocalSearch, searchType]);
   
+  const handleExternalSearchClick = () => {
+    setIsExternalSearchDialogOpen(true);
+  };
+  
+  const handleExternalSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const query = encodeURIComponent(searchQuery);
+    const searchUrl = isFoodCard 
+      ? `https://www.google.com/search?q=${query}+restaurant` 
+      : `https://www.google.com/search?q=${query}+movie+show`;
+    
+    window.open(searchUrl, '_blank');
+    setIsExternalSearchDialogOpen(false);
+  };
+  
   const handleSearchItemSelect = (item: any) => {
     console.log("Selected search item:", item);
     
@@ -512,12 +528,6 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
     setHasPerformedSearch(false);
   };
   
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Search form submitted with query:", searchQuery);
-    handleSearch(searchQuery);
-  };
-  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -626,16 +636,28 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
                     <Label htmlFor="title" className="text-base">Name <span className="text-red-500">*</span></Label>
                     <p className="text-xs italic mb-1">Name of Establishment</p>
                   </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSearchClick}
-                    className="flex items-center gap-1 border-catalog-softBrown text-catalog-darkBrown"
-                  >
-                    <Globe className="w-4 h-4" />
-                    <span>Web Search</span>
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleExternalSearchClick}
+                      className="flex items-center gap-1 border-catalog-softBrown text-catalog-darkBrown"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      <span>Browser Search</span>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSearchClick}
+                      className="flex items-center gap-1 border-catalog-softBrown text-catalog-darkBrown"
+                    >
+                      <Globe className="w-4 h-4" />
+                      <span>Web Search</span>
+                    </Button>
+                  </div>
                 </div>
                 <Input
                   id="title"
@@ -915,16 +937,28 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
                     <Label htmlFor="title" className="text-base">Title <span className="text-red-500">*</span></Label>
                     <p className="text-xs italic mb-1">Name of show, performance, etc.</p>
                   </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSearchClick}
-                    className="flex items-center gap-1 border-catalog-softBrown text-catalog-darkBrown"
-                  >
-                    <Globe className="w-4 h-4" />
-                    <span>Web Search</span>
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleExternalSearchClick}
+                      className="flex items-center gap-1 border-catalog-softBrown text-catalog-darkBrown"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      <span>Browser Search</span>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSearchClick}
+                      className="flex items-center gap-1 border-catalog-softBrown text-catalog-darkBrown"
+                    >
+                      <Globe className="w-4 h-4" />
+                      <span>Web Search</span>
+                    </Button>
+                  </div>
                 </div>
                 <Input
                   id="title"
@@ -1309,6 +1343,36 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
               </form>
             </TabsContent>
           </Tabs>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isExternalSearchDialogOpen} onOpenChange={setIsExternalSearchDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>External Browser Search</DialogTitle>
+            <DialogDescription>
+              Search for {isFoodCard ? 'restaurants and dishes' : 'movies, shows, and more'} using your browser.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleExternalSearchSubmit} className="space-y-4 py-4">
+            <div className="flex space-x-2">
+              <Input
+                value={searchQuery}
+                onChange={handleSearchQueryChange}
+                placeholder={`Search for ${isFoodCard ? 'restaurants, dishes, etc.' : 'movies, shows, etc.'}`}
+                className="flex-grow"
+              />
+              <Button type="submit" className="flex items-center gap-1">
+                <ExternalLink className="w-4 h-4" />
+                <span>Search</span>
+              </Button>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              This will open a new browser tab with search results. After finding information, 
+              return here to manually enter the details.
+            </p>
+          </form>
         </DialogContent>
       </Dialog>
       
