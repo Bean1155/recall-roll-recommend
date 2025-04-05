@@ -49,7 +49,7 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
         }}
       >
         <div 
-          className="flex flex-col items-center justify-start p-6 relative"
+          className="flex flex-col items-center justify-between p-6 relative"
           style={{
             minHeight: '550px'
           }}
@@ -59,18 +59,22 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
             stamped={stamped}
           />
           
-          <LaunchScreenForm 
-            stamped={stamped}
-            onSubmitSuccess={handleFormSubmit}
-          />
+          <div className="flex-1 flex flex-col items-center justify-center w-full">
+            <LaunchScreenForm 
+              stamped={stamped}
+              onSubmitSuccess={handleFormSubmit}
+            />
+          </div>
           
-          {/* Move the animation (envelope part) to the bottom */}
-          <LaunchScreenAnimation 
-            open={open}
-            forcedOpen={forcedOpen}
-            setStamped={setStamped}
-            stamped={stamped}
-          />
+          {/* Move the animation (envelope part) to the bottom and make it full width */}
+          <div className="w-full mt-8">
+            <LaunchScreenAnimation 
+              open={open}
+              forcedOpen={forcedOpen}
+              setStamped={setStamped}
+              stamped={stamped}
+            />
+          </div>
         </div>
       </DialogContent>
     </Dialog>
