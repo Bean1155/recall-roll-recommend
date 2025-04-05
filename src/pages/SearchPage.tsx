@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,7 +21,7 @@ const SearchPage = () => {
   const isMobile = useIsMobile();
   const location = useLocation();
   const navigate = useNavigate();
-  const { userId } = useUser();
+  const { currentUser } = useUser();
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -56,15 +55,15 @@ const SearchPage = () => {
       setSearchType('food');
       setIsSearchOpen(true);
       // Award points for using search
-      if (userId) {
-        addPointsForSearch(userId, 'food');
+      if (currentUser?.id) {
+        addPointsForSearch(currentUser.id, 'food');
       }
     } else if (value === 'entertainment') {
       setSearchType('entertainment');
       setIsSearchOpen(true);
       // Award points for using search
-      if (userId) {
-        addPointsForSearch(userId, 'entertainment');
+      if (currentUser?.id) {
+        addPointsForSearch(currentUser.id, 'entertainment');
       }
     }
   };
