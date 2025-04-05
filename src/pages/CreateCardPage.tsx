@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import CardForm from "@/components/CardForm";
 import { CardType } from "@/lib/types";
 import GridLayout from "@/components/GridLayout";
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { forceRewardsRefresh, showRewardToast, addPointsForCardCreation } from "@/utils/rewardUtils";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "@/components/ui/use-toast";
@@ -14,6 +14,7 @@ const CreateCardPage = () => {
   const { currentUser } = useUser();
   const hasInitializedRef = useRef(false);
   const rewardRefreshIntervalRef = useRef<number | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
   
   const title = cardType === 'food' ? 'Add Bite' : 'Add Blockbuster';
   
