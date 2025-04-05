@@ -66,8 +66,8 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
             />
           </div>
           
-          {/* Increase the negative margin to create more overlap */}
-          <div className="w-full mt-8" style={{ marginBottom: "-24px" }}>
+          {/* Significantly increase the negative margin to fully overlap the PF.3 line */}
+          <div className="w-full mt-8" style={{ marginBottom: "-42px" }}>
             <LaunchScreenAnimation 
               open={open}
               forcedOpen={forcedOpen}
