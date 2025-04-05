@@ -12,14 +12,12 @@ interface LaunchScreenProps {
 const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose }) => {
   const [open, setOpen] = useState(true);
   const [stamped, setStamped] = useState(false);
-  const [displayText, setDisplayText] = useState("");
 
   // Reset stamped state when forcedOpen changes
   useEffect(() => {
     if (forcedOpen) {
       setOpen(true);
       setStamped(false);
-      setDisplayText("");
     }
   }, [forcedOpen]);
 
@@ -42,11 +40,17 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
 
   return (
     <Dialog open={open || forcedOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md md:max-w-lg p-0 border-catalog-softBrown border-2 overflow-hidden bg-catalog-cream rounded-lg">
+      <DialogContent 
+        className="sm:max-w-md md:max-w-lg p-0 border-catalog-softBrown border-2 overflow-hidden rounded-lg"
+        style={{
+          background: "#f5f5dc",
+          boxShadow: "rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px"
+        }}
+      >
         <div 
           className="flex flex-col items-center justify-start p-6 relative"
           style={{
-            minHeight: '450px'
+            minHeight: '550px'
           }}
         >
           <LaunchScreenAnimation 

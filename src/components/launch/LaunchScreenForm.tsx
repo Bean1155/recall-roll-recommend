@@ -35,6 +35,8 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
   onSubmitSuccess 
 }) => {
   const { setCurrentUser } = useUser();
+  const currentDate = new Date();
+  const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -76,67 +78,88 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
 
   return (
     <div 
-      className={`w-full transition-all duration-500 transform ${stamped ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}
+      className={`w-full max-w-md transition-all duration-500 transform ${stamped ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}
     >
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-0">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem className="mb-2.4">
-                <div className="flex items-center">
-                  <FormLabel className="text-vintage-red font-medium mr-2 w-40">This Catalog belongs to:</FormLabel>
-                  <div className="flex-1">
-                    <FormControl>
-                      <Input 
-                        placeholder="Enter your name" 
-                        className="bg-transparent border-0 border-b border-dashed border-catalog-softBrown focus:border-catalog-teal rounded-none pl-0 focus-visible:ring-0 focus-visible:ring-offset-0" 
-                        {...field} 
-                      />
-                    </FormControl>
-                  </div>
-                </div>
-                <FormMessage className="pl-40 text-xs" />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="mb-2.4">
-                <div className="flex items-center">
-                  <FormLabel className="text-vintage-red font-medium mr-2 w-40">Correspondence:</FormLabel>
-                  <div className="flex-1">
-                    <FormControl>
-                      <Input 
-                        placeholder="Enter your email" 
-                        className="bg-transparent border-0 border-b border-dashed border-catalog-softBrown focus:border-catalog-teal rounded-none pl-0 focus-visible:ring-0 focus-visible:ring-offset-0" 
-                        {...field} 
-                      />
-                    </FormControl>
-                  </div>
-                </div>
-                <FormMessage className="pl-40 text-xs" />
-              </FormItem>
-            )}
-          />
-          
-          <div className="pt-6 flex justify-center">
-            <Button 
-              type="submit" 
-              className="w-3/4 bg-catalog-teal hover:bg-catalog-darkTeal text-white font-medium"
-            >
-              Get Started
-            </Button>
-          </div>
-        </form>
-      </Form>
+      {/* Library card appearance */}
+      <div 
+        className="bg-white border border-gray-300 rounded-md shadow-md overflow-hidden"
+        style={{
+          backgroundImage: `
+            linear-gradient(180deg, rgba(220,252,231,0.1) 0%, rgba(255,255,255,1) 3%, rgba(255,255,255,1) 97%, rgba(220,252,231,0.1) 100%),
+            repeating-linear-gradient(0deg, transparent, transparent 27px, #a9d9d0 27px, #a9d9d0 28px),
+            repeating-linear-gradient(90deg, transparent, transparent 120px, #a9d9d0 120px, #a9d9d0 121px)
+          `,
+        }}
+      >
+        <div className="border-b border-gray-300 bg-gray-100 px-4 py-2 flex justify-between items-center">
+          <div className="text-xs font-bold text-gray-500">CATALOG CARD</div>
+          <div className="text-xs font-bold text-gray-500">DATE ISSUED: {formattedDate}</div>
+        </div>
 
-      <div className="mt-3 text-center text-sm text-vintage-red">
-        <p>Start cataloging your favorites and sharing your recommendations! It's the app that recalls, when you don't.</p>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="p-5">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className="mb-6">
+                  <div className="flex items-start">
+                    <FormLabel className="text-vintage-red font-mono font-bold text-sm min-w-[130px] mt-2">PATRON NAME:</FormLabel>
+                    <div className="flex-1">
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter your name" 
+                          className="border-0 border-b border-dashed border-catalog-softBrown focus:border-catalog-teal rounded-none pl-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs mt-1" />
+                    </div>
+                  </div>
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem className="mb-6">
+                  <div className="flex items-start">
+                    <FormLabel className="text-vintage-red font-mono font-bold text-sm min-w-[130px] mt-2">CORRESPONDENCE:</FormLabel>
+                    <div className="flex-1">
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter your email" 
+                          className="border-0 border-b border-dashed border-catalog-softBrown focus:border-catalog-teal rounded-none pl-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs mt-1" />
+                    </div>
+                  </div>
+                </FormItem>
+              )}
+            />
+            
+            <div className="flex justify-center mt-8 mb-4">
+              <Button 
+                type="submit" 
+                className="w-3/4 bg-catalog-teal hover:bg-catalog-darkTeal text-white font-medium"
+              >
+                Get Started
+              </Button>
+            </div>
+            
+            <div className="text-center text-sm text-vintage-red mt-4 font-typewriter">
+              <p>Start cataloging your favorites and sharing your recommendations! It's the app that recalls, when you don't.</p>
+            </div>
+          </form>
+        </Form>
+        
+        <div className="border-t border-gray-300 bg-gray-100 px-4 py-2 text-center">
+          <div className="text-xs text-gray-500 font-mono">PF.3</div>
+        </div>
       </div>
     </div>
   );
