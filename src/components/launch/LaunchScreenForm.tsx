@@ -136,7 +136,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
       </Form>
 
       <div className="mt-3 text-center text-sm text-vintage-red">
-        <p>The app that recalls when you don't</p>
+        <p>Start cataloging your favorites and sharing your recommendations! It's the app that recalls, when you don't.</p>
       </div>
     </div>
   );
