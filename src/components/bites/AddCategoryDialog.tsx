@@ -1,141 +1,59 @@
 
 import { useState } from "react";
-import { X, Plus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FoodCategory } from "@/lib/types";
-import { useToast } from "@/hooks/use-toast";
-import { useUser } from "@/contexts/UserContext";
-import { addUserRewardPoints } from "@/lib/data";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-  DialogOverlay,
-  DialogClose,
-  DialogFooter,
-} from "@/components/ui/dialog";
 
 interface AddCategoryDialogProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  onCategoryAdded: (category: FoodCategory) => void;
-  existingCategories: FoodCategory[];
+  open?: boolean;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const AddCategoryDialog = ({
-  isOpen,
-  onOpenChange,
-  onCategoryAdded,
-  existingCategories,
+  open, 
+  isOpen, 
+  onOpenChange
 }: AddCategoryDialogProps) => {
-  const [newCategory, setNewCategory] = useState("");
-  const { toast } = useToast();
-  const { currentUser } = useUser();
+  const [categoryName, setCategoryName] = useState("");
   
+  const dialogOpen = open !== undefined ? open : isOpen;
+  const handleOpenChange = onOpenChange;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!newCategory.trim()) {
-      toast({
-        title: "Error",
-        description: "Category name cannot be empty",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    const formattedCategory = newCategory.trim().toLowerCase() as FoodCategory;
-    
-    if (existingCategories.includes(formattedCategory)) {
-      toast({
-        title: "Error",
-        description: "This category already exists",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Add category to local storage
-    try {
-      const savedCategories = localStorage.getItem('customFoodCategories');
-      let customCategories: FoodCategory[] = [];
-      
-      if (savedCategories) {
-        customCategories = JSON.parse(savedCategories);
+    // Handle category creation logic
+    if (categoryName.trim()) {
+      // Add category
+      console.log("Creating category:", categoryName);
+      setCategoryName("");
+      if (handleOpenChange) {
+        handleOpenChange(false);
       }
-      
-      customCategories.push(formattedCategory);
-      localStorage.setItem('customFoodCategories', JSON.stringify(customCategories));
-      
-      // Add reward point for creating a new category
-      // Make sure to trigger the reward notification BEFORE closing the dialog
-      if (currentUser) {
-        console.log("Adding reward points for user:", currentUser.id);
-        addUserRewardPoints(currentUser.id, 1, "Creating a new food category");
-        console.log("Reward points should have been added!");
-      }
-      
-      onCategoryAdded(formattedCategory);
-      setNewCategory("");
-      onOpenChange(false);
-      
-      toast({
-        title: "Success",
-        description: `Added new category: ${formattedCategory}`,
-      });
-    } catch (error) {
-      console.error("Error saving category:", error);
-      toast({
-        title: "Error",
-        description: "Failed to save category",
-        variant: "destructive",
-      });
     }
   };
-  
+
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogOverlay className="bg-black/80 backdrop-blur-sm" />
-      <DialogContent className="sm:max-w-[500px] p-6 border-2 border-catalog-softBrown rounded-xl">
-        <DialogTitle className="text-xl font-typewriter text-catalog-teal">
-          Add New Category
-        </DialogTitle>
-        <DialogDescription className="text-sm text-catalog-softBrown mb-4">
-          Create a custom category for your food experiences.
-        </DialogDescription>
-        
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="category-name" className="text-sm font-medium">
-                Category Name
-              </label>
-              <Input
-                id="category-name"
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                placeholder="Enter a new category name"
-                className="w-full"
-              />
-            </div>
+    <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Add New Category</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Input
+              placeholder="Category Name"
+              value={categoryName}
+              onChange={(e) => setCategoryName(e.target.value)}
+              className="w-full"
+            />
           </div>
-          
-          <DialogFooter className="mt-6">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" className="bg-catalog-teal hover:bg-catalog-darkTeal">
-              <Plus size={16} className="mr-2" />
+          <div className="flex justify-end">
+            <Button type="submit" disabled={!categoryName.trim()}>
               Add Category
             </Button>
-          </DialogFooter>
+          </div>
         </form>
-        
-        <DialogClose className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 shadow-md hover:bg-gray-100">
-          <X size={18} />
-        </DialogClose>
       </DialogContent>
     </Dialog>
   );

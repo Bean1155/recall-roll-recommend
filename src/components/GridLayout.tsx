@@ -8,9 +8,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 interface GridLayoutProps {
   children: React.ReactNode;
   title?: React.ReactNode;
+  icon?: React.ReactNode; // Added icon prop
+  headerContent?: React.ReactNode; // Added headerContent prop
 }
 
-const GridLayout: React.FC<GridLayoutProps> = ({ children, title }) => {
+const GridLayout: React.FC<GridLayoutProps> = ({ children, title, icon, headerContent }) => {
   const isMobile = useIsMobile();
   
   // Force a rewards refresh when any page using GridLayout is loaded
@@ -43,7 +45,15 @@ const GridLayout: React.FC<GridLayoutProps> = ({ children, title }) => {
       <Header />
       
       <main className="flex-1 container mx-auto px-2 sm:px-4 py-4 sm:py-6 mb-16 max-w-full sm:max-w-3xl lg:max-w-5xl">
-        {title && <div className="catalog-title text-xl sm:text-3xl mb-4 sm:mb-6 text-center">{title}</div>}
+        {title && (
+          <div className="catalog-title text-xl sm:text-3xl mb-4 sm:mb-6 text-center flex items-center justify-center">
+            {icon && <span className="mr-2">{icon}</span>}
+            {title}
+          </div>
+        )}
+        {headerContent && (
+          <div className="flex justify-end mb-4">{headerContent}</div>
+        )}
         {children}
       </main>
       

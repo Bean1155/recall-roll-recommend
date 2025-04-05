@@ -15,11 +15,19 @@ import {
 } from "@/components/ui/carousel";
 
 interface EntertainmentCardsDisplayProps {
-  category: string;
+  category?: string;
   cards: EntertainmentCard[];
-  categoryColor: string;
-  categoryDisplayName: string;
-  textColor: string;
+  categoryColor?: string;
+  categoryDisplayName?: string;
+  textColor?: string;
+  onCardClick?: (card: EntertainmentCard) => void;
+  filters?: {
+    status: string[];
+    rating: number[];
+    tags: string[];
+  };
+  categoryColors?: Record<string, string>;
+  onOpenFilters?: () => void;
 }
 
 const EntertainmentCardsDisplay = ({
@@ -28,6 +36,10 @@ const EntertainmentCardsDisplay = ({
   categoryColor,
   categoryDisplayName,
   textColor,
+  onCardClick,
+  filters,
+  categoryColors,
+  onOpenFilters,
 }: EntertainmentCardsDisplayProps) => {
   const hasCards = cards.length > 0;
 
@@ -41,6 +53,7 @@ const EntertainmentCardsDisplay = ({
                 <div 
                   className="p-1" 
                   id={`card-${card.id}`}
+                  onClick={() => onCardClick?.(card)}
                 >
                   <Envelope 
                     label={card.title}

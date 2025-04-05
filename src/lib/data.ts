@@ -107,6 +107,17 @@ export const getCardsByType = (type: 'food' | 'entertainment'): CatalogCard[] =>
   return cards.filter(card => card.type === type);
 };
 
+// New functions to get food and entertainment cards specifically
+export const getFoodCards = (): FoodCard[] => {
+  const cards = getAllCards();
+  return cards.filter(card => card.type === 'food') as FoodCard[];
+};
+
+export const getEntertainmentCards = (): EntertainmentCard[] => {
+  const cards = getAllCards();
+  return cards.filter(card => card.type === 'entertainment') as EntertainmentCard[];
+};
+
 // Get a card by ID
 export const getCardById = (id: string): CatalogCard | undefined => {
   const cards = getAllCards();
