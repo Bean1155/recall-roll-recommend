@@ -9,11 +9,11 @@ const LaunchScreenLogo: React.FC<LaunchScreenLogoProps> = ({ stamped }) => {
   return (
     <div 
       className={`relative flex items-center justify-center transition-all duration-500 ${stamped ? 'scale-100 opacity-100' : 'scale-75 opacity-0'}`}
-      style={{ marginBottom: "0.5rem" }}
+      style={{ marginBottom: "0.25rem" }}
     >
       <div className="absolute inset-0 rounded-md opacity-0"></div>
       
-      <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center">
+      <div className="relative w-20 h-20 sm:w-28 sm:h-28 flex items-center justify-center">
         {/* Add a stamp effect ring that appears when stamped */}
         <div 
           className={`absolute inset-0 border-4 rounded-full transition-all duration-700 ${stamped ? 'border-amber-700 scale-100 opacity-20' : 'scale-150 opacity-0'}`}

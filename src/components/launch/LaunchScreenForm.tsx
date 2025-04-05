@@ -82,7 +82,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
     >
       {/* Library card appearance */}
       <div 
-        className="bg-white border border-gray-300 rounded-md shadow-md overflow-hidden mb-6"
+        className="bg-white border border-gray-300 rounded-md shadow-md overflow-hidden mb-3 sm:mb-6"
         style={{
           backgroundImage: `
             linear-gradient(180deg, rgba(220,252,231,0.1) 0%, rgba(255,255,255,1) 3%, rgba(255,255,255,1) 97%, rgba(220,252,231,0.1) 100%),
@@ -97,15 +97,15 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="p-5">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="p-4 sm:p-5">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem className="mb-6">
+                <FormItem className="mb-4 sm:mb-6">
                   <div className="flex flex-col sm:flex-row items-start">
-                    <FormLabel className="text-vintage-red font-mono font-bold text-sm sm:min-w-[130px] mt-2">FROM THE<br />LIBRARY OF:</FormLabel>
-                    <div className="flex-1 w-full mt-2 sm:mt-0">
+                    <FormLabel className="text-vintage-red font-mono font-bold text-sm sm:min-w-[130px] mt-2">BORROWER:</FormLabel>
+                    <div className="flex-1 w-full mt-1 sm:mt-0">
                       <FormControl>
                         <Input 
                           placeholder="Enter your name" 
@@ -124,10 +124,10 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem className="mb-6">
+                <FormItem className="mb-4 sm:mb-6">
                   <div className="flex flex-col sm:flex-row items-start">
                     <FormLabel className="text-vintage-red font-mono font-bold text-sm sm:min-w-[130px] mt-2">CORRESPONDENCE:</FormLabel>
-                    <div className="flex-1 w-full mt-2 sm:mt-0">
+                    <div className="flex-1 w-full mt-1 sm:mt-0">
                       <FormControl>
                         <Input 
                           placeholder="Enter your email" 
@@ -142,7 +142,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
               )}
             />
             
-            <div className="flex justify-center mt-8 mb-4">
+            <div className="flex justify-center mt-5 sm:mt-6 mb-2 sm:mb-4">
               <Button 
                 type="submit" 
                 className="w-3/4 bg-catalog-teal hover:bg-catalog-darkTeal text-white font-medium"
@@ -151,13 +151,13 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
               </Button>
             </div>
             
-            <div className="text-center text-sm text-vintage-red mt-4 font-typewriter">
-              <p>Catalog, share and checkout your favorites. It's the app that recalls, when you don't!</p>
+            <div className="text-center text-xs sm:text-sm text-vintage-red mt-2 sm:mt-3 font-typewriter">
+              <p>Catalog, Share and Checkout your favorites.</p>
             </div>
           </form>
         </Form>
         
-        <div className="border-t border-gray-300 bg-gray-100 px-4 py-2 text-center">
+        <div className="border-t border-gray-300 bg-gray-100 px-4 py-1 sm:py-2 text-center">
           <div className="text-xs text-gray-500 font-mono">PF.3</div>
         </div>
       </div>
