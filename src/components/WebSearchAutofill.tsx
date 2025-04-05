@@ -113,7 +113,7 @@ const WebSearchAutofill = ({ type, onResultSelect, className }: WebSearchAutofil
       <SearchResultsDialog
         isOpen={dialogOpen}
         onOpenChange={setDialogOpen}
-        results={results}
+        results={results as FoodCard[]} // Type assertion to satisfy component prop requirements
         categoryColors={categoryColors}
         onCardClick={handleResultSelect}
         isLoading={isLoading}
