@@ -1,3 +1,4 @@
+
 import { FoodCard, EntertainmentCard } from "@/lib/types";
 
 // Function to generate a unique ID
@@ -65,8 +66,32 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
   // For demonstration, we'll use the mock data below instead of actual API calls
   
   if (type === 'food') {
-    // Food search simulation with more realistic data
-    if (query.toLowerCase().includes('pizza')) {
+    // Enhanced food search simulation with complete data and multiple results for all searches
+    const lowerQuery = query.toLowerCase();
+    
+    // Always return at least 3 results for any food search
+    results = [
+      {
+        id: generateId(),
+        type: 'food',
+        title: `${query} Restaurant`,
+        creator: "Local Restaurant Group",
+        cuisine: "Various",
+        location: "123 Main Street, Anytown",
+        category: "restaurant",
+        url: `https://www.${query.toLowerCase().replace(/\s+/g, '')}-restaurant.com`,
+        tags: ["local", "trendy", query.toLowerCase()],
+        rating: 4.2,
+        visitCount: 1,
+        status: "Interested: Want a bite",
+        notes: "",
+        isFavorite: false,
+        date: new Date().toISOString().split('T')[0],
+      }
+    ];
+    
+    // Add popular restaurant chains based on common keywords
+    if (lowerQuery.includes('pizza') || lowerQuery.includes('italian')) {
       results = [
         {
           id: generateId(),
@@ -74,7 +99,7 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           title: "Domino's Pizza",
           creator: "Domino's Pizza Inc.",
           cuisine: "Pizza, Italian",
-          location: "Nationwide",
+          location: "Multiple locations nationwide",
           category: "restaurant",
           url: "https://www.dominos.com",
           tags: ["pizza", "delivery", "fast food"],
@@ -82,7 +107,8 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           visitCount: 1,
           status: "Interested: Want a bite",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         },
         {
           id: generateId(),
@@ -90,7 +116,7 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           title: "Pizza Hut",
           creator: "Pizza Hut Inc.",
           cuisine: "Pizza, Wings",
-          location: "Nationwide",
+          location: "Nationwide chain restaurants",
           category: "restaurant",
           url: "https://www.pizzahut.com",
           tags: ["pizza", "italian", "fast food"],
@@ -98,7 +124,8 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           visitCount: 1,
           status: "Interested: Want a bite",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         },
         {
           id: generateId(),
@@ -106,7 +133,7 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           title: "Mellow Mushroom",
           creator: "Mellow Mushroom Inc.",
           cuisine: "Gourmet Pizza, Craft Beer",
-          location: "Multiple locations",
+          location: "Multiple locations across the US",
           category: "restaurant",
           url: "https://mellowmushroom.com",
           tags: ["gourmet pizza", "craft beer", "casual dining"],
@@ -114,17 +141,18 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           visitCount: 1,
           status: "Interested: Want a bite",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         }
       ];
-    } else if (query.toLowerCase().includes('sushi')) {
+    } else if (lowerQuery.includes('sushi') || lowerQuery.includes('japanese')) {
       results = [
         {
           id: generateId(),
           type: 'food',
           title: "Nobu",
           creator: "Chef Nobu Matsuhisa",
-          cuisine: "Japanese, Sushi",
+          cuisine: "Japanese, Sushi, Asian Fusion",
           location: "Multiple international locations",
           category: "restaurant",
           url: "https://www.noburestaurants.com",
@@ -133,7 +161,8 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           visitCount: 1,
           status: "Interested: Want a bite",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         },
         {
           id: generateId(),
@@ -149,10 +178,28 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           visitCount: 1,
           status: "Interested: Want a bite",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
+        },
+        {
+          id: generateId(),
+          type: 'food',
+          title: "Wasabi",
+          creator: "Wasabi Group",
+          cuisine: "Japanese, Sushi, Ramen",
+          location: "Multiple urban locations",
+          category: "restaurant",
+          url: "https://www.wasabi.uk.com",
+          tags: ["sushi", "ramen", "casual dining"],
+          rating: 3.9,
+          visitCount: 1,
+          status: "Interested: Want a bite",
+          notes: "",
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         }
       ];
-    } else if (query.toLowerCase().includes('burger')) {
+    } else if (lowerQuery.includes('burger') || lowerQuery.includes('american')) {
       results = [
         {
           id: generateId(),
@@ -160,7 +207,7 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           title: "Shake Shack",
           creator: "Danny Meyer",
           cuisine: "American, Burgers",
-          location: "Multiple locations",
+          location: "Multiple locations nationwide",
           category: "restaurant",
           url: "https://www.shakeshack.com",
           tags: ["burgers", "shakes", "casual dining"],
@@ -168,7 +215,8 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           visitCount: 1,
           status: "Interested: Want a bite",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         },
         {
           id: generateId(),
@@ -176,7 +224,7 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           title: "Five Guys",
           creator: "Murrell Family",
           cuisine: "American, Burgers",
-          location: "Nationwide",
+          location: "Nationwide locations",
           category: "restaurant",
           url: "https://www.fiveguys.com",
           tags: ["burgers", "fries", "fast casual"],
@@ -184,10 +232,28 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           visitCount: 1,
           status: "Interested: Want a bite",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
+        },
+        {
+          id: generateId(),
+          type: 'food',
+          title: "In-N-Out Burger",
+          creator: "In-N-Out Inc.",
+          cuisine: "American, Burgers",
+          location: "West Coast, USA",
+          category: "restaurant",
+          url: "https://www.in-n-out.com",
+          tags: ["burgers", "fast food", "cult favorite"],
+          rating: 4.6,
+          visitCount: 1,
+          status: "Interested: Want a bite",
+          notes: "",
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         }
       ];
-    } else if (query.toLowerCase().includes('cafe')) {
+    } else if (lowerQuery.includes('cafe') || lowerQuery.includes('coffee')) {
       results = [
         {
           id: generateId(),
@@ -195,7 +261,7 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           title: "Starbucks",
           creator: "Starbucks Corporation",
           cuisine: "Coffee, Pastries",
-          location: "Worldwide",
+          location: "Worldwide locations",
           category: "cafe",
           url: "https://www.starbucks.com",
           tags: ["coffee", "pastries", "chain"],
@@ -203,7 +269,8 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           visitCount: 1,
           status: "Interested: Want a bite",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         },
         {
           id: generateId(),
@@ -211,7 +278,7 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           title: "Blue Bottle Coffee",
           creator: "James Freeman",
           cuisine: "Specialty Coffee, Light Fare",
-          location: "Multiple locations",
+          location: "Select urban locations",
           category: "cafe",
           url: "https://bluebottlecoffee.com",
           tags: ["coffee", "specialty", "third wave"],
@@ -219,33 +286,147 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           visitCount: 1,
           status: "Interested: Want a bite",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
+        },
+        {
+          id: generateId(),
+          type: 'food',
+          title: "Peet's Coffee",
+          creator: "Alfred Peet",
+          cuisine: "Coffee, Bakery",
+          location: "Multiple US locations",
+          category: "cafe",
+          url: "https://www.peets.com",
+          tags: ["coffee", "bakery", "beans"],
+          rating: 4.1,
+          visitCount: 1,
+          status: "Interested: Want a bite",
+          notes: "",
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         }
       ];
-    } else {
-      // Generic results based on query - now enhanced with more details
+    } else if (lowerQuery.includes('mexican') || lowerQuery.includes('taco')) {
       results = [
         {
           id: generateId(),
           type: 'food',
-          title: `${query} Restaurant`,
-          creator: "Various Chefs",
-          cuisine: "Various",
-          location: "Results from web search API",
+          title: "Chipotle Mexican Grill",
+          creator: "Steve Ells",
+          cuisine: "Mexican, Tex-Mex",
+          location: "Nationwide locations",
           category: "restaurant",
-          url: "",
-          tags: ["web search API", query.toLowerCase()],
-          rating: undefined,
+          url: "https://www.chipotle.com",
+          tags: ["mexican", "fast casual", "burritos"],
+          rating: 4.0,
           visitCount: 1,
           status: "Interested: Want a bite",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
+        },
+        {
+          id: generateId(),
+          type: 'food',
+          title: "Taco Bell",
+          creator: "Glen Bell",
+          cuisine: "Mexican-inspired",
+          location: "Worldwide locations",
+          category: "restaurant",
+          url: "https://www.tacobell.com",
+          tags: ["tacos", "fast food", "mexican"],
+          rating: 3.5,
+          visitCount: 1,
+          status: "Interested: Want a bite",
+          notes: "",
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
+        },
+        {
+          id: generateId(),
+          type: 'food',
+          title: "Qdoba",
+          creator: "Qdoba Restaurant Corporation",
+          cuisine: "Mexican, Tex-Mex",
+          location: "Multiple US locations",
+          category: "restaurant",
+          url: "https://www.qdoba.com",
+          tags: ["mexican", "fast casual", "burritos"],
+          rating: 3.8,
+          visitCount: 1,
+          status: "Interested: Want a bite",
+          notes: "",
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         }
       ];
     }
+    
+    // Add the generic match to ensure we always have at least one restaurant named after the query
+    if (results.length < 3) {
+      results.push({
+        id: generateId(),
+        type: 'food',
+        title: `${query} Restaurant`,
+        creator: "Local Restaurant Group",
+        cuisine: "Various",
+        location: "123 Main Street, Anytown",
+        category: "restaurant",
+        url: `https://www.${query.toLowerCase().replace(/\s+/g, '')}-restaurant.com`,
+        tags: ["local", "trendy", query.toLowerCase()],
+        rating: 4.2,
+        visitCount: 1,
+        status: "Interested: Want a bite",
+        notes: "",
+        isFavorite: false,
+        date: new Date().toISOString().split('T')[0],
+      });
+      
+      // Add a second generic result with slightly different details
+      results.push({
+        id: generateId(),
+        type: 'food',
+        title: `${query} Bistro`,
+        creator: "Chef " + query.split(' ')[0],
+        cuisine: "Fusion",
+        location: "456 Oak Avenue, Somewhere",
+        category: "restaurant",
+        url: `https://www.${query.toLowerCase().replace(/\s+/g, '')}-bistro.com`,
+        tags: ["bistro", "fusion", query.toLowerCase()],
+        rating: 4.0,
+        visitCount: 1,
+        status: "Interested: Want a bite",
+        notes: "",
+        isFavorite: false,
+        date: new Date().toISOString().split('T')[0],
+      });
+    }
   } else {
     // Entertainment search - enhanced with API-like data
-    if (query.toLowerCase().includes('star wars')) {
+    const lowerQuery = query.toLowerCase();
+    
+    // Default generic entertainment result
+    results = [
+      {
+        id: generateId(),
+        type: 'entertainment',
+        title: query,
+        creator: "Various",
+        genre: "Mixed",
+        medium: "Various Streaming Services",
+        entertainmentCategory: "movies",
+        url: `https://www.imdb.com/find?q=${encodeURIComponent(query)}`,
+        tags: ["search result", query.toLowerCase()],
+        rating: 3.8,
+        status: "Want to Watch",
+        notes: "",
+        isFavorite: false,
+        date: new Date().toISOString().split('T')[0],
+      }
+    ];
+    
+    if (lowerQuery.includes('star wars') || lowerQuery.includes('star trek') || lowerQuery.includes('sci-fi')) {
       results = [
         {
           id: generateId(),
@@ -260,7 +441,8 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           rating: 4.1,
           status: "Want to Watch",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         },
         {
           id: generateId(),
@@ -275,10 +457,27 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           rating: 4.7,
           status: "Want to Watch",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
+        },
+        {
+          id: generateId(),
+          type: 'entertainment',
+          title: "Star Trek: Strange New Worlds",
+          creator: "Akiva Goldsman, Alex Kurtzman",
+          genre: "Science Fiction, Adventure",
+          medium: "Paramount+",
+          entertainmentCategory: "tv shows",
+          url: "https://www.paramountplus.com/shows/star-trek-strange-new-worlds/",
+          tags: ["sci-fi", "space", "adventure"],
+          rating: 4.8,
+          status: "Want to Watch",
+          notes: "",
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         }
       ];
-    } else if (query.toLowerCase().includes('netflix') || query.toLowerCase().includes('stranger')) {
+    } else if (lowerQuery.includes('netflix') || lowerQuery.includes('stranger')) {
       results = [
         {
           id: generateId(),
@@ -293,7 +492,8 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           rating: 4.8,
           status: "Want to Watch",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         },
         {
           id: generateId(),
@@ -308,10 +508,27 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           rating: 4.7,
           status: "Want to Watch",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
+        },
+        {
+          id: generateId(),
+          type: 'entertainment',
+          title: "Squid Game",
+          creator: "Hwang Dong-hyuk",
+          genre: "Thriller, Drama",
+          medium: "Netflix",
+          entertainmentCategory: "tv shows",
+          url: "https://www.netflix.com/title/81040344",
+          tags: ["thriller", "korean", "drama"],
+          rating: 4.6,
+          status: "Want to Watch",
+          notes: "",
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         }
       ];
-    } else if (query.toLowerCase().includes('game of thrones')) {
+    } else if (lowerQuery.includes('game of thrones') || lowerQuery.includes('house of the dragon')) {
       results = [
         {
           id: generateId(),
@@ -326,7 +543,8 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           rating: 4.6,
           status: "Want to Watch",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         },
         {
           id: generateId(),
@@ -341,28 +559,114 @@ export async function performWebSearch(query: string, type: 'food' | 'entertainm
           rating: 4.4,
           status: "Want to Watch",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
+        },
+        {
+          id: generateId(),
+          type: 'entertainment',
+          title: "Westworld",
+          creator: "Jonathan Nolan, Lisa Joy",
+          genre: "Science Fiction, Western",
+          medium: "HBO Max",
+          entertainmentCategory: "tv shows",
+          url: "https://www.hbo.com/westworld",
+          tags: ["sci-fi", "western", "AI"],
+          rating: 4.2,
+          status: "Want to Watch",
+          notes: "",
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         }
       ];
-    } else {
-      // Generic entertainment search results
+    } else if (lowerQuery.includes('marvel') || lowerQuery.includes('avengers')) {
       results = [
         {
           id: generateId(),
           type: 'entertainment',
-          title: query,
-          creator: "Various",
-          genre: "Mixed",
-          medium: "Various Streaming Services",
+          title: "Avengers: Endgame",
+          creator: "Anthony & Joe Russo",
+          genre: "Action, Superhero",
+          medium: "Disney+",
           entertainmentCategory: "movies",
-          url: "",
-          tags: ["web search API", query.toLowerCase()],
-          rating: undefined,
+          url: "https://www.disneyplus.com/movies/marvel-studios-avengers-endgame/aRbVJUb2h2Rf",
+          tags: ["marvel", "superhero", "action"],
+          rating: 4.8,
           status: "Want to Watch",
           notes: "",
-          isFavorite: false
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
+        },
+        {
+          id: generateId(),
+          type: 'entertainment',
+          title: "WandaVision",
+          creator: "Jac Schaeffer",
+          genre: "Superhero, Drama",
+          medium: "Disney+",
+          entertainmentCategory: "tv shows",
+          url: "https://www.disneyplus.com/series/wandavision/4SrN28ZjDLwH",
+          tags: ["marvel", "superhero", "sitcom"],
+          rating: 4.5,
+          status: "Want to Watch",
+          notes: "",
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
+        },
+        {
+          id: generateId(),
+          type: 'entertainment',
+          title: "Loki",
+          creator: "Michael Waldron",
+          genre: "Superhero, Sci-Fi",
+          medium: "Disney+",
+          entertainmentCategory: "tv shows",
+          url: "https://www.disneyplus.com/series/loki/6pARMvILBGzF",
+          tags: ["marvel", "superhero", "time travel"],
+          rating: 4.6,
+          status: "Want to Watch",
+          notes: "",
+          isFavorite: false,
+          date: new Date().toISOString().split('T')[0],
         }
       ];
+    }
+    
+    // If we don't have enough results, add generic ones based on the query
+    if (results.length < 3) {
+      results.push({
+        id: generateId(),
+        type: 'entertainment',
+        title: `${query} - The Movie`,
+        creator: "Various Directors",
+        genre: "Mixed",
+        medium: "Prime Video",
+        entertainmentCategory: "movies",
+        url: `https://www.amazon.com/s?k=${encodeURIComponent(query)}`,
+        tags: ["new release", query.toLowerCase()],
+        rating: 3.9,
+        status: "Want to Watch",
+        notes: "",
+        isFavorite: false,
+        date: new Date().toISOString().split('T')[0],
+      });
+      
+      results.push({
+        id: generateId(),
+        type: 'entertainment',
+        title: `${query} - The Series`,
+        creator: "Various Creators",
+        genre: "Drama",
+        medium: "Netflix",
+        entertainmentCategory: "tv shows",
+        url: `https://www.netflix.com/search?q=${encodeURIComponent(query)}`,
+        tags: ["binge-worthy", query.toLowerCase()],
+        rating: 4.0,
+        status: "Want to Watch",
+        notes: "",
+        isFavorite: false,
+        date: new Date().toISOString().split('T')[0],
+      });
     }
   }
   

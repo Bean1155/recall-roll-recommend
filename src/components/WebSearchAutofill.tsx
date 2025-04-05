@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Search, Globe, MapPin } from "lucide-react";
 import { performWebSearch } from "@/utils/webSearch";
 import SearchResultsDialog from "@/components/bites/SearchResultsDialog";
 import { FoodCard, EntertainmentCard } from "@/lib/types";
@@ -42,8 +42,9 @@ const WebSearchAutofill = ({ type, onResultSelect, className }: WebSearchAutofil
     setDialogOpen(true);
     
     try {
+      // Search for multiple results
       const searchResults = await performWebSearch(query, type);
-      console.log(`Web search returned ${searchResults.length} results`);
+      console.log(`Web search returned ${searchResults.length} results:`, searchResults);
       setResults(searchResults);
     } catch (error) {
       console.error("Error fetching search results:", error);
@@ -70,13 +71,13 @@ const WebSearchAutofill = ({ type, onResultSelect, className }: WebSearchAutofil
     // Only perform auto-search when there's enough input (3+ characters)
     if (value.length >= 3) {
       searchTimeout.current = setTimeout(() => {
-        setIsSearching(true);
         handleSearch();
       }, 500);
     }
   };
 
   const handleResultSelect = (result: FoodCard | EntertainmentCard) => {
+    console.log("Selected result with complete data:", result);
     onResultSelect(result);
     setDialogOpen(false);
     setQuery("");  // Clear the search input
@@ -91,15 +92,18 @@ const WebSearchAutofill = ({ type, onResultSelect, className }: WebSearchAutofil
 
   return (
     <div className={`relative ${className}`}>
-      <div className="flex w-full max-w-full items-center space-x-2">
-        <Input
-          type="text"
-          placeholder={`Search online for ${type === 'food' ? 'restaurants' : 'entertainment'}...`}
-          value={query}
-          onChange={handleQueryChange}
-          onKeyDown={handleKeyPress}
-          className="flex-grow"
-        />
+      <div className="flex w-full max-w-full items-center space-x-2 mb-2">
+        <div className="relative flex-grow">
+          <Input
+            type="text"
+            placeholder={`Search online for ${type === 'food' ? 'restaurants' : 'entertainment'}...`}
+            value={query}
+            onChange={handleQueryChange}
+            onKeyDown={handleKeyPress}
+            className="pl-10"
+          />
+          <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        </div>
         <Button 
           onClick={handleSearch} 
           type="button" 
@@ -113,7 +117,7 @@ const WebSearchAutofill = ({ type, onResultSelect, className }: WebSearchAutofil
       <SearchResultsDialog
         isOpen={dialogOpen}
         onOpenChange={setDialogOpen}
-        results={results as FoodCard[]} // Type assertion to satisfy component prop requirements
+        results={results}
         categoryColors={categoryColors}
         onCardClick={handleResultSelect}
         isLoading={isLoading}

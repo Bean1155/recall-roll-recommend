@@ -1,5 +1,5 @@
 
-import { X } from "lucide-react";
+import { X, MapPin, Globe } from "lucide-react";
 import { FoodCard } from "@/lib/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -80,23 +80,37 @@ const SearchResultsDialog = ({
                   className="cursor-pointer p-4 hover:bg-slate-100 data-[selected=true]:bg-slate-100 rounded-md flex flex-col gap-2"
                   data-testid={`search-result-${card.id}`}
                 >
-                  <div className="flex flex-row items-center w-full">
-                    <div className="flex-1">
-                      <div className="font-medium text-base">{card.title}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {card.category} • {card.cuisine || 'Various'}
-                      </div>
-                      {card.location && (
-                        <div className="text-xs text-muted-foreground mt-1">
-                          {card.location}
-                        </div>
-                      )}
-                      {searchSource === "web" && (
-                        <div className="mt-2 text-xs text-blue-500">
-                          {card.url ? "Source: Web" : "Add to catalog"}
-                        </div>
-                      )}
+                  <div className="flex flex-col w-full">
+                    <div className="font-medium text-base">{card.title}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {card.creator && <span>{card.creator} • </span>}
+                      {card.category || 'Various'}
+                      {card.cuisine && <span> • {card.cuisine}</span>}
                     </div>
+                    
+                    {card.location && (
+                      <div className="text-xs text-muted-foreground mt-1 flex items-center">
+                        <MapPin className="h-3 w-3 mr-1" />
+                        {card.location}
+                      </div>
+                    )}
+                    
+                    {card.url && (
+                      <div className="mt-2 text-xs text-blue-500 flex items-center">
+                        <Globe className="h-3 w-3 mr-1" />
+                        <a href={card.url} target="_blank" rel="noopener noreferrer" 
+                           className="hover:underline truncate max-w-[250px]"
+                           onClick={(e) => e.stopPropagation()}>
+                          {card.url.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}
+                        </a>
+                      </div>
+                    )}
+                    
+                    {searchSource === "web" && (
+                      <div className="mt-1 text-xs text-green-600">
+                        Click to add to your catalog
+                      </div>
+                    )}
                   </div>
                 </CommandItem>
               ))}
