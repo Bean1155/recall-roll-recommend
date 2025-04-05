@@ -10,6 +10,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerOverlay } from "@/components/ui/drawer";
 import CatalogSearch from "@/components/CatalogSearch";
+import { useUser } from "@/contexts/UserContext";
+import { addPointsForSearch } from "@/utils/rewardUtils";
 
 const SearchPage = () => {
   const [allCards, setAllCards] = useState<CatalogCardType[]>([]);
@@ -20,6 +22,7 @@ const SearchPage = () => {
   const isMobile = useIsMobile();
   const location = useLocation();
   const navigate = useNavigate();
+  const { userId } = useUser();
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -52,9 +55,17 @@ const SearchPage = () => {
     if (value === 'food') {
       setSearchType('food');
       setIsSearchOpen(true);
+      // Award points for using search
+      if (userId) {
+        addPointsForSearch(userId, 'food');
+      }
     } else if (value === 'entertainment') {
       setSearchType('entertainment');
       setIsSearchOpen(true);
+      // Award points for using search
+      if (userId) {
+        addPointsForSearch(userId, 'entertainment');
+      }
     }
   };
 

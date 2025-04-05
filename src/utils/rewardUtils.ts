@@ -180,3 +180,31 @@ export const addPointsForCardCreation = (userId: string, cardType: string): void
     console.error("Error adding points for card creation:", e);
   }
 }
+
+// NEW: Add points for using search feature
+export const addPointsForSearch = (userId: string, type: string): void => {
+  if (!userId) return;
+  
+  try {
+    const rewardsData = localStorage.getItem('catalogUserRewards');
+    let rewards = rewardsData ? JSON.parse(rewardsData) : {};
+    
+    // Initialize or update user rewards
+    if (typeof rewards[userId] === 'undefined') {
+      rewards[userId] = 1;
+    } else {
+      rewards[userId] += 1;
+    }
+    
+    // Save back to localStorage
+    localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
+    
+    // Show toast notification
+    showRewardToast(userId, 1, `Using search for ${type === 'food' ? 'bite' : 'blockbuster'} information`);
+    
+    // Trigger a refresh
+    forceRewardsRefresh();
+  } catch (e) {
+    console.error("Error adding points for search:", e);
+  }
+}
