@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { toast } from "@/hooks/use-toast";
 import { useUser } from "@/contexts/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -35,6 +36,7 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
   onSubmitSuccess 
 }) => {
   const { setCurrentUser } = useUser();
+  const navigate = useNavigate();
   const currentDate = new Date();
   const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
 
@@ -68,12 +70,15 @@ const LaunchScreenForm: React.FC<LaunchScreenFormProps> = ({
     // Show success toast
     toast({
       title: "Welcome to Total Recall Catalog!",
-      description: "Your account has been created successfully.",
+      description: "Your account has been created. Please complete your profile setup.",
       className: "bg-catalog-cream border-catalog-teal border-4 text-catalog-darkBrown font-medium",
     });
     
     // Call the onSubmitSuccess callback
     onSubmitSuccess();
+    
+    // Navigate to settings page with account tab active
+    navigate("/settings?tab=account");
   };
 
   return (

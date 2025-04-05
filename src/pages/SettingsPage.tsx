@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NavBar from "@/components/NavBar";
 import Header from "@/components/Header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,15 +10,28 @@ import { SharingSettings } from "@/components/settings/SharingSettings";
 import { useUser } from "@/contexts/UserContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const SettingsPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { userName } = useUser();
-  const [activeTab, setActiveTab] = useState("profile");
   const isMobile = useIsMobile();
+  
+  // Parse the tab from URL query parameters
+  const queryParams = new URLSearchParams(location.search);
+  const tabFromUrl = queryParams.get('tab');
+  
+  const [activeTab, setActiveTab] = useState(tabFromUrl || "profile");
+  
+  // Update the activeTab state if the URL changes
+  useEffect(() => {
+    if (tabFromUrl) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [tabFromUrl]);
   
   const handleSaveSettings = () => {
     toast({

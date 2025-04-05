@@ -51,7 +51,7 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
         <div 
           className="flex flex-col items-center justify-between p-2 sm:p-4 relative"
           style={{
-            minHeight: '460px'
+            minHeight: '420px'
           }}
         >
           {/* Add the title component at the top */}

@@ -2,13 +2,34 @@
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
+import { useUser } from "@/contexts/UserContext";
 
 export const NotificationSettings = () => {
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [pushNotifications, setPushNotifications] = useState(false);
-  const [newRecommendations, setNewRecommendations] = useState(true);
-  const [friendActivity, setFriendActivity] = useState(true);
-  const [appUpdates, setAppUpdates] = useState(true);
+  const { notificationSettings, updateNotificationSettings } = useUser();
+  const [emailNotifications, setEmailNotifications] = useState(notificationSettings.email);
+  const [pushNotifications, setPushNotifications] = useState(notificationSettings.push);
+  const [newRecommendations, setNewRecommendations] = useState(notificationSettings.recommendations);
+  const [friendActivity, setFriendActivity] = useState(notificationSettings.friendActivity);
+  const [appUpdates, setAppUpdates] = useState(notificationSettings.appUpdates);
+  
+  const handleSaveSettings = () => {
+    // Update notification settings in context
+    updateNotificationSettings({
+      email: emailNotifications,
+      push: pushNotifications,
+      recommendations: newRecommendations,
+      friendActivity: friendActivity,
+      appUpdates: appUpdates
+    });
+    
+    // Show success toast
+    toast({
+      title: "Notification preferences saved",
+      description: "Your notification preferences have been updated successfully.",
+    });
+  };
   
   return (
     <div className="space-y-6">
@@ -101,6 +122,15 @@ export const NotificationSettings = () => {
               onCheckedChange={setAppUpdates}
             />
           </div>
+        </div>
+        
+        <div className="pt-4 flex justify-end">
+          <Button 
+            onClick={handleSaveSettings}
+            className="bg-catalog-teal hover:bg-catalog-darkTeal"
+          >
+            Save Preferences
+          </Button>
         </div>
       </div>
     </div>
