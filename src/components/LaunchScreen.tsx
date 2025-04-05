@@ -51,7 +51,7 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
         <div 
           className="flex flex-col items-center justify-between p-2 sm:p-4 relative"
           style={{
-            minHeight: '480px'
+            minHeight: '460px'
           }}
         >
           {/* Add the title component at the top */}
@@ -66,8 +66,8 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
             />
           </div>
           
-          {/* Position envelope higher to be fully visible on mobile */}
-          <div className="w-full mt-0" style={{ marginBottom: "-20px" }}>
+          {/* Position envelope higher */}
+          <div className="w-full mt-0" style={{ marginBottom: "-5px" }}>
             <LaunchScreenAnimation 
               open={open}
               forcedOpen={forcedOpen}
