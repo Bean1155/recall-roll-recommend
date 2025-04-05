@@ -1,291 +1,199 @@
 
-import { useEffect, useState, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { FoodCard, FoodCategory } from "@/lib/types";
-import { getCardsByType } from "@/lib/data";
-import { useUser } from "@/contexts/UserContext";
-import { PlusCircle } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { UtensilsCrossed, Plus, Search, FilterX } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
-import { useToast } from "@/hooks/use-toast";
-import CatalogSearch from "@/components/CatalogSearch";
+import { Button } from "@/components/ui/button";
+import { FoodCard } from "@/lib/types";
+import { getFoodCards } from "@/lib/data";
+import { useNavigate, useLocation } from "react-router-dom";
+import CategoryCardsDisplay from "@/components/bites/CategoryCardsDisplay";
+import AddCategoryDialog from "@/components/bites/AddCategoryDialog";
 import CategoryDrawer from "@/components/bites/CategoryDrawer";
-import SearchResultsDialog from "@/components/bites/SearchResultsDialog";
 import CardDetailDialog from "@/components/bites/CardDetailDialog";
-import { 
-  getCategoryDisplayName,
-  generateCategoryColors,
-  getTextColor,
-  getAllCategories
-} from "@/utils/categoryUtils";
+import { useUser } from "@/contexts/UserContext";
 
 const BitesPage = () => {
-  const [foodCards, setFoodCards] = useState<FoodCard[]>([]);
-  const [filteredCards, setFilteredCards] = useState<FoodCard[]>([]);
-  const [categories, setCategories] = useState<FoodCategory[]>([]);
-  const [initialAccordionValues, setInitialAccordionValues] = useState<string[]>([]);
-  const [selectedCard, setSelectedCard] = useState<FoodCard | null>(null);
-  const [isCardModalOpen, setIsCardModalOpen] = useState(false);
-  const [searchResults, setSearchResults] = useState<FoodCard[]>([]);
-  const [isSearchResultsOpen, setIsSearchResultsOpen] = useState(false);
-  const [openCatalogs, setOpenCatalogs] = useState<string[]>([]);
-  const { userName } = useUser();
+  const navigate = useNavigate();
   const location = useLocation();
-  const { toast } = useToast();
-  const highlightedCardRef = useRef<HTMLDivElement>(null);
+  const { currentUser } = useUser();
+  const [cards, setCards] = useState<FoodCard[]>([]);
+  const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [filters, setFilters] = useState({
+    status: [] as string[],
+    rating: [] as number[],
+    tags: [] as string[]
+  });
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [isCardDetailOpen, setIsCardDetailOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<FoodCard | null>(null);
   
   useEffect(() => {
-    const allCategories = getAllCategories();
+    const foodCards = getFoodCards();
+    setCards(foodCards);
     
-    const sortedCategories = allCategories.sort((a, b) => a.localeCompare(b));
+    // Check for card ID in the URL query parameter
+    const params = new URLSearchParams(location.search);
+    const cardToOpen = params.get('open');
     
-    setCategories(sortedCategories);
-    
-    if (sortedCategories.length > 0) {
-      setInitialAccordionValues([sortedCategories[0]]);
+    if (cardToOpen) {
+      const card = foodCards.find(c => c.id === cardToOpen);
+      if (card) {
+        setSelectedCard(card);
+        setSelectedCardId(cardToOpen);
+        setIsCardDetailOpen(true);
+        
+        // Clear the URL parameter without refreshing
+        const newUrl = `${window.location.pathname}${window.location.hash}`;
+        window.history.replaceState({}, document.title, newUrl);
+      }
     }
+    
+    // Check for hash in URL (legacy method)
+    if (location.hash) {
+      const cardId = location.hash.replace('#card-', '');
+      const card = foodCards.find(c => c.id === cardId);
+      if (card) {
+        setSelectedCard(card);
+        setSelectedCardId(cardId);
+        setIsCardDetailOpen(true);
+      }
+    }
+  }, [location]);
+  
+  useEffect(() => {
+    const fetchCards = () => {
+      const foodCards = getFoodCards();
+      setCards(foodCards);
+    };
+
+    fetchCards();
+    
+    const handleCardAdded = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      if (customEvent.detail?.action === 'card_added' && customEvent.detail?.cardType === 'food') {
+        fetchCards();
+      }
+    };
+    
+    window.addEventListener('catalog_action', handleCardAdded);
+    
+    return () => {
+      window.removeEventListener('catalog_action', handleCardAdded);
+    };
   }, []);
   
-  useEffect(() => {
-    const cards = getCardsByType("food") as FoodCard[];
-    setFoodCards(cards);
-    setFilteredCards(cards);
-    
-    const searchParams = new URLSearchParams(location.search);
-    const highlightId = searchParams.get('highlight');
-    const categoryParam = searchParams.get('category');
-    const fromSearch = searchParams.get('fromSearch');
-    
-    if (highlightId) {
-      const cardToHighlight = cards.find(card => card.id === highlightId);
-      
-      if (cardToHighlight) {
-        const category = categoryParam || cardToHighlight.category;
-        
-        setInitialAccordionValues([category]);
-        
-        if (fromSearch === 'true') {
-          setSelectedCard(cardToHighlight);
-          setIsCardModalOpen(true);
-        } else {
-          setTimeout(() => {
-            const accordionItem = document.querySelector(`[data-value="${category}"]`);
-            if (accordionItem && !accordionItem.closest('[data-state="open"]')) {
-              (accordionItem as HTMLElement).click();
-            }
-            
-            setTimeout(() => {
-              const cardElement = document.getElementById(`card-${highlightId}`);
-              if (cardElement) {
-                cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                
-                cardElement.classList.add('highlight-pulse');
-                setTimeout(() => {
-                  cardElement.classList.remove('highlight-pulse');
-                }, 2000);
-                
-                toast({
-                  title: "Card found",
-                  description: `Showing ${cardToHighlight.title}`,
-                });
-              }
-            }, 500);
-          }, 300);
-        }
-      }
-    }
-    
-    const searchResultsParam = searchParams.get('searchResults');
-    if (searchResultsParam) {
-      try {
-        const ids = searchResultsParam.split(',');
-        const matchingCards = cards.filter(card => ids.includes(card.id));
-        if (matchingCards.length > 0) {
-          setSearchResults(matchingCards);
-          setIsSearchResultsOpen(true);
-          
-          toast({
-            title: `Found ${matchingCards.length} results`,
-            description: "Click on a card to view details",
-          });
-        }
-      } catch (error) {
-        console.error("Error parsing search results:", error);
-      }
-    }
-  }, [location.search, toast]);
-
-  const handleFilteredItemsChange = (items: FoodCard[]) => {
-    setFilteredCards(items);
+  const applyFilters = (filterConfig: typeof filters) => {
+    setFilters(filterConfig);
+    setIsFiltersOpen(false);
   };
   
-  const handleSearchResultCardClick = (card: FoodCard) => {
-    setIsSearchResultsOpen(false);
-    setSelectedCard(card);
-    setIsCardModalOpen(true);
-  };
-
-  const handleCatalogToggle = (category: string, isOpen: boolean) => {
-    setOpenCatalogs(prev => {
-      if (isOpen) {
-        if (prev.includes(category)) return prev;
-        return [...prev, category];
-      } else {
-        return prev.filter(cat => cat !== category);
-      }
+  const clearFilters = () => {
+    setFilters({
+      status: [],
+      rating: [],
+      tags: []
     });
   };
-
-  const activeCategories = categories.filter(category => 
-    filteredCards.some(card => card.category === category)
-  );
-
-  const cardsByCategory: Record<string, FoodCard[]> = {};
   
-  activeCategories.forEach(category => {
-    cardsByCategory[category] = [];
+  const hasActiveFilters = () => {
+    return filters.status.length > 0 || filters.rating.length > 0 || filters.tags.length > 0;
+  };
+  
+  const handleCardClick = (card: FoodCard) => {
+    setSelectedCard(card);
+    setSelectedCardId(card.id);
+    setIsCardDetailOpen(true);
+  };
+  
+  const categoryColors: Record<string, string> = {
+    "restaurant": "#FDE1D3", // Light pink
+    "cafe": "#E6F3F3",       // Light blue-green
+    "bakery": "#FCF0D3",     // Light yellow
+    "bar": "#E2D8F3",        // Light purple
+    "food truck": "#D3F4E6", // Light green
+    "dessert": "#FFE5EC",    // Light pink
+    "fastfood": "#FFE8CC",   // Light orange
+    "grocery": "#E5FFE5",    // Light green
+    "home cooking": "#F9E8FF", // Light lavender
+    "other": "#F5F5F5",      // Light gray
+  };
+  
+  // Check for custom categories and add colors if needed
+  const customCategories = [...new Set(cards.map(card => card.category))];
+  customCategories.forEach(category => {
+    if (!categoryColors[category]) {
+      categoryColors[category] = "#F5F5F5"; // Default light gray for custom categories
+    }
   });
   
-  filteredCards.forEach(card => {
-    if (!cardsByCategory[card.category]) {
-      cardsByCategory[card.category] = [];
-    }
-    cardsByCategory[card.category].push(card);
-  });
-
-  const categoryPairs = [];
-  for (let i = 0; i < activeCategories.length; i += 2) {
-    const pair = [activeCategories[i]];
-    if (i + 1 < activeCategories.length) {
-      pair.push(activeCategories[i + 1]);
-    }
-    categoryPairs.push(pair);
-  }
-
-  const categoryColors = generateCategoryColors(categories);
-
   return (
-    <GridLayout>
-      <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mb-8 gap-4">
-        <h1 className="catalog-title text-3xl">
-          From the Library of <span className="font-typewriter font-bold text-black">{userName}</span>
-        </h1>
-        <div className="flex flex-wrap gap-2 w-full md:w-auto">
-          <CatalogSearch 
-            items={foodCards}
-            onFilteredItemsChange={handleFilteredItemsChange}
-            type="food"
-          />
-          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-            <Link to="/create/food">
-              <PlusCircle size={16} className="mr-2" />
-              Add New Bite
-            </Link>
+    <GridLayout 
+      title="Bites" 
+      icon={<UtensilsCrossed className="h-5 w-5" />}
+      headerContent={
+        <div className="flex space-x-2">
+          {hasActiveFilters() && (
+            <Button 
+              size="sm"
+              variant="outline"
+              className="flex items-center gap-1"
+              onClick={clearFilters}
+            >
+              <FilterX className="h-4 w-4" />
+              <span className="hidden sm:inline">Clear</span>
+            </Button>
+          )}
+          <Button 
+            size="sm"
+            variant="outline"
+            className="flex items-center gap-1"
+            onClick={() => navigate('/search?type=food')}
+          >
+            <Search className="h-4 w-4" />
+            <span className="hidden sm:inline">Search</span>
+          </Button>
+          <Button 
+            size="sm"
+            variant="default"
+            className="flex items-center gap-1"
+            onClick={() => navigate('/create/food')}
+          >
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:inline">Add Bite</span>
           </Button>
         </div>
+      }
+    >
+      <div className="w-full">
+        <CategoryCardsDisplay 
+          cards={cards} 
+          onCardClick={handleCardClick} 
+          filters={filters}
+          categoryColors={categoryColors}
+          onOpenFilters={() => setIsFiltersOpen(true)}
+        />
       </div>
-
-      {foodCards.length === 0 ? (
-        <div className="text-center py-12 bg-catalog-cream rounded-lg border border-catalog-softBrown/30 shadow-md">
-          <p className="text-lg text-catalog-softBrown mb-4">
-            Your food catalog is empty.
-          </p>
-          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-            <Link to="/create/food">
-              <PlusCircle size={18} className="mr-2" />
-              Add Your First Food Experience
-            </Link>
-          </Button>
-        </div>
-      ) : activeCategories.length === 0 ? (
-        <div className="text-center py-12 bg-catalog-cream rounded-lg border border-catalog-softBrown/30 shadow-md">
-          <p className="text-lg text-catalog-softBrown mb-4">
-            No matching food entries found.
-          </p>
-          <Button asChild className="bg-catalog-teal hover:bg-catalog-darkTeal">
-            <Link to="/create/food">
-              <PlusCircle size={18} className="mr-2" />
-              Add New Food Experience
-            </Link>
-          </Button>
-        </div>
-      ) : (
-        <div className="space-y-10">
-          <div className="flex justify-center items-center pb-4">
-            <h2 className="text-xl font-medium text-[#1EAEDB] font-typewriter">Categories</h2>
-          </div>
-          
-          {categoryPairs.map((pair, pairIndex) => (
-            <div key={`pair-${pairIndex}`} className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-              {pair.map((category) => {
-                const categoryColor = categoryColors[category] || "#d2b48c";
-                const textColor = getTextColor(categoryColor);
-                const isOpen = openCatalogs.includes(category);
-                
-                const categoryCards = cardsByCategory[category] || [];
-                if (categoryCards.length === 0) {
-                  return null;
-                }
-                
-                return (
-                  <CategoryDrawer
-                    key={category}
-                    category={category}
-                    cards={categoryCards}
-                    backgroundColor={categoryColor}
-                    textColor={textColor}
-                    categoryDisplayName={getCategoryDisplayName(category)}
-                    isOpen={isOpen}
-                    onOpenChange={(open) => handleCatalogToggle(category, open)}
-                  />
-                );
-              })}
-            </div>
-          ))}
-        </div>
-      )}
-
-      <SearchResultsDialog
-        isOpen={isSearchResultsOpen}
-        onOpenChange={setIsSearchResultsOpen}
-        results={searchResults}
-        categoryColors={categoryColors}
-        onCardClick={handleSearchResultCardClick}
+      
+      <CategoryDrawer 
+        isOpen={isFiltersOpen}
+        onOpenChange={setIsFiltersOpen}
+        cards={cards}
+        onApplyFilters={applyFilters}
+        currentFilters={filters}
       />
-
-      <CardDetailDialog
-        isOpen={isCardModalOpen}
-        onOpenChange={setIsCardModalOpen}
+      
+      <AddCategoryDialog 
+        open={isAddCategoryDialogOpen} 
+        onOpenChange={setIsAddCategoryDialogOpen} 
+      />
+      
+      <CardDetailDialog 
+        isOpen={isCardDetailOpen}
+        onOpenChange={setIsCardDetailOpen}
         card={selectedCard}
         categoryColors={categoryColors}
       />
-
-      <style>{`
-        .highlight-pulse {
-          animation: pulse 2s;
-        }
-        
-        @keyframes pulse {
-          0% {
-            box-shadow: 0 0 0 0 rgba(0, 128, 128, 0.7);
-          }
-          70% {
-            box-shadow: 0 0 0 15px rgba(0, 128, 128, 0);
-          }
-          100% {
-            box-shadow: 0 0 0 0 rgba(0, 128, 128, 0);
-          }
-        }
-        
-        .animate-fade-in {
-          animation: fadeIn 0.3s ease-in-out;
-        }
-        
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-      `}</style>
     </GridLayout>
   );
 };

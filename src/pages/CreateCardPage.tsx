@@ -64,9 +64,10 @@ const CreateCardPage = () => {
     });
     window.dispatchEvent(event);
     
-    // Redirect to the appropriate listing page after adding card
+    // Redirect to the appropriate page and open the card detail dialog via URL fragment
     setTimeout(() => {
-      navigate(cardType === 'food' ? `/bites#card-${cardId}` : `/blockbusters#card-${cardId}`);
+      // Navigate to the page with a URL fragment that will trigger the card to open
+      navigate(cardType === 'food' ? `/bites?open=${cardId}` : `/blockbusters?open=${cardId}`);
       processingSubmitRef.current = false; // Reset the flag
     }, 600);
   };
