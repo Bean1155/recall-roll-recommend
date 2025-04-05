@@ -44,7 +44,7 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
       <DialogContent 
         className="sm:max-w-md md:max-w-lg p-0 border-catalog-softBrown border-2 overflow-hidden rounded-lg"
         style={{
-          background: "#f5f5dc",
+          background: "#FFFEF0", // Vintage white color
           boxShadow: "rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px"
         }}
       >
