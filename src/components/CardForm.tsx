@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { CardType, CatalogCard, FoodCard, EntertainmentCard, FoodCategory, FoodStatus, EntertainmentStatus, ServiceRating } from "@/lib/types";
 import { addCard, updateCard, getCardById } from "@/lib/data";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { Plus, Minus, Calendar, Link, Tag, Star, Smile, Meh, Frown, Search } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import {
@@ -189,6 +189,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
         if (query.toLowerCase().includes('pizza')) {
           results = [
             {
+              id: "pizza-palace",
               title: "Pizza Palace",
               creator: "Chef Mario",
               cuisine: "Italian",
@@ -198,6 +199,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
               tags: ["pizza", "italian", "pasta"]
             },
             {
+              id: "slice-of-heaven",
               title: "Slice of Heaven",
               creator: "Pizza Bros",
               cuisine: "Italian-American",
@@ -210,6 +212,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
         } else if (query.toLowerCase().includes('sushi')) {
           results = [
             {
+              id: "sushi-delight",
               title: "Sushi Delight",
               creator: "Chef Tanaka",
               cuisine: "Japanese",
@@ -222,6 +225,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
         } else if (query.toLowerCase().includes('cafe')) {
           results = [
             {
+              id: "morning-brew",
               title: "Morning Brew",
               creator: "Coffee Experts Inc.",
               cuisine: "Coffee, Pastries",
@@ -234,6 +238,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
         } else {
           results = [
             {
+              id: "generic-" + Date.now(),
               title: query + " Restaurant",
               creator: "Local Chef",
               cuisine: "Various",
@@ -248,6 +253,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
         if (query.toLowerCase().includes('star')) {
           results = [
             {
+              id: "star-wars",
               title: "Star Wars: The Force Awakens",
               creator: "J.J. Abrams",
               genre: "Science Fiction",
@@ -257,6 +263,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
               tags: ["sci-fi", "action", "adventure"]
             },
             {
+              id: "star-trek",
               title: "Star Trek: Discovery",
               creator: "Bryan Fuller, Alex Kurtzman",
               genre: "Science Fiction",
@@ -269,6 +276,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
         } else if (query.toLowerCase().includes('stranger')) {
           results = [
             {
+              id: "stranger-things",
               title: "Stranger Things",
               creator: "Duffer Brothers",
               genre: "Science Fiction, Horror",
@@ -281,6 +289,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
         } else if (query.toLowerCase().includes('game')) {
           results = [
             {
+              id: "game-of-thrones",
               title: "Game of Thrones",
               creator: "David Benioff, D. B. Weiss",
               genre: "Fantasy, Drama",
@@ -293,6 +302,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
         } else {
           results = [
             {
+              id: "generic-" + Date.now(),
               title: query,
               creator: "Various",
               genre: "Mixed",
@@ -318,7 +328,7 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
     } finally {
       setIsSearching(false);
     }
-  }, [isFoodCard, toast]);
+  }, [isFoodCard]);
   
   const handleSearchItemSelect = (item: any) => {
     console.log("Selected search item:", item);
@@ -1173,9 +1183,9 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
               <div className="mt-4">
                 <h3 className="text-sm font-medium mb-2">Results:</h3>
                 <div className="max-h-[300px] overflow-y-auto space-y-2">
-                  {searchResults.map((item, index) => (
+                  {searchResults.map((item) => (
                     <div 
-                      key={index}
+                      key={item.id}
                       onClick={() => handleSearchItemSelect(item)}
                       className="p-3 border rounded-md hover:bg-slate-100 cursor-pointer"
                     >
