@@ -151,7 +151,7 @@ export const ensureUserHasRewards = (userId: string): void => {
   }
 }
 
-// NEW: Direct function to add points for card creation
+// Direct function to add points for card creation - modified to only add points after form submission
 export const addPointsForCardCreation = (userId: string, cardType: string): void => {
   if (!userId) return;
   
@@ -181,7 +181,7 @@ export const addPointsForCardCreation = (userId: string, cardType: string): void
   }
 }
 
-// NEW: Add points for using search feature
+// Add points for using search feature - but don't automatically trigger form submission
 export const addPointsForSearch = (userId: string, type: string): void => {
   if (!userId) return;
   

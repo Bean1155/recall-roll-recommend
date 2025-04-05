@@ -126,7 +126,7 @@ const SearchResultsDialog = ({
                       
                       {searchSource === "web" && (
                         <div className="mt-1 text-xs text-green-600">
-                          Click to add to your catalog
+                          Click to fill form with this data
                         </div>
                       )}
                     </div>
@@ -161,7 +161,7 @@ const SearchResultsDialog = ({
             <DrawerDescription className="text-sm text-catalog-softBrown">
               {isLoading 
                 ? "Searching the web for matches..."
-                : `We found ${results.length} matches. Tap a result to select it.`
+                : `We found ${results.length} matches. Tap a result to fill the form.`
               }
             </DrawerDescription>
           </div>
@@ -191,7 +191,7 @@ const SearchResultsDialog = ({
         <DialogDescription className="text-sm text-catalog-softBrown mb-4">
           {isLoading 
             ? "Searching the web for matches..."
-            : `We found ${results.length} matches. Click on a result to select it.`
+            : `We found ${results.length} matches. Click on a result to fill the form.`
           }
         </DialogDescription>
         

@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import CardForm from "@/components/CardForm";
 import { CardType } from "@/lib/types";
@@ -15,6 +16,7 @@ const CreateCardPage = () => {
   const hasInitializedRef = useRef(false);
   const rewardRefreshIntervalRef = useRef<number | null>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [submittedCardId, setSubmittedCardId] = useState<string | null>(null);
   
   const title = cardType === 'food' ? 'Add Bite' : 'Add Blockbuster';
   
@@ -69,8 +71,9 @@ const CreateCardPage = () => {
   useEffect(() => {
     const handleCardSubmit = (event: Event) => {
       const customEvent = event as CustomEvent;
-      if (customEvent.detail?.action === 'card_added') {
-        console.log("CreateCardPage: Card submission event detected, refreshing rewards");
+      if (customEvent.detail?.action === 'card_added' && customEvent.detail?.cardId) {
+        console.log("CreateCardPage: Card submission event detected with ID:", customEvent.detail.cardId);
+        setSubmittedCardId(customEvent.detail.cardId);
         
         // Mark the time of card addition
         if (currentUser) {
@@ -78,7 +81,7 @@ const CreateCardPage = () => {
           localStorage.setItem(trackingKey, Date.now().toString());
           console.log(`CreateCardPage: Marked card addition time in ${trackingKey}`);
           
-          // Points are only added when the form is submitted, not on search selection
+          // Points are only added when the form is submitted
           addPointsForCardCreation(currentUser.id, cardType);
         }
         
@@ -134,12 +137,12 @@ const CreateCardPage = () => {
     };
   }, []);
 
-  const handleFormSubmitSuccess = () => {
-    console.log("CreateCardPage: CardForm submission success callback");
+  // Modified to include cardId in the success event and redirect to the card
+  const handleFormSubmitSuccess = (cardId: string) => {
+    console.log("CreateCardPage: CardForm submission success callback with ID:", cardId);
     
     if (currentUser) {
       // Only add points here when directly submitting the form
-      // NOT when using search selection which has its own reward mechanism
       addPointsForCardCreation(currentUser.id, cardType);
       
       toast({
@@ -150,13 +153,18 @@ const CreateCardPage = () => {
       });
     }
     
-    // Dispatch a single event
+    // Dispatch a single event with the cardId
     setTimeout(() => {
       const event = new CustomEvent('catalog_action', { 
-        detail: { action: 'card_added', cardType } 
+        detail: { action: 'card_added', cardType, cardId } 
       });
       window.dispatchEvent(event);
     }, 50);
+    
+    // Redirect to the appropriate listing page after adding card
+    setTimeout(() => {
+      navigate(cardType === 'food' ? `/bites#card-${cardId}` : `/blockbusters#card-${cardId}`);
+    }, 600);
   };
   
   return (
