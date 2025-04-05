@@ -6,7 +6,7 @@ import GridLayout from "@/components/GridLayout";
 import { useEffect, useRef, useCallback } from "react";
 import { forceRewardsRefresh, showRewardToast, addPointsForCardCreation } from "@/utils/rewardUtils";
 import { useUser } from "@/contexts/UserContext";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 
 const CreateCardPage = () => {
   const { type } = useParams<{ type: string }>();

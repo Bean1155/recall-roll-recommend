@@ -25,6 +25,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { toast } from "@/components/ui/use-toast";
 
 interface SearchResultsDialogProps {
   isOpen: boolean;

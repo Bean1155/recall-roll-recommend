@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
@@ -7,7 +6,7 @@ import { getCardById, deleteCard } from "@/lib/data";
 import GridLayout from "@/components/GridLayout";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import {
   AlertDialog,
   AlertDialogAction,
