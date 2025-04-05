@@ -66,9 +66,8 @@ const LaunchScreen: React.FC<LaunchScreenProps> = ({ forcedOpen = false, onClose
             />
           </div>
           
-          {/* Move the animation (envelope part) to the bottom and make it full width */}
-          {/* Adjust margin-top to create negative space for overlap */}
-          <div className="w-full mt-8" style={{ marginBottom: "-15px" }}>
+          {/* Increase the negative margin to create more overlap */}
+          <div className="w-full mt-8" style={{ marginBottom: "-24px" }}>
             <LaunchScreenAnimation 
               open={open}
               forcedOpen={forcedOpen}
