@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ import {
 import { CardType, CatalogCard, FoodCard, EntertainmentCard, FoodCategory, FoodStatus, EntertainmentStatus, ServiceRating } from "@/lib/types";
 import { addCard, updateCard, getCardById } from "@/lib/data";
 import { toast } from "@/components/ui/use-toast";
-import { Plus, Minus, Calendar, Link, Tag, Star, Smile, Meh, Frown } from "lucide-react";
+import { Plus, Minus, Calendar, Link, Tag, Star, Smile, Meh, Frown, Search } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import {
   Dialog,
@@ -25,6 +25,15 @@ import {
   DialogFooter,
   DialogClose
 } from "@/components/ui/dialog";
+import {
+  Command,
+  CommandDialog,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "@/components/ui/command";
 import { defaultCategories, getCategoryDisplayName } from "@/utils/categoryUtils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
@@ -32,7 +41,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/
 interface CardFormProps {
   type: CardType;
   cardId?: string;
-  onSubmitSuccess?: () => void; // Add this prop to fix the TypeScript error
+  onSubmitSuccess?: () => void;
 }
 
 const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
@@ -44,6 +53,10 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
   const [customFoodCategories, setCustomFoodCategories] = useState<FoodCategory[]>([]);
   const [customEntertainmentCategories, setCustomEntertainmentCategories] = useState<string[]>([]);
   const [showRating, setShowRating] = useState(true);
+  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   
   useEffect(() => {
     const savedFoodCategories = localStorage.getItem('customFoodCategories');
@@ -153,6 +166,174 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
       setFormData(prev => ({ ...prev, hasRating: false }));
     }
   }, [formData.status, isFoodCard, showRating]);
+
+  const performSearch = useCallback(async (query: string) => {
+    if (!query.trim()) return;
+    
+    setIsSearching(true);
+    
+    try {
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      let results = [];
+      
+      if (isFoodCard) {
+        if (query.toLowerCase().includes('pizza')) {
+          results = [
+            {
+              title: "Pizza Palace",
+              creator: "Chef Mario",
+              cuisine: "Italian",
+              location: "123 Main St",
+              category: "restaurant",
+              url: "https://pizzapalace.com",
+              tags: ["pizza", "italian", "pasta"]
+            },
+            {
+              title: "Slice of Heaven",
+              creator: "Pizza Bros",
+              cuisine: "Italian-American",
+              location: "456 Broadway",
+              category: "restaurant",
+              url: "https://sliceofheaven.com",
+              tags: ["pizza", "delivery", "casual"]
+            }
+          ];
+        } else if (query.toLowerCase().includes('sushi')) {
+          results = [
+            {
+              title: "Sushi Delight",
+              creator: "Chef Tanaka",
+              cuisine: "Japanese",
+              location: "789 Ocean Ave",
+              category: "restaurant",
+              url: "https://sushidelight.com",
+              tags: ["sushi", "japanese", "seafood"]
+            }
+          ];
+        } else if (query.toLowerCase().includes('cafe')) {
+          results = [
+            {
+              title: "Morning Brew",
+              creator: "Coffee Experts Inc.",
+              cuisine: "Coffee, Pastries",
+              location: "101 Bean St",
+              category: "cafe",
+              url: "https://morningbrew.com",
+              tags: ["coffee", "pastries", "breakfast"]
+            }
+          ];
+        } else {
+          results = [
+            {
+              title: query + " Restaurant",
+              creator: "Local Chef",
+              cuisine: "Various",
+              location: "Local Area",
+              category: "restaurant",
+              url: "",
+              tags: ["local", "food"]
+            }
+          ];
+        }
+      } else {
+        if (query.toLowerCase().includes('star')) {
+          results = [
+            {
+              title: "Star Wars: The Force Awakens",
+              creator: "J.J. Abrams",
+              genre: "Science Fiction",
+              medium: "Disney+",
+              entertainmentCategory: "movies",
+              url: "https://www.disneyplus.com/movies/star-wars-the-force-awakens/4RLKxpFcZRQK",
+              tags: ["sci-fi", "action", "adventure"]
+            },
+            {
+              title: "Star Trek: Discovery",
+              creator: "Bryan Fuller, Alex Kurtzman",
+              genre: "Science Fiction",
+              medium: "Paramount+",
+              entertainmentCategory: "tv shows",
+              url: "https://www.paramountplus.com/shows/star-trek-discovery/",
+              tags: ["sci-fi", "space", "drama"]
+            }
+          ];
+        } else if (query.toLowerCase().includes('stranger')) {
+          results = [
+            {
+              title: "Stranger Things",
+              creator: "Duffer Brothers",
+              genre: "Science Fiction, Horror",
+              medium: "Netflix",
+              entertainmentCategory: "tv shows",
+              url: "https://www.netflix.com/title/80057281",
+              tags: ["sci-fi", "horror", "1980s"]
+            }
+          ];
+        } else if (query.toLowerCase().includes('game')) {
+          results = [
+            {
+              title: "Game of Thrones",
+              creator: "David Benioff, D. B. Weiss",
+              genre: "Fantasy, Drama",
+              medium: "HBO Max",
+              entertainmentCategory: "tv shows",
+              url: "https://www.hbomax.com/series/game-of-thrones",
+              tags: ["fantasy", "drama", "medieval"]
+            }
+          ];
+        } else {
+          results = [
+            {
+              title: query,
+              creator: "Various",
+              genre: "Mixed",
+              medium: "Various Streaming Services",
+              entertainmentCategory: "movies",
+              url: "",
+              tags: ["entertainment"]
+            }
+          ];
+        }
+      }
+      
+      setSearchResults(results);
+    } catch (error) {
+      console.error("Error performing search:", error);
+      toast({
+        title: "Search Error",
+        description: "Failed to perform search. Please try again.",
+        variant: "destructive",
+      });
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, [isFoodCard]);
+  
+  const handleSearchItemSelect = (item: any) => {
+    setFormData(prev => ({
+      ...prev,
+      title: item.title || prev.title,
+      creator: item.creator || prev.creator,
+      url: item.url || prev.url,
+      tags: item.tags ? item.tags.join(', ') : prev.tags,
+      cuisine: item.cuisine || prev.cuisine,
+      location: item.location || prev.location,
+      category: (item.category as FoodCategory) || prev.category,
+      genre: item.genre || prev.genre,
+      medium: item.medium || prev.medium,
+      entertainmentCategory: item.entertainmentCategory || prev.entertainmentCategory,
+    }));
+    
+    setIsSearchDialogOpen(false);
+    setSearchQuery('');
+    
+    toast({
+      title: "Information Added",
+      description: `Details for "${item.title}" have been populated in the form.`,
+    });
+  };
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -250,6 +431,19 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
     }
   };
   
+  const handleSearchClick = () => {
+    setIsSearchDialogOpen(true);
+  };
+  
+  const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+  
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    performSearch(searchQuery);
+  };
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -312,7 +506,6 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
           description: `Your ${isFoodCard ? 'bite' : 'blockbuster'} has been added to your collection!`,
         });
 
-        // Call onSubmitSuccess callback if provided
         if (onSubmitSuccess) {
           onSubmitSuccess();
         }
@@ -354,8 +547,22 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
           {isFoodCard ? (
             <>
               <div>
-                <Label htmlFor="title" className="text-base">Name <span className="text-red-500">*</span></Label>
-                <p className="text-xs italic mb-1">Name of Establishment</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="title" className="text-base">Name <span className="text-red-500">*</span></Label>
+                    <p className="text-xs italic mb-1">Name of Establishment</p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSearchClick}
+                    className="flex items-center gap-1 border-catalog-softBrown text-catalog-darkBrown"
+                  >
+                    <Search className="w-4 h-4" />
+                    <span>Search</span>
+                  </Button>
+                </div>
                 <Input
                   id="title"
                   name="title"
@@ -629,8 +836,22 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
           ) : (
             <>
               <div>
-                <Label htmlFor="title" className="text-base">Title <span className="text-red-500">*</span></Label>
-                <p className="text-xs italic mb-1">Name of show, performance, etc.</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="title" className="text-base">Title <span className="text-red-500">*</span></Label>
+                    <p className="text-xs italic mb-1">Name of show, performance, etc.</p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSearchClick}
+                    className="flex items-center gap-1 border-catalog-softBrown text-catalog-darkBrown"
+                  >
+                    <Search className="w-4 h-4" />
+                    <span>Search</span>
+                  </Button>
+                </div>
                 <Input
                   id="title"
                   name="title"
@@ -889,6 +1110,72 @@ const CardForm = ({ type, cardId, onSubmitSuccess }: CardFormProps) => {
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
               <Button type="button" onClick={handleAddNewCategory}>Add Category</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        
+        <Dialog open={isSearchDialogOpen} onOpenChange={setIsSearchDialogOpen}>
+          <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Search for {isFoodCard ? 'Restaurants' : 'Entertainment'}</DialogTitle>
+              <DialogDescription>
+                Enter a name to search for {isFoodCard ? 'restaurant' : 'movie/show'} information.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 py-2">
+              <Input 
+                value={searchQuery}
+                onChange={handleSearchQueryChange}
+                placeholder={isFoodCard ? "Search for restaurants..." : "Search for movies, TV shows..."}
+                className="flex-1"
+              />
+              <Button type="submit" disabled={isSearching}>
+                {isSearching ? "Searching..." : "Search"}
+              </Button>
+            </form>
+            
+            <div className="py-2">
+              {isSearching ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">Searching...</p>
+                </div>
+              ) : searchResults.length > 0 ? (
+                <Command>
+                  <CommandList>
+                    <CommandGroup heading="Results">
+                      {searchResults.map((result, index) => (
+                        <CommandItem
+                          key={index}
+                          onSelect={() => handleSearchItemSelect(result)}
+                          className="cursor-pointer"
+                        >
+                          <div className="flex flex-col w-full">
+                            <span className="font-medium">{result.title}</span>
+                            <span className="text-sm text-muted-foreground">
+                              {isFoodCard 
+                                ? `${result.cuisine || ''} ${result.cuisine && result.location ? '•' : ''} ${result.location || ''}`
+                                : `${result.genre || ''} ${result.genre && result.medium ? '•' : ''} ${result.medium || ''}`
+                              }
+                            </span>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                  <CommandEmpty>No results found.</CommandEmpty>
+                </Command>
+              ) : searchQuery ? (
+                <p className="text-center py-4 text-muted-foreground">No results found. Try a different search term.</p>
+              ) : (
+                <p className="text-center py-4 text-muted-foreground">Type a search term above to find information.</p>
+              )}
+            </div>
+            
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Close</Button>
+              </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>
