@@ -8,8 +8,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 interface GridLayoutProps {
   children: React.ReactNode;
   title?: React.ReactNode;
-  icon?: React.ReactNode; // Added icon prop
-  headerContent?: React.ReactNode; // Added headerContent prop
+  icon?: React.ReactNode;
+  headerContent?: React.ReactNode;
 }
 
 const GridLayout: React.FC<GridLayoutProps> = ({ children, title, icon, headerContent }) => {
