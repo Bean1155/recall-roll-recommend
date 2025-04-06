@@ -1,11 +1,11 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
 import { FoodCard, FoodCategory } from "@/lib/types";
+import { getCategoryDisplayName, defaultCategories } from "@/utils/categoryUtils";
 import {
   Carousel,
   CarouselContent,
@@ -41,8 +41,105 @@ const CategoryCardsDisplay = ({
   categoryColors,
   onOpenFilters,
 }: CategoryCardsDisplayProps) => {
-  const hasCards = cards.length > 0;
+  const [categorizedCards, setCategorizedCards] = useState<Record<string, FoodCard[]>>({});
+  
+  useEffect(() => {
+    if (!cards || cards.length === 0) {
+      setCategorizedCards({});
+      return;
+    }
+    
+    if (category) {
+      const filteredCards = cards.filter(card => card.category === category);
+      setCategorizedCards({ [category]: filteredCards });
+      return;
+    }
+    
+    const grouped = cards.reduce((acc: Record<string, FoodCard[]>, card) => {
+      const cardCategory = card.category || 'other';
+      if (!acc[cardCategory]) {
+        acc[cardCategory] = [];
+      }
+      acc[cardCategory].push(card);
+      return acc;
+    }, {});
+    
+    defaultCategories.forEach(cat => {
+      if (!grouped[cat]) {
+        grouped[cat] = [];
+      }
+    });
+    
+    setCategorizedCards(grouped);
+  }, [cards, category]);
 
+  if (category) {
+    const hasCards = cards.length > 0;
+    return (
+      <SingleCategoryDisplay 
+        category={category}
+        cards={cards}
+        categoryColor={categoryColor}
+        categoryDisplayName={categoryDisplayName || getCategoryDisplayName(category)}
+        textColor={textColor}
+        onCardClick={onCardClick}
+        hasCards={hasCards}
+      />
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      {Object.entries(categorizedCards).map(([cat, catCards]) => {
+        if (catCards.length === 0 && !defaultCategories.includes(cat as FoodCategory)) {
+          return null;
+        }
+        
+        const color = categoryColors?.[cat] || '#d2b48c';
+        const displayName = getCategoryDisplayName(cat);
+        const catTextColor = textColor || '#603913';
+        
+        return (
+          <div key={cat} className="mb-8">
+            <h2 
+              className="text-lg sm:text-xl font-semibold mb-3 px-2"
+              style={{ color: catTextColor }}
+            >
+              {displayName}
+            </h2>
+            <SingleCategoryDisplay 
+              category={cat as FoodCategory}
+              cards={catCards}
+              categoryColor={color}
+              categoryDisplayName={displayName}
+              textColor={catTextColor}
+              onCardClick={onCardClick}
+              hasCards={catCards.length > 0}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+const SingleCategoryDisplay = ({ 
+  category,
+  cards,
+  categoryColor,
+  categoryDisplayName,
+  textColor,
+  onCardClick,
+  hasCards
+}: {
+  category: FoodCategory;
+  cards: FoodCard[];
+  categoryColor?: string;
+  categoryDisplayName?: string;
+  textColor?: string;
+  onCardClick?: (card: FoodCard) => void;
+  hasCards: boolean;
+}) => {
   return (
     <>
       {hasCards ? (

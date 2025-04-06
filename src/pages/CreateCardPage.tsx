@@ -1,5 +1,5 @@
 
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import CardForm from "@/components/CardForm";
 import { CardType } from "@/lib/types";
 import GridLayout from "@/components/GridLayout";
@@ -10,6 +10,9 @@ import { toast } from "@/components/ui/use-toast";
 
 const CreateCardPage = () => {
   const { type } = useParams<{ type: string }>();
+  const [searchParams] = useSearchParams();
+  const initialCategory = searchParams.get('category') || '';
+  
   const cardType = (type === 'food' || type === 'entertainment') ? type : 'food';
   const navigate = useNavigate();
   const { currentUser } = useUser();
@@ -58,11 +61,12 @@ const CreateCardPage = () => {
       });
     }
     
-    // Dispatch a single event with the cardId
+    // Dispatch a custom event to notify other components
     const event = new CustomEvent('catalog_action', { 
       detail: { action: 'card_added', cardType, cardId } 
     });
     window.dispatchEvent(event);
+    console.log("CreateCardPage: Dispatched card_added event", { cardType, cardId });
     
     // Redirect to the appropriate page and open the card detail dialog via URL fragment
     setTimeout(() => {
@@ -77,6 +81,7 @@ const CreateCardPage = () => {
       <CardForm 
         type={cardType as CardType} 
         onSubmitSuccess={handleFormSubmitSuccess}
+        initialCategory={initialCategory}
       />
     </GridLayout>
   );

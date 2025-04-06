@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
 import { FoodCard } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
@@ -18,6 +19,7 @@ const BitesPage = () => {
   const [filteredCards, setFilteredCards] = useState<FoodCard[]>([]);
   const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const location = useLocation();
   const [filters, setFilters] = useState({
     status: [] as string[],
     rating: [] as number[],
@@ -29,15 +31,31 @@ const BitesPage = () => {
     const fetchCards = () => {
       const allCards = getAllCards();
       const foodCards = allCards.filter(card => card.type === 'food') as FoodCard[];
+      console.log('BitesPage: Fetched food cards:', foodCards.length);
       setCards(foodCards);
       setFilteredCards(foodCards);
     };
 
     fetchCards();
     
+    // Check for URL parameter to open specific card
+    const searchParams = new URLSearchParams(location.search);
+    const cardToOpen = searchParams.get('open');
+    if (cardToOpen) {
+      setTimeout(() => {
+        console.log('BitesPage: Opening card from URL param:', cardToOpen);
+        const cardToSelect = cards.find(card => card.id === cardToOpen);
+        if (cardToSelect) {
+          handleCardClick(cardToSelect);
+        }
+      }, 300);
+    }
+    
+    // Listen for card_added events
     const handleCardAdded = (event: Event) => {
       const customEvent = event as CustomEvent;
       if (customEvent.detail?.action === 'card_added' && customEvent.detail?.cardType === 'food') {
+        console.log('BitesPage: Card added event received, refreshing cards');
         fetchCards();
       }
     };
@@ -47,7 +65,7 @@ const BitesPage = () => {
     return () => {
       window.removeEventListener('catalog_action', handleCardAdded);
     };
-  }, []);
+  }, [location.search]);
   
   const categoryColors = useCategoryColors(cards);
   
@@ -58,6 +76,45 @@ const BitesPage = () => {
     selectedCard,
     handleCardClick
   } = useCardDetailHandling(cards);
+  
+  // Apply filters
+  useEffect(() => {
+    if (!hasActiveFilters()) {
+      setFilteredCards(cards);
+      return;
+    }
+    
+    const filtered = cards.filter(card => {
+      // Filter by status
+      if (filters.status.length > 0 && !filters.status.includes(card.status)) {
+        return false;
+      }
+      
+      // Filter by rating
+      if (filters.rating.length > 0 && card.rating && !filters.rating.includes(card.rating)) {
+        return false;
+      }
+      
+      // Filter by tags
+      if (filters.tags.length > 0) {
+        if (!card.tags || card.tags.length === 0) {
+          return false;
+        }
+        
+        const hasMatchingTag = filters.tags.some(tag => 
+          card.tags?.some(cardTag => cardTag.toLowerCase().includes(tag.toLowerCase()))
+        );
+        
+        if (!hasMatchingTag) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+    
+    setFilteredCards(filtered);
+  }, [filters, cards]);
   
   const applyFilters = (filterConfig: typeof filters) => {
     setFilters(filterConfig);
@@ -70,7 +127,6 @@ const BitesPage = () => {
       rating: [],
       tags: []
     });
-    setFilteredCards(cards);
   };
   
   const hasActiveFilters = () => {

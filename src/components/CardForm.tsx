@@ -1,8 +1,7 @@
-
 import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FoodCard, EntertainmentCard, FoodStatus, EntertainmentStatus, ServiceRating, CardType } from "@/lib/types";
-import { getCardById } from "@/lib/data";
+import { addCard, getCardById } from "@/lib/data";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,7 +13,6 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon, Star } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 
 interface CardFormProps {
   type: CardType;
@@ -23,9 +21,18 @@ interface CardFormProps {
   isEdit?: boolean;
   cardId?: string;
   onSubmitSuccess?: (cardId: string) => void;
+  initialCategory?: string;
 }
 
-const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmitSuccess }: CardFormProps) => {
+const CardForm = ({ 
+  type, 
+  initialData, 
+  onSubmit, 
+  isEdit = false, 
+  cardId, 
+  onSubmitSuccess,
+  initialCategory = "" 
+}: CardFormProps) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FoodCard | EntertainmentCard | null>(null);
 
@@ -43,7 +50,12 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmi
   // Food fields
   const [title, setTitle] = useState(formData?.title || initialData?.title || "");
   const [creator, setCreator] = useState(formData?.creator || initialData?.creator || "");
-  const [category, setCategory] = useState((formData as FoodCard)?.category || (initialData as FoodCard)?.category || "");
+  const [category, setCategory] = useState(
+    (formData as FoodCard)?.category || 
+    (initialData as FoodCard)?.category || 
+    initialCategory || 
+    ""
+  );
   const [cuisine, setCuisine] = useState((formData as FoodCard)?.cuisine || (initialData as FoodCard)?.cuisine || "");
   const [location, setLocation] = useState((formData as FoodCard)?.location || (initialData as FoodCard)?.location || "");
   const [serviceRating, setServiceRating] = useState<string>((formData as FoodCard)?.serviceRating || (initialData as FoodCard)?.serviceRating || "");
@@ -77,7 +89,7 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmi
       cuisine,
       location,
       url,
-      tags: tags.split(",").map((tag) => tag.trim()),
+      tags: tags.split(",").map((tag) => tag.trim()).filter(tag => tag !== ""),
       rating: parseFloat(rating) || 0,
       status: status as FoodStatus,
       notes,
@@ -94,7 +106,7 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmi
       genre,
       medium,
       url,
-      tags: tags.split(",").map((tag) => tag.trim()),
+      tags: tags.split(",").map((tag) => tag.trim()).filter(tag => tag !== ""),
       rating: parseFloat(rating) || 0,
       status: status as EntertainmentStatus,
       notes,
@@ -103,22 +115,37 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmi
       id: formData?.id || initialData?.id || String(Math.random()),
     };
 
-    if (onSubmit) {
-      onSubmit(cardData);
-    }
-    
-    if (onSubmitSuccess) {
-      onSubmitSuccess(cardData.id);
+    if (!onSubmit) {
+      try {
+        console.log('CardForm: Saving card directly:', cardData);
+        const savedCard = addCard(cardData);
+        
+        if (onSubmitSuccess) {
+          onSubmitSuccess(savedCard.id);
+        } else {
+          toast({
+            title: `${type === "food" ? "Bite" : "Blockbuster"} ${isEdit ? "Updated" : "Created"}!`,
+            description: `Your ${type === "food" ? "bite" : "blockbuster"} has been ${isEdit ? "updated" : "created"}.`,
+          });
+          navigate(`/${type === "food" ? "bites" : "blockbusters"}`);
+        }
+      } catch (error) {
+        console.error('Error saving card:', error);
+        toast({
+          title: "Error",
+          description: `There was an error saving your ${type === "food" ? "bite" : "blockbuster"}.`,
+          variant: "destructive",
+        });
+      }
     } else {
-      toast({
-        title: `${type === "food" ? "Bite" : "Blockbuster"} ${isEdit ? "Updated" : "Created"}!`,
-        description: `Your ${type === "food" ? "bite" : "blockbuster"} has been ${isEdit ? "updated" : "created"}.`,
-      });
-      navigate(`/${type === "food" ? "bites" : "blockbusters"}`);
+      onSubmit(cardData);
+      
+      if (onSubmitSuccess) {
+        onSubmitSuccess(cardData.id);
+      }
     }
   };
 
-  // Only render the food form if type is "food"
   if (type === "food") {
     return (
       <div className="w-full max-w-3xl mx-auto p-4 space-y-6 bg-white rounded-lg shadow">
@@ -332,7 +359,6 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmi
     );
   }
 
-  // Render the entertainment form
   return (
     <div className="w-full max-w-3xl mx-auto p-4 space-y-6">
       <form onSubmit={handleSubmit} className="space-y-4">
