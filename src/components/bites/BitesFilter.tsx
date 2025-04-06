@@ -15,6 +15,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { FoodCard } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -158,7 +159,7 @@ const BitesFilter = ({
             <span className="hidden sm:inline">Filter</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-64 bg-white z-50" style={{ backgroundColor: "white" }}>
+        <DropdownMenuContent className="w-64" style={{ backgroundColor: "white", zIndex: 50 }}>
           <DropdownMenuLabel>Quick Filters</DropdownMenuLabel>
           <DropdownMenuSeparator />
           
@@ -185,10 +186,10 @@ const BitesFilter = ({
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent 
-                className="w-56 bg-white z-50" 
+                className="w-56" 
                 sideOffset={2} 
                 alignOffset={-5}
-                style={{ backgroundColor: "white" }}
+                style={{ backgroundColor: "white", zIndex: 50 }}
               >
                 <DropdownMenuCheckboxItem
                   checked={activeFilters.rating.includes(5)}
@@ -285,10 +286,10 @@ const BitesFilter = ({
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent 
-                className="w-56 bg-white z-50 max-h-80 overflow-y-auto" 
+                className="w-56 max-h-80 overflow-y-auto" 
                 sideOffset={2} 
                 alignOffset={-5}
-                style={{ backgroundColor: "white" }}
+                style={{ backgroundColor: "white", zIndex: 50 }}
               >
                 {uniqueLocations.length > 0 ? (
                   uniqueLocations.map((location) => (
@@ -326,50 +327,49 @@ const BitesFilter = ({
                   className="h-6 p-1" 
                   onClick={(e) => {
                     e.preventDefault(); // Prevent the dropdown from closing
+                    e.stopPropagation(); // Prevent event bubbling
                     closeFilteredCards();
                   }}
                 >
                   <FilterX className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuLabel>
-              <div className="max-h-64 overflow-y-auto px-2 py-2">
-                {filteredCards.slice(0, 8).map((card) => (
-                  <Card 
-                    key={card.id} 
-                    className="mb-2 cursor-pointer hover:bg-gray-50 border border-gray-200" 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleCardSelect(card);
-                    }}
-                  >
-                    <CardContent className="p-3 text-sm">
-                      <div className="font-medium">{card.title}</div>
-                      {card.location && (
-                        <div className="flex mt-1 text-gray-500 text-xs items-center">
-                          <MapPin className="h-3 w-3 mr-1" />
-                          {card.location}
-                        </div>
-                      )}
-                      {card.rating && (
-                        <div className="flex mt-1">
-                          {Array.from({ length: card.rating }).map((_, i) => (
-                            <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />
-                          ))}
-                        </div>
-                      )}
-                      {card.notes && (
-                        <div className="text-gray-500 text-xs mt-1 line-clamp-2">{card.notes}</div>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
-                {filteredCards.length > 8 && (
-                  <div className="text-center text-xs text-gray-500 mt-1">
-                    + {filteredCards.length - 8} more results
-                  </div>
-                )}
-              </div>
+              
+              <ScrollArea className="max-h-64 w-full">
+                <div className="p-2">
+                  {filteredCards.map((card) => (
+                    <Card 
+                      key={card.id} 
+                      className="mb-2 cursor-pointer hover:bg-gray-50 border border-gray-200" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleCardSelect(card);
+                      }}
+                    >
+                      <CardContent className="p-3 text-sm">
+                        <div className="font-medium">{card.title}</div>
+                        {card.location && (
+                          <div className="flex mt-1 text-gray-500 text-xs items-center">
+                            <MapPin className="h-3 w-3 mr-1" />
+                            {card.location}
+                          </div>
+                        )}
+                        {card.rating && (
+                          <div className="flex mt-1">
+                            {Array.from({ length: card.rating }).map((_, i) => (
+                              <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />
+                            ))}
+                          </div>
+                        )}
+                        {card.notes && (
+                          <div className="text-gray-500 text-xs mt-1 line-clamp-2">{card.notes}</div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </ScrollArea>
             </>
           )}
         </DropdownMenuContent>
