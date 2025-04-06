@@ -17,6 +17,7 @@ const BitesPage = () => {
   const [cards, setCards] = useState<FoodCard[]>([]);
   const [filteredCards, setFilteredCards] = useState<FoodCard[]>([]);
   const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
+  const [hasActiveFilters, setHasActiveFilters] = useState(false);
   const location = useLocation();
   
   useEffect(() => {
@@ -69,26 +70,30 @@ const BitesPage = () => {
   
   const clearFilters = () => {
     setFilteredCards(cards);
+    setHasActiveFilters(false);
   };
   
   const handleFilteredItemsChange = (filteredItems: FoodCard[]) => {
     setFilteredCards(filteredItems);
+    setHasActiveFilters(filteredItems.length !== cards.length);
   };
-  
-  const headerProps = BitesHeader({
-    onClearFilters: clearFilters,
-    cards: cards,
-    onFilteredItemsChange: handleFilteredItemsChange
-  });
   
   const searchParams = new URLSearchParams(location.search);
   const focusCardId = searchParams.get('open');
   
   return (
     <GridLayout 
-      title={headerProps.title}
-      icon={headerProps.icon}
-      headerContent={headerProps.headerContent}
+      title="Bites"
+      icon={<Utensils className="h-6 w-6 text-teal-700" />}
+      headerContent={(
+        <BitesHeader 
+          onClearFilters={clearFilters}
+          cards={cards}
+          onFilteredItemsChange={handleFilteredItemsChange}
+          onCardClick={handleCardClick}
+          hasActiveFilters={hasActiveFilters}
+        />
+      ).headerContent}
     >
       <div className="w-full">
         <CategoryDrawers
