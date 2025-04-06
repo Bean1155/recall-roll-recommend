@@ -72,9 +72,11 @@ const BitesPage = () => {
   const clearFilters = () => {
     setFilteredCards(cards);
     setHasActiveFilters(false);
+    console.log('BitesPage: Filters cleared');
   };
   
   const handleFilteredItemsChange = (filteredItems: FoodCard[]) => {
+    console.log('BitesPage: Filtered items changed, count:', filteredItems.length);
     setFilteredCards(filteredItems);
     setHasActiveFilters(filteredItems.length !== cards.length);
   };

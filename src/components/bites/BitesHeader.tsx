@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Search, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -22,7 +22,7 @@ const BitesHeader = ({
   onCardClick,
   hasActiveFilters = false
 }: BitesHeaderProps) => {
-  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const handleFilterChange = (filterType: string, value: string) => {
     // Filter the cards based on the selected filter
@@ -52,7 +52,15 @@ const BitesHeader = ({
       );
     }
     
+    console.log(`BitesHeader: Filter applied ${filterType}=${value}, found ${filteredItems.length} results`);
     onFilteredItemsChange(filteredItems);
+  };
+
+  const handleCardClickFromFilter = (card: FoodCard) => {
+    if (onCardClick) {
+      console.log('BitesHeader: Card clicked from filter dropdown:', card.title);
+      onCardClick(card);
+    }
   };
 
   return (
@@ -73,7 +81,7 @@ const BitesHeader = ({
         onOpenFilters={() => {}}
         onFilterChange={handleFilterChange}
         allCards={cards}
-        onCardClick={onCardClick}
+        onCardClick={handleCardClickFromFilter}
       />
       
       <Button 

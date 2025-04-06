@@ -96,6 +96,9 @@ const BitesFilter = ({
       if (filtered.length > 0) {
         setShowFilteredCards(true);
       }
+      
+      // Log the number of filtered results for debugging
+      console.log(`Filter applied: ${selectedFilter.type}="${selectedFilter.value}", found ${filtered.length} results`);
     }
   }, [selectedFilter, allCards]);
   
@@ -140,7 +143,7 @@ const BitesFilter = ({
       
       <DropdownMenu open={open} onOpenChange={(o) => {
         setOpen(o);
-        if (!o) {
+        if (!o && !selectedFilter) {
           setShowFilteredCards(false);
         }
       }}>
@@ -154,19 +157,19 @@ const BitesFilter = ({
             <span className="hidden sm:inline">Filter</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-64 bg-white z-50">
+        <DropdownMenuContent className="w-64 bg-white z-50" style={{ backgroundColor: "white" }}>
           <DropdownMenuLabel>Quick Filters</DropdownMenuLabel>
           <DropdownMenuSeparator />
           
           <DropdownMenuLabel className="text-xs text-gray-500">Status</DropdownMenuLabel>
           <DropdownMenuCheckboxItem
-            checked={activeFilters.status.includes("Visited")}
+            checked={activeFilters.status.includes("Visited: Tried this bite")}
             onSelect={() => handleFilterSelect("status", "Visited: Tried this bite")}
           >
             Visited
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem
-            checked={activeFilters.status.includes("Interested")}
+            checked={activeFilters.status.includes("Interested: Want a bite")}
             onSelect={() => handleFilterSelect("status", "Interested: Want a bite")}
           >
             Interested
@@ -175,16 +178,8 @@ const BitesFilter = ({
           <DropdownMenuSeparator />
           <DropdownMenuLabel className="text-xs text-gray-500">Rating</DropdownMenuLabel>
           
-          <DropdownMenuSub open={selectedFilter?.type === "rating"}>
-            <DropdownMenuSubTrigger 
-              className="flex items-center"
-              onClick={() => {
-                if (selectedFilter?.type === "rating") {
-                  setSelectedFilter(null);
-                  setShowFilteredCards(false);
-                }
-              }}
-            >
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger className="flex items-center">
               <span>By Star Rating</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
@@ -282,16 +277,8 @@ const BitesFilter = ({
           <DropdownMenuSeparator />
           <DropdownMenuLabel className="text-xs text-gray-500">Location</DropdownMenuLabel>
           
-          <DropdownMenuSub open={selectedFilter?.type === "location"}>
-            <DropdownMenuSubTrigger 
-              className="flex items-center"
-              onClick={() => {
-                if (selectedFilter?.type === "location") {
-                  setSelectedFilter(null);
-                  setShowFilteredCards(false);
-                }
-              }}
-            >
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger className="flex items-center">
               <MapPin className="h-4 w-4 mr-2" />
               <span>By Location</span>
             </DropdownMenuSubTrigger>
@@ -341,16 +328,19 @@ const BitesFilter = ({
                   <FilterX className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuLabel>
-              <div className="max-h-64 overflow-y-auto pb-2">
-                {filteredCards.slice(0, 6).map((card) => (
+              <div className="max-h-64 overflow-y-auto px-2 py-2">
+                {filteredCards.slice(0, 8).map((card) => (
                   <Card 
                     key={card.id} 
-                    className="mx-2 my-1.5 cursor-pointer hover:bg-gray-50" 
-                    onClick={() => handleCardSelect(card)}
+                    className="mb-2 cursor-pointer hover:bg-gray-50 border border-gray-200" 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleCardSelect(card);
+                    }}
                   >
-                    <CardContent className="p-2 text-xs">
-                      <div className="font-medium truncate">{card.title}</div>
-                      <div className="text-gray-500 truncate">{card.notes?.substring(0, 50)}</div>
+                    <CardContent className="p-3 text-sm">
+                      <div className="font-medium">{card.title}</div>
                       {card.location && (
                         <div className="flex mt-1 text-gray-500 text-xs items-center">
                           <MapPin className="h-3 w-3 mr-1" />
@@ -364,12 +354,15 @@ const BitesFilter = ({
                           ))}
                         </div>
                       )}
+                      {card.notes && (
+                        <div className="text-gray-500 text-xs mt-1 line-clamp-2">{card.notes}</div>
+                      )}
                     </CardContent>
                   </Card>
                 ))}
-                {filteredCards.length > 6 && (
+                {filteredCards.length > 8 && (
                   <div className="text-center text-xs text-gray-500 mt-1">
-                    + {filteredCards.length - 6} more results
+                    + {filteredCards.length - 8} more results
                   </div>
                 )}
               </div>
