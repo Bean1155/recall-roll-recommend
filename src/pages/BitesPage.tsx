@@ -73,11 +73,38 @@ const BitesPage = () => {
   const hasActiveFilters = () => {
     return filters.status.length > 0 || filters.rating.length > 0 || filters.tags.length > 0;
   };
+
+  const handleQuickFilterChange = (filterType: string, value: string) => {
+    const newFilters = { ...filters };
+    
+    if (filterType === "status") {
+      // Toggle status filter
+      if (newFilters.status.includes(value)) {
+        newFilters.status = newFilters.status.filter(status => status !== value);
+      } else {
+        newFilters.status = [...newFilters.status, value];
+      }
+    }
+    
+    if (filterType === "rating") {
+      const ratingValue = parseInt(value, 10);
+      // Toggle rating filter
+      if (newFilters.rating.includes(ratingValue)) {
+        newFilters.rating = newFilters.rating.filter(r => r !== ratingValue);
+      } else {
+        newFilters.rating = [...newFilters.rating, ratingValue];
+      }
+    }
+    
+    setFilters(newFilters);
+  };
   
   const headerProps = BitesHeader({
     hasActiveFilters: hasActiveFilters(),
     onClearFilters: clearFilters,
-    onOpenFilters: () => setIsFiltersOpen(true)
+    onOpenFilters: () => setIsFiltersOpen(true),
+    onFilterChange: handleQuickFilterChange,
+    activeFilters: filters
   });
   
   return (

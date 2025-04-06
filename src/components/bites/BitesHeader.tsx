@@ -1,49 +1,47 @@
 
 import React from "react";
-import { UtensilsCrossed, Plus, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Utensils } from "lucide-react";
 import BitesFilter from "./BitesFilter";
 
 interface BitesHeaderProps {
   hasActiveFilters: boolean;
   onClearFilters: () => void;
   onOpenFilters: () => void;
+  onFilterChange?: (filterType: string, value: string) => void;
+  activeFilters?: {
+    status: string[];
+    rating: number[];
+    tags: string[];
+  };
 }
 
-const BitesHeader = ({ hasActiveFilters, onClearFilters, onOpenFilters }: BitesHeaderProps) => {
-  const navigate = useNavigate();
-  
+interface BitesHeaderResult {
+  title: string;
+  icon: React.ReactNode;
+  headerContent: React.ReactNode;
+}
+
+const BitesHeader = ({
+  hasActiveFilters,
+  onClearFilters,
+  onOpenFilters,
+  onFilterChange,
+  activeFilters
+}: BitesHeaderProps): BitesHeaderResult => {
   return {
     title: "Bites",
-    icon: <UtensilsCrossed className="h-5 w-5" />,
+    icon: <Utensils className="h-6 w-6 text-teal-700" />,
     headerContent: (
-      <div className="flex space-x-2">
+      <div className="flex gap-2">
         <BitesFilter 
-          hasActiveFilters={hasActiveFilters}
-          onClearFilters={onClearFilters}
-          onOpenFilters={onOpenFilters}
+          hasActiveFilters={hasActiveFilters} 
+          onClearFilters={onClearFilters} 
+          onOpenFilters={onOpenFilters} 
+          onFilterChange={onFilterChange}
+          activeFilters={activeFilters}
         />
-        <Button 
-          size="sm"
-          variant="outline"
-          className="flex items-center gap-1"
-          onClick={() => navigate('/search?type=food')}
-        >
-          <Search className="h-4 w-4" />
-          <span className="hidden sm:inline">Search</span>
-        </Button>
-        <Button 
-          size="sm"
-          variant="default"
-          className="flex items-center gap-1"
-          onClick={() => navigate('/create/food')}
-        >
-          <Plus className="h-4 w-4" />
-          <span className="hidden sm:inline">Add Bite</span>
-        </Button>
       </div>
-    )
+    ),
   };
 };
 
