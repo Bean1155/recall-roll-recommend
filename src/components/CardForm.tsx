@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FoodCard, EntertainmentCard, FoodStatus, EntertainmentStatus, ServiceRating, CardType } from "@/lib/types";
@@ -248,7 +249,7 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmi
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="rating" className="text-gray-700 font-medium">Establishment Rating (1-5)*</Label>
+              <Label htmlFor="rating" className="text-gray-700 font-medium">Establishment Rating (1-5)</Label>
               <div className="flex items-center mt-1">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
