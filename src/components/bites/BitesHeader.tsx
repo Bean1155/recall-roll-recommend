@@ -1,7 +1,10 @@
 
 import React from "react";
-import { Utensils } from "lucide-react";
+import { Utensils, Search, PlusCircle } from "lucide-react";
 import BitesFilter from "./BitesFilter";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import CatalogSearch from "@/components/CatalogSearch";
 
 interface BitesHeaderProps {
   hasActiveFilters: boolean;
@@ -13,6 +16,8 @@ interface BitesHeaderProps {
     rating: number[];
     tags: string[];
   };
+  cards: any[];
+  onFilteredItemsChange: (filteredItems: any[]) => void;
 }
 
 interface BitesHeaderResult {
@@ -26,13 +31,27 @@ const BitesHeader = ({
   onClearFilters,
   onOpenFilters,
   onFilterChange,
-  activeFilters
+  activeFilters,
+  cards,
+  onFilteredItemsChange
 }: BitesHeaderProps): BitesHeaderResult => {
+  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
+
   return {
     title: "Bites",
     icon: <Utensils className="h-6 w-6 text-teal-700" />,
     headerContent: (
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => setIsSearchOpen(true)} 
+          className="flex items-center gap-1"
+        >
+          <Search className="h-4 w-4" />
+          <span className="hidden sm:inline">Search</span>
+        </Button>
+        
         <BitesFilter 
           hasActiveFilters={hasActiveFilters} 
           onClearFilters={onClearFilters} 
@@ -40,6 +59,27 @@ const BitesHeader = ({
           onFilterChange={onFilterChange}
           activeFilters={activeFilters}
         />
+
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="flex items-center gap-1 bg-teal-700 text-white hover:bg-teal-800"
+          asChild
+        >
+          <Link to="/create/food">
+            <PlusCircle className="h-4 w-4" />
+            <span className="hidden sm:inline">Add</span>
+          </Link>
+        </Button>
+
+        {isSearchOpen && (
+          <CatalogSearch 
+            items={cards}
+            onFilteredItemsChange={onFilteredItemsChange}
+            type="food"
+            onClose={() => setIsSearchOpen(false)}
+          />
+        )}
       </div>
     ),
   };

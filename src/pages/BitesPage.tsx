@@ -15,6 +15,7 @@ import { useUser } from "@/contexts/UserContext";
 const BitesPage = () => {
   const { currentUser } = useUser();
   const [cards, setCards] = useState<FoodCard[]>([]);
+  const [filteredCards, setFilteredCards] = useState<FoodCard[]>([]);
   const [isAddCategoryDialogOpen, setIsAddCategoryDialogOpen] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [filters, setFilters] = useState({
@@ -29,6 +30,7 @@ const BitesPage = () => {
       const allCards = getAllCards();
       const foodCards = allCards.filter(card => card.type === 'food') as FoodCard[];
       setCards(foodCards);
+      setFilteredCards(foodCards);
     };
 
     fetchCards();
@@ -68,6 +70,7 @@ const BitesPage = () => {
       rating: [],
       tags: []
     });
+    setFilteredCards(cards);
   };
   
   const hasActiveFilters = () => {
@@ -99,12 +102,18 @@ const BitesPage = () => {
     setFilters(newFilters);
   };
   
+  const handleFilteredItemsChange = (filteredItems: FoodCard[]) => {
+    setFilteredCards(filteredItems);
+  };
+  
   const headerProps = BitesHeader({
     hasActiveFilters: hasActiveFilters(),
     onClearFilters: clearFilters,
     onOpenFilters: () => setIsFiltersOpen(true),
     onFilterChange: handleQuickFilterChange,
-    activeFilters: filters
+    activeFilters: filters,
+    cards: cards,
+    onFilteredItemsChange: handleFilteredItemsChange
   });
   
   return (
@@ -115,7 +124,7 @@ const BitesPage = () => {
     >
       <div className="w-full">
         <CategoryCardsDisplay 
-          cards={cards} 
+          cards={filteredCards.length > 0 ? filteredCards : cards} 
           onCardClick={handleCardClick} 
           filters={filters}
           categoryColors={categoryColors}
