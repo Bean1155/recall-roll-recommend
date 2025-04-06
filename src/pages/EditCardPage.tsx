@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
@@ -48,12 +49,20 @@ const EditCardPage = () => {
       navigate(cardType === 'food' ? '/bites' : '/blockbusters');
     }
   };
+
+  const handleSubmitSuccess = (cardId: string) => {
+    toast({
+      title: "Card Updated",
+      description: `Your ${cardType === 'food' ? 'bite' : 'blockbuster'} has been updated.`,
+    });
+    navigate(cardType === 'food' ? `/bites?open=${cardId}` : `/blockbusters?open=${cardId}`);
+  };
   
   if (notFound) {
     return <Navigate to="/not-found" />;
   }
   
-  if (!cardType) {
+  if (!cardType || !id) {
     return <div>Loading...</div>;
   }
   
@@ -62,7 +71,12 @@ const EditCardPage = () => {
   return (
     <GridLayout title={title}>
       <div className="w-full max-w-md mx-auto">
-        <CardForm type={cardType} cardId={id} />
+        <CardForm 
+          type={cardType} 
+          cardId={id} 
+          isEdit={true}
+          onSubmitSuccess={handleSubmitSuccess}
+        />
         
         <div className="flex justify-center mt-8">
           <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

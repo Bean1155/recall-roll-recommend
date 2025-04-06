@@ -1,6 +1,8 @@
-import React, { useState, useCallback } from "react";
+
+import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FoodCard, EntertainmentCard } from "@/lib/types";
+import { FoodCard, EntertainmentCard, FoodStatus, EntertainmentStatus } from "@/lib/types";
+import { getCardById } from "@/lib/data";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,28 +18,42 @@ import { toast } from "@/components/ui/use-toast";
 interface CardFormProps {
   type: "food" | "entertainment";
   initialData?: FoodCard | EntertainmentCard;
-  onSubmit: (data: FoodCard | EntertainmentCard) => void;
+  onSubmit?: (data: FoodCard | EntertainmentCard) => void;
   isEdit?: boolean;
+  cardId?: string;
+  onSubmitSuccess?: (cardId: string) => void;
 }
 
-const CardForm = ({ type, initialData, onSubmit, isEdit = false }: CardFormProps) => {
+const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmitSuccess }: CardFormProps) => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState<FoodCard | EntertainmentCard | null>(null);
 
-  const [title, setTitle] = useState(initialData?.title || "");
-  const [creator, setCreator] = useState(initialData?.creator || "");
-  const [category, setCategory] = useState((initialData as FoodCard)?.category || (initialData as EntertainmentCard)?.entertainmentCategory || "");
-  const [cuisine, setCuisine] = useState((initialData as FoodCard)?.cuisine || "");
-  const [location, setLocation] = useState((initialData as FoodCard)?.location || "");
-  const [genre, setGenre] = useState((initialData as EntertainmentCard)?.genre || "");
-  const [medium, setMedium] = useState((initialData as EntertainmentCard)?.medium || "");
-  const [url, setUrl] = useState(initialData?.url || "");
-  const [tags, setTags] = useState(initialData?.tags?.join(", ") || "");
-  const [rating, setRating] = useState(initialData?.rating?.toString() || "");
-  const [status, setStatus] = useState(initialData?.status || "");
-  const [notes, setNotes] = useState(initialData?.notes || "");
-  const [isFavorite, setIsFavorite] = useState(initialData?.isFavorite || false);
-  const [date, setDate] = useState(initialData?.date ? new Date(initialData.date) : new Date());
-  const [serviceRating, setServiceRating] = useState((initialData as FoodCard)?.serviceRating?.toString() || "");
+  useEffect(() => {
+    if (cardId) {
+      const card = getCardById(cardId);
+      if (card) {
+        setFormData(card as FoodCard | EntertainmentCard);
+      }
+    } else if (initialData) {
+      setFormData(initialData);
+    }
+  }, [cardId, initialData]);
+
+  const [title, setTitle] = useState(formData?.title || initialData?.title || "");
+  const [creator, setCreator] = useState(formData?.creator || initialData?.creator || "");
+  const [category, setCategory] = useState((formData as FoodCard)?.category || (formData as EntertainmentCard)?.entertainmentCategory || (initialData as FoodCard)?.category || (initialData as EntertainmentCard)?.entertainmentCategory || "");
+  const [cuisine, setCuisine] = useState((formData as FoodCard)?.cuisine || (initialData as FoodCard)?.cuisine || "");
+  const [location, setLocation] = useState((formData as FoodCard)?.location || (initialData as FoodCard)?.location || "");
+  const [genre, setGenre] = useState((formData as EntertainmentCard)?.genre || (initialData as EntertainmentCard)?.genre || "");
+  const [medium, setMedium] = useState((formData as EntertainmentCard)?.medium || (initialData as EntertainmentCard)?.medium || "");
+  const [url, setUrl] = useState(formData?.url || initialData?.url || "");
+  const [tags, setTags] = useState(formData?.tags?.join(", ") || initialData?.tags?.join(", ") || "");
+  const [rating, setRating] = useState(formData?.rating?.toString() || initialData?.rating?.toString() || "");
+  const [status, setStatus] = useState(formData?.status || initialData?.status || "");
+  const [notes, setNotes] = useState(formData?.notes || initialData?.notes || "");
+  const [isFavorite, setIsFavorite] = useState(formData?.isFavorite || initialData?.isFavorite || false);
+  const [date, setDate] = useState(formData?.date ? new Date(formData.date) : initialData?.date ? new Date(initialData.date) : new Date());
+  const [serviceRating, setServiceRating] = useState((formData as FoodCard)?.serviceRating?.toString() || (initialData as FoodCard)?.serviceRating?.toString() || "");
 
   const formatDate = useCallback((date: Date): string => {
     return format(date, "yyyy-MM-dd");
@@ -50,18 +66,19 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false }: CardFormProps
       type: "food",
       title,
       creator,
-      category,
+      category: category as FoodCard["category"],
       cuisine,
       location,
       url,
       tags: tags.split(",").map((tag) => tag.trim()),
-      rating: parseFloat(rating),
-      status,
+      rating: parseFloat(rating) || 0,
+      status: status as FoodStatus,
       notes,
       isFavorite,
       date: formatDate(date),
-      serviceRating: parseFloat(serviceRating),
-      id: initialData?.id || String(Math.random()),
+      serviceRating: serviceRating ? (serviceRating as unknown as FoodCard["serviceRating"]) : null,
+      visitCount: (formData as FoodCard)?.visitCount || 0,
+      id: formData?.id || initialData?.id || String(Math.random()),
     } : {
       type: "entertainment",
       title,
@@ -71,20 +88,27 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false }: CardFormProps
       medium,
       url,
       tags: tags.split(",").map((tag) => tag.trim()),
-      rating: parseFloat(rating),
-      status,
+      rating: parseFloat(rating) || 0,
+      status: status as EntertainmentStatus,
       notes,
       isFavorite,
       date: formatDate(date),
-      id: initialData?.id || String(Math.random()),
+      id: formData?.id || initialData?.id || String(Math.random()),
     };
 
-    onSubmit(cardData);
-    toast({
-      title: `${type === "food" ? "Bite" : "Blockbuster"} ${isEdit ? "Updated" : "Created"}!`,
-      description: `Your ${type === "food" ? "bite" : "blockbuster"} has been ${isEdit ? "updated" : "created"}.`,
-    });
-    navigate(`/${type === "food" ? "bites" : "blockbusters"}`);
+    if (onSubmit) {
+      onSubmit(cardData);
+    }
+    
+    if (onSubmitSuccess) {
+      onSubmitSuccess(cardData.id);
+    } else {
+      toast({
+        title: `${type === "food" ? "Bite" : "Blockbuster"} ${isEdit ? "Updated" : "Created"}!`,
+        description: `Your ${type === "food" ? "bite" : "blockbuster"} has been ${isEdit ? "updated" : "created"}.`,
+      });
+      navigate(`/${type === "food" ? "bites" : "blockbusters"}`);
+    }
   };
 
   return (
@@ -124,6 +148,11 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false }: CardFormProps
                   <SelectItem value="bar">Bar</SelectItem>
                   <SelectItem value="food truck">Food Truck</SelectItem>
                   <SelectItem value="bakery">Bakery</SelectItem>
+                  <SelectItem value="diner">Diner</SelectItem>
+                  <SelectItem value="fine dining">Fine Dining</SelectItem>
+                  <SelectItem value="specialty">Specialty</SelectItem>
+                  <SelectItem value="take out">Take Out</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -146,15 +175,17 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false }: CardFormProps
               />
             </div>
             <div>
-              <Label htmlFor="serviceRating">Service Rating (1-5)</Label>
-              <Input
-                type="number"
-                id="serviceRating"
-                value={serviceRating}
-                onChange={(e) => setServiceRating(e.target.value)}
-                min="1"
-                max="5"
-              />
+              <Label htmlFor="serviceRating">Service Rating</Label>
+              <Select value={serviceRating} onValueChange={setServiceRating}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Had me at hello">Had me at hello</SelectItem>
+                  <SelectItem value="Needs more effort">Needs more effort</SelectItem>
+                  <SelectItem value="Disappointed">Disappointed</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </>
         ) : (
@@ -234,15 +265,14 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false }: CardFormProps
             <SelectContent>
               {type === "food" ? (
                 <>
+                  <SelectItem value="Visited: Tried this bite">Visited: Tried this bite</SelectItem>
                   <SelectItem value="Interested: Want a bite">Interested: Want a bite</SelectItem>
-                  <SelectItem value="Tried: Was good">Tried: Was good</SelectItem>
-                  <SelectItem value="Tried: Was bad">Tried: Was bad</SelectItem>
                 </>
               ) : (
                 <>
+                  <SelectItem value="Watched">Watched</SelectItem>
                   <SelectItem value="Want to Watch">Want to Watch</SelectItem>
-                  <SelectItem value="Watched: Liked it">Watched: Liked it</SelectItem>
-                  <SelectItem value="Watched: Disliked it">Watched: Disliked it</SelectItem>
+                  <SelectItem value="Currently Watching">Currently Watching</SelectItem>
                 </>
               )}
             </SelectContent>
@@ -287,7 +317,7 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false }: CardFormProps
               <Calendar
                 mode="single"
                 selected={date}
-                onSelect={setDate}
+                onSelect={(selectedDate) => selectedDate && setDate(selectedDate)}
                 disabled={(date) =>
                   date > new Date()
                 }
