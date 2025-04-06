@@ -1,21 +1,12 @@
 
 import React from "react";
 import { Utensils, Search, PlusCircle } from "lucide-react";
-import BitesFilter from "./BitesFilter";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import CatalogSearch from "@/components/CatalogSearch";
 
 interface BitesHeaderProps {
-  hasActiveFilters: boolean;
   onClearFilters: () => void;
-  onOpenFilters: () => void;
-  onFilterChange?: (filterType: string, value: string) => void;
-  activeFilters?: {
-    status: string[];
-    rating: number[];
-    tags: string[];
-  };
   cards: any[];
   onFilteredItemsChange: (filteredItems: any[]) => void;
 }
@@ -27,11 +18,7 @@ interface BitesHeaderResult {
 }
 
 const BitesHeader = ({
-  hasActiveFilters,
   onClearFilters,
-  onOpenFilters,
-  onFilterChange,
-  activeFilters,
   cards,
   onFilteredItemsChange
 }: BitesHeaderProps): BitesHeaderResult => {
@@ -52,14 +39,6 @@ const BitesHeader = ({
           <span className="hidden sm:inline">Search</span>
         </Button>
         
-        <BitesFilter 
-          hasActiveFilters={hasActiveFilters} 
-          onClearFilters={onClearFilters} 
-          onOpenFilters={onOpenFilters} 
-          onFilterChange={onFilterChange}
-          activeFilters={activeFilters}
-        />
-
         <Button 
           variant="outline" 
           size="sm" 
