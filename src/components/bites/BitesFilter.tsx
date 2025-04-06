@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { FilterX, Filter, Check } from "lucide-react";
+import { FilterX, Filter, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,6 +10,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
 
 interface BitesFilterProps {
@@ -85,24 +89,97 @@ const BitesFilter = ({
           
           <DropdownMenuSeparator />
           <DropdownMenuLabel className="text-xs text-gray-500">Rating</DropdownMenuLabel>
-          <DropdownMenuCheckboxItem
-            checked={activeFilters.rating.includes(5)}
-            onSelect={() => handleFilterSelect("rating", "5")}
-          >
-            5 Stars
-          </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={activeFilters.rating.includes(4)}
-            onSelect={() => handleFilterSelect("rating", "4")}
-          >
-            4+ Stars
-          </DropdownMenuCheckboxItem>
-          <DropdownMenuCheckboxItem
-            checked={activeFilters.rating.includes(3)}
-            onSelect={() => handleFilterSelect("rating", "3")}
-          >
-            3+ Stars
-          </DropdownMenuCheckboxItem>
+          
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger className="flex items-center">
+              <span>By Star Rating</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent className="bg-white">
+                <DropdownMenuCheckboxItem
+                  checked={activeFilters.rating.includes(5)}
+                  onSelect={() => handleFilterSelect("rating", "5")}
+                  className="flex items-center"
+                >
+                  <div className="flex items-center">
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400 mr-1" />
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400 mr-1" />
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400 mr-1" />
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400 mr-1" />
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                    <span className="ml-2">5 Stars Only</span>
+                  </div>
+                </DropdownMenuCheckboxItem>
+                
+                <DropdownMenuCheckboxItem
+                  checked={activeFilters.rating.includes(4)}
+                  onSelect={() => handleFilterSelect("rating", "4")}
+                  className="flex items-center"
+                >
+                  <div className="flex items-center">
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400 mr-1" />
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400 mr-1" />
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400 mr-1" />
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                    <span className="ml-2">4 Stars Only</span>
+                  </div>
+                </DropdownMenuCheckboxItem>
+                
+                <DropdownMenuCheckboxItem
+                  checked={activeFilters.rating.includes(3)}
+                  onSelect={() => handleFilterSelect("rating", "3")}
+                  className="flex items-center"
+                >
+                  <div className="flex items-center">
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400 mr-1" />
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400 mr-1" />
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                    <span className="ml-2">3 Stars Only</span>
+                  </div>
+                </DropdownMenuCheckboxItem>
+                
+                <DropdownMenuCheckboxItem
+                  checked={activeFilters.rating.includes(2)}
+                  onSelect={() => handleFilterSelect("rating", "2")}
+                  className="flex items-center"
+                >
+                  <div className="flex items-center">
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400 mr-1" />
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                    <span className="ml-2">2 Stars Only</span>
+                  </div>
+                </DropdownMenuCheckboxItem>
+                
+                <DropdownMenuCheckboxItem
+                  checked={activeFilters.rating.includes(1)}
+                  onSelect={() => handleFilterSelect("rating", "1")}
+                  className="flex items-center"
+                >
+                  <div className="flex items-center">
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                    <span className="ml-2">1 Star Only</span>
+                  </div>
+                </DropdownMenuCheckboxItem>
+                
+                <DropdownMenuSeparator />
+                
+                <DropdownMenuCheckboxItem
+                  checked={activeFilters.rating.some(r => r >= 4)}
+                  onSelect={() => handleFilterSelect("rating", "4+")}
+                  className="flex items-center"
+                >
+                  4+ Stars
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  checked={activeFilters.rating.some(r => r >= 3)}
+                  onSelect={() => handleFilterSelect("rating", "3+")}
+                  className="flex items-center"
+                >
+                  3+ Stars
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
           
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => onOpenFilters()}>
