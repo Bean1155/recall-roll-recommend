@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FoodCard, EntertainmentCard, FoodStatus, EntertainmentStatus, ServiceRating } from "@/lib/types";
+import { FoodCard, EntertainmentCard, FoodStatus, EntertainmentStatus, ServiceRating, CardType } from "@/lib/types";
 import { getCardById } from "@/lib/data";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,7 +16,7 @@ import { toast } from "@/components/ui/use-toast";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 
 interface CardFormProps {
-  type: "food" | "entertainment";
+  type: CardType;
   initialData?: FoodCard | EntertainmentCard;
   onSubmit?: (data: FoodCard | EntertainmentCard) => void;
   isEdit?: boolean;
@@ -117,7 +117,7 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmi
     }
   };
 
-  // Only render the food form
+  // Only render the food form if type is "food"
   if (type === "food") {
     return (
       <div className="w-full max-w-3xl mx-auto p-4 space-y-6 bg-white rounded-lg shadow">
@@ -356,97 +356,41 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmi
           />
         </div>
 
-        {type === "food" ? (
-          <>
-            <div>
-              <Label htmlFor="category">Category</Label>
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="restaurant">Restaurant</SelectItem>
-                  <SelectItem value="cafe">Cafe</SelectItem>
-                  <SelectItem value="bar">Bar</SelectItem>
-                  <SelectItem value="food truck">Food Truck</SelectItem>
-                  <SelectItem value="bakery">Bakery</SelectItem>
-                  <SelectItem value="diner">Diner</SelectItem>
-                  <SelectItem value="fine dining">Fine Dining</SelectItem>
-                  <SelectItem value="specialty">Specialty</SelectItem>
-                  <SelectItem value="take out">Take Out</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="cuisine">Cuisine</Label>
-              <Input
-                type="text"
-                id="cuisine"
-                value={cuisine}
-                onChange={(e) => setCuisine(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="location">Location</Label>
-              <Input
-                type="text"
-                id="location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="serviceRating">Service Rating</Label>
-              <Select value={serviceRating} onValueChange={setServiceRating}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Had me at hello">Had me at hello</SelectItem>
-                  <SelectItem value="Needs more effort">Needs more effort</SelectItem>
-                  <SelectItem value="Disappointed">Disappointed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </>
-        ) : (
-          <>
-            <div>
-              <Label htmlFor="category">Category</Label>
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="movies">Movies</SelectItem>
-                  <SelectItem value="tv shows">TV Shows</SelectItem>
-                  <SelectItem value="books">Books</SelectItem>
-                  <SelectItem value="games">Games</SelectItem>
-                  <SelectItem value="podcasts">Podcasts</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="genre">Genre</Label>
-              <Input
-                type="text"
-                id="genre"
-                value={genre}
-                onChange={(e) => setGenre(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="medium">Medium</Label>
-              <Input
-                type="text"
-                id="medium"
-                value={medium}
-                onChange={(e) => setMedium(e.target.value)}
-              />
-            </div>
-          </>
-        )}
+        <div>
+          <Label htmlFor="category">Category</Label>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="movies">Movies</SelectItem>
+              <SelectItem value="tv shows">TV Shows</SelectItem>
+              <SelectItem value="books">Books</SelectItem>
+              <SelectItem value="games">Games</SelectItem>
+              <SelectItem value="podcasts">Podcasts</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor="genre">Genre</Label>
+          <Input
+            type="text"
+            id="genre"
+            value={genre}
+            onChange={(e) => setGenre(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="medium">Medium</Label>
+          <Input
+            type="text"
+            id="medium"
+            value={medium}
+            onChange={(e) => setMedium(e.target.value)}
+          />
+        </div>
 
         <div>
           <Label htmlFor="url">URL</Label>
@@ -457,6 +401,7 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmi
             onChange={(e) => setUrl(e.target.value)}
           />
         </div>
+        
         <div>
           <Label htmlFor="tags">Tags (comma separated)</Label>
           <Input
@@ -466,6 +411,7 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmi
             onChange={(e) => setTags(e.target.value)}
           />
         </div>
+        
         <div>
           <Label htmlFor="rating">Rating (1-5)</Label>
           <Input
@@ -478,6 +424,7 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmi
             required
           />
         </div>
+        
         <div>
           <Label htmlFor="status">Status</Label>
           <Select value={status} onValueChange={setStatus}>
@@ -485,21 +432,13 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmi
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent>
-              {type === "food" ? (
-                <>
-                  <SelectItem value="Visited: Tried this bite">Visited: Tried this bite</SelectItem>
-                  <SelectItem value="Interested: Want a bite">Interested: Want a bite</SelectItem>
-                </>
-              ) : (
-                <>
-                  <SelectItem value="Watched">Watched</SelectItem>
-                  <SelectItem value="Want to Watch">Want to Watch</SelectItem>
-                  <SelectItem value="Currently Watching">Currently Watching</SelectItem>
-                </>
-              )}
+              <SelectItem value="Watched">Watched</SelectItem>
+              <SelectItem value="Want to Watch">Want to Watch</SelectItem>
+              <SelectItem value="Currently Watching">Currently Watching</SelectItem>
             </SelectContent>
           </Select>
         </div>
+        
         <div>
           <Label htmlFor="notes">Notes</Label>
           <Textarea
@@ -508,6 +447,7 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmi
             onChange={(e) => setNotes(e.target.value)}
           />
         </div>
+        
         <div>
           <Label htmlFor="isFavorite" className="inline-flex items-center">
             <Input
@@ -520,6 +460,7 @@ const CardForm = ({ type, initialData, onSubmit, isEdit = false, cardId, onSubmi
             <span>Is Favorite</span>
           </Label>
         </div>
+        
         <div>
           <Label>Date</Label>
           <Popover>
