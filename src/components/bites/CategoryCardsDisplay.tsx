@@ -1,18 +1,18 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, ChevronDown, ChevronUp } from "lucide-react";
 import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
 import { FoodCard, FoodCategory } from "@/lib/types";
 import { getCategoryDisplayName, defaultCategories } from "@/utils/categoryUtils";
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from "@/components/ui/accordion";
 
 interface CategoryCardsDisplayProps {
   category?: FoodCategory;
@@ -42,6 +42,7 @@ const CategoryCardsDisplay = ({
   onOpenFilters,
 }: CategoryCardsDisplayProps) => {
   const [categorizedCards, setCategorizedCards] = useState<Record<string, FoodCard[]>>({});
+  const [openCategories, setOpenCategories] = useState<string[]>([]);
   
   useEffect(() => {
     if (!cards || cards.length === 0) {
@@ -71,7 +72,26 @@ const CategoryCardsDisplay = ({
     });
     
     setCategorizedCards(grouped);
+    
+    // Auto-open categories with cards
+    const categoriesToOpen = Object.entries(grouped)
+      .filter(([_, catCards]) => catCards.length > 0)
+      .map(([cat]) => cat);
+    
+    if (categoriesToOpen.length > 0) {
+      setOpenCategories([categoriesToOpen[0]]); // Open just the first category with cards
+    }
   }, [cards, category]);
+
+  const toggleCategory = (cat: string) => {
+    setOpenCategories(prev => {
+      if (prev.includes(cat)) {
+        return prev.filter(c => c !== cat);
+      } else {
+        return [...prev, cat];
+      }
+    });
+  };
 
   if (category) {
     const hasCards = cards.length > 0;
@@ -89,7 +109,7 @@ const CategoryCardsDisplay = ({
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {Object.entries(categorizedCards).map(([cat, catCards]) => {
         if (catCards.length === 0 && !defaultCategories.includes(cat as FoodCategory)) {
           return null;
@@ -98,24 +118,67 @@ const CategoryCardsDisplay = ({
         const color = categoryColors?.[cat] || '#d2b48c';
         const displayName = getCategoryDisplayName(cat);
         const catTextColor = textColor || '#603913';
+        const isOpen = openCategories.includes(cat);
         
         return (
-          <div key={cat} className="mb-8">
-            <h2 
-              className="text-lg sm:text-xl font-semibold mb-3 px-2"
-              style={{ color: catTextColor }}
+          <div 
+            key={cat} 
+            className="catalog-drawer mb-6 border rounded-lg overflow-hidden shadow-md"
+            style={{ borderColor: color }}
+          >
+            <div 
+              className="catalog-drawer-header flex justify-between items-center p-3 cursor-pointer"
+              style={{ backgroundColor: color, color: catTextColor }}
+              onClick={() => toggleCategory(cat)}
             >
-              {displayName}
-            </h2>
-            <SingleCategoryDisplay 
-              category={cat as FoodCategory}
-              cards={catCards}
-              categoryColor={color}
-              categoryDisplayName={displayName}
-              textColor={catTextColor}
-              onCardClick={onCardClick}
-              hasCards={catCards.length > 0}
-            />
+              <h2 className="text-lg font-semibold">{displayName}</h2>
+              <div className="flex items-center">
+                <span className="mr-2 text-sm">
+                  {catCards.length} {catCards.length === 1 ? 'item' : 'items'}
+                </span>
+                {isOpen ? (
+                  <ChevronUp size={20} />
+                ) : (
+                  <ChevronDown size={20} />
+                )}
+              </div>
+            </div>
+            
+            {isOpen && (
+              <div className="catalog-drawer-content p-3 bg-white">
+                {catCards.length > 0 ? (
+                  <div className="grid grid-cols-1 gap-4">
+                    {catCards.map(card => (
+                      <div 
+                        key={card.id} 
+                        className="catalog-card cursor-pointer"
+                        onClick={() => onCardClick?.(card)}
+                      >
+                        <Envelope
+                          label={card.title}
+                          backgroundColor={color}
+                        >
+                          <CatalogCard card={card} />
+                        </Envelope>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-catalog-softBrown mb-4">No entries in this category yet.</p>
+                    <Button asChild 
+                      className="text-sm py-2 px-4 h-auto" 
+                      style={{ backgroundColor: color, color: catTextColor }}
+                    >
+                      <Link to={`/create/food?category=${cat}`}>
+                        <PlusCircle size={16} className="mr-2" />
+                        <span>Add {displayName}</span>
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         );
       })}
@@ -141,53 +204,48 @@ const SingleCategoryDisplay = ({
   hasCards: boolean;
 }) => {
   return (
-    <>
-      {hasCards ? (
-        <Carousel className="w-full">
-          <CarouselContent>
+    <div className="border rounded-lg overflow-hidden shadow-md" style={{ borderColor: categoryColor }}>
+      <div 
+        className="p-3"
+        style={{ backgroundColor: categoryColor, color: textColor }}
+      >
+        <h2 className="text-lg font-semibold">{categoryDisplayName}</h2>
+      </div>
+      
+      <div className="p-3 bg-white">
+        {hasCards ? (
+          <div className="grid grid-cols-1 gap-4">
             {cards.map((card) => (
-              <CarouselItem key={card.id} className="basis-full">
-                <div 
-                  className="p-1" 
-                  id={`card-${card.id}`}
-                  onClick={() => onCardClick?.(card)}
+              <div 
+                key={card.id} 
+                className="catalog-card cursor-pointer"
+                onClick={() => onCardClick?.(card)}
+              >
+                <Envelope 
+                  label={card.title}
+                  backgroundColor={categoryColor}
                 >
-                  <Envelope 
-                    label={card.title}
-                    backgroundColor={categoryColor}
-                  >
-                    <CatalogCard card={card} />
-                  </Envelope>
-                </div>
-              </CarouselItem>
+                  <CatalogCard card={card} />
+                </Envelope>
+              </div>
             ))}
-          </CarouselContent>
-          <div className="flex justify-end gap-2 mt-4">
-            <CarouselPrevious 
-              className="relative static translate-y-0 h-6 w-6 sm:h-8 sm:w-8" 
-              style={{ backgroundColor: categoryColor, color: textColor }}
-            />
-            <CarouselNext 
-              className="relative static translate-y-0 h-6 w-6 sm:h-8 sm:w-8" 
-              style={{ backgroundColor: categoryColor, color: textColor }}
-            />
           </div>
-        </Carousel>
-      ) : (
-        <div className="text-center py-4 sm:py-8">
-          <p className="text-catalog-softBrown mb-4 text-sm sm:text-base">No entries in this category yet.</p>
-          <Button asChild 
-            className="text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-4 h-auto" 
-            style={{ backgroundColor: categoryColor, color: textColor }}
-          >
-            <Link to={`/create/food?category=${category}`}>
-              <PlusCircle size={12} className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="truncate">Add {categoryDisplayName}</span>
-            </Link>
-          </Button>
-        </div>
-      )}
-    </>
+        ) : (
+          <div className="text-center py-4">
+            <p className="text-catalog-softBrown mb-4">No entries in this category yet.</p>
+            <Button asChild 
+              className="text-sm py-2 px-4 h-auto" 
+              style={{ backgroundColor: categoryColor, color: textColor }}
+            >
+              <Link to={`/create/food?category=${category}`}>
+                <PlusCircle size={16} className="mr-2" />
+                <span>Add {categoryDisplayName}</span>
+              </Link>
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

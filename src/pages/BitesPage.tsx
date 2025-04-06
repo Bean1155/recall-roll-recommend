@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
 import { FoodCard } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
-import CategoryCardsDisplay from "@/components/bites/CategoryCardsDisplay";
+import CategoryDrawers from "@/components/bites/CategoryDrawers"; 
 import AddCategoryDialog from "@/components/bites/AddCategoryDialog";
 import CategoryDrawer from "@/components/bites/CategoryDrawer";
 import CardDetailDialog from "@/components/bites/CardDetailDialog";
@@ -26,7 +25,6 @@ const BitesPage = () => {
     tags: [] as string[]
   });
   
-  // Get food cards from all cards
   useEffect(() => {
     const fetchCards = () => {
       const allCards = getAllCards();
@@ -38,7 +36,6 @@ const BitesPage = () => {
 
     fetchCards();
     
-    // Check for URL parameter to open specific card
     const searchParams = new URLSearchParams(location.search);
     const cardToOpen = searchParams.get('open');
     if (cardToOpen) {
@@ -51,7 +48,6 @@ const BitesPage = () => {
       }, 300);
     }
     
-    // Listen for card_added events
     const handleCardAdded = (event: Event) => {
       const customEvent = event as CustomEvent;
       if (customEvent.detail?.action === 'card_added' && customEvent.detail?.cardType === 'food') {
@@ -77,7 +73,6 @@ const BitesPage = () => {
     handleCardClick
   } = useCardDetailHandling(cards);
   
-  // Apply filters
   useEffect(() => {
     if (!hasActiveFilters()) {
       setFilteredCards(cards);
@@ -85,17 +80,14 @@ const BitesPage = () => {
     }
     
     const filtered = cards.filter(card => {
-      // Filter by status
       if (filters.status.length > 0 && !filters.status.includes(card.status)) {
         return false;
       }
       
-      // Filter by rating
       if (filters.rating.length > 0 && card.rating && !filters.rating.includes(card.rating)) {
         return false;
       }
       
-      // Filter by tags
       if (filters.tags.length > 0) {
         if (!card.tags || card.tags.length === 0) {
           return false;
@@ -137,7 +129,6 @@ const BitesPage = () => {
     const newFilters = { ...filters };
     
     if (filterType === "status") {
-      // Toggle status filter
       if (newFilters.status.includes(value)) {
         newFilters.status = newFilters.status.filter(status => status !== value);
       } else {
@@ -147,7 +138,6 @@ const BitesPage = () => {
     
     if (filterType === "rating") {
       const ratingValue = parseInt(value, 10);
-      // Toggle rating filter
       if (newFilters.rating.includes(ratingValue)) {
         newFilters.rating = newFilters.rating.filter(r => r !== ratingValue);
       } else {
@@ -172,6 +162,9 @@ const BitesPage = () => {
     onFilteredItemsChange: handleFilteredItemsChange
   });
   
+  const searchParams = new URLSearchParams(location.search);
+  const focusCardId = searchParams.get('open');
+  
   return (
     <GridLayout 
       title={headerProps.title}
@@ -179,12 +172,12 @@ const BitesPage = () => {
       headerContent={headerProps.headerContent}
     >
       <div className="w-full">
-        <CategoryCardsDisplay 
+        <CategoryDrawers
           cards={filteredCards.length > 0 ? filteredCards : cards} 
           onCardClick={handleCardClick} 
-          filters={filters}
           categoryColors={categoryColors}
-          onOpenFilters={() => setIsFiltersOpen(true)}
+          defaultOpenCategory={focusCardId ? 
+            cards.find(c => c.id === focusCardId)?.category : undefined}
         />
       </div>
       
