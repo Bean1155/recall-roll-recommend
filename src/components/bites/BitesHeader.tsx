@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Utensils, Search, PlusCircle } from "lucide-react";
+import { Search, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import CatalogSearch from "@/components/CatalogSearch";

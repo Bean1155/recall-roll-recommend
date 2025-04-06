@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { FilterX, Filter, Star, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -107,12 +106,9 @@ const BitesFilter = ({
       onFilterChange(filterType, value);
     }
     
-    // Keep the dropdown open to show results
-    if (allCards.length > 0) {
-      // Don't close dropdown if we want to show filtered cards
-    } else {
-      setOpen(false);
-    }
+    // Always keep the dropdown open to show results
+    setOpen(true);
+    setShowFilteredCards(true);
   };
 
   const handleCardSelect = (card: FoodCard) => {
@@ -179,8 +175,16 @@ const BitesFilter = ({
           <DropdownMenuSeparator />
           <DropdownMenuLabel className="text-xs text-gray-500">Rating</DropdownMenuLabel>
           
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger className="flex items-center">
+          <DropdownMenuSub open={selectedFilter?.type === "rating"}>
+            <DropdownMenuSubTrigger 
+              className="flex items-center"
+              onClick={() => {
+                if (selectedFilter?.type === "rating") {
+                  setSelectedFilter(null);
+                  setShowFilteredCards(false);
+                }
+              }}
+            >
               <span>By Star Rating</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
@@ -278,8 +282,16 @@ const BitesFilter = ({
           <DropdownMenuSeparator />
           <DropdownMenuLabel className="text-xs text-gray-500">Location</DropdownMenuLabel>
           
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger className="flex items-center">
+          <DropdownMenuSub open={selectedFilter?.type === "location"}>
+            <DropdownMenuSubTrigger 
+              className="flex items-center"
+              onClick={() => {
+                if (selectedFilter?.type === "location") {
+                  setSelectedFilter(null);
+                  setShowFilteredCards(false);
+                }
+              }}
+            >
               <MapPin className="h-4 w-4 mr-2" />
               <span>By Location</span>
             </DropdownMenuSubTrigger>
