@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { FilterX, Filter, Star, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -323,7 +324,10 @@ const BitesFilter = ({
                   variant="ghost" 
                   size="sm" 
                   className="h-6 p-1" 
-                  onClick={closeFilteredCards}
+                  onClick={(e) => {
+                    e.preventDefault(); // Prevent the dropdown from closing
+                    closeFilteredCards();
+                  }}
                 >
                   <FilterX className="h-3.5 w-3.5" />
                 </Button>
