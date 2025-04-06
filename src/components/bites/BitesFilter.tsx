@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { FilterX, Filter, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -286,7 +287,7 @@ const BitesFilter = ({
                   >
                     <CardContent className="p-2 text-xs">
                       <div className="font-medium truncate">{card.title}</div>
-                      <div className="text-gray-500 truncate">{card.description?.substring(0, 50)}</div>
+                      <div className="text-gray-500 truncate">{card.notes?.substring(0, 50)}</div>
                       {card.rating && (
                         <div className="flex mt-1">
                           {Array.from({ length: card.rating }).map((_, i) => (

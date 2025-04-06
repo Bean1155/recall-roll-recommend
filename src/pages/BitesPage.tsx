@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
 import { FoodCard } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
+import { Utensils } from "lucide-react";
 import CategoryDrawers from "@/components/bites/CategoryDrawers"; 
 import AddCategoryDialog from "@/components/bites/AddCategoryDialog";
 import CardDetailDialog from "@/components/bites/CardDetailDialog";
@@ -85,7 +86,7 @@ const BitesPage = () => {
     <GridLayout 
       title="Bites"
       icon={<Utensils className="h-6 w-6 text-teal-700" />}
-      headerContent={(
+      headerContent={
         <BitesHeader 
           onClearFilters={clearFilters}
           cards={cards}
@@ -93,7 +94,7 @@ const BitesPage = () => {
           onCardClick={handleCardClick}
           hasActiveFilters={hasActiveFilters}
         />
-      ).headerContent}
+      }
     >
       <div className="w-full">
         <CategoryDrawers
