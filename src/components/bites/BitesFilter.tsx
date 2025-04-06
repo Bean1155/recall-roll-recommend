@@ -95,7 +95,7 @@ const BitesFilter = ({
               <span>By Star Rating</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
-              <DropdownMenuSubContent className="bg-white">
+              <DropdownMenuSubContent className="w-56 bg-white" sideOffset={2} alignOffset={-5}>
                 <DropdownMenuCheckboxItem
                   checked={activeFilters.rating.includes(5)}
                   onSelect={() => handleFilterSelect("rating", "5")}
