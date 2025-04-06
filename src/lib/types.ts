@@ -1,7 +1,7 @@
 
 export type CardType = 'food' | 'entertainment';
 export type FoodCategory = 'bakery' | 'bar' | 'cafe' | 'diner' | 'fine dining' | 'food truck' | 'restaurant' | 'specialty' | 'take out' | 'other' | string;
-export type FoodStatus = 'Visited: Tried this bite' | 'Interested: Want a bite';
+export type FoodStatus = 'Visited: Tried this bite' | 'Interested: Want a bite' | 'Returning: Returning to this bite';
 export type EntertainmentStatus = 'Watched' | 'Want to Watch' | 'Currently Watching';
 export type RecommendationBadge = 'Highly Recommend' | 'Favorite' | null;
 export type AgreementStatus = 'Agree' | 'Disagree' | 'Neutral' | null;
