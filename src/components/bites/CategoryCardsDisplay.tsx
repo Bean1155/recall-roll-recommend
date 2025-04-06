@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -28,6 +27,7 @@ interface CategoryCardsDisplayProps {
   };
   categoryColors?: Record<string, string>;
   onOpenFilters?: () => void;
+  hideEmptyCategories?: boolean;
 }
 
 const CategoryCardsDisplay = ({
@@ -40,6 +40,7 @@ const CategoryCardsDisplay = ({
   filters,
   categoryColors,
   onOpenFilters,
+  hideEmptyCategories = true,
 }: CategoryCardsDisplayProps) => {
   const [categorizedCards, setCategorizedCards] = useState<Record<string, FoodCard[]>>({});
   const [openCategories, setOpenCategories] = useState<string[]>([]);
@@ -65,23 +66,24 @@ const CategoryCardsDisplay = ({
       return acc;
     }, {});
     
-    defaultCategories.forEach(cat => {
-      if (!grouped[cat]) {
-        grouped[cat] = [];
-      }
-    });
+    if (!hideEmptyCategories) {
+      defaultCategories.forEach(cat => {
+        if (!grouped[cat]) {
+          grouped[cat] = [];
+        }
+      });
+    }
     
     setCategorizedCards(grouped);
     
-    // Auto-open categories with cards
     const categoriesToOpen = Object.entries(grouped)
       .filter(([_, catCards]) => catCards.length > 0)
       .map(([cat]) => cat);
     
     if (categoriesToOpen.length > 0) {
-      setOpenCategories([categoriesToOpen[0]]); // Open just the first category with cards
+      setOpenCategories([categoriesToOpen[0]]);
     }
-  }, [cards, category]);
+  }, [cards, category, hideEmptyCategories]);
 
   const toggleCategory = (cat: string) => {
     setOpenCategories(prev => {
@@ -111,7 +113,7 @@ const CategoryCardsDisplay = ({
   return (
     <div className="space-y-6">
       {Object.entries(categorizedCards).map(([cat, catCards]) => {
-        if (catCards.length === 0 && !defaultCategories.includes(cat as FoodCategory)) {
+        if (catCards.length === 0 && (hideEmptyCategories || !defaultCategories.includes(cat as FoodCategory))) {
           return null;
         }
         

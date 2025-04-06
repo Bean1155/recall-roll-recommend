@@ -103,6 +103,7 @@ const BitesPage = () => {
           categoryColors={categoryColors}
           defaultOpenCategory={focusCardId ? 
             cards.find(c => c.id === focusCardId)?.category : undefined}
+          hideEmptyCategories={true} // Only show categories that have cards
         />
       </div>
       

@@ -15,6 +15,7 @@ interface CategoryDrawersProps {
   categoryColors?: Record<string, string>;
   onCardClick?: (card: FoodCard) => void;
   defaultOpenCategory?: string;
+  hideEmptyCategories?: boolean; // New prop to control visibility of empty categories
 }
 
 const CategoryDrawers = ({
@@ -22,7 +23,8 @@ const CategoryDrawers = ({
   cards,
   categoryColors,
   onCardClick,
-  defaultOpenCategory
+  defaultOpenCategory,
+  hideEmptyCategories = true // Default to hiding empty categories
 }: CategoryDrawersProps) => {
   const [categorizedCards, setCategorizedCards] = useState<Record<string, FoodCard[]>>({});
   const [openCategory, setOpenCategory] = useState<string | null>(defaultOpenCategory || null);
@@ -53,11 +55,14 @@ const CategoryDrawers = ({
       return acc;
     }, {});
     
-    defaultCategories.forEach(cat => {
-      if (!grouped[cat]) {
-        grouped[cat] = [];
-      }
-    });
+    // Only add default categories if we're not hiding empty categories
+    if (!hideEmptyCategories) {
+      defaultCategories.forEach(cat => {
+        if (!grouped[cat]) {
+          grouped[cat] = [];
+        }
+      });
+    }
     
     setCategorizedCards(grouped);
     
@@ -70,7 +75,7 @@ const CategoryDrawers = ({
         setOpenCategory(firstCategoryWithCards);
       }
     }
-  }, [cards, category, defaultOpenCategory]);
+  }, [cards, category, defaultOpenCategory, hideEmptyCategories]);
 
   const handleOpenChange = (cat: string, isOpen: boolean) => {
     if (isOpen) {
@@ -83,7 +88,8 @@ const CategoryDrawers = ({
   return (
     <div className="space-y-2">
       {Object.entries(categorizedCards).map(([cat, catCards]) => {
-        if (catCards.length === 0 && !defaultCategories.includes(cat as FoodCategory)) {
+        // Skip empty categories if hideEmptyCategories is true
+        if (catCards.length === 0 && (hideEmptyCategories || !defaultCategories.includes(cat as FoodCategory))) {
           return null;
         }
         
