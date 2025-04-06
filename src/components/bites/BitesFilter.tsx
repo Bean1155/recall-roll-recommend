@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { FilterX, Filter, Star } from "lucide-react";
+import { FilterX, Filter, Star, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,6 +27,7 @@ interface BitesFilterProps {
     status: string[];
     rating: number[];
     tags: string[];
+    location: string[];
   };
   allCards?: FoodCard[];
   onCardClick?: (card: FoodCard) => void;
@@ -37,7 +38,7 @@ const BitesFilter = ({
   onClearFilters, 
   onOpenFilters,
   onFilterChange,
-  activeFilters = { status: [], rating: [], tags: [] },
+  activeFilters = { status: [], rating: [], tags: [], location: [] },
   allCards = [],
   onCardClick
 }: BitesFilterProps) => {
@@ -45,6 +46,20 @@ const BitesFilter = ({
   const [filteredCards, setFilteredCards] = useState<FoodCard[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<{ type: string, value: string } | null>(null);
   const [showFilteredCards, setShowFilteredCards] = useState(false);
+  const [uniqueLocations, setUniqueLocations] = useState<string[]>([]);
+  
+  // Extract unique locations from cards
+  useEffect(() => {
+    if (allCards.length > 0) {
+      const locations = Array.from(new Set(
+        allCards
+          .filter(card => card.location && card.location.trim() !== '')
+          .map(card => card.location)
+      )).sort();
+      
+      setUniqueLocations(locations);
+    }
+  }, [allCards]);
   
   useEffect(() => {
     if (selectedFilter && allCards.length > 0) {
@@ -71,6 +86,10 @@ const BitesFilter = ({
       } else if (selectedFilter.type === "tags") {
         filtered = allCards.filter(card => 
           card.tags && card.tags.includes(selectedFilter.value)
+        );
+      } else if (selectedFilter.type === "location") {
+        filtered = allCards.filter(card => 
+          card.location === selectedFilter.value
         );
       }
       
@@ -146,13 +165,13 @@ const BitesFilter = ({
           <DropdownMenuLabel className="text-xs text-gray-500">Status</DropdownMenuLabel>
           <DropdownMenuCheckboxItem
             checked={activeFilters.status.includes("Visited")}
-            onSelect={() => handleFilterSelect("status", "Visited")}
+            onSelect={() => handleFilterSelect("status", "Visited: Tried this bite")}
           >
             Visited
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem
             checked={activeFilters.status.includes("Interested")}
-            onSelect={() => handleFilterSelect("status", "Interested")}
+            onSelect={() => handleFilterSelect("status", "Interested: Want a bite")}
           >
             Interested
           </DropdownMenuCheckboxItem>
@@ -257,6 +276,38 @@ const BitesFilter = ({
           </DropdownMenuSub>
           
           <DropdownMenuSeparator />
+          <DropdownMenuLabel className="text-xs text-gray-500">Location</DropdownMenuLabel>
+          
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger className="flex items-center">
+              <MapPin className="h-4 w-4 mr-2" />
+              <span>By Location</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent 
+                className="w-56 bg-white z-50 max-h-80 overflow-y-auto" 
+                sideOffset={2} 
+                alignOffset={-5}
+                style={{ backgroundColor: "white" }}
+              >
+                {uniqueLocations.length > 0 ? (
+                  uniqueLocations.map((location) => (
+                    <DropdownMenuCheckboxItem
+                      key={location}
+                      checked={activeFilters.location.includes(location)}
+                      onSelect={() => handleFilterSelect("location", location)}
+                    >
+                      {location}
+                    </DropdownMenuCheckboxItem>
+                  ))
+                ) : (
+                  <DropdownMenuItem disabled>No locations available</DropdownMenuItem>
+                )}
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
+
+          <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => onOpenFilters()}>
             <span className="flex items-center justify-between w-full">
               Advanced Filters
@@ -288,6 +339,12 @@ const BitesFilter = ({
                     <CardContent className="p-2 text-xs">
                       <div className="font-medium truncate">{card.title}</div>
                       <div className="text-gray-500 truncate">{card.notes?.substring(0, 50)}</div>
+                      {card.location && (
+                        <div className="flex mt-1 text-gray-500 text-xs items-center">
+                          <MapPin className="h-3 w-3 mr-1" />
+                          {card.location}
+                        </div>
+                      )}
                       {card.rating && (
                         <div className="flex mt-1">
                           {Array.from({ length: card.rating }).map((_, i) => (

@@ -46,6 +46,10 @@ const BitesHeader = ({
       filteredItems = cards.filter(card => 
         card.tags && card.tags.includes(value)
       );
+    } else if (filterType === "location") {
+      filteredItems = cards.filter(card => 
+        card.location === value
+      );
     }
     
     onFilteredItemsChange(filteredItems);
