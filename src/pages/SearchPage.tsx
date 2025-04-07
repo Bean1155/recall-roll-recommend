@@ -16,7 +16,7 @@ const SearchPage = () => {
   const [allCards, setAllCards] = useState<CatalogCardType[]>([]);
   const [filteredCards, setFilteredCards] = useState<CatalogCardType[]>([]);
   const [activeTab, setActiveTab] = useState<string>("food");
-  const [isSearchOpen, setIsSearchOpen] = useState(true); // Changed to true to auto-open search on page load
+  const [isSearchOpen, setIsSearchOpen] = useState(true); // Auto-open search on page load
   const [searchType, setSearchType] = useState<'food' | 'entertainment'>('food');
   const isMobile = useIsMobile();
   const location = useLocation();
@@ -70,13 +70,12 @@ const SearchPage = () => {
   const foodTabBgColor = "#FDE1D3";  // Pink (Bites) from the header
   const entertainmentTabBgColor = "#D6E5F0"; // Blue (Blockbusters) from the header
 
-  // Handle close action - navigate back if came from home page
+  // Modified close action - don't navigate away when coming from browse action
   const handleSearchClose = () => {
     setIsSearchOpen(false);
     
-    // Wait for animation to complete before navigating
-    const referrer = document.referrer;
-    if (referrer.includes('/') && !referrer.includes('/search')) {
+    // Only navigate back if not coming from a browse action (which would be /search path)
+    if (!location.pathname.includes('/search')) {
       setTimeout(() => navigate('/'), 300);
     }
   };
