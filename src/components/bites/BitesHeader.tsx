@@ -7,7 +7,7 @@ import CatalogSearch from "@/components/CatalogSearch";
 import BitesFilter from "./BitesFilter";
 import { FoodCard } from "@/lib/types";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogOverlay, DialogTitle } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerOverlay } from "@/components/ui/drawer";
 
 interface BitesHeaderProps {
@@ -116,20 +116,18 @@ const BitesHeader = ({
             onOpenChange={setIsSearchOpen}
           >
             <DrawerOverlay className="bg-black/70 backdrop-blur-sm" />
-            <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-hidden max-h-[85vh] shadow-lg">
-              <div className="overflow-y-auto pb-0">
-                <div className="relative">
-                  {/* Decorative line connecting to the button */}
-                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-1.5 bg-[#d2b48c] rounded-b-md"></div>
-                  
-                  <CatalogSearch 
-                    items={cards}
-                    onFilteredItemsChange={onFilteredItemsChange}
-                    type="food"
-                    onClose={handleSearchClose}
-                    compact={true}
-                  />
-                </div>
+            <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-visible max-h-[95vh] shadow-lg">
+              <div className="relative overflow-y-auto pb-6">
+                {/* Decorative line connecting to the button */}
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-1.5 bg-[#d2b48c] rounded-b-md"></div>
+                
+                <CatalogSearch 
+                  items={cards}
+                  onFilteredItemsChange={onFilteredItemsChange}
+                  type="food"
+                  onClose={handleSearchClose}
+                  compact={true}
+                />
               </div>
             </DrawerContent>
           </Drawer>
@@ -140,6 +138,7 @@ const BitesHeader = ({
               className="p-0 border-0 shadow-none bg-transparent"
               style={{ maxWidth: "90vw", width: "550px" }}
             >
+              <DialogTitle className="sr-only">Search Food Catalog</DialogTitle>
               <CatalogSearch 
                 items={cards}
                 onFilteredItemsChange={onFilteredItemsChange}

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UtensilsCrossed, Film } from "lucide-react";
+import { UtensilsCrossed, Film, Search } from "lucide-react";
 import { CatalogCard as CatalogCardType } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import CatalogSearch from "@/components/CatalogSearch";
 import { useUser } from "@/contexts/UserContext";
+import { Button } from "@/components/ui/button";
 
 const SearchPage = () => {
   const [allCards, setAllCards] = useState<CatalogCardType[]>([]);
@@ -42,19 +43,16 @@ const SearchPage = () => {
       setActiveTab('food');
       setSearchType('food');
     }
-
-    // Always set search dialog to open on the search page
-    setIsSearchOpen(true);
   }, [location.search]);
 
+  // Force the search to be open after component mounts and whenever search type changes
   useEffect(() => {
-    // This effect ensures the drawer is visible when the component mounts
     const timer = setTimeout(() => {
       setIsSearchOpen(true);
     }, 300);
     
     return () => clearTimeout(timer);
-  }, []);
+  }, [searchType]);
 
   const getPageTitle = () => {
     return "Search Catalog";
@@ -65,11 +63,12 @@ const SearchPage = () => {
     
     if (value === 'food') {
       setSearchType('food');
-      setIsSearchOpen(true);
     } else if (value === 'entertainment') {
       setSearchType('entertainment');
-      setIsSearchOpen(true);
     }
+    
+    // Ensure search reopens after changing tab
+    setTimeout(() => setIsSearchOpen(true), 100);
   };
 
   const handleFilteredItemsChange = (items: CatalogCardType[]) => {
@@ -80,15 +79,19 @@ const SearchPage = () => {
   const entertainmentTabBgColor = "#D6E5F0"; // Blue (Blockbusters) from the header
 
   const handleSearchClose = () => {
-    if (!location.pathname.includes('/search')) {
-      setTimeout(() => navigate('/'), 300);
-    }
-    // On the search page, don't close the search dialog completely
-    else {
+    // Don't navigate away on the search page, just toggle the drawer
+    if (location.pathname.includes('/search')) {
       // Force it to reopen after a brief moment
       setIsSearchOpen(false);
       setTimeout(() => setIsSearchOpen(true), 100);
+    } else {
+      setTimeout(() => navigate('/'), 300);
     }
+  };
+
+  // Function to manually trigger the search drawer
+  const openSearchDrawer = () => {
+    setIsSearchOpen(true);
   };
 
   return (
@@ -132,17 +135,37 @@ const SearchPage = () => {
           
           <TabsContent value="food" className="mt-0">
             <div className="p-4 text-center">
-              <p className="text-lg font-typewriter text-vintage-red">
-                Click to search your food catalog
-              </p>
+              {isSearchOpen ? (
+                <p className="text-lg font-typewriter text-vintage-red">
+                  Searching food catalog...
+                </p>
+              ) : (
+                <Button 
+                  onClick={openSearchDrawer}
+                  className="bg-[#1A7D76] hover:bg-[#166661] px-8 py-3 rounded-2xl font-typewriter text-white flex items-center gap-2 mx-auto"
+                >
+                  <Search size={18} />
+                  Search Food Catalog
+                </Button>
+              )}
             </div>
           </TabsContent>
           
           <TabsContent value="entertainment" className="mt-0">
             <div className="p-4 text-center">
-              <p className="text-lg font-typewriter text-vintage-red">
-                Click to search your entertainment catalog
-              </p>
+              {isSearchOpen ? (
+                <p className="text-lg font-typewriter text-vintage-red">
+                  Searching entertainment catalog...
+                </p>
+              ) : (
+                <Button 
+                  onClick={openSearchDrawer}
+                  className="bg-[#1A7D76] hover:bg-[#166661] px-8 py-3 rounded-2xl font-typewriter text-white flex items-center gap-2 mx-auto"
+                >
+                  <Search size={18} />
+                  Search Entertainment Catalog
+                </Button>
+              )}
             </div>
           </TabsContent>
         </Tabs>
@@ -153,14 +176,14 @@ const SearchPage = () => {
           open={isSearchOpen}
           onOpenChange={(open) => {
             setIsSearchOpen(open);
-            // If user tries to close, reopen after a brief moment
+            // If user tries to close, reopen after a brief moment on the search page
             if (!open && location.pathname.includes('/search')) {
               setTimeout(() => setIsSearchOpen(true), 100);
             }
           }}
         >
-          <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-hidden max-h-[85vh] shadow-lg">
-            <div className="relative overflow-y-auto pb-0">
+          <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-visible max-h-[95vh] shadow-lg">
+            <div className="relative overflow-y-auto pb-6">
               {/* Decorative line connecting to the button */}
               <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-1.5 bg-[#d2b48c] rounded-b-md"></div>
               
