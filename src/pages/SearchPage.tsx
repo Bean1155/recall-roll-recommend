@@ -131,8 +131,8 @@ const SearchPage = () => {
           open={isSearchOpen}
           onOpenChange={setIsSearchOpen}
         >
-          <DrawerContent className="p-0 border border-gray-200 bg-[#FAF3E3] rounded-t-xl overflow-hidden max-h-[85vh]">
-            <div className="max-h-[85vh] overflow-y-auto pb-6">
+          <DrawerContent className="p-0 border border-gray-200 bg-[#FAF3E3] rounded-t-xl overflow-hidden max-h-[280px]">
+            <div className="max-h-[280px] overflow-y-auto pb-0">
               <CatalogSearch 
                 items={searchType === 'food' 
                   ? allCards.filter(card => card.type === 'food')
@@ -141,6 +141,7 @@ const SearchPage = () => {
                 onFilteredItemsChange={handleFilteredItemsChange}
                 type={searchType}
                 onClose={handleSearchClose}
+                compact={true}
               />
             </div>
           </DrawerContent>
@@ -160,6 +161,7 @@ const SearchPage = () => {
               onFilteredItemsChange={handleFilteredItemsChange}
               type={searchType}
               onClose={handleSearchClose}
+              compact={true}
             />
           </DialogContent>
         </Dialog>
