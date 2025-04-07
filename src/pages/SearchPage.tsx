@@ -168,7 +168,7 @@ const SearchPage = () => {
           }}
         >
           <DrawerOverlay className="bg-black/70 backdrop-blur-sm" />
-          <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-visible shadow-lg" style={{ maxHeight: "90vh" }}>
+          <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-visible shadow-lg" style={{ maxHeight: "95vh" }}>
             <div className="relative overflow-y-auto pb-6">
               {/* Decorative line connecting to the button */}
               <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-1.5 bg-[#d2b48c] rounded-b-md"></div>
