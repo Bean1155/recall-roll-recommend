@@ -44,7 +44,7 @@ const EntertainmentDetailDialog = ({
       <Drawer open={isOpen} onOpenChange={onOpenChange}>
         <DrawerOverlay className="bg-black/80 backdrop-blur-sm" />
         <DrawerContent 
-          className="p-0 border-t-2 border-catalog-softBrown rounded-t-xl overflow-y-auto"
+          className="p-0 border-t-2 border-catalog-softBrown rounded-t-xl overflow-y-auto animate-in slide-in-from-bottom duration-300"
           style={{ 
             backgroundColor,
             height: "85vh", // Set fixed height for mobile
