@@ -15,7 +15,8 @@ import {
   FileText, 
   Clock, 
   Tag, 
-  Share2 
+  Share2,
+  List
 } from "lucide-react";
 
 interface FilterTabsProps {
@@ -79,6 +80,12 @@ const FilterTabs: React.FC<FilterTabsProps> = ({
             value="topReferrals" 
             icon={<Share2 size={18} />} 
             description={filterDescriptions.topReferrals} 
+          />
+          
+          <FilterTabItem 
+            value="allItems" 
+            icon={<List size={18} />} 
+            description={filterDescriptions.allItems || "View all items"} 
           />
         </div>
       </TabsList>

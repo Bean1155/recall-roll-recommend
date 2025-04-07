@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { ChevronRight, ArrowLeft, Star, Heart, MapPin, Calendar, Clock, Film, UtensilsCrossed, Share2 } from "lucide-react";
+import { ChevronRight, ArrowLeft, Star, Heart, MapPin, Calendar, Clock, Film, UtensilsCrossed, Share2, List } from "lucide-react";
 import { FoodCard, EntertainmentCard } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -182,6 +183,13 @@ const BrowsePage = () => {
           .slice(0, 20);
       },
     },
+    {
+      name: activeType === 'food' ? "All Bites" : "All Blockbusters",
+      description: activeType === 'food' ? "Browse all food items" : "Browse all entertainment items",
+      path: "all-items",
+      icon: <List className="h-5 w-5 text-teal-500" />,
+      filterFunction: (cards) => cards,
+    },
   ];
 
   const getFilteredCards = (category: BrowseCategory) => {
@@ -226,6 +234,44 @@ const BrowsePage = () => {
     const category = browseCategories.find(cat => cat.path === selectedCategory);
     if (!category) return null;
 
+    // For the new "All Items" category
+    if (selectedCategory === 'all-items') {
+      const allItems = category.filterFunction(activeCards);
+      
+      return (
+        <div className="mt-4">
+          <div className="flex items-center mb-4">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="flex items-center gap-2"
+              onClick={() => setSelectedCategory(null)}
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Browse
+            </Button>
+            <h2 className="text-xl font-semibold ml-2">
+              {activeType === 'food' ? 'All Bites' : 'All Blockbusters'}
+            </h2>
+          </div>
+          
+          <ScrollArea className="h-[70vh]">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
+              {allItems.map((card) => (
+                <div 
+                  key={card.id} 
+                  className="cursor-pointer"
+                  onClick={() => handleSubCategorySelect('all-items', 'all', allItems)}
+                >
+                  <CatalogCardCompact card={card} />
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
+      );
+    }
+    
     if (selectedCategory === 'by-location') {
       const locationMap = new Map<string, (FoodCard | EntertainmentCard)[]>();
       
