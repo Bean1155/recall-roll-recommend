@@ -8,7 +8,6 @@ import { getEntertainmentCards } from "@/lib/data";
 import { useNavigate, useLocation } from "react-router-dom";
 import EntertainmentCardsDisplay from "@/components/blockbusters/EntertainmentCardsDisplay";
 import EntertainmentCategoryDrawer from "@/components/blockbusters/EntertainmentCategoryDrawer";
-import EntertainmentDetailDialog from "@/components/blockbusters/EntertainmentDetailDialog";
 
 const BlockbustersPage = () => {
   const navigate = useNavigate();
@@ -20,40 +19,29 @@ const BlockbustersPage = () => {
     rating: [] as number[],
     tags: [] as string[]
   });
-  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
-  const [isCardDetailOpen, setIsCardDetailOpen] = useState(false);
-  const [selectedCard, setSelectedCard] = useState<EntertainmentCard | null>(null);
   
   useEffect(() => {
     const entertainmentCards = getEntertainmentCards();
     setCards(entertainmentCards);
     
-    // Check for card ID in the URL query parameter
+    // Check for browse parameters in the URL
     const params = new URLSearchParams(location.search);
-    const cardToOpen = params.get('open');
+    const browseCategory = params.get('browse');
+    const subcategory = params.get('subcategory');
+    const highlightedCardId = params.get('highlight');
     
-    if (cardToOpen) {
-      const card = entertainmentCards.find(c => c.id === cardToOpen);
-      if (card) {
-        setSelectedCard(card);
-        setSelectedCardId(cardToOpen);
-        setIsCardDetailOpen(true);
-        
-        // Clear the URL parameter without refreshing
-        const newUrl = `${window.location.pathname}${window.location.hash}`;
-        window.history.replaceState({}, document.title, newUrl);
-      }
-    }
-    
-    // Check for hash in URL (legacy method)
-    if (location.hash) {
-      const cardId = location.hash.replace('#card-', '');
-      const card = entertainmentCards.find(c => c.id === cardId);
-      if (card) {
-        setSelectedCard(card);
-        setSelectedCardId(cardId);
-        setIsCardDetailOpen(true);
-      }
+    if (highlightedCardId) {
+      // Scroll to the highlighted card if needed
+      setTimeout(() => {
+        const element = document.getElementById(`card-${highlightedCardId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.classList.add('ring-4', 'ring-blue-400', 'ring-opacity-75');
+          setTimeout(() => {
+            element.classList.remove('ring-4', 'ring-blue-400', 'ring-opacity-75');
+          }, 2000);
+        }
+      }, 500);
     }
   }, [location]);
   
@@ -97,9 +85,7 @@ const BlockbustersPage = () => {
   };
   
   const handleCardClick = (card: EntertainmentCard) => {
-    setSelectedCard(card);
-    setSelectedCardId(card.id);
-    setIsCardDetailOpen(true);
+    navigate(`/edit/${card.id}`);
   };
   
   const categoryColors: Record<string, string> = {
@@ -150,6 +136,15 @@ const BlockbustersPage = () => {
           </Button>
           <Button 
             size="sm"
+            variant="outline"
+            className="flex items-center gap-1"
+            onClick={() => navigate('/browse?type=entertainment')}
+          >
+            <Film className="h-4 w-4" />
+            <span className="hidden sm:inline">Browse</span>
+          </Button>
+          <Button 
+            size="sm"
             variant="default"
             className="flex items-center gap-1"
             onClick={() => navigate('/create/entertainment')}
@@ -176,13 +171,6 @@ const BlockbustersPage = () => {
         cards={cards}
         onApplyFilters={applyFilters}
         currentFilters={filters}
-      />
-      
-      <EntertainmentDetailDialog 
-        isOpen={isCardDetailOpen}
-        onOpenChange={setIsCardDetailOpen}
-        card={selectedCard}
-        categoryColors={categoryColors}
       />
     </GridLayout>
   );

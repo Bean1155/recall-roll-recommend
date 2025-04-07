@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import CatalogCard from "@/components/CatalogCard";
@@ -37,6 +38,7 @@ const CategoryDrawers = ({
   const [categorizedCards, setCategorizedCards] = useState<Record<string, FoodCard[]>>({});
   const [openCategory, setOpenCategory] = useState<string | null>(defaultOpenCategory || null);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   
   useEffect(() => {
     if (!cards || cards.length === 0) {
@@ -92,6 +94,14 @@ const CategoryDrawers = ({
     }
   };
   
+  const handleCardClick = (card: FoodCard) => {
+    if (onCardClick) {
+      onCardClick(card);
+    } else {
+      navigate(`/edit/${card.id}`);
+    }
+  };
+  
   const renderCards = (catCards: FoodCard[], color: string) => {
     if (catCards.length === 0) {
       return (
@@ -118,7 +128,7 @@ const CategoryDrawers = ({
               <CarouselItem key={card.id} className="basis-full">
                 <div 
                   className="catalog-card cursor-pointer p-1"
-                  onClick={() => onCardClick?.(card)}
+                  onClick={() => handleCardClick(card)}
                 >
                   <Envelope
                     label={card.title}
@@ -150,7 +160,7 @@ const CategoryDrawers = ({
           <div 
             key={card.id} 
             className="catalog-card cursor-pointer"
-            onClick={() => onCardClick?.(card)}
+            onClick={() => handleCardClick(card)}
           >
             <Envelope
               label={card.title}

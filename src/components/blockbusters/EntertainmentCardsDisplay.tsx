@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import CatalogCard from "@/components/CatalogCard";
@@ -42,6 +42,15 @@ const EntertainmentCardsDisplay = ({
   onOpenFilters,
 }: EntertainmentCardsDisplayProps) => {
   const hasCards = cards.length > 0;
+  const navigate = useNavigate();
+
+  const handleCardClick = (card: EntertainmentCard) => {
+    if (onCardClick) {
+      onCardClick(card);
+    } else {
+      navigate(`/edit/${card.id}`);
+    }
+  };
 
   return (
     <>
@@ -53,7 +62,7 @@ const EntertainmentCardsDisplay = ({
                 <div 
                   className="p-1" 
                   id={`card-${card.id}`}
-                  onClick={() => onCardClick?.(card)}
+                  onClick={() => handleCardClick(card)}
                 >
                   <Envelope 
                     label={card.title}

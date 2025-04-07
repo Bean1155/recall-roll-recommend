@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import GridLayout from "@/components/GridLayout";
 import { useNavigate, Link } from "react-router-dom";
@@ -5,8 +6,6 @@ import { ChevronRight, ArrowLeft, Star, Heart, MapPin, Calendar, Clock, Film, Ut
 import { FoodCard, EntertainmentCard } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
-import CatalogCard from "@/components/CatalogCard";
 import CatalogCardCompact from "@/components/CatalogCardCompact";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
