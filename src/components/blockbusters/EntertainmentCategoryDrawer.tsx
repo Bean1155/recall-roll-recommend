@@ -22,6 +22,7 @@ interface EntertainmentCategoryDrawerProps {
     rating: number[];
     tags: string[];
   };
+  startCollapsed?: boolean;
 }
 
 const EntertainmentCategoryDrawer = ({
@@ -34,6 +35,7 @@ const EntertainmentCategoryDrawer = ({
   onOpenChange,
   onApplyFilters,
   currentFilters,
+  startCollapsed = true,
 }: EntertainmentCategoryDrawerProps) => {
   const [visibleCards, setVisibleCards] = useState<EntertainmentCard[]>([]);
 

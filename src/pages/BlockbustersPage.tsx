@@ -113,7 +113,7 @@ const BlockbustersPage = () => {
       title="Blockbusters" 
       icon={<Film className="h-5 w-5" />}
       headerContent={
-        <div className="flex space-x-2">
+        <div className="flex items-center justify-center w-full max-w-md mx-auto gap-2">
           {hasActiveFilters() && (
             <Button 
               size="sm"
@@ -155,14 +155,16 @@ const BlockbustersPage = () => {
         </div>
       }
     >
-      <div className="w-full">
-        <EntertainmentCardsDisplay 
-          cards={cards} 
-          onCardClick={handleCardClick} 
-          filters={filters}
-          categoryColors={categoryColors}
-          onOpenFilters={() => setIsFiltersOpen(true)}
-        />
+      <div className="w-full flex justify-center">
+        <div className="w-full max-w-md">
+          <EntertainmentCardsDisplay 
+            cards={cards} 
+            onCardClick={handleCardClick} 
+            filters={filters}
+            categoryColors={categoryColors}
+            onOpenFilters={() => setIsFiltersOpen(true)}
+          />
+        </div>
       </div>
       
       <EntertainmentCategoryDrawer 
@@ -171,6 +173,7 @@ const BlockbustersPage = () => {
         cards={cards}
         onApplyFilters={applyFilters}
         currentFilters={filters}
+        startCollapsed={true}
       />
     </GridLayout>
   );
