@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { ChevronRight, ArrowLeft, Star, Heart, MapPin, Calendar, Clock, Film, UtensilsCrossed, Share2 } from "lucide-react";
 import { FoodCard, EntertainmentCard } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
@@ -8,6 +8,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import CatalogCardCompact from "@/components/CatalogCardCompact";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Accordion,
   AccordionContent,
@@ -28,7 +29,19 @@ const BrowsePage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const location = useLocation();
   const allCards = getAllCards();
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const typeParam = searchParams.get('type');
+    
+    if (typeParam === 'entertainment') {
+      setActiveType('entertainment');
+    } else {
+      setActiveType('food');
+    }
+  }, [location.search]);
 
   const foodCards = allCards.filter(card => card.type === 'food') as FoodCard[];
   const entertainmentCards = allCards.filter(card => card.type === 'entertainment') as EntertainmentCard[];
@@ -200,6 +213,11 @@ const BrowsePage = () => {
     } else {
       navigate(`/blockbusters?browse=${category}&subcategory=${subCategory}&ids=${cardIds}`);
     }
+  };
+
+  const handleTabChange = (value: 'food' | 'entertainment') => {
+    setActiveType(value);
+    navigate(`/browse?type=${value}`);
   };
 
   const renderSubcategories = () => {
@@ -488,33 +506,42 @@ const BrowsePage = () => {
 
   return (
     <GridLayout title="Browse">
+      <div className="mb-6">
+        <Tabs value={activeType} onValueChange={handleTabChange} className="mb-6">
+          <TabsList className="w-full bg-transparent p-0 rounded-md mb-4 flex gap-4">
+            <TabsTrigger 
+              value="food" 
+              className="flex items-center gap-2 flex-1 py-3 rounded-md border-2 transition-colors text-black font-medium"
+              style={{
+                backgroundColor: "#FDE1D3",
+                borderColor: activeType === "food" ? "#d2b48c" : "transparent",
+                boxShadow: activeType === "food" ? "0 2px 4px rgba(0,0,0,0.1)" : "none"
+              }}
+            >
+              <UtensilsCrossed size={18} />
+              Bites
+            </TabsTrigger>
+            <TabsTrigger 
+              value="entertainment" 
+              className="flex items-center gap-2 flex-1 py-3 rounded-md border-2 transition-colors text-black font-medium"
+              style={{
+                backgroundColor: "#D6E5F0",
+                borderColor: activeType === "entertainment" ? "#d2b48c" : "transparent",
+                boxShadow: activeType === "entertainment" ? "0 2px 4px rgba(0,0,0,0.1)" : "none"
+              }}
+            >
+              <Film size={18} />
+              Blockbusters
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+
       {selectedCategory ? (
         renderSubcategories()
       ) : (
         <>
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold">Browse by</h1>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant={activeType === 'food' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setActiveType('food')}
-                className={activeType === 'food' ? 'bg-[#FDE1D3] text-black hover:text-black hover:bg-[#FCE9E0]' : ''}
-              >
-                <UtensilsCrossed className="h-4 w-4 mr-2" />
-                Bites
-              </Button>
-              <Button
-                variant={activeType === 'entertainment' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setActiveType('entertainment')}
-                className={activeType === 'entertainment' ? 'bg-[#D6E5F0] text-black hover:text-black hover:bg-[#E0EDF5]' : ''}
-              >
-                <Film className="h-4 w-4 mr-2" />
-                Blockbusters
-              </Button>
-            </div>
-          </div>
+          <h1 className="text-2xl font-bold mb-6">Browse by</h1>
 
           <div className="space-y-0.5 rounded-lg bg-gray-100 overflow-hidden">
             {browseCategories.map((category) => (
