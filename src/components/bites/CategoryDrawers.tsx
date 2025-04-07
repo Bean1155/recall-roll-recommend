@@ -8,6 +8,14 @@ import Envelope from "@/components/Envelope";
 import { FoodCard, FoodCategory } from "@/lib/types";
 import { getCategoryDisplayName, defaultCategories } from "@/utils/categoryUtils";
 import { CatalogCollapsible } from "@/components/ui/collapsible";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 interface CategoryDrawersProps {
   category?: FoodCategory;
@@ -15,7 +23,7 @@ interface CategoryDrawersProps {
   categoryColors?: Record<string, string>;
   onCardClick?: (card: FoodCard) => void;
   defaultOpenCategory?: string;
-  hideEmptyCategories?: boolean; // New prop to control visibility of empty categories
+  hideEmptyCategories?: boolean;
 }
 
 const CategoryDrawers = ({
@@ -24,10 +32,11 @@ const CategoryDrawers = ({
   categoryColors,
   onCardClick,
   defaultOpenCategory,
-  hideEmptyCategories = true // Default to hiding empty categories
+  hideEmptyCategories = true
 }: CategoryDrawersProps) => {
   const [categorizedCards, setCategorizedCards] = useState<Record<string, FoodCard[]>>({});
   const [openCategory, setOpenCategory] = useState<string | null>(defaultOpenCategory || null);
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     if (!cards || cards.length === 0) {
@@ -84,6 +93,81 @@ const CategoryDrawers = ({
       setOpenCategory(null);
     }
   };
+  
+  // Function to render cards based on count and device
+  const renderCards = (catCards: FoodCard[], color: string) => {
+    if (catCards.length === 0) {
+      return (
+        <div className="text-center py-4">
+          <p className="text-catalog-softBrown mb-4">No entries in this category yet.</p>
+          <Button asChild 
+            className="text-sm py-2 px-4 h-auto" 
+            style={{ backgroundColor: color, color: '#603913' }}
+          >
+            <Link to={`/create/food?category=${openCategory}`}>
+              <PlusCircle size={16} className="mr-2" />
+              <span>Add {getCategoryDisplayName(openCategory || '')}</span>
+            </Link>
+          </Button>
+        </div>
+      );
+    }
+    
+    // If there are multiple cards and we're on mobile or it's more than 2 cards, use carousel
+    if (catCards.length > 1) {
+      return (
+        <Carousel className="w-full">
+          <CarouselContent>
+            {catCards.map(card => (
+              <CarouselItem key={card.id} className="basis-full">
+                <div 
+                  className="catalog-card cursor-pointer p-1"
+                  onClick={() => onCardClick?.(card)}
+                >
+                  <Envelope
+                    label={card.title}
+                    backgroundColor={color}
+                  >
+                    <CatalogCard card={card} />
+                  </Envelope>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="flex justify-end gap-2 mt-4">
+            <CarouselPrevious 
+              className="relative static translate-y-0 h-8 w-8" 
+              style={{ backgroundColor: color, color: '#603913' }}
+            />
+            <CarouselNext 
+              className="relative static translate-y-0 h-8 w-8" 
+              style={{ backgroundColor: color, color: '#603913' }}
+            />
+          </div>
+        </Carousel>
+      );
+    }
+    
+    // For a single card, just display it normally
+    return (
+      <div className="grid grid-cols-1 gap-4">
+        {catCards.map(card => (
+          <div 
+            key={card.id} 
+            className="catalog-card cursor-pointer"
+            onClick={() => onCardClick?.(card)}
+          >
+            <Envelope
+              label={card.title}
+              backgroundColor={color}
+            >
+              <CatalogCard card={card} />
+            </Envelope>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-2">
@@ -106,37 +190,7 @@ const CategoryDrawers = ({
             open={openCategory === cat}
             onOpenChange={(isOpen) => handleOpenChange(cat, isOpen)}
           >
-            {catCards.length > 0 ? (
-              <div className="grid grid-cols-1 gap-4">
-                {catCards.map(card => (
-                  <div 
-                    key={card.id} 
-                    className="catalog-card cursor-pointer"
-                    onClick={() => onCardClick?.(card)}
-                  >
-                    <Envelope
-                      label={card.title}
-                      backgroundColor={color}
-                    >
-                      <CatalogCard card={card} />
-                    </Envelope>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-4">
-                <p className="text-catalog-softBrown mb-4">No entries in this category yet.</p>
-                <Button asChild 
-                  className="text-sm py-2 px-4 h-auto" 
-                  style={{ backgroundColor: color, color: textColor }}
-                >
-                  <Link to={`/create/food?category=${cat}`}>
-                    <PlusCircle size={16} className="mr-2" />
-                    <span>Add {displayName}</span>
-                  </Link>
-                </Button>
-              </div>
-            )}
+            {renderCards(catCards, color)}
           </CatalogCollapsible>
         );
       })}

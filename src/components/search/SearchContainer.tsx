@@ -28,7 +28,7 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
         onOpenChange={onOpenChange}
       >
         <DrawerOverlay className="bg-black/70 backdrop-blur-sm" />
-        <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-visible shadow-lg" style={{ maxHeight: "90vh" }}>
+        <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-visible shadow-lg animate-in slide-in-from-bottom duration-300" style={{ maxHeight: "90vh" }}>
           <div className="relative overflow-y-auto pb-6">
             {/* Decorative line connecting to the button */}
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-1.5 bg-[#d2b48c] rounded-b-md"></div>
@@ -36,7 +36,7 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
             {onClose && (
               <Button 
                 onClick={onClose} 
-                className="absolute right-4 top-3 z-20 text-white rounded-full hover:bg-white/20"
+                className="absolute right-4 top-3 z-20 rounded-full hover:bg-white/20"
                 variant="ghost"
                 size="icon"
               >
@@ -56,7 +56,7 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogOverlay className="bg-black/70 backdrop-blur-sm" />
       <DialogContent 
-        className="p-0 border-0 shadow-none bg-transparent"
+        className="p-0 border-0 shadow-none bg-transparent animate-in zoom-in-95 duration-200"
         style={{ maxWidth: "90vw", width: "550px" }}
       >
         {children}
