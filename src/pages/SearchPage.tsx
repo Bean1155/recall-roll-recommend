@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useCallback } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UtensilsCrossed, Film, Search, X } from "lucide-react";
+import { UtensilsCrossed, Film, Search } from "lucide-react";
 import { CatalogCard as CatalogCardType } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -51,7 +52,7 @@ const SearchPage = () => {
     return "Search Catalog";
   };
 
-  const handleCatalogTypeChange = (value: string) => {
+  const handleCatalogTypeChange = useCallback((value: string) => {
     setActiveTab(value);
     
     if (value === 'food') {
@@ -61,27 +62,28 @@ const SearchPage = () => {
     }
     
     setTimeout(() => setIsSearchOpen(true), 100);
-  };
+  }, []);
 
-  const handleFilteredItemsChange = (items: CatalogCardType[]) => {
+  const handleFilteredItemsChange = useCallback((items: CatalogCardType[]) => {
     setFilteredCards(items);
-  };
+  }, []);
 
   const foodTabBgColor = "#FDE1D3";  // Pink (Bites) from the header
   const entertainmentTabBgColor = "#D6E5F0"; // Blue (Blockbusters) from the header
 
-  const handleSearchClose = () => {
+  const handleSearchClose = useCallback(() => {
     if (location.pathname.includes('/search')) {
       setIsSearchOpen(false);
       setTimeout(() => setIsSearchOpen(true), 100);
     } else {
+      setIsSearchOpen(false);
       setTimeout(() => navigate('/'), 300);
     }
-  };
+  }, [location.pathname, navigate]);
 
-  const openSearchDrawer = () => {
+  const openSearchDrawer = useCallback(() => {
     setIsSearchOpen(true);
-  };
+  }, []);
 
   return (
     <GridLayout title={getPageTitle()}>

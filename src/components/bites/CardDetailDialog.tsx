@@ -18,6 +18,7 @@ import {
   DrawerClose,
   DrawerOverlay,
 } from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
 
 interface CardDetailDialogProps {
   isOpen: boolean;
@@ -58,6 +59,8 @@ const CardDetailDialog = ({
               <Button 
                 onClick={handleClose} 
                 className="rounded-full bg-white/90 p-2.5 shadow-md hover:bg-white transition-colors flex items-center justify-center h-10 w-10"
+                type="button"
+                aria-label="Close"
               >
                 <X size={24} className="text-gray-700" />
                 <span className="sr-only">Close</span>
@@ -99,8 +102,5 @@ const CardDetailDialog = ({
     </Dialog>
   );
 };
-
-// Need to import Button
-import { Button } from "@/components/ui/button";
 
 export default CardDetailDialog;
