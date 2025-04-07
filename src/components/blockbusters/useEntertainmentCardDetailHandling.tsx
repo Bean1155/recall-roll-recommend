@@ -1,13 +1,13 @@
 
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { FoodCard } from "@/lib/types";
+import { EntertainmentCard } from "@/lib/types";
 
-export const useCardDetailHandling = (cards: FoodCard[]) => {
+export const useEntertainmentCardDetailHandling = (cards: EntertainmentCard[]) => {
   const location = useLocation();
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [isCardDetailOpen, setIsCardDetailOpen] = useState(false);
-  const [selectedCard, setSelectedCard] = useState<FoodCard | null>(null);
+  const [selectedCard, setSelectedCard] = useState<EntertainmentCard | null>(null);
   
   useEffect(() => {
     // Check for card ID in the URL query parameter
@@ -28,15 +28,15 @@ export const useCardDetailHandling = (cards: FoodCard[]) => {
       }
     } else if (highlightCard) {
       // Handle the highlight parameter
-      console.log('useCardDetailHandling: Found highlight parameter:', highlightCard);
+      console.log('useEntertainmentCardDetailHandling: Found highlight parameter:', highlightCard);
       const card = cards.find(c => c.id === highlightCard);
       if (card) {
-        console.log('useCardDetailHandling: Found matching card:', card.title);
+        console.log('useEntertainmentCardDetailHandling: Found matching card:', card.title);
         setSelectedCard(card);
         setSelectedCardId(highlightCard);
         setIsCardDetailOpen(true);
       } else {
-        console.log('useCardDetailHandling: No matching card found for ID:', highlightCard);
+        console.log('useEntertainmentCardDetailHandling: No matching card found for ID:', highlightCard);
       }
     }
     
@@ -52,7 +52,7 @@ export const useCardDetailHandling = (cards: FoodCard[]) => {
     }
   }, [location, cards]);
   
-  const handleCardClick = (card: FoodCard) => {
+  const handleCardClick = (card: EntertainmentCard) => {
     setSelectedCard(card);
     setSelectedCardId(card.id);
     setIsCardDetailOpen(true);

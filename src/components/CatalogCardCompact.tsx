@@ -20,7 +20,7 @@ const CatalogCardCompact = ({ card, onClick }: CatalogCardCompactProps) => {
       return;
     }
     
-    // Navigate to the appropriate page
+    // Navigate to the appropriate page with highlight parameter
     if (card.type === 'food') {
       navigate(`/bites?highlight=${card.id}`);
     } else {
