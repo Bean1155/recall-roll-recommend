@@ -15,12 +15,16 @@ const CatalogCardCompact = ({ card, onClick }: CatalogCardCompactProps) => {
   const navigate = useNavigate();
   
   const handleCardClick = () => {
+    console.log("CatalogCardCompact: Card clicked:", card.id, card.title);
+    
     if (onClick) {
+      console.log("CatalogCardCompact: Using provided onClick handler");
       onClick(card);
       return;
     }
     
     // Navigate to the appropriate page with highlight parameter
+    console.log("CatalogCardCompact: Navigating to card page with highlight parameter");
     if (card.type === 'food') {
       navigate(`/bites?highlight=${card.id}`);
     } else {

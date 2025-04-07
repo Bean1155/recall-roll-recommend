@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { EntertainmentCard } from "@/lib/types";
@@ -18,6 +17,7 @@ export const useEntertainmentCardDetailHandling = (cards: EntertainmentCard[]) =
     if (cardToOpen) {
       const card = cards.find(c => c.id === cardToOpen);
       if (card) {
+        console.log('useEntertainmentCardDetailHandling: Opening card with ID:', cardToOpen);
         setSelectedCard(card);
         setSelectedCardId(cardToOpen);
         setIsCardDetailOpen(true);
@@ -35,6 +35,17 @@ export const useEntertainmentCardDetailHandling = (cards: EntertainmentCard[]) =
         setSelectedCard(card);
         setSelectedCardId(highlightCard);
         setIsCardDetailOpen(true);
+        
+        // Clear the highlight parameter from URL without refreshing
+        const newParams = new URLSearchParams(location.search);
+        newParams.delete('highlight');
+        
+        // Keep other parameters if they exist
+        const newUrl = newParams.toString() 
+          ? `${window.location.pathname}?${newParams.toString()}${window.location.hash}`
+          : `${window.location.pathname}${window.location.hash}`;
+          
+        window.history.replaceState({}, document.title, newUrl);
       } else {
         console.log('useEntertainmentCardDetailHandling: No matching card found for ID:', highlightCard);
       }
@@ -45,14 +56,19 @@ export const useEntertainmentCardDetailHandling = (cards: EntertainmentCard[]) =
       const cardId = location.hash.replace('#card-', '');
       const card = cards.find(c => c.id === cardId);
       if (card) {
+        console.log('useEntertainmentCardDetailHandling: Opening card from hash:', cardId);
         setSelectedCard(card);
         setSelectedCardId(cardId);
         setIsCardDetailOpen(true);
+        
+        // Clear the hash without refreshing
+        window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
       }
     }
   }, [location, cards]);
   
   const handleCardClick = (card: EntertainmentCard) => {
+    console.log('useEntertainmentCardDetailHandling: handleCardClick called for card:', card.id, card.title);
     setSelectedCard(card);
     setSelectedCardId(card.id);
     setIsCardDetailOpen(true);

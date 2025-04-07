@@ -84,6 +84,7 @@ const FilteredCardsList = ({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                console.log("FilteredCardsList: Card clicked:", card.id, card.title);
                 onCardSelect(card);
               }}
             >

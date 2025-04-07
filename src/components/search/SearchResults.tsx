@@ -26,7 +26,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({
           <Card 
             key={item.id} 
             className="bg-catalog-cream hover:bg-vintage-tan cursor-pointer border border-catalog-softBrown/40 transition-colors duration-150"
-            onClick={() => handleCardClick(item)}
+            onClick={() => {
+              console.log("SearchResults: Card clicked:", item.id, item.title);
+              handleCardClick(item);
+            }}
           >
             <CardContent className="p-3">
               <div className="flex items-center gap-2">

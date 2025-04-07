@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
@@ -7,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { FoodCard, EntertainmentCard, CatalogCard } from "@/lib/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-// Import our new components
 import SearchContainer from "./search/SearchContainer";
 import SearchHeader from "./search/SearchHeader";
 import SearchInput from "./search/SearchInput";
@@ -136,6 +134,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
   };
 
   const handleCardClick = (card: CatalogCard) => {
+    console.log("CatalogSearch: handleCardClick called for card:", card.id, card.title);
+    
     if (onClose) {
       onClose();
     } else {
@@ -146,9 +146,11 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
     
     if (type === 'food') {
       const foodCard = card as FoodCard;
+      console.log("CatalogSearch: Navigating to food card with highlight parameter");
       navigate(`${path}?highlight=${card.id}&category=${foodCard.category}&fromSearch=true`);
     } else {
       const entertainmentCard = card as EntertainmentCard;
+      console.log("CatalogSearch: Navigating to entertainment card with highlight parameter");
       navigate(`${path}?highlight=${card.id}&category=${entertainmentCard.entertainmentCategory?.toLowerCase() || 'etc.'}&fromSearch=true`);
     }
     
@@ -238,7 +240,6 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
 
   const isStandalone = onClose === undefined;
 
-  // Render the main content inside the appropriate container
   const renderSearchContent = () => (
     <>
       <SearchHeader type={type} />
