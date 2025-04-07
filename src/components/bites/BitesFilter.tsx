@@ -14,7 +14,7 @@ import StatusFilters from "./StatusFilters";
 import RatingFilters from "./RatingFilters";
 import LocationFilters from "./LocationFilters";
 import FilteredCardsList from "./FilteredCardsList";
-import { useFilteredCards } from "@/hooks/useFilteredCards";
+import { useFilteredCards, ProximitySearch } from "@/hooks/useFilteredCards";
 
 interface BitesFilterProps {
   hasActiveFilters: boolean;
@@ -47,6 +47,7 @@ const BitesFilter = ({
     showFilteredCards,
     uniqueLocations,
     handleFilterSelect,
+    handleProximitySearch,
     closeFilteredCards,
     setShowFilteredCards
   } = useFilteredCards(allCards);
@@ -57,6 +58,14 @@ const BitesFilter = ({
     if (onFilterChange) {
       onFilterChange(filterType, value);
     }
+    
+    // Always keep the dropdown open to show results
+    setOpen(true);
+    setShowFilteredCards(true);
+  };
+
+  const handleProximitySearch_ = (options: ProximitySearch) => {
+    handleProximitySearch(options);
     
     // Always keep the dropdown open to show results
     setOpen(true);
@@ -119,6 +128,7 @@ const BitesFilter = ({
             activeLocations={activeFilters.location}
             uniqueLocations={uniqueLocations}
             onSelect={handleFilterSelect_}
+            onProximitySearch={handleProximitySearch_}
           />
 
           <DropdownMenuItem onSelect={() => onOpenFilters()}>
