@@ -47,7 +47,9 @@ const FoodCardDetails = ({ card }: FoodCardDetailsProps) => {
       )}
       {card.serviceRating && (
         <p className="text-gray-700">
-          <span className="font-medium">Service:</span> {renderServiceRating(card.serviceRating)}
+          <span className="font-medium">Service:</span>{" "}
+          {/* Just display the service rating text instead of passing to renderServiceRating */}
+          {card.serviceRating}
         </p>
       )}
     </div>

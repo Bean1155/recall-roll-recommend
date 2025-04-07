@@ -52,21 +52,23 @@ const CardForm = ({
           setIsFavorite(card.isFavorite || false);
           setTags(card.tags?.join(", ") || "");
           setUrl(card.url || "");
-          setStatus(card.status || "");
           setDate(card.date ? new Date(card.date) : new Date());
           
+          // Type guard to check card type before accessing type-specific properties
           if (card.type === 'food') {
             const foodCard = card as FoodCard;
             setCategory(foodCard.category || "");
             setCuisine(foodCard.cuisine || "");
             setLocation(foodCard.location || "");
-            setServiceRating(foodCard.serviceRating || "");
             setVisitCount((foodCard.visitCount || 0).toString());
-          } else {
+            setServiceRating(foodCard.serviceRating || "");
+            setStatus(foodCard.status || "");
+          } else if (card.type === 'entertainment') {
             const entertainmentCard = card as EntertainmentCard;
             setCategory(entertainmentCard.entertainmentCategory || "");
             setGenre(entertainmentCard.genre || "");
             setMedium(entertainmentCard.medium || "");
+            setStatus(entertainmentCard.status || "");
           }
         } else {
           // If card not found and this is an edit page, we should show an error
