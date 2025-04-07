@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import CardForm from "@/components/CardForm";
-import { getCardById, deleteCard } from "@/lib/data";
+import { getCardById, deleteCard, updateCard } from "@/lib/data";
 import GridLayout from "@/components/GridLayout";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";

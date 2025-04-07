@@ -35,44 +35,78 @@ const CardForm = ({
 }: CardFormProps) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FoodCard | EntertainmentCard | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (cardId) {
-      const card = getCardById(cardId);
-      if (card) {
-        setFormData(card as FoodCard | EntertainmentCard);
+    const loadCardData = () => {
+      if (cardId) {
+        const card = getCardById(cardId);
+        if (card) {
+          setFormData(card as FoodCard | EntertainmentCard);
+          
+          // Set all form fields from the loaded card
+          setTitle(card.title || "");
+          setCreator(card.creator || "");
+          setNotes(card.notes || "");
+          setRating(card.rating?.toString() || "");
+          setIsFavorite(card.isFavorite || false);
+          setTags(card.tags?.join(", ") || "");
+          setUrl(card.url || "");
+          setStatus(card.status || "");
+          setDate(card.date ? new Date(card.date) : new Date());
+          
+          if (card.type === 'food') {
+            const foodCard = card as FoodCard;
+            setCategory(foodCard.category || "");
+            setCuisine(foodCard.cuisine || "");
+            setLocation(foodCard.location || "");
+            setServiceRating(foodCard.serviceRating || "");
+            setVisitCount((foodCard.visitCount || 0).toString());
+          } else {
+            const entertainmentCard = card as EntertainmentCard;
+            setCategory(entertainmentCard.entertainmentCategory || "");
+            setGenre(entertainmentCard.genre || "");
+            setMedium(entertainmentCard.medium || "");
+          }
+        } else {
+          // If card not found and this is an edit page, we should show an error
+          toast({
+            title: "Error",
+            description: "Card not found",
+            variant: "destructive",
+          });
+        }
+      } else if (initialData) {
+        setFormData(initialData);
       }
-    } else if (initialData) {
-      setFormData(initialData);
-    }
+      
+      setLoading(false);
+    };
+
+    loadCardData();
   }, [cardId, initialData]);
 
   // Food fields
-  const [title, setTitle] = useState(formData?.title || initialData?.title || "");
-  const [creator, setCreator] = useState(formData?.creator || initialData?.creator || "");
-  const [category, setCategory] = useState(
-    (formData as FoodCard)?.category || 
-    (initialData as FoodCard)?.category || 
-    initialCategory || 
-    ""
-  );
-  const [cuisine, setCuisine] = useState((formData as FoodCard)?.cuisine || (initialData as FoodCard)?.cuisine || "");
-  const [location, setLocation] = useState((formData as FoodCard)?.location || (initialData as FoodCard)?.location || "");
-  const [serviceRating, setServiceRating] = useState<string>((formData as FoodCard)?.serviceRating || (initialData as FoodCard)?.serviceRating || "");
+  const [title, setTitle] = useState("");
+  const [creator, setCreator] = useState("");
+  const [category, setCategory] = useState(initialCategory);
+  const [cuisine, setCuisine] = useState("");
+  const [location, setLocation] = useState("");
+  const [serviceRating, setServiceRating] = useState<string>("");
   
   // Entertainment fields
-  const [genre, setGenre] = useState((formData as EntertainmentCard)?.genre || (initialData as EntertainmentCard)?.genre || "");
-  const [medium, setMedium] = useState((formData as EntertainmentCard)?.medium || (initialData as EntertainmentCard)?.medium || "");
+  const [genre, setGenre] = useState("");
+  const [medium, setMedium] = useState("");
   
   // Common fields
-  const [url, setUrl] = useState(formData?.url || initialData?.url || "");
-  const [tags, setTags] = useState(formData?.tags?.join(", ") || initialData?.tags?.join(", ") || "");
-  const [rating, setRating] = useState(formData?.rating?.toString() || initialData?.rating?.toString() || "");
-  const [status, setStatus] = useState(formData?.status || initialData?.status || "");
-  const [notes, setNotes] = useState(formData?.notes || initialData?.notes || "");
-  const [isFavorite, setIsFavorite] = useState(formData?.isFavorite || initialData?.isFavorite || false);
-  const [date, setDate] = useState(formData?.date ? new Date(formData.date) : initialData?.date ? new Date(initialData.date) : new Date());
-  const [visitCount, setVisitCount] = useState((formData as FoodCard)?.visitCount?.toString() || "0");
+  const [url, setUrl] = useState("");
+  const [tags, setTags] = useState("");
+  const [rating, setRating] = useState("");
+  const [status, setStatus] = useState("");
+  const [notes, setNotes] = useState("");
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [date, setDate] = useState(new Date());
+  const [visitCount, setVisitCount] = useState("0");
 
   const formatDate = useCallback((date: Date): string => {
     return format(date, "yyyy-MM-dd");
@@ -146,10 +180,14 @@ const CardForm = ({
     }
   };
 
+  if (loading) {
+    return <div className="w-full text-center py-8">Loading card data...</div>;
+  }
+  
   if (type === "food") {
     return (
       <div className="w-full max-w-3xl mx-auto p-4 space-y-6 bg-white rounded-lg shadow">
-        <h1 className="text-2xl font-bold text-teal-700 mb-6">Add Bite</h1>
+        <h1 className="text-2xl font-bold text-teal-700 mb-6">{isEdit ? 'Edit Bite' : 'Add Bite'}</h1>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
