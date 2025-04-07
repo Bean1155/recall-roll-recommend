@@ -111,15 +111,20 @@ const BitesHeader = ({
             open={isSearchOpen}
             onOpenChange={setIsSearchOpen}
           >
-            <DrawerContent className="p-0 border border-gray-200 bg-[#FAF3E3] rounded-t-xl overflow-hidden max-h-[280px]">
+            <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-hidden max-h-[180px] shadow-lg">
               <div className="overflow-y-auto pb-0">
-                <CatalogSearch 
-                  items={cards}
-                  onFilteredItemsChange={onFilteredItemsChange}
-                  type="food"
-                  onClose={() => setIsSearchOpen(false)}
-                  compact={true}
-                />
+                <div className="relative">
+                  {/* Decorative line connecting to the button */}
+                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-1.5 bg-[#d2b48c] rounded-b-md"></div>
+                  
+                  <CatalogSearch 
+                    items={cards}
+                    onFilteredItemsChange={onFilteredItemsChange}
+                    type="food"
+                    onClose={() => setIsSearchOpen(false)}
+                    compact={true}
+                  />
+                </div>
               </div>
             </DrawerContent>
           </Drawer>
