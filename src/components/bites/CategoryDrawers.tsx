@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -25,6 +24,7 @@ interface CategoryDrawersProps {
   onCardClick?: (card: FoodCard) => void;
   defaultOpenCategory?: string;
   hideEmptyCategories?: boolean;
+  startCollapsed?: boolean;
 }
 
 const CategoryDrawers = ({
@@ -33,10 +33,13 @@ const CategoryDrawers = ({
   categoryColors,
   onCardClick,
   defaultOpenCategory,
-  hideEmptyCategories = true
+  hideEmptyCategories = true,
+  startCollapsed = false
 }: CategoryDrawersProps) => {
   const [categorizedCards, setCategorizedCards] = useState<Record<string, FoodCard[]>>({});
-  const [openCategory, setOpenCategory] = useState<string | null>(defaultOpenCategory || null);
+  const [openCategory, setOpenCategory] = useState<string | null>(
+    startCollapsed ? null : defaultOpenCategory || null
+  );
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   
@@ -50,7 +53,7 @@ const CategoryDrawers = ({
       const filteredCards = cards.filter(card => card.category === category);
       setCategorizedCards({ [category]: filteredCards });
       
-      if (!openCategory && filteredCards.length > 0) {
+      if (!startCollapsed && !openCategory && filteredCards.length > 0) {
         setOpenCategory(category);
       }
       
@@ -76,7 +79,7 @@ const CategoryDrawers = ({
     
     setCategorizedCards(grouped);
     
-    if (!openCategory) {
+    if (!startCollapsed && !openCategory) {
       const firstCategoryWithCards = Object.entries(grouped)
         .find(([_, catCards]) => catCards.length > 0)?.[0];
       
@@ -84,7 +87,7 @@ const CategoryDrawers = ({
         setOpenCategory(firstCategoryWithCards);
       }
     }
-  }, [cards, category, defaultOpenCategory, hideEmptyCategories]);
+  }, [cards, category, defaultOpenCategory, hideEmptyCategories, startCollapsed]);
 
   const handleOpenChange = (cat: string, isOpen: boolean) => {
     if (isOpen) {

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
@@ -181,15 +182,17 @@ const BitesPage = () => {
       title={hasActiveFilters ? `Bites - ${filterDescription}` : "Bites"}
       icon={<Utensils className="h-6 w-6 text-teal-700" />}
       headerContent={
-        <BitesHeader 
-          onClearFilters={clearFilters}
-          hasActiveFilters={hasActiveFilters}
-        />
+        <div className="w-full flex justify-center">
+          <BitesHeader 
+            onClearFilters={clearFilters}
+            hasActiveFilters={hasActiveFilters}
+          />
+        </div>
       }
     >
       <div className="w-full">
         {hasActiveFilters && filteredCards.length > 0 && (
-          <div className="mb-4 text-sm text-gray-600">
+          <div className="mb-4 text-sm text-gray-600 text-center">
             Showing {filteredCards.length} results for {filterDescription}
           </div>
         )}
@@ -200,7 +203,8 @@ const BitesPage = () => {
           categoryColors={categoryColors}
           defaultOpenCategory={focusCardId ? 
             cards.find(c => c.id === focusCardId)?.category : undefined}
-          hideEmptyCategories={true} // Only show categories that have cards
+          hideEmptyCategories={true} 
+          startCollapsed={true} // Keep all drawers collapsed by default
         />
       </div>
       
