@@ -8,7 +8,7 @@ import BitesFilter from "./BitesFilter";
 import { FoodCard } from "@/lib/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerOverlay } from "@/components/ui/drawer";
 
 interface BitesHeaderProps {
   onClearFilters: () => void;
@@ -111,8 +111,8 @@ const BitesHeader = ({
             open={isSearchOpen}
             onOpenChange={setIsSearchOpen}
           >
-            <DrawerContent className="p-0 border-t-0 bg-[#FAF3E3] inset-0 h-full w-full pb-24">
-              <div className="h-full overflow-y-auto">
+            <DrawerContent className="p-0 border border-gray-200 bg-[#FAF3E3] rounded-t-xl overflow-hidden max-h-[85vh]">
+              <div className="max-h-[85vh] overflow-y-auto pb-6">
                 <CatalogSearch 
                   items={cards}
                   onFilteredItemsChange={onFilteredItemsChange}

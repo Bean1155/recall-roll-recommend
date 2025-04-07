@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,7 +8,7 @@ import { getAllCards } from "@/lib/data";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerOverlay } from "@/components/ui/drawer";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import CatalogSearch from "@/components/CatalogSearch";
 import { useUser } from "@/contexts/UserContext";
 
@@ -130,8 +131,8 @@ const SearchPage = () => {
           open={isSearchOpen}
           onOpenChange={setIsSearchOpen}
         >
-          <DrawerContent className="p-0 border-t-0 bg-[#FAF3E3] inset-0 h-full w-full pb-24">
-            <div className="h-full overflow-y-auto">
+          <DrawerContent className="p-0 border border-gray-200 bg-[#FAF3E3] rounded-t-xl overflow-hidden max-h-[85vh]">
+            <div className="max-h-[85vh] overflow-y-auto pb-6">
               <CatalogSearch 
                 items={searchType === 'food' 
                   ? allCards.filter(card => card.type === 'food')
