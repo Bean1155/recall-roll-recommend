@@ -136,7 +136,7 @@ const SearchPage = () => {
           onOpenChange={setIsSearchOpen}
         >
           <DrawerOverlay className="bg-black/70 backdrop-blur-sm" />
-          <DrawerContent className="p-0 border-t-2 border-catalog-softBrown bg-[#FAF3E3] rounded-t-xl h-[92vh] max-h-[92vh]">
+          <DrawerContent className="p-0 border-t-2 border-catalog-softBrown bg-[#FAF3E3] rounded-t-xl h-[95vh] max-h-[95vh] fixed inset-x-0 top-[5vh]">
             <div className="h-full overflow-y-auto">
               <CatalogSearch 
                 items={searchType === 'food' 
