@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { useNavigate, Link, useLocation } from "react-router-dom";
@@ -199,16 +198,9 @@ const BrowsePage = () => {
   const handleCategorySelect = (category: BrowseCategory) => {
     setSelectedCategory(category.path);
     
-    if (category.path === 'favorites' || category.path === 'highest-rated' || category.path === 'recent') {
-      const filteredCards = getFilteredCards(category);
-      const cardIds = filteredCards.map(card => card.id).join(',');
-      
-      if (activeType === 'food') {
-        navigate(`/bites?browse=${category.path}&ids=${cardIds}`);
-      } else {
-        navigate(`/blockbusters?browse=${category.path}&ids=${cardIds}`);
-      }
-    } else {
+    const filteredCards = getFilteredCards(category);
+    
+    if (filteredCards.length > 0) {
       setSelectedCategory(category.path);
     }
   };
@@ -223,6 +215,14 @@ const BrowsePage = () => {
     }
   };
 
+  const handleCardClick = (card: FoodCard | EntertainmentCard) => {
+    if (activeType === 'food') {
+      navigate(`/bites?highlight=${card.id}`);
+    } else {
+      navigate(`/blockbusters?highlight=${card.id}`);
+    }
+  };
+
   const handleTabChange = (value: 'food' | 'entertainment') => {
     setActiveType(value);
     navigate(`/browse?type=${value}`);
@@ -234,7 +234,6 @@ const BrowsePage = () => {
     const category = browseCategories.find(cat => cat.path === selectedCategory);
     if (!category) return null;
 
-    // For the new "All Items" category
     if (selectedCategory === 'all-items') {
       const allItems = category.filterFunction(activeCards);
       
@@ -261,7 +260,7 @@ const BrowsePage = () => {
                 <div 
                   key={card.id} 
                   className="cursor-pointer"
-                  onClick={() => handleSubCategorySelect('all-items', 'all', allItems)}
+                  onClick={() => handleCardClick(card)}
                 >
                   <CatalogCardCompact card={card} />
                 </div>
@@ -317,7 +316,7 @@ const BrowsePage = () => {
                         <div 
                           key={card.id} 
                           className="cursor-pointer"
-                          onClick={() => handleSubCategorySelect('by-location', location, cards)}
+                          onClick={() => handleCardClick(card)}
                         >
                           <CatalogCardCompact card={card} />
                         </div>
@@ -399,11 +398,7 @@ const BrowsePage = () => {
                         <div 
                           key={card.id} 
                           className="cursor-pointer"
-                          onClick={() => handleSubCategorySelect(
-                            activeType === 'food' ? 'by-cuisine' : 'by-genre', 
-                            groupValue, 
-                            cards
-                          )}
+                          onClick={() => handleCardClick(card)}
                         >
                           <CatalogCardCompact card={card} />
                         </div>
@@ -476,7 +471,7 @@ const BrowsePage = () => {
                         <div 
                           key={card.id} 
                           className="cursor-pointer"
-                          onClick={() => handleSubCategorySelect('by-status', status, cards)}
+                          onClick={() => handleCardClick(card)}
                         >
                           <CatalogCardCompact card={card} />
                         </div>
@@ -500,8 +495,14 @@ const BrowsePage = () => {
           </ScrollArea>
         </div>
       );
-    } else if (selectedCategory === 'top-referrals') {
-      const topReferredCards = category.filterFunction(activeCards);
+    } else if (selectedCategory === 'favorites' || selectedCategory === 'highest-rated' || selectedCategory === 'recent' || selectedCategory === 'top-referrals') {
+      const filteredCards = category.filterFunction(activeCards);
+      const categoryTitle = {
+        'favorites': 'Favorites',
+        'highest-rated': 'Highest Rated',
+        'recent': 'Most Recent',
+        'top-referrals': 'Top Referrals'
+      }[selectedCategory] || category.name;
       
       return (
         <div className="mt-4">
@@ -515,31 +516,25 @@ const BrowsePage = () => {
               <ArrowLeft className="h-4 w-4" />
               Back to Browse
             </Button>
-            <h2 className="text-xl font-semibold ml-2">Top Referred Items</h2>
+            <h2 className="text-xl font-semibold ml-2">{categoryTitle}</h2>
           </div>
           
           <ScrollArea className="h-[70vh]">
-            {topReferredCards.length > 0 ? (
+            {filteredCards.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
-                {topReferredCards.map((card) => (
+                {filteredCards.map((card) => (
                   <div 
                     key={card.id} 
-                    className="cursor-pointer relative"
-                    onClick={() => handleSubCategorySelect('top-referrals', 'all', topReferredCards)}
+                    className="cursor-pointer"
+                    onClick={() => handleCardClick(card)}
                   >
                     <CatalogCardCompact card={card} />
-                    {card.recommendedTo && (
-                      <div className="absolute top-2 right-2 bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded-full flex items-center">
-                        <Share2 className="h-3 w-3 mr-1" />
-                        {card.recommendedTo.length}
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
             ) : (
               <div className="text-center p-8">
-                <p className="text-gray-500">No referrals found. Start sharing items with friends!</p>
+                <p className="text-gray-500">No items found in this category.</p>
               </div>
             )}
           </ScrollArea>
@@ -617,7 +612,11 @@ const BrowsePage = () => {
             
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
               {activeCards.slice(0, 5).map(card => (
-                <div key={card.id}>
+                <div 
+                  key={card.id}
+                  className="cursor-pointer"
+                  onClick={() => handleCardClick(card)}
+                >
                   <CatalogCardCompact card={card} />
                 </div>
               ))}
