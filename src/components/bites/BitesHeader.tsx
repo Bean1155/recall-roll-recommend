@@ -67,6 +67,10 @@ const BitesHeader = ({
     }
   };
 
+  const handleSearchClose = () => {
+    setIsSearchOpen(false);
+  };
+
   return (
     <div className="flex items-center gap-2">
       <Button 
@@ -111,7 +115,8 @@ const BitesHeader = ({
             open={isSearchOpen}
             onOpenChange={setIsSearchOpen}
           >
-            <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-hidden max-h-[180px] shadow-lg">
+            <DrawerOverlay className="bg-black/70 backdrop-blur-sm" />
+            <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-hidden max-h-[85vh] shadow-lg">
               <div className="overflow-y-auto pb-0">
                 <div className="relative">
                   {/* Decorative line connecting to the button */}
@@ -121,7 +126,7 @@ const BitesHeader = ({
                     items={cards}
                     onFilteredItemsChange={onFilteredItemsChange}
                     type="food"
-                    onClose={() => setIsSearchOpen(false)}
+                    onClose={handleSearchClose}
                     compact={true}
                   />
                 </div>
@@ -139,7 +144,7 @@ const BitesHeader = ({
                 items={cards}
                 onFilteredItemsChange={onFilteredItemsChange}
                 type="food"
-                onClose={() => setIsSearchOpen(false)}
+                onClose={handleSearchClose}
                 compact={true}
               />
             </DialogContent>

@@ -43,8 +43,18 @@ const SearchPage = () => {
       setSearchType('food');
     }
 
+    // Always set search dialog to open on the search page
     setIsSearchOpen(true);
   }, [location.search]);
+
+  useEffect(() => {
+    // This effect ensures the drawer is visible when the component mounts
+    const timer = setTimeout(() => {
+      setIsSearchOpen(true);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const getPageTitle = () => {
     return "Search Catalog";
@@ -70,10 +80,14 @@ const SearchPage = () => {
   const entertainmentTabBgColor = "#D6E5F0"; // Blue (Blockbusters) from the header
 
   const handleSearchClose = () => {
-    setIsSearchOpen(false);
-    
     if (!location.pathname.includes('/search')) {
       setTimeout(() => navigate('/'), 300);
+    }
+    // On the search page, don't close the search dialog completely
+    else {
+      // Force it to reopen after a brief moment
+      setIsSearchOpen(false);
+      setTimeout(() => setIsSearchOpen(true), 100);
     }
   };
 
@@ -90,6 +104,10 @@ const SearchPage = () => {
                 borderColor: activeTab === "food" ? "#d2b48c" : "transparent",
                 boxShadow: activeTab === "food" ? "0 2px 4px rgba(0,0,0,0.1)" : "none"
               }}
+              onClick={() => {
+                setSearchType('food');
+                setIsSearchOpen(true);
+              }}
             >
               <UtensilsCrossed size={18} />
               Bites
@@ -102,6 +120,10 @@ const SearchPage = () => {
                 borderColor: activeTab === "entertainment" ? "#d2b48c" : "transparent",
                 boxShadow: activeTab === "entertainment" ? "0 2px 4px rgba(0,0,0,0.1)" : "none"
               }}
+              onClick={() => {
+                setSearchType('entertainment');
+                setIsSearchOpen(true);
+              }}
             >
               <Film size={18} />
               Blockbusters
@@ -109,17 +131,17 @@ const SearchPage = () => {
           </TabsList>
           
           <TabsContent value="food" className="mt-0">
-            <div className="p-6 text-center">
+            <div className="p-4 text-center">
               <p className="text-lg font-typewriter text-vintage-red">
-                Click and Search and Recall
+                Click to search your food catalog
               </p>
             </div>
           </TabsContent>
           
           <TabsContent value="entertainment" className="mt-0">
-            <div className="p-6 text-center">
+            <div className="p-4 text-center">
               <p className="text-lg font-typewriter text-vintage-red">
-                Click and Search and Recall
+                Click to search your entertainment catalog
               </p>
             </div>
           </TabsContent>
@@ -129,9 +151,15 @@ const SearchPage = () => {
       {isMobile ? (
         <Drawer
           open={isSearchOpen}
-          onOpenChange={setIsSearchOpen}
+          onOpenChange={(open) => {
+            setIsSearchOpen(open);
+            // If user tries to close, reopen after a brief moment
+            if (!open && location.pathname.includes('/search')) {
+              setTimeout(() => setIsSearchOpen(true), 100);
+            }
+          }}
         >
-          <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-hidden max-h-[180px] shadow-lg">
+          <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-hidden max-h-[85vh] shadow-lg">
             <div className="relative overflow-y-auto pb-0">
               {/* Decorative line connecting to the button */}
               <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-1.5 bg-[#d2b48c] rounded-b-md"></div>
