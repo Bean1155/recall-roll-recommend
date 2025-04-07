@@ -12,7 +12,7 @@ interface SearchButtonProps {
 
 const SearchButton: React.FC<SearchButtonProps> = ({ path, color, onClick }) => {
   const location = useLocation();
-  const isActive = location.pathname === path;
+  const isActive = location.pathname === path || location.pathname === "/browse";
 
   return (
     <TooltipProvider>
@@ -44,7 +44,7 @@ const SearchButton: React.FC<SearchButtonProps> = ({ path, color, onClick }) => 
           </Link>
         </TooltipTrigger>
         <TooltipContent className="bg-white text-catalog-softBrown">
-          Search across all catalog items
+          Search and browse the catalog
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

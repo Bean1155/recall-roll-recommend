@@ -2,11 +2,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UtensilsCrossed, Film, Search } from "lucide-react";
+import { UtensilsCrossed, Film, Search, ChevronRight } from "lucide-react";
 import { CatalogCard as CatalogCardType } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import CatalogSearch from "@/components/CatalogSearch";
 import { useUser } from "@/contexts/UserContext";
 import { Button } from "@/components/ui/button";
@@ -84,6 +84,14 @@ const SearchPage = () => {
     setIsSearchOpen(true);
   }, []);
 
+  // Browse categories for quick access
+  const browseCategories = [
+    { title: "Favorites", icon: "Heart", path: "/browse" },
+    { title: "Highest Rated", icon: "Star", path: "/browse" },
+    { title: "By Location", icon: "MapPin", path: "/browse" },
+    { title: "Most Recent", icon: "Clock", path: "/browse" },
+  ];
+
   return (
     <GridLayout title={getPageTitle()}>
       <div className="max-w-5xl mx-auto">
@@ -149,6 +157,30 @@ const SearchPage = () => {
             </div>
           </TabsContent>
         </Tabs>
+        
+        {/* New Browse By section */}
+        <div className="mt-6">
+          <h2 className="text-2xl font-bold mb-4">Browse by</h2>
+          <div className="space-y-0.5 rounded-lg bg-gray-100 overflow-hidden">
+            <Link 
+              to="/browse"
+              className="w-full hover:bg-gray-200 py-4 px-4 flex justify-between items-center transition-colors border-b border-gray-200 bg-white"
+            >
+              <span className="text-lg">All Categories</span>
+              <ChevronRight className="h-5 w-5 text-gray-400" />
+            </Link>
+            {browseCategories.map((category) => (
+              <Link
+                key={category.title}
+                to={category.path}
+                className="w-full hover:bg-gray-200 py-4 px-4 flex justify-between items-center transition-colors border-b border-gray-200 last:border-0 bg-white"
+              >
+                <span className="text-lg">{category.title}</span>
+                <ChevronRight className="h-5 w-5 text-gray-400" />
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
 
       <SearchContainer

@@ -1,0 +1,98 @@
+
+import React from "react";
+import { CatalogCard as CatalogCardType } from "@/lib/types";
+import { Card, CardContent } from "@/components/ui/card";
+import { Star, Heart } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
+
+interface CatalogCardCompactProps {
+  card: CatalogCardType;
+  onClick?: (card: CatalogCardType) => void;
+}
+
+const CatalogCardCompact = ({ card, onClick }: CatalogCardCompactProps) => {
+  const navigate = useNavigate();
+  
+  const handleCardClick = () => {
+    if (onClick) {
+      onClick(card);
+      return;
+    }
+    
+    // Navigate to the appropriate page
+    if (card.type === 'food') {
+      navigate(`/bites?highlight=${card.id}`);
+    } else {
+      navigate(`/blockbusters?highlight=${card.id}`);
+    }
+  };
+
+  // Generate a soft pastel background color based on the card id for consistency
+  const generateBackgroundColor = (id: string) => {
+    const colors = [
+      'bg-pink-100', 'bg-purple-100', 'bg-blue-100', 'bg-green-100',
+      'bg-yellow-100', 'bg-orange-100', 'bg-red-100', 'bg-indigo-100'
+    ];
+    
+    // Simple hash function to get a consistent index
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+      hash = id.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    
+    const index = Math.abs(hash) % colors.length;
+    return colors[index];
+  };
+
+  // Generate background color based on the card's id
+  const bgColorClass = generateBackgroundColor(card.id);
+
+  // Truncate title if it's too long
+  const truncateText = (text: string, maxLength: number) => {
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength) + '...';
+  };
+  
+  return (
+    <Card 
+      className={cn(
+        "overflow-hidden cursor-pointer transition-all hover:shadow-md",
+        "border border-gray-200 rounded-lg h-full"
+      )}
+      onClick={handleCardClick}
+    >
+      <div className={cn("relative h-32 flex items-center justify-center", bgColorClass)}>
+        {card.imageUrl ? (
+          <img
+            src={card.imageUrl}
+            alt={card.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="text-lg font-semibold text-gray-600">
+            {truncateText(card.title, 20)}
+          </div>
+        )}
+        
+        {card.isFavorite && (
+          <div className="absolute top-2 right-2">
+            <Heart className="h-5 w-5 fill-red-500 text-red-500" />
+          </div>
+        )}
+      </div>
+      <CardContent className="p-3">
+        <div className="font-medium text-sm line-clamp-1">{card.title}</div>
+        {card.rating > 0 && (
+          <div className="flex items-center mt-1">
+            {Array.from({ length: card.rating }).map((_, i) => (
+              <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+export default CatalogCardCompact;
