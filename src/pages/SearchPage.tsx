@@ -8,7 +8,7 @@ import { getAllCards } from "@/lib/data";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerOverlay } from "@/components/ui/drawer";
 import CatalogSearch from "@/components/CatalogSearch";
 import { useUser } from "@/contexts/UserContext";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ const SearchPage = () => {
   const [allCards, setAllCards] = useState<CatalogCardType[]>([]);
   const [filteredCards, setFilteredCards] = useState<CatalogCardType[]>([]);
   const [activeTab, setActiveTab] = useState<string>("food");
-  const [isSearchOpen, setIsSearchOpen] = useState(true); // Auto-open search on page load
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchType, setSearchType] = useState<'food' | 'entertainment'>('food');
   const isMobile = useIsMobile();
   const location = useLocation();
@@ -43,16 +43,12 @@ const SearchPage = () => {
       setActiveTab('food');
       setSearchType('food');
     }
-  }, [location.search]);
-
-  // Force the search to be open after component mounts and whenever search type changes
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsSearchOpen(true);
-    }, 300);
     
-    return () => clearTimeout(timer);
-  }, [searchType]);
+    // Auto-open search when component mounts
+    setTimeout(() => {
+      setIsSearchOpen(true);
+    }, 100);
+  }, [location.search]);
 
   const getPageTitle = () => {
     return "Search Catalog";
@@ -135,54 +131,44 @@ const SearchPage = () => {
           
           <TabsContent value="food" className="mt-0">
             <div className="p-4 text-center">
-              {isSearchOpen ? (
-                <p className="text-lg font-typewriter text-vintage-red">
-                  Searching food catalog...
-                </p>
-              ) : (
-                <Button 
-                  onClick={openSearchDrawer}
-                  className="bg-[#1A7D76] hover:bg-[#166661] px-8 py-3 rounded-2xl font-typewriter text-white flex items-center gap-2 mx-auto"
-                >
-                  <Search size={18} />
-                  Search Food Catalog
-                </Button>
-              )}
+              <Button 
+                onClick={openSearchDrawer}
+                className="bg-[#1A7D76] hover:bg-[#166661] px-8 py-3 rounded-2xl font-typewriter text-white flex items-center gap-2 mx-auto"
+              >
+                <Search size={18} />
+                Search Food Catalog
+              </Button>
             </div>
           </TabsContent>
           
           <TabsContent value="entertainment" className="mt-0">
             <div className="p-4 text-center">
-              {isSearchOpen ? (
-                <p className="text-lg font-typewriter text-vintage-red">
-                  Searching entertainment catalog...
-                </p>
-              ) : (
-                <Button 
-                  onClick={openSearchDrawer}
-                  className="bg-[#1A7D76] hover:bg-[#166661] px-8 py-3 rounded-2xl font-typewriter text-white flex items-center gap-2 mx-auto"
-                >
-                  <Search size={18} />
-                  Search Entertainment Catalog
-                </Button>
-              )}
+              <Button 
+                onClick={openSearchDrawer}
+                className="bg-[#1A7D76] hover:bg-[#166661] px-8 py-3 rounded-2xl font-typewriter text-white flex items-center gap-2 mx-auto"
+              >
+                <Search size={18} />
+                Search Entertainment Catalog
+              </Button>
             </div>
           </TabsContent>
         </Tabs>
       </div>
 
+      {/* Display search UI */}
       {isMobile ? (
         <Drawer
           open={isSearchOpen}
           onOpenChange={(open) => {
             setIsSearchOpen(open);
-            // If user tries to close, reopen after a brief moment on the search page
+            // Auto-reopen on search page
             if (!open && location.pathname.includes('/search')) {
-              setTimeout(() => setIsSearchOpen(true), 100);
+              setTimeout(() => setIsSearchOpen(true), 200);
             }
           }}
         >
-          <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-visible max-h-[95vh] shadow-lg">
+          <DrawerOverlay className="bg-black/70 backdrop-blur-sm" />
+          <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-visible shadow-lg" style={{ maxHeight: "90vh" }}>
             <div className="relative overflow-y-auto pb-6">
               {/* Decorative line connecting to the button */}
               <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-1.5 bg-[#d2b48c] rounded-b-md"></div>
