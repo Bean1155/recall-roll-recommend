@@ -21,10 +21,16 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
 }) => {
   const isMobile = useIsMobile();
 
-  const handleClose = useCallback(() => {
+  const handleClose = useCallback((e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
     if (onClose) {
       onClose();
     }
+    
     // Force close by setting to false directly
     onOpenChange(false);
   }, [onClose, onOpenChange]);
@@ -44,19 +50,17 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
             
             {onClose && (
               <div className="absolute right-4 top-3 z-50">
-                <DrawerClose asChild>
-                  <Button 
-                    onClick={handleClose} 
-                    className="rounded-full bg-white/90 p-2.5 h-10 w-10 shadow-md hover:bg-white flex items-center justify-center"
-                    variant="ghost"
-                    size="icon"
-                    type="button"
-                    aria-label="Close"
-                  >
-                    <X size={24} className="text-gray-700" />
-                    <span className="sr-only">Close</span>
-                  </Button>
-                </DrawerClose>
+                <Button 
+                  onClick={handleClose} 
+                  className="rounded-full bg-white/90 p-2.5 h-10 w-10 shadow-md hover:bg-white flex items-center justify-center"
+                  variant="ghost"
+                  size="icon"
+                  type="button"
+                  aria-label="Close"
+                >
+                  <X size={24} className="text-gray-700" />
+                  <span className="sr-only">Close</span>
+                </Button>
               </div>
             )}
 
@@ -75,21 +79,19 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
         style={{ maxWidth: "90vw", width: "550px" }}
       >
         <DialogTitle className="sr-only">Search</DialogTitle>
-        <DialogClose 
-          asChild
-          className="absolute right-4 top-4 z-50"
-        >
+        <div className="absolute right-4 top-4 z-50">
           <Button
             onClick={handleClose}
-            className="rounded-full bg-white/90 p-2 h-8 w-8 shadow-md hover:bg-white"
+            className="rounded-full bg-white/90 p-2 h-8 w-8 shadow-md hover:bg-white flex items-center justify-center"
             size="icon"
+            variant="ghost"
             type="button"
             aria-label="Close"
           >
             <X size={16} className="text-gray-700" />
             <span className="sr-only">Close</span>
           </Button>
-        </DialogClose>
+        </div>
         {children}
       </DialogContent>
     </Dialog>

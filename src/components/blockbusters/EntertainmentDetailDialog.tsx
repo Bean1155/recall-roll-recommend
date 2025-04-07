@@ -9,13 +9,11 @@ import {
   DialogContent,
   DialogTitle,
   DialogOverlay,
-  DialogClose,
 } from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerContent,
   DrawerTitle,
-  DrawerClose,
   DrawerOverlay,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
@@ -40,7 +38,9 @@ const EntertainmentDetailDialog = ({
   const category = card.entertainmentCategory?.toLowerCase() || 'etc.';
   const backgroundColor = categoryColors[category] || '#d2b48c';
   
-  const handleClose = () => {
+  const handleClose = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     // Force close by setting to false
     onOpenChange(false);
   };
@@ -60,17 +60,17 @@ const EntertainmentDetailDialog = ({
           <DrawerTitle className="sr-only">Card Details</DrawerTitle>
           <div className="relative h-full">
             <div className="absolute right-4 top-4 z-50">
-              <DrawerClose asChild>
-                <Button 
-                  onClick={handleClose} 
-                  className="rounded-full bg-white/90 p-2.5 shadow-md hover:bg-white transition-colors flex items-center justify-center h-10 w-10"
-                  type="button"
-                  aria-label="Close"
-                >
-                  <X size={24} className="text-gray-700" />
-                  <span className="sr-only">Close</span>
-                </Button>
-              </DrawerClose>
+              <Button 
+                onClick={handleClose} 
+                className="rounded-full bg-white/90 p-2.5 shadow-md hover:bg-white transition-colors flex items-center justify-center h-10 w-10"
+                variant="ghost"
+                size="icon"
+                type="button"
+                aria-label="Close"
+              >
+                <X size={24} className="text-gray-700" />
+                <span className="sr-only">Close</span>
+              </Button>
             </div>
             
             <div className="p-6 animate-fade-in overflow-y-auto pb-16" style={{ height: "100%" }}>
@@ -93,17 +93,19 @@ const EntertainmentDetailDialog = ({
       >
         <DialogTitle className="sr-only">Card Details</DialogTitle>
         <div className="relative">
-          <DialogClose asChild>
+          <div className="absolute right-4 top-4 z-10">
             <Button
               onClick={handleClose}
-              className="absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 shadow-md hover:bg-white transition-colors h-10 w-10"
+              className="rounded-full bg-white/90 p-2 shadow-md hover:bg-white transition-colors flex items-center justify-center h-10 w-10"
+              variant="ghost"
+              size="icon"
               type="button"
               aria-label="Close"
             >
               <X size={18} className="text-gray-700" />
               <span className="sr-only">Close</span>
             </Button>
-          </DialogClose>
+          </div>
           
           <div className="p-6 animate-fade-in">
             <Envelope label={card.title} backgroundColor={backgroundColor}>

@@ -43,9 +43,10 @@ const SearchPage = () => {
       setSearchType('food');
     }
     
+    // Delay opening search to ensure everything is ready
     setTimeout(() => {
       setIsSearchOpen(true);
-    }, 100);
+    }, 300);
   }, [location.search]);
 
   const getPageTitle = () => {
@@ -61,7 +62,7 @@ const SearchPage = () => {
       setSearchType('entertainment');
     }
     
-    setTimeout(() => setIsSearchOpen(true), 100);
+    setTimeout(() => setIsSearchOpen(true), 300);
   }, []);
 
   const handleFilteredItemsChange = useCallback((items: CatalogCardType[]) => {
@@ -72,12 +73,10 @@ const SearchPage = () => {
   const entertainmentTabBgColor = "#D6E5F0"; // Blue (Blockbusters) from the header
 
   const handleSearchClose = useCallback(() => {
-    if (location.pathname.includes('/search')) {
-      setIsSearchOpen(false);
-      setTimeout(() => setIsSearchOpen(true), 100);
-    } else {
-      setIsSearchOpen(false);
-      setTimeout(() => navigate('/'), 300);
+    setIsSearchOpen(false);
+    
+    if (!location.pathname.includes('/search')) {
+      navigate('/');
     }
   }, [location.pathname, navigate]);
 
@@ -100,7 +99,7 @@ const SearchPage = () => {
               }}
               onClick={() => {
                 setSearchType('food');
-                setIsSearchOpen(true);
+                setTimeout(() => setIsSearchOpen(true), 300);
               }}
             >
               <UtensilsCrossed size={18} />
@@ -116,7 +115,7 @@ const SearchPage = () => {
               }}
               onClick={() => {
                 setSearchType('entertainment');
-                setIsSearchOpen(true);
+                setTimeout(() => setIsSearchOpen(true), 300);
               }}
             >
               <Film size={18} />
@@ -129,6 +128,7 @@ const SearchPage = () => {
               <Button 
                 onClick={openSearchDrawer}
                 className="bg-[#1A7D76] hover:bg-[#166661] px-8 py-3 rounded-2xl font-typewriter text-white flex items-center gap-2 mx-auto"
+                type="button"
               >
                 <Search size={18} />
                 Search Food Catalog
@@ -141,6 +141,7 @@ const SearchPage = () => {
               <Button 
                 onClick={openSearchDrawer}
                 className="bg-[#1A7D76] hover:bg-[#166661] px-8 py-3 rounded-2xl font-typewriter text-white flex items-center gap-2 mx-auto"
+                type="button"
               >
                 <Search size={18} />
                 Search Entertainment Catalog
@@ -154,9 +155,6 @@ const SearchPage = () => {
         isOpen={isSearchOpen}
         onOpenChange={(open) => {
           setIsSearchOpen(open);
-          if (!open && location.pathname.includes('/search')) {
-            setTimeout(() => setIsSearchOpen(true), 200);
-          }
         }}
         onClose={handleSearchClose}
       >
