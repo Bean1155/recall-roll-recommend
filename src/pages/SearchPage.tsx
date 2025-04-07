@@ -6,7 +6,6 @@ import { UtensilsCrossed, Film, Search, ChevronRight, Share2 } from "lucide-reac
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
-import { Button } from "@/components/ui/button";
 
 const SearchPage = () => {
   const [activeTab, setActiveTab] = useState<string>("food");
@@ -35,13 +34,6 @@ const SearchPage = () => {
     navigate(`/browse?type=${value}`);
   }, [navigate]);
 
-  const handleBrowseClick = useCallback((type: string) => {
-    navigate(`/browse?type=${type}`);
-  }, [navigate]);
-
-  const foodTabBgColor = "#FDE1D3";  // Pink (Bites) from the header
-  const entertainmentTabBgColor = "#D6E5F0"; // Blue (Blockbusters) from the header
-
   // Browse categories for quick access
   const browseCategories = [
     { title: "Favorites", icon: "Heart", path: "/browse" },
@@ -60,7 +52,7 @@ const SearchPage = () => {
               value="food" 
               className="flex items-center gap-2 flex-1 py-3 rounded-md border-2 transition-colors text-black font-medium"
               style={{
-                backgroundColor: foodTabBgColor,
+                backgroundColor: "#FDE1D3",
                 borderColor: activeTab === "food" ? "#d2b48c" : "transparent",
                 boxShadow: activeTab === "food" ? "0 2px 4px rgba(0,0,0,0.1)" : "none"
               }}
@@ -72,7 +64,7 @@ const SearchPage = () => {
               value="entertainment" 
               className="flex items-center gap-2 flex-1 py-3 rounded-md border-2 transition-colors text-black font-medium"
               style={{
-                backgroundColor: entertainmentTabBgColor,
+                backgroundColor: "#D6E5F0",
                 borderColor: activeTab === "entertainment" ? "#d2b48c" : "transparent",
                 boxShadow: activeTab === "entertainment" ? "0 2px 4px rgba(0,0,0,0.1)" : "none"
               }}
@@ -83,29 +75,11 @@ const SearchPage = () => {
           </TabsList>
           
           <TabsContent value="food" className="mt-0">
-            <div className="p-4 text-center">
-              <Button 
-                onClick={() => handleBrowseClick('food')}
-                className="bg-[#1A7D76] hover:bg-[#166661] px-8 py-3 rounded-2xl font-typewriter text-white flex items-center gap-2 mx-auto"
-                type="button"
-              >
-                <Search size={18} />
-                Browse Food Catalog
-              </Button>
-            </div>
+            {/* Content automatically shows when tab is selected */}
           </TabsContent>
           
           <TabsContent value="entertainment" className="mt-0">
-            <div className="p-4 text-center">
-              <Button 
-                onClick={() => handleBrowseClick('entertainment')}
-                className="bg-[#1A7D76] hover:bg-[#166661] px-8 py-3 rounded-2xl font-typewriter text-white flex items-center gap-2 mx-auto"
-                type="button"
-              >
-                <Search size={18} />
-                Browse Entertainment Catalog
-              </Button>
-            </div>
+            {/* Content automatically shows when tab is selected */}
           </TabsContent>
         </Tabs>
         
