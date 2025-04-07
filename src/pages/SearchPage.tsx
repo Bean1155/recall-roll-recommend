@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UtensilsCrossed, Film, Search, ChevronRight } from "lucide-react";
+import { UtensilsCrossed, Film, Search, ChevronRight, Share2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useUser } from "@/contexts/UserContext";
@@ -48,6 +48,7 @@ const SearchPage = () => {
     { title: "Highest Rated", icon: "Star", path: "/browse" },
     { title: "By Location", icon: "MapPin", path: "/browse" },
     { title: "Most Recent", icon: "Clock", path: "/browse" },
+    { title: "Top Referrals", icon: "Share2", path: "/browse" }
   ];
 
   return (

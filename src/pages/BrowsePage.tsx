@@ -1,8 +1,7 @@
-
 import React, { useState } from "react";
 import GridLayout from "@/components/GridLayout";
 import { useNavigate, Link } from "react-router-dom";
-import { ChevronRight, ArrowLeft, Star, Heart, MapPin, Calendar, Clock, Film, UtensilsCrossed } from "lucide-react";
+import { ChevronRight, ArrowLeft, Star, Heart, MapPin, Calendar, Clock, Film, UtensilsCrossed, Share2 } from "lucide-react";
 import { FoodCard, EntertainmentCard } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -152,6 +151,22 @@ const BrowsePage = () => {
           }
         });
         return result;
+      },
+    },
+    {
+      name: "Top Referrals",
+      description: "Items that have been shared or referred the most",
+      path: "top-referrals",
+      icon: <Share2 className="h-5 w-5 text-purple-500" />,
+      filterFunction: (cards) => {
+        return [...cards]
+          .filter(card => card.recommendedTo && card.recommendedTo.length > 0)
+          .sort((a, b) => {
+            const aReferrals = a.recommendedTo ? a.recommendedTo.length : 0;
+            const bReferrals = b.recommendedTo ? b.recommendedTo.length : 0;
+            return bReferrals - aReferrals;
+          })
+          .slice(0, 20);
       },
     },
   ];
@@ -418,6 +433,51 @@ const BrowsePage = () => {
                 </AccordionItem>
               ))}
             </Accordion>
+          </ScrollArea>
+        </div>
+      );
+    } else if (selectedCategory === 'top-referrals') {
+      const topReferredCards = category.filterFunction(activeCards);
+      
+      return (
+        <div className="mt-4">
+          <div className="flex items-center mb-4">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="flex items-center gap-2"
+              onClick={() => setSelectedCategory(null)}
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Browse
+            </Button>
+            <h2 className="text-xl font-semibold ml-2">Top Referred Items</h2>
+          </div>
+          
+          <ScrollArea className="h-[70vh]">
+            {topReferredCards.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
+                {topReferredCards.map((card) => (
+                  <div 
+                    key={card.id} 
+                    className="cursor-pointer relative"
+                    onClick={() => handleSubCategorySelect('top-referrals', 'all', topReferredCards)}
+                  >
+                    <CatalogCardCompact card={card} />
+                    {card.recommendedTo && (
+                      <div className="absolute top-2 right-2 bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded-full flex items-center">
+                        <Share2 className="h-3 w-3 mr-1" />
+                        {card.recommendedTo.length}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center p-8">
+                <p className="text-gray-500">No referrals found. Start sharing items with friends!</p>
+              </div>
+            )}
           </ScrollArea>
         </div>
       );
