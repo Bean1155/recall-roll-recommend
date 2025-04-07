@@ -134,17 +134,21 @@ const SearchPage = () => {
           open={isSearchOpen}
           onOpenChange={setIsSearchOpen}
         >
-          <DrawerOverlay className="bg-black/70 backdrop-blur-sm" />
+          <DrawerOverlay className="bg-black/70 backdrop-blur-sm fixed inset-0" />
           <DrawerContent 
-            className="p-0 border-t-2 border-catalog-softBrown bg-[#FAF3E3] rounded-t-xl"
+            className="p-0 border-t-2 border-catalog-softBrown bg-[#FAF3E3] rounded-t-xl w-full"
             style={{
-              height: "100vh",
-              maxHeight: "100vh",
-              position: "fixed",
-              inset: 0, // Position the drawer to fill the entire viewport
+              position: "absolute",
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: "100%",
+              maxHeight: "none",
+              margin: 0,
             }}
           >
-            <div className="h-full overflow-y-auto">
+            <div className="flex-1 overflow-auto">
               <CatalogSearch 
                 items={searchType === 'food' 
                   ? allCards.filter(card => card.type === 'food')
