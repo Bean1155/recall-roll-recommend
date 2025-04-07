@@ -50,8 +50,9 @@ const CardDetailDialog = ({
         >
           <DrawerTitle className="sr-only">Card Details</DrawerTitle>
           <div className="relative h-full">
-            <DrawerClose className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 shadow-md hover:bg-gray-100">
-              <X size={18} />
+            <DrawerClose className="absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 shadow-md hover:bg-white transition-colors">
+              <X size={18} className="text-gray-700" />
+              <span className="sr-only">Close</span>
             </DrawerClose>
             
             <div className="p-6 animate-fade-in overflow-y-auto pb-16" style={{ height: "100%" }}>
@@ -69,13 +70,14 @@ const CardDetailDialog = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogOverlay className="bg-black/80 backdrop-blur-sm" />
       <DialogContent 
-        className="sm:max-w-[600px] p-0 border-2 border-catalog-softBrown rounded-xl overflow-hidden max-h-[90vh] overflow-y-auto"
+        className="sm:max-w-[600px] p-0 border-2 border-catalog-softBrown rounded-xl overflow-hidden max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200"
         style={{ backgroundColor: categoryColors[card.category] }}
       >
         <DialogTitle className="sr-only">Card Details</DialogTitle>
         <div className="relative">
-          <DialogClose className="absolute right-4 top-4 z-10 rounded-full bg-white p-2 shadow-md hover:bg-gray-100">
-            <X size={18} />
+          <DialogClose className="absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 shadow-md hover:bg-white transition-colors">
+            <X size={18} className="text-gray-700" />
+            <span className="sr-only">Close</span>
           </DialogClose>
           
           <div className="p-6 animate-fade-in">
