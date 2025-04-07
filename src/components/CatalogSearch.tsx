@@ -144,18 +144,11 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
     
     const path = type === 'food' ? '/bites' : '/blockbusters';
     
-    if (type === 'food') {
-      const foodCard = card as FoodCard;
-      console.log("CatalogSearch: Navigating to food card with highlight parameter");
-      navigate(`${path}?highlight=${card.id}&category=${foodCard.category}&fromSearch=true`);
-    } else {
-      const entertainmentCard = card as EntertainmentCard;
-      console.log("CatalogSearch: Navigating to entertainment card with highlight parameter");
-      navigate(`${path}?highlight=${card.id}&category=${entertainmentCard.entertainmentCategory?.toLowerCase() || 'etc.'}&fromSearch=true`);
-    }
+    console.log(`CatalogSearch: Navigating to ${path} with highlight=${card.id}`);
+    navigate(`${path}?highlight=${card.id}&fromSearch=true`);
     
     toast({
-      title: "Navigating to card",
+      title: "Opening card",
       description: `Opening ${card.title}`,
     });
   };

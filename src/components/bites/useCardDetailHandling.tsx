@@ -9,12 +9,16 @@ export const useCardDetailHandling = (cards: FoodCard[]) => {
   const [selectedCard, setSelectedCard] = useState<FoodCard | null>(null);
   
   useEffect(() => {
+    console.log("useCardDetailHandling: Effect running with location change");
+    console.log("useCardDetailHandling: Current location:", location.search);
+    
     // Check for card ID in the URL query parameter
     const params = new URLSearchParams(location.search);
     const cardToOpen = params.get('open');
     const highlightCard = params.get('highlight');
     
     if (cardToOpen) {
+      console.log('useCardDetailHandling: Found open parameter:', cardToOpen);
       const card = cards.find(c => c.id === cardToOpen);
       if (card) {
         console.log('useCardDetailHandling: Opening card with ID:', cardToOpen);
@@ -29,25 +33,32 @@ export const useCardDetailHandling = (cards: FoodCard[]) => {
     } else if (highlightCard) {
       // Handle the highlight parameter
       console.log('useCardDetailHandling: Found highlight parameter:', highlightCard);
-      const card = cards.find(c => c.id === highlightCard);
-      if (card) {
-        console.log('useCardDetailHandling: Found matching card:', card.title);
-        setSelectedCard(card);
-        setSelectedCardId(highlightCard);
-        setIsCardDetailOpen(true);
-        
-        // Clear the highlight parameter from URL without refreshing
-        const newParams = new URLSearchParams(location.search);
-        newParams.delete('highlight');
-        
-        // Keep other parameters if they exist
-        const newUrl = newParams.toString() 
-          ? `${window.location.pathname}?${newParams.toString()}${window.location.hash}`
-          : `${window.location.pathname}${window.location.hash}`;
+      console.log('useCardDetailHandling: Available cards count:', cards.length);
+      
+      if (cards.length > 0) {
+        const card = cards.find(c => c.id === highlightCard);
+        if (card) {
+          console.log('useCardDetailHandling: Found matching card for highlight:', card.title);
+          setSelectedCard(card);
+          setSelectedCardId(highlightCard);
+          setIsCardDetailOpen(true);
           
-        window.history.replaceState({}, document.title, newUrl);
+          // Only remove the highlight param, keep other params
+          const newParams = new URLSearchParams(location.search);
+          newParams.delete('highlight');
+          
+          // Keep other parameters if they exist
+          const newUrl = newParams.toString() 
+            ? `${window.location.pathname}?${newParams.toString()}${window.location.hash}`
+            : `${window.location.pathname}${window.location.hash}`;
+            
+          window.history.replaceState({}, document.title, newUrl);
+        } else {
+          console.log('useCardDetailHandling: No matching card found for ID:', highlightCard);
+          console.log('useCardDetailHandling: Available card IDs:', cards.map(c => c.id).join(', '));
+        }
       } else {
-        console.log('useCardDetailHandling: No matching card found for ID:', highlightCard);
+        console.log('useCardDetailHandling: Cards array is empty, cannot find highlighted card');
       }
     }
     

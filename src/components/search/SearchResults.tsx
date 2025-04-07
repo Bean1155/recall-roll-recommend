@@ -27,7 +27,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             key={item.id} 
             className="bg-catalog-cream hover:bg-vintage-tan cursor-pointer border border-catalog-softBrown/40 transition-colors duration-150"
             onClick={() => {
-              console.log("SearchResults: Card clicked:", item.id, item.title);
+              console.log("SearchResults: Card clicked with ID:", item.id);
+              console.log("SearchResults: Card data:", JSON.stringify(item));
               handleCardClick(item);
             }}
           >

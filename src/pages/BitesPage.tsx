@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
@@ -12,6 +11,7 @@ import { useCategoryColors } from "@/components/bites/useCategoryColors";
 import { useCardDetailHandling } from "@/components/bites/useCardDetailHandling";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "@/components/ui/use-toast";
+import CardDetailDialog from "@/components/bites/CardDetailDialog";
 
 const BitesPage = () => {
   const { currentUser } = useUser();
@@ -23,6 +23,8 @@ const BitesPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
+  const categoryColors = useCategoryColors(cards);
+
   useEffect(() => {
     const fetchCards = () => {
       const allCards = getAllCards();
@@ -33,34 +35,6 @@ const BitesPage = () => {
     };
 
     fetchCards();
-    
-    const searchParams = new URLSearchParams(location.search);
-    
-    // Handle direct card opening from URL param
-    const cardToOpen = searchParams.get('open');
-    if (cardToOpen) {
-      setTimeout(() => {
-        console.log('BitesPage: Opening card from URL param:', cardToOpen);
-        const cardToSelect = cards.find(card => card.id === cardToOpen);
-        if (cardToSelect) {
-          handleCardClick(cardToSelect);
-        }
-      }, 300);
-    }
-    
-    // Handle filtered results from URL params
-    const filterParam = searchParams.get('filter');
-    const proximityLocation = searchParams.get('proximity');
-    const proximityDistance = searchParams.get('distance');
-    
-    if (filterParam) {
-      const [filterType, filterValue] = filterParam.split('=');
-      if (filterType && filterValue) {
-        applyFilterFromUrl(filterType, decodeURIComponent(filterValue));
-      }
-    } else if (proximityLocation && proximityDistance) {
-      applyProximityFilterFromUrl(proximityLocation, Number(proximityDistance));
-    }
     
     const handleCardAdded = (event: Event) => {
       const customEvent = event as CustomEvent;
@@ -75,7 +49,54 @@ const BitesPage = () => {
     return () => {
       window.removeEventListener('catalog_action', handleCardAdded);
     };
-  }, [location.search]);
+  }, []);
+  
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    console.log('BitesPage: Processing URL params:', location.search);
+    
+    const cardToOpen = searchParams.get('open');
+    const highlightParam = searchParams.get('highlight');
+    const fromSearch = searchParams.get('fromSearch');
+    
+    if (cardToOpen || highlightParam) {
+      const cardId = cardToOpen || highlightParam;
+      console.log('BitesPage: Found card param in URL:', cardId);
+      if (cards.length > 0) {
+        const cardToSelect = cards.find(card => card.id === cardId);
+        if (cardToSelect) {
+          console.log('BitesPage: Found card to open:', cardToSelect.title);
+          handleCardClick(cardToSelect);
+        } else {
+          console.log('BitesPage: Card not found with ID:', cardId);
+          console.log('BitesPage: Available card IDs:', cards.map(c => c.id).join(', '));
+        }
+      } else {
+        console.log('BitesPage: Cards not loaded yet, will retry when cards are available');
+      }
+    }
+    
+    const filterParam = searchParams.get('filter');
+    const proximityLocation = searchParams.get('proximity');
+    const proximityDistance = searchParams.get('distance');
+    
+    if (filterParam) {
+      const [filterType, filterValue] = filterParam.split('=');
+      if (filterType && filterValue) {
+        applyFilterFromUrl(filterType, decodeURIComponent(filterValue));
+      }
+    } else if (proximityLocation && proximityDistance) {
+      applyProximityFilterFromUrl(proximityLocation, Number(proximityDistance));
+    }
+  }, [location.search, cards]);
+  
+  const {
+    selectedCardId,
+    isCardDetailOpen,
+    setIsCardDetailOpen,
+    selectedCard,
+    handleCardClick
+  } = useCardDetailHandling(cards);
   
   const applyFilterFromUrl = (filterType: string, value: string) => {
     let filtered: FoodCard[] = [...cards];
@@ -149,16 +170,6 @@ const BitesPage = () => {
     });
   };
   
-  const categoryColors = useCategoryColors(cards);
-  
-  const {
-    selectedCardId,
-    isCardDetailOpen,
-    setIsCardDetailOpen,
-    selectedCard,
-    handleCardClick
-  } = useCardDetailHandling(cards);
-  
   const clearFilters = () => {
     setFilteredCards(cards);
     setHasActiveFilters(false);
@@ -175,7 +186,8 @@ const BitesPage = () => {
   };
   
   const searchParams = new URLSearchParams(location.search);
-  const focusCardId = searchParams.get('open');
+  const focusCardId = searchParams.get('highlight') || searchParams.get('open');
+  const focusCategory = focusCardId ? cards.find(c => c.id === focusCardId)?.category : undefined;
   
   return (
     <GridLayout 
@@ -201,16 +213,22 @@ const BitesPage = () => {
           cards={filteredCards.length > 0 ? filteredCards : cards} 
           onCardClick={handleCardClick} 
           categoryColors={categoryColors}
-          defaultOpenCategory={focusCardId ? 
-            cards.find(c => c.id === focusCardId)?.category : undefined}
+          defaultOpenCategory={focusCategory}
           hideEmptyCategories={true} 
-          startCollapsed={true} // Keep all drawers collapsed by default
+          startCollapsed={!focusCategory}
         />
       </div>
       
       <AddCategoryDialog 
         isOpen={isAddCategoryDialogOpen} 
         onOpenChange={setIsAddCategoryDialogOpen} 
+      />
+      
+      <CardDetailDialog
+        isOpen={isCardDetailOpen}
+        onOpenChange={setIsCardDetailOpen}
+        card={selectedCard}
+        categoryColors={categoryColors}
       />
     </GridLayout>
   );
