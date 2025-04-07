@@ -38,6 +38,7 @@ const CardDetailDialog = ({
   if (!card) return null;
   
   const handleClose = () => {
+    // Force close by setting to false
     onOpenChange(false);
   };
   
@@ -56,15 +57,17 @@ const CardDetailDialog = ({
           <DrawerTitle className="sr-only">Card Details</DrawerTitle>
           <div className="relative h-full">
             <div className="absolute right-4 top-4 z-50">
-              <Button 
-                onClick={handleClose} 
-                className="rounded-full bg-white/90 p-2.5 shadow-md hover:bg-white transition-colors flex items-center justify-center h-10 w-10"
-                type="button"
-                aria-label="Close"
-              >
-                <X size={24} className="text-gray-700" />
-                <span className="sr-only">Close</span>
-              </Button>
+              <DrawerClose asChild>
+                <Button 
+                  onClick={handleClose} 
+                  className="rounded-full bg-white/90 p-2.5 shadow-md hover:bg-white transition-colors flex items-center justify-center h-10 w-10"
+                  type="button"
+                  aria-label="Close"
+                >
+                  <X size={24} className="text-gray-700" />
+                  <span className="sr-only">Close</span>
+                </Button>
+              </DrawerClose>
             </div>
             
             <div className="p-6 animate-fade-in overflow-y-auto pb-16" style={{ height: "100%" }}>
@@ -87,9 +90,16 @@ const CardDetailDialog = ({
       >
         <DialogTitle className="sr-only">Card Details</DialogTitle>
         <div className="relative">
-          <DialogClose className="absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 shadow-md hover:bg-white transition-colors">
-            <X size={18} className="text-gray-700" />
-            <span className="sr-only">Close</span>
+          <DialogClose asChild>
+            <Button
+              onClick={handleClose}
+              className="absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 shadow-md hover:bg-white transition-colors h-10 w-10"
+              type="button"
+              aria-label="Close"
+            >
+              <X size={18} className="text-gray-700" />
+              <span className="sr-only">Close</span>
+            </Button>
           </DialogClose>
           
           <div className="p-6 animate-fade-in">

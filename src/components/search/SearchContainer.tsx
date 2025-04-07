@@ -1,8 +1,8 @@
 
 import React, { useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogOverlay, DialogTitle } from "@/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerOverlay, DrawerTitle } from "@/components/ui/drawer";
+import { Dialog, DialogContent, DialogOverlay, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerOverlay, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
 import { X } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -24,9 +24,9 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
   const handleClose = useCallback(() => {
     if (onClose) {
       onClose();
-    } else {
-      onOpenChange(false);
     }
+    // Force close by setting to false directly
+    onOpenChange(false);
   }, [onClose, onOpenChange]);
 
   if (isMobile) {
@@ -44,17 +44,19 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
             
             {onClose && (
               <div className="absolute right-4 top-3 z-50">
-                <Button 
-                  onClick={handleClose} 
-                  className="rounded-full bg-white/90 p-2.5 h-10 w-10 shadow-md hover:bg-white flex items-center justify-center"
-                  variant="ghost"
-                  size="icon"
-                  type="button"
-                  aria-label="Close"
-                >
-                  <X size={24} className="text-gray-700" />
-                  <span className="sr-only">Close</span>
-                </Button>
+                <DrawerClose asChild>
+                  <Button 
+                    onClick={handleClose} 
+                    className="rounded-full bg-white/90 p-2.5 h-10 w-10 shadow-md hover:bg-white flex items-center justify-center"
+                    variant="ghost"
+                    size="icon"
+                    type="button"
+                    aria-label="Close"
+                  >
+                    <X size={24} className="text-gray-700" />
+                    <span className="sr-only">Close</span>
+                  </Button>
+                </DrawerClose>
               </div>
             )}
 
@@ -73,6 +75,21 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
         style={{ maxWidth: "90vw", width: "550px" }}
       >
         <DialogTitle className="sr-only">Search</DialogTitle>
+        <DialogClose 
+          asChild
+          className="absolute right-4 top-4 z-50"
+        >
+          <Button
+            onClick={handleClose}
+            className="rounded-full bg-white/90 p-2 h-8 w-8 shadow-md hover:bg-white"
+            size="icon"
+            type="button"
+            aria-label="Close"
+          >
+            <X size={16} className="text-gray-700" />
+            <span className="sr-only">Close</span>
+          </Button>
+        </DialogClose>
         {children}
       </DialogContent>
     </Dialog>
