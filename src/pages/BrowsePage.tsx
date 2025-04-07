@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { ChevronRight, ArrowLeft, Star, Heart, MapPin, Calendar, Clock, Film, UtensilsCrossed, Share2, List } from "lucide-react";
-import { FoodCard, EntertainmentCard } from "@/lib/types";
+import { ChevronRight, ArrowLeft, Star, Heart, MapPin, Calendar, Clock, Film, UtensilsCrossed, Share2, List, ShoppingBag } from "lucide-react";
+import { FoodCard, EntertainmentCard, FoodCategory } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
 import { useIsMobile } from "@/hooks/use-mobile";
 import CatalogCardCompact from "@/components/CatalogCardCompact";
@@ -15,6 +15,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { getAllCategories } from "@/utils/categoryUtils";
 
 type BrowseCategory = {
   name: string;
@@ -85,6 +86,32 @@ const BrowsePage = () => {
           }
         });
         return result;
+      },
+    },
+    {
+      name: "By Category",
+      description: "Browse food by establishment type",
+      path: "by-category",
+      icon: <ShoppingBag className="h-5 w-5 text-green-600" />,
+      filterFunction: (cards) => {
+        if (activeType === 'food') {
+          const categories = new Set<FoodCategory>();
+          (cards as FoodCard[]).forEach(card => {
+            if (card.category) {
+              categories.add(card.category);
+            }
+          });
+          
+          const result: FoodCard[] = [];
+          categories.forEach(category => {
+            const categoryCards = (cards as FoodCard[]).filter(card => card.category === category);
+            if (categoryCards.length > 0) {
+              result.push(categoryCards[0]);
+            }
+          });
+          return result;
+        }
+        return [];
       },
     },
     {
@@ -340,6 +367,77 @@ const BrowsePage = () => {
           </ScrollArea>
         </div>
       );
+    } else if (selectedCategory === 'by-category') {
+      const categoryMap = new Map<string, FoodCard[]>();
+      
+      if (activeType === 'food') {
+        (activeCards as FoodCard[]).forEach(card => {
+          if (card.category) {
+            const category = card.category;
+            if (!categoryMap.has(category)) {
+              categoryMap.set(category, []);
+            }
+            categoryMap.get(category)?.push(card);
+          }
+        });
+        
+        return (
+          <div className="mt-4">
+            <div className="flex items-center mb-4">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="flex items-center gap-2"
+                onClick={() => setSelectedCategory(null)}
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Browse
+              </Button>
+              <h2 className="text-xl font-semibold ml-2">Browse By Category</h2>
+            </div>
+            
+            <ScrollArea className="h-[70vh]">
+              <Accordion type="single" collapsible className="w-full">
+                {Array.from(categoryMap.entries()).map(([category, cards]) => (
+                  <AccordionItem key={category} value={category}>
+                    <AccordionTrigger className="hover:bg-gray-100 px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <ShoppingBag className="h-4 w-4 text-green-600" />
+                        <span>{category}</span>
+                        <span className="text-xs text-gray-500 ml-2">({cards.length} items)</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-3">
+                        {cards.map((card) => (
+                          <div 
+                            key={card.id} 
+                            className="cursor-pointer"
+                            onClick={() => handleCardClick(card)}
+                          >
+                            <CatalogCardCompact card={card} />
+                          </div>
+                        ))}
+                        
+                        {cards.length > 8 && (
+                          <Button 
+                            variant="outline"
+                            className="h-full min-h-[100px] flex flex-col items-center justify-center"
+                            onClick={() => handleSubCategorySelect('by-category', category, cards)}
+                          >
+                            <span>View all</span>
+                            <span className="text-sm">{cards.length} items</span>
+                          </Button>
+                        )}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </ScrollArea>
+          </div>
+        );
+      }
     } else if (selectedCategory === 'by-cuisine' || selectedCategory === 'by-genre') {
       const groupKey = activeType === 'food' ? 'cuisine' : 'genre';
       const groupMap = new Map<string, (FoodCard | EntertainmentCard)[]>();
@@ -384,9 +482,9 @@ const BrowsePage = () => {
                   <AccordionTrigger className="hover:bg-gray-100 px-4 py-3">
                     <div className="flex items-center gap-2">
                       {activeType === 'food' ? (
-                        <UtensilsCrossed className="h-4 w-4 text-red-500" />
+                        <UtensilsCrossed className="h-4 w-5 text-red-500" />
                       ) : (
-                        <Film className="h-4 w-4 text-purple-500" />
+                        <Film className="h-4 w-5 text-purple-500" />
                       )}
                       <span>{groupValue}</span>
                       <span className="text-xs text-gray-500 ml-2">({cards.length} items)</span>

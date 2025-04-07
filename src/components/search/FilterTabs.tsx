@@ -16,7 +16,8 @@ import {
   Clock, 
   Tag, 
   Share2,
-  List
+  List,
+  ShoppingBag
 } from "lucide-react";
 
 interface FilterTabsProps {
@@ -33,7 +34,7 @@ const FilterTabs: React.FC<FilterTabsProps> = ({
   return (
     <Tabs defaultValue={activeFilter} className="w-full mt-2" onValueChange={handleTabChange}>
       <TabsList className="w-full bg-[#FAEBD7] p-1 rounded-md h-14 border border-[#8B7D6B]/20 relative z-20">
-        <div className="grid grid-cols-4 gap-1 w-full">
+        <div className="grid grid-cols-5 gap-1 w-full">
           <FilterTabItem 
             value="all" 
             icon={<Search size={18} />} 
@@ -56,6 +57,12 @@ const FilterTabs: React.FC<FilterTabsProps> = ({
             value="location" 
             icon={<MapPin size={18} />} 
             description={filterDescriptions.location} 
+          />
+          
+          <FilterTabItem 
+            value="byCategory" 
+            icon={<ShoppingBag size={18} />} 
+            description={filterDescriptions.byCategory || "Browse by category"} 
           />
           
           <FilterTabItem 
