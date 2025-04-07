@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,7 +16,7 @@ const SearchPage = () => {
   const [allCards, setAllCards] = useState<CatalogCardType[]>([]);
   const [filteredCards, setFilteredCards] = useState<CatalogCardType[]>([]);
   const [activeTab, setActiveTab] = useState<string>("food");
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(true); // Changed to true to auto-open search on page load
   const [searchType, setSearchType] = useState<'food' | 'entertainment'>('food');
   const isMobile = useIsMobile();
   const location = useLocation();
@@ -41,6 +42,9 @@ const SearchPage = () => {
       setActiveTab('food');
       setSearchType('food');
     }
+
+    // Automatically open search when page loads
+    setIsSearchOpen(true);
   }, [location.search]);
 
   const getPageTitle = () => {
@@ -65,6 +69,17 @@ const SearchPage = () => {
 
   const foodTabBgColor = "#FDE1D3";  // Pink (Bites) from the header
   const entertainmentTabBgColor = "#D6E5F0"; // Blue (Blockbusters) from the header
+
+  // Handle close action - navigate back if came from home page
+  const handleSearchClose = () => {
+    setIsSearchOpen(false);
+    
+    // Wait for animation to complete before navigating
+    const referrer = document.referrer;
+    if (referrer.includes('/') && !referrer.includes('/search')) {
+      setTimeout(() => navigate('/'), 300);
+    }
+  };
 
   return (
     <GridLayout title={getPageTitle()}>
@@ -121,8 +136,8 @@ const SearchPage = () => {
           onOpenChange={setIsSearchOpen}
         >
           <DrawerOverlay className="bg-black/70 backdrop-blur-sm" />
-          <DrawerContent className="p-0 border-t-2 border-catalog-softBrown bg-[#FAF3E3] rounded-t-xl">
-            <div className="max-h-[85vh] overflow-y-auto">
+          <DrawerContent className="p-0 border-t-2 border-catalog-softBrown bg-[#FAF3E3] rounded-t-xl h-[92vh] max-h-[92vh]">
+            <div className="h-full overflow-y-auto">
               <CatalogSearch 
                 items={searchType === 'food' 
                   ? allCards.filter(card => card.type === 'food')
@@ -130,7 +145,7 @@ const SearchPage = () => {
                 }
                 onFilteredItemsChange={handleFilteredItemsChange}
                 type={searchType}
-                onClose={() => setIsSearchOpen(false)}
+                onClose={handleSearchClose}
               />
             </div>
           </DrawerContent>
@@ -140,7 +155,7 @@ const SearchPage = () => {
           <DialogOverlay className="bg-black/70 backdrop-blur-sm" />
           <DialogContent 
             className="p-0 border-0 shadow-none bg-transparent"
-            style={{ maxWidth: "90vw", width: "500px" }}
+            style={{ maxWidth: "90vw", width: "550px" }}
           >
             <CatalogSearch 
               items={searchType === 'food' 
@@ -149,7 +164,7 @@ const SearchPage = () => {
               }
               onFilteredItemsChange={handleFilteredItemsChange}
               type={searchType}
-              onClose={() => setIsSearchOpen(false)}
+              onClose={handleSearchClose}
             />
           </DialogContent>
         </Dialog>

@@ -107,7 +107,7 @@ const Index = () => {
               <div className="py-16"></div>
             </div>
             
-            <Link to="/bites" className="grid grid-cols-3 border-b border-catalog-softBrown hover:bg-catalog-cream">
+            <Link to="/search?type=food" className="grid grid-cols-3 border-b border-catalog-softBrown hover:bg-catalog-cream">
               <div className="border-r border-catalog-softBrown py-8 flex items-center justify-center">
                 <Search size={24} className="text-vintage-red" />
               </div>
@@ -152,7 +152,7 @@ const Index = () => {
               <div className="py-16"></div>
             </div>
             
-            <Link to="/blockbusters" className="grid grid-cols-3 border-b border-catalog-softBrown hover:bg-catalog-cream">
+            <Link to="/search?type=entertainment" className="grid grid-cols-3 border-b border-catalog-softBrown hover:bg-catalog-cream">
               <div className="border-r border-catalog-softBrown py-8 flex items-center justify-center">
                 <Search size={24} className="text-vintage-red" />
               </div>
