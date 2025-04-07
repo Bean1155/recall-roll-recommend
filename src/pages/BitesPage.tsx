@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
@@ -7,7 +6,6 @@ import { getAllCards } from "@/lib/data";
 import { Utensils } from "lucide-react";
 import CategoryDrawers from "@/components/bites/CategoryDrawers"; 
 import AddCategoryDialog from "@/components/bites/AddCategoryDialog";
-import CardDetailDialog from "@/components/bites/CardDetailDialog";
 import BitesHeader from "@/components/bites/BitesHeader";
 import { useCategoryColors } from "@/components/bites/useCategoryColors";
 import { useCardDetailHandling } from "@/components/bites/useCardDetailHandling";
@@ -112,7 +110,6 @@ const BitesPage = () => {
   };
   
   const applyProximityFilterFromUrl = (location: string, distance: number) => {
-    // Helper function to calculate distance (simplified mock)
     const calculateDistance = (loc1: string, loc2: string) => {
       const stringToNum = (str: string) => {
         let hash = 0;
@@ -134,7 +131,6 @@ const BitesPage = () => {
       return calcDistance <= distance;
     });
     
-    // Sort by distance
     filtered.sort((a, b) => {
       if (!a.location || !b.location) return 0;
       const distA = calculateDistance(location, a.location);
@@ -168,7 +164,6 @@ const BitesPage = () => {
     setFilterDescription("");
     console.log('BitesPage: Filters cleared');
     
-    // Remove filter parameters from URL
     navigate('/bites');
   };
   
@@ -188,9 +183,6 @@ const BitesPage = () => {
       headerContent={
         <BitesHeader 
           onClearFilters={clearFilters}
-          cards={cards}
-          onFilteredItemsChange={handleFilteredItemsChange}
-          onCardClick={handleCardClick}
           hasActiveFilters={hasActiveFilters}
         />
       }
@@ -215,13 +207,6 @@ const BitesPage = () => {
       <AddCategoryDialog 
         isOpen={isAddCategoryDialogOpen} 
         onOpenChange={setIsAddCategoryDialogOpen} 
-      />
-      
-      <CardDetailDialog 
-        isOpen={isCardDetailOpen}
-        onOpenChange={setIsCardDetailOpen}
-        card={selectedCard}
-        categoryColors={categoryColors}
       />
     </GridLayout>
   );

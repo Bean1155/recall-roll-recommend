@@ -19,7 +19,7 @@ const SearchButton: React.FC<SearchButtonProps> = ({ path, color, onClick }) => 
       <Tooltip>
         <TooltipTrigger asChild>
           <Link 
-            to={path}
+            to={"/browse"}
             className="flex flex-col items-center order-first group"
             onClick={onClick}
           >
@@ -39,12 +39,12 @@ const SearchButton: React.FC<SearchButtonProps> = ({ path, color, onClick }) => 
             <span className={`text-xs font-medium ${
               isActive ? "text-catalog-teal" : "text-catalog-softBrown"
             } transition-all duration-200 group-hover:font-bold`}>
-              Search
+              Browse
             </span>
           </Link>
         </TooltipTrigger>
         <TooltipContent className="bg-white text-catalog-softBrown">
-          Search and browse the catalog
+          Browse the catalog
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

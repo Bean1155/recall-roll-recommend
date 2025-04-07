@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
@@ -45,11 +44,7 @@ const EntertainmentCardsDisplay = ({
   const navigate = useNavigate();
 
   const handleCardClick = (card: EntertainmentCard) => {
-    if (onCardClick) {
-      onCardClick(card);
-    } else {
-      navigate(`/edit/${card.id}`);
-    }
+    navigate(`/edit/${card.id}`);
   };
 
   return (

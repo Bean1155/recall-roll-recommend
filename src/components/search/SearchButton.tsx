@@ -13,7 +13,7 @@ const SearchButton: React.FC<SearchButtonProps> = ({ onClick }) => {
         onClick={onClick}
         className="bg-[#1A7D76] hover:bg-[#166661] px-8 rounded-2xl font-typewriter text-white"
       >
-        SEARCH CATALOG
+        BROWSE CATALOG
       </Button>
     </div>
   );
