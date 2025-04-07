@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -43,7 +42,6 @@ const SearchPage = () => {
       setSearchType('food');
     }
 
-    // Automatically open search when page loads
     setIsSearchOpen(true);
   }, [location.search]);
 
@@ -70,11 +68,9 @@ const SearchPage = () => {
   const foodTabBgColor = "#FDE1D3";  // Pink (Bites) from the header
   const entertainmentTabBgColor = "#D6E5F0"; // Blue (Blockbusters) from the header
 
-  // Modified close action - don't navigate away when coming from browse action
   const handleSearchClose = () => {
     setIsSearchOpen(false);
     
-    // Only navigate back if not coming from a browse action (which would be /search path)
     if (!location.pathname.includes('/search')) {
       setTimeout(() => navigate('/'), 300);
     }
@@ -134,21 +130,8 @@ const SearchPage = () => {
           open={isSearchOpen}
           onOpenChange={setIsSearchOpen}
         >
-          <DrawerOverlay className="bg-black/70 backdrop-blur-sm fixed inset-0" />
-          <DrawerContent 
-            className="p-0 border-t-2 border-catalog-softBrown bg-[#FAF3E3] rounded-t-xl w-full"
-            style={{
-              position: "absolute",
-              top: 0,
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: "100%",
-              maxHeight: "none",
-              margin: 0,
-            }}
-          >
-            <div className="flex-1 overflow-auto">
+          <DrawerContent className="p-0 border-t-0 bg-[#FAF3E3] inset-0 h-full w-full pb-24">
+            <div className="h-full overflow-y-auto">
               <CatalogSearch 
                 items={searchType === 'food' 
                   ? allCards.filter(card => card.type === 'food')

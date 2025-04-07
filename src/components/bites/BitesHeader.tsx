@@ -7,6 +7,8 @@ import CatalogSearch from "@/components/CatalogSearch";
 import BitesFilter from "./BitesFilter";
 import { FoodCard } from "@/lib/types";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 
 interface BitesHeaderProps {
   onClearFilters: () => void;
@@ -104,12 +106,38 @@ const BitesHeader = ({
       </Button>
 
       {isSearchOpen && (
-        <CatalogSearch 
-          items={cards}
-          onFilteredItemsChange={onFilteredItemsChange}
-          type="food"
-          onClose={() => setIsSearchOpen(false)}
-        />
+        isMobile ? (
+          <Drawer
+            open={isSearchOpen}
+            onOpenChange={setIsSearchOpen}
+          >
+            <DrawerContent className="p-0 border-t-0 bg-[#FAF3E3] inset-0 h-full w-full pb-24">
+              <div className="h-full overflow-y-auto">
+                <CatalogSearch 
+                  items={cards}
+                  onFilteredItemsChange={onFilteredItemsChange}
+                  type="food"
+                  onClose={() => setIsSearchOpen(false)}
+                />
+              </div>
+            </DrawerContent>
+          </Drawer>
+        ) : (
+          <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+            <DialogOverlay className="bg-black/70 backdrop-blur-sm" />
+            <DialogContent 
+              className="p-0 border-0 shadow-none bg-transparent"
+              style={{ maxWidth: "90vw", width: "550px" }}
+            >
+              <CatalogSearch 
+                items={cards}
+                onFilteredItemsChange={onFilteredItemsChange}
+                type="food"
+                onClose={() => setIsSearchOpen(false)}
+              />
+            </DialogContent>
+          </Dialog>
+        )
       )}
     </div>
   );

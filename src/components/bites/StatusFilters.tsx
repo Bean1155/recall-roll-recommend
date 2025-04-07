@@ -14,19 +14,21 @@ const StatusFilters = ({ activeStatuses, onSelect }: StatusFiltersProps) => {
       <DropdownMenuCheckboxItem
         checked={activeStatuses.includes("Visited: Tried this bite")}
         onSelect={() => onSelect("status", "Visited: Tried this bite")}
+        className="py-2"
       >
         <div className="flex flex-col">
-          <span>Visited</span>
-          <span className="text-xs text-gray-500">Items you've already tried</span>
+          <span className="font-medium">Visited</span>
+          <span className="text-xs text-gray-500 mt-1">Items you've already tried</span>
         </div>
       </DropdownMenuCheckboxItem>
       <DropdownMenuCheckboxItem
         checked={activeStatuses.includes("Interested: Want a bite")}
         onSelect={() => onSelect("status", "Interested: Want a bite")}
+        className="py-2"
       >
         <div className="flex flex-col">
-          <span>Interested</span>
-          <span className="text-xs text-gray-500">Items you want to try</span>
+          <span className="font-medium">Interested</span>
+          <span className="text-xs text-gray-500 mt-1">Items you want to try</span>
         </div>
       </DropdownMenuCheckboxItem>
       <DropdownMenuSeparator />
