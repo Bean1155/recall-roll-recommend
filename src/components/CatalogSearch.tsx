@@ -327,9 +327,10 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 backgroundImage: "linear-gradient(rgba(139, 125, 107, 0.03) 1px, transparent 1px)",
                 backgroundSize: "100% 28px",
                 boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
-                height: "85vh",
-                maxHeight: "85vh",
-                position: "relative",
+                height: "100vh",
+                maxHeight: "100vh",
+                position: "fixed",
+                inset: 0,
                 overflowY: "auto"
               }}
             >
@@ -352,7 +353,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                 zIndex: 1
               }}></div>
               
-              <div className="p-4 relative z-10 pb-20">
+              <div className="p-4 relative z-10 pb-28">
                 <div className="mb-4">
                   <label htmlFor="search-input" className="block text-xl font-medium text-vintage-red mb-1 font-typewriter">
                     SEARCH TERMS
@@ -916,8 +917,9 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
             backgroundImage: "linear-gradient(rgba(139, 125, 107, 0.03) 1px, transparent 1px)",
             backgroundSize: "100% 28px",
             boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
-            maxHeight: "80vh",
-            position: "relative"
+            maxHeight: isMobile ? "100vh" : "80vh",
+            position: "relative",
+            height: isMobile ? "100vh" : "auto"
           }}
         >
           <div className="bg-[#1A7D76] w-full py-3 px-4 flex flex-col items-center justify-center">

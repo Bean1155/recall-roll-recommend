@@ -135,7 +135,15 @@ const SearchPage = () => {
           onOpenChange={setIsSearchOpen}
         >
           <DrawerOverlay className="bg-black/70 backdrop-blur-sm" />
-          <DrawerContent className="p-0 border-t-2 border-catalog-softBrown bg-[#FAF3E3] rounded-t-xl h-[95vh] max-h-[95vh] fixed inset-x-0 top-[5vh]">
+          <DrawerContent 
+            className="p-0 border-t-2 border-catalog-softBrown bg-[#FAF3E3] rounded-t-xl"
+            style={{
+              height: "100vh",
+              maxHeight: "100vh",
+              position: "fixed",
+              inset: 0, // Position the drawer to fill the entire viewport
+            }}
+          >
             <div className="h-full overflow-y-auto">
               <CatalogSearch 
                 items={searchType === 'food' 
