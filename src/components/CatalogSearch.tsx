@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -722,84 +723,28 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
-                            
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <TabsTrigger 
-                                    value="favorites" 
-                                    className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
-                                  >
-                                    <Heart size={18} />
-                                    <span className="sr-only">Favorites</span>
-                                  </TabsTrigger>
-                                </TooltipTrigger>
-                                <TooltipContent className="bg-white text-catalog-softBrown">
-                                  {filterDescriptions.favorites}
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                            
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <TabsTrigger 
-                                    value="topRated" 
-                                    className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
-                                  >
-                                    <Star size={18} />
-                                    <span className="sr-only">Top Rated</span>
-                                  </TabsTrigger>
-                                </TooltipTrigger>
-                                <TooltipContent className="bg-white text-catalog-softBrown">
-                                  {filterDescriptions.topRated}
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                            
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <TabsTrigger 
-                                    value="location" 
-                                    className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
-                                  >
-                                    <MapPin size={18} />
-                                    <span className="sr-only">Location</span>
-                                  </TabsTrigger>
-                                </TooltipTrigger>
-                                <TooltipContent className="bg-white text-catalog-softBrown">
-                                  {filterDescriptions.location}
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                            
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <TabsTrigger 
-                                    value="byStatus" 
-                                    className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
-                                  >
-                                    <FileText size={18} />
-                                    <span className="sr-only">Status</span>
-                                  </TabsTrigger>
-                                </TooltipTrigger>
-                                <TooltipContent className="bg-white text-catalog-softBrown">
-                                  {filterDescriptions.byStatus}
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                            
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <TabsTrigger 
-                                    value="newest" 
-                                    className="text-sm py-2 data-[state=active]:bg-white data-[state=active]:text-[#1A7D76] data-[state=active]:shadow-sm"
-                                  >
-                                    <Clock size={18} />
-                                    <span className="sr-only">Newest</span>
-                                  </TabsTrigger>
-                                </TooltipTrigger>
-                                <TooltipContent className="bg-
+                          </div>
+                        </TabsList>
+                      </Tabs>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+
+                <div className="mt-3 flex justify-center">
+                  <Button 
+                    onClick={executeSearch}
+                    className="bg-[#1A7D76] hover:bg-[#166661] px-8 rounded-2xl font-typewriter text-white"
+                  >
+                    SEARCH CATALOG
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </DialogPortal>
+        </Dialog>
+      ) : null}
+    </>
+  );
+};
+
+export default CatalogSearch;
