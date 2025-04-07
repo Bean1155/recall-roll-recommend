@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import CatalogSearch from "@/components/CatalogSearch";
 import BitesFilter from "./BitesFilter";
 import { FoodCard } from "@/lib/types";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface BitesHeaderProps {
   onClearFilters: () => void;
@@ -23,6 +24,7 @@ const BitesHeader = ({
   hasActiveFilters = false
 }: BitesHeaderProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleFilterChange = (filterType: string, value: string) => {
     // Filter the cards based on the selected filter
@@ -69,30 +71,35 @@ const BitesHeader = ({
         variant="outline" 
         size="sm" 
         onClick={() => setIsSearchOpen(true)} 
-        className="flex items-center gap-1"
+        className={`flex items-center gap-1 ${isMobile ? 'flex-1 justify-center' : ''}`}
       >
         <Search className="h-4 w-4" />
-        <span className="hidden sm:inline">Search</span>
+        <span className={isMobile ? 'inline' : 'hidden sm:inline'}>
+          {isMobile ? 'Search & Filter' : 'Search'}
+        </span>
       </Button>
       
-      <BitesFilter 
-        hasActiveFilters={hasActiveFilters}
-        onClearFilters={onClearFilters}
-        onOpenFilters={() => {}}
-        onFilterChange={handleFilterChange}
-        allCards={cards}
-        onCardClick={handleCardClickFromFilter}
-      />
+      {/* Only show the filter button on desktop */}
+      {!isMobile && (
+        <BitesFilter 
+          hasActiveFilters={hasActiveFilters}
+          onClearFilters={onClearFilters}
+          onOpenFilters={() => {}}
+          onFilterChange={handleFilterChange}
+          allCards={cards}
+          onCardClick={handleCardClickFromFilter}
+        />
+      )}
       
       <Button 
         variant="outline" 
         size="sm" 
-        className="flex items-center gap-1 bg-teal-700 text-white hover:bg-teal-800"
+        className={`flex items-center gap-1 bg-teal-700 text-white hover:bg-teal-800 ${isMobile ? 'flex-1 justify-center' : ''}`}
         asChild
       >
         <Link to="/create/food">
           <PlusCircle className="h-4 w-4" />
-          <span className="hidden sm:inline">Add</span>
+          <span className={isMobile ? 'inline' : 'hidden sm:inline'}>Add</span>
         </Link>
       </Button>
 

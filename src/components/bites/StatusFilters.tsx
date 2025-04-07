@@ -15,13 +15,19 @@ const StatusFilters = ({ activeStatuses, onSelect }: StatusFiltersProps) => {
         checked={activeStatuses.includes("Visited: Tried this bite")}
         onSelect={() => onSelect("status", "Visited: Tried this bite")}
       >
-        Visited
+        <div className="flex flex-col">
+          <span>Visited</span>
+          <span className="text-xs text-gray-500">Items you've already tried</span>
+        </div>
       </DropdownMenuCheckboxItem>
       <DropdownMenuCheckboxItem
         checked={activeStatuses.includes("Interested: Want a bite")}
         onSelect={() => onSelect("status", "Interested: Want a bite")}
       >
-        Interested
+        <div className="flex flex-col">
+          <span>Interested</span>
+          <span className="text-xs text-gray-500">Items you want to try</span>
+        </div>
       </DropdownMenuCheckboxItem>
       <DropdownMenuSeparator />
     </>
