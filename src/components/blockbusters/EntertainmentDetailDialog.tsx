@@ -39,6 +39,10 @@ const EntertainmentDetailDialog = ({
   const category = card.entertainmentCategory?.toLowerCase() || 'etc.';
   const backgroundColor = categoryColors[category] || '#d2b48c';
   
+  const handleClose = () => {
+    onOpenChange(false);
+  };
+  
   if (isMobile) {
     return (
       <Drawer open={isOpen} onOpenChange={onOpenChange}>
@@ -54,10 +58,13 @@ const EntertainmentDetailDialog = ({
           <DrawerTitle className="sr-only">Card Details</DrawerTitle>
           <div className="relative h-full">
             <div className="absolute right-4 top-4 z-50">
-              <DrawerClose className="rounded-full bg-white/90 p-2.5 shadow-md hover:bg-white transition-colors flex items-center justify-center">
+              <Button 
+                onClick={handleClose} 
+                className="rounded-full bg-white/90 p-2.5 shadow-md hover:bg-white transition-colors flex items-center justify-center h-10 w-10"
+              >
                 <X size={24} className="text-gray-700" />
                 <span className="sr-only">Close</span>
-              </DrawerClose>
+              </Button>
             </div>
             
             <div className="p-6 animate-fade-in overflow-y-auto pb-16" style={{ height: "100%" }}>
@@ -95,5 +102,8 @@ const EntertainmentDetailDialog = ({
     </Dialog>
   );
 };
+
+// Need to import Button
+import { Button } from "@/components/ui/button";
 
 export default EntertainmentDetailDialog;

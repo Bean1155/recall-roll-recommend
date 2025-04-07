@@ -21,6 +21,14 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
 }) => {
   const isMobile = useIsMobile();
 
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      onOpenChange(false);
+    }
+  };
+
   if (isMobile) {
     return (
       <Drawer
@@ -36,7 +44,7 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
             {onClose && (
               <div className="absolute right-4 top-3 z-50">
                 <Button 
-                  onClick={onClose} 
+                  onClick={handleClose} 
                   className="rounded-full bg-white/90 p-2.5 h-10 w-10 shadow-md hover:bg-white flex items-center justify-center"
                   variant="ghost"
                   size="icon"
