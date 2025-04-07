@@ -1,11 +1,23 @@
 
 import { FoodCard } from "@/lib/types";
+import { Star } from "lucide-react";
 
 interface FoodCardDetailsProps {
   card: FoodCard;
 }
 
 const FoodCardDetails = ({ card }: FoodCardDetailsProps) => {
+  // Helper function to render stars for the service rating
+  const renderServiceRating = (rating: number) => {
+    return (
+      <div className="flex items-center">
+        {Array.from({ length: rating }).map((_, i) => (
+          <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-1">
       {card.creator && (
@@ -35,7 +47,7 @@ const FoodCardDetails = ({ card }: FoodCardDetailsProps) => {
       )}
       {card.serviceRating && (
         <p className="text-gray-700">
-          <span className="font-medium">Service:</span> {card.serviceRating}
+          <span className="font-medium">Service:</span> {renderServiceRating(card.serviceRating)}
         </p>
       )}
     </div>

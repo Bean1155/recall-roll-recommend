@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { FilterX, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,6 +15,7 @@ import RatingFilters from "./RatingFilters";
 import LocationFilters from "./LocationFilters";
 import FilteredCardsList from "./FilteredCardsList";
 import { useFilteredCards, ProximitySearch } from "@/hooks/useFilteredCards";
+import { useNavigate } from "react-router-dom";
 
 interface BitesFilterProps {
   hasActiveFilters: boolean;
@@ -42,6 +42,7 @@ const BitesFilter = ({
   onCardClick
 }: BitesFilterProps) => {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   
   const {
     filteredCards,
@@ -51,7 +52,8 @@ const BitesFilter = ({
     handleProximitySearch,
     closeFilteredCards,
     setShowFilteredCards,
-    proximitySearch
+    proximitySearch,
+    selectedFilter
   } = useFilteredCards(allCards);
   
   const handleFilterSelect_ = (filterType: string, value: string) => {
@@ -64,6 +66,13 @@ const BitesFilter = ({
     // Always keep the dropdown open to show results
     setOpen(true);
     setShowFilteredCards(true);
+
+    // If we have enough results, navigate to a filtered list view
+    if (filteredCards.length > 4) {
+      setOpen(false);
+      const filterParams = `${filterType}=${encodeURIComponent(value)}`;
+      navigate(`/bites?filter=${filterParams}`);
+    }
   };
 
   const handleProximitySearch_ = (options: ProximitySearch) => {
@@ -72,6 +81,15 @@ const BitesFilter = ({
     // Always keep the dropdown open to show results
     setOpen(true);
     setShowFilteredCards(true);
+
+    // Add a slight delay to allow filteredCards to update
+    setTimeout(() => {
+      // Only navigate if we have sufficient results
+      if (filteredCards.length > 4) {
+        setOpen(false);
+        navigate(`/bites?proximity=${options.location}&distance=${options.distance}`);
+      }
+    }, 100);
   };
 
   const handleCardSelect = (card: FoodCard) => {
@@ -79,6 +97,17 @@ const BitesFilter = ({
       onCardClick(card);
       setOpen(false);
       setShowFilteredCards(false);
+    }
+  };
+  
+  const handleShowAllResults = () => {
+    setOpen(false);
+    
+    if (selectedFilter) {
+      const filterParams = `${selectedFilter.type}=${encodeURIComponent(selectedFilter.value)}`;
+      navigate(`/bites?filter=${filterParams}`);
+    } else if (proximitySearch) {
+      navigate(`/bites?proximity=${proximitySearch.location}&distance=${proximitySearch.distance}`);
     }
   };
   
@@ -146,6 +175,7 @@ const BitesFilter = ({
             onCardSelect={handleCardSelect}
             onClose={closeFilteredCards}
             proximitySearch={proximitySearch}
+            onShowAll={handleShowAllResults}
           />
         </DropdownMenuContent>
       </DropdownMenu>

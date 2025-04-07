@@ -3,7 +3,7 @@ import React from "react";
 import { FoodCard } from "@/lib/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Star, FilterX, Navigation } from "lucide-react";
+import { MapPin, Star, FilterX, Navigation, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { ProximitySearch } from "@/hooks/useFilteredCards";
@@ -14,6 +14,7 @@ interface FilteredCardsListProps {
   onCardSelect: (card: FoodCard) => void;
   onClose: () => void;
   proximitySearch?: ProximitySearch | null;
+  onShowAll?: () => void;
 }
 
 const FilteredCardsList = ({
@@ -21,7 +22,8 @@ const FilteredCardsList = ({
   filteredCards,
   onCardSelect,
   onClose,
-  proximitySearch
+  proximitySearch,
+  onShowAll
 }: FilteredCardsListProps) => {
   if (!showFilteredCards || filteredCards.length === 0) {
     return null;
@@ -50,6 +52,10 @@ const FilteredCardsList = ({
     return ((combinedHash % 200) / 10) + 0.1; // Distance between 0.1-20 miles with one decimal
   };
 
+  // Display limited number of cards in dropdown
+  const displayCards = filteredCards.slice(0, 5);
+  const hasMoreCards = filteredCards.length > displayCards.length;
+
   return (
     <>
       <DropdownMenuSeparator />
@@ -71,7 +77,7 @@ const FilteredCardsList = ({
       
       <ScrollArea className="max-h-64 w-full">
         <div className="p-2">
-          {filteredCards.map((card) => (
+          {displayCards.map((card) => (
             <Card 
               key={card.id} 
               className="mb-2 cursor-pointer hover:bg-gray-50 border border-gray-200" 
@@ -111,6 +117,22 @@ const FilteredCardsList = ({
               </CardContent>
             </Card>
           ))}
+          
+          {hasMoreCards && onShowAll && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full mt-2 flex items-center justify-between"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onShowAll();
+              }}
+            >
+              <span>View all {filteredCards.length} results</span>
+              <ChevronRight className="h-3.5 w-3.5" />
+            </Button>
+          )}
         </div>
       </ScrollArea>
     </>
