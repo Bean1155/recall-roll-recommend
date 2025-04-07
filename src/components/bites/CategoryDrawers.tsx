@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import CatalogCard from "@/components/CatalogCard";
+import CatalogCardCompact from "@/components/CatalogCardCompact";
 import Envelope from "@/components/Envelope";
 import { FoodCard, FoodCategory } from "@/lib/types";
 import { getCategoryDisplayName, defaultCategories } from "@/utils/categoryUtils";
@@ -64,7 +64,6 @@ const CategoryDrawers = ({
       return acc;
     }, {});
     
-    // Only add default categories if we're not hiding empty categories
     if (!hideEmptyCategories) {
       defaultCategories.forEach(cat => {
         if (!grouped[cat]) {
@@ -75,7 +74,6 @@ const CategoryDrawers = ({
     
     setCategorizedCards(grouped);
     
-    // If no category is open and we have cards, open the first category with cards
     if (!openCategory) {
       const firstCategoryWithCards = Object.entries(grouped)
         .find(([_, catCards]) => catCards.length > 0)?.[0];
@@ -94,7 +92,6 @@ const CategoryDrawers = ({
     }
   };
   
-  // Function to render cards based on count and device
   const renderCards = (catCards: FoodCard[], color: string) => {
     if (catCards.length === 0) {
       return (
@@ -113,7 +110,6 @@ const CategoryDrawers = ({
       );
     }
     
-    // If there are multiple cards and we're on mobile or it's more than 2 cards, use carousel
     if (catCards.length > 1) {
       return (
         <Carousel className="w-full">
@@ -148,7 +144,6 @@ const CategoryDrawers = ({
       );
     }
     
-    // For a single card, just display it normally
     return (
       <div className="grid grid-cols-1 gap-4">
         {catCards.map(card => (
@@ -172,7 +167,6 @@ const CategoryDrawers = ({
   return (
     <div className="space-y-2">
       {Object.entries(categorizedCards).map(([cat, catCards]) => {
-        // Skip empty categories if hideEmptyCategories is true
         if (catCards.length === 0 && (hideEmptyCategories || !defaultCategories.includes(cat as FoodCategory))) {
           return null;
         }

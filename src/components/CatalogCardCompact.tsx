@@ -54,6 +54,23 @@ const CatalogCardCompact = ({ card, onClick }: CatalogCardCompactProps) => {
     return text.slice(0, maxLength) + '...';
   };
   
+  // Check for image URL based on card type
+  const hasImage = card.type === 'food' ? 
+    'url' in card && Boolean(card.url) : 
+    'url' in card && Boolean(card.url);
+  
+  // Get image URL safely
+  const getImageUrl = () => {
+    if (card.type === 'food' && 'url' in card) {
+      return card.url;
+    } else if (card.type === 'entertainment' && 'url' in card) {
+      return card.url;
+    }
+    return null;
+  };
+  
+  const imageUrl = getImageUrl();
+  
   return (
     <Card 
       className={cn(
@@ -63,9 +80,9 @@ const CatalogCardCompact = ({ card, onClick }: CatalogCardCompactProps) => {
       onClick={handleCardClick}
     >
       <div className={cn("relative h-32 flex items-center justify-center", bgColorClass)}>
-        {card.imageUrl ? (
+        {imageUrl ? (
           <img
-            src={card.imageUrl}
+            src={imageUrl}
             alt={card.title}
             className="w-full h-full object-cover"
           />
@@ -83,7 +100,7 @@ const CatalogCardCompact = ({ card, onClick }: CatalogCardCompactProps) => {
       </div>
       <CardContent className="p-3">
         <div className="font-medium text-sm line-clamp-1">{card.title}</div>
-        {card.rating > 0 && (
+        {card.rating && card.rating > 0 && (
           <div className="flex items-center mt-1">
             {Array.from({ length: card.rating }).map((_, i) => (
               <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />

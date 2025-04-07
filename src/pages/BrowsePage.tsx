@@ -6,7 +6,8 @@ import { FoodCard, EntertainmentCard } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { CatalogCard } from "@/components/CatalogCard";
+import CatalogCard from "@/components/CatalogCard";
+import CatalogCardCompact from "@/components/CatalogCardCompact";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { 
@@ -31,12 +32,10 @@ const BrowsePage = () => {
   const isMobile = useIsMobile();
   const allCards = getAllCards();
 
-  // Filtering cards by type (food or entertainment)
   const foodCards = allCards.filter(card => card.type === 'food') as FoodCard[];
   const entertainmentCards = allCards.filter(card => card.type === 'entertainment') as EntertainmentCard[];
   const activeCards = activeType === 'food' ? foodCards : entertainmentCards;
 
-  // Define browse categories
   const browseCategories: BrowseCategory[] = [
     {
       name: "Favorites",
@@ -58,7 +57,6 @@ const BrowsePage = () => {
       path: "by-location",
       icon: <MapPin className="h-5 w-5 text-blue-500" />,
       filterFunction: (cards) => {
-        // Group by location and take only unique locations
         const locations = new Set<string>();
         cards.forEach(card => {
           if ('location' in card && card.location) {
@@ -66,7 +64,6 @@ const BrowsePage = () => {
           }
         });
         
-        // Show a few example cards from different locations
         const result: (FoodCard | EntertainmentCard)[] = [];
         locations.forEach(location => {
           const locationCards = cards.filter(card => 
@@ -167,7 +164,6 @@ const BrowsePage = () => {
   const handleCategorySelect = (category: BrowseCategory) => {
     setSelectedCategory(category.path);
     
-    // Navigate to the filtered cards view if it's a direct filter
     if (category.path === 'favorites' || category.path === 'highest-rated' || category.path === 'recent') {
       const filteredCards = getFilteredCards(category);
       const cardIds = filteredCards.map(card => card.id).join(',');
@@ -178,7 +174,6 @@ const BrowsePage = () => {
         navigate(`/blockbusters?browse=${category.path}&ids=${cardIds}`);
       }
     } else {
-      // Otherwise, keep on the browse page but show the subcategories
       setSelectedCategory(category.path);
     }
   };
@@ -193,7 +188,6 @@ const BrowsePage = () => {
     }
   };
 
-  // If a category is selected that requires further filtering
   const renderSubcategories = () => {
     if (!selectedCategory) return null;
     
@@ -201,7 +195,6 @@ const BrowsePage = () => {
     if (!category) return null;
 
     if (selectedCategory === 'by-location') {
-      // Group cards by location
       const locationMap = new Map<string, (FoodCard | EntertainmentCard)[]>();
       
       activeCards.forEach(card => {
@@ -248,7 +241,7 @@ const BrowsePage = () => {
                           className="cursor-pointer"
                           onClick={() => handleSubCategorySelect('by-location', location, cards)}
                         >
-                          <CatalogCard card={card} compact />
+                          <CatalogCardCompact card={card} />
                         </div>
                       ))}
                       
@@ -271,7 +264,6 @@ const BrowsePage = () => {
         </div>
       );
     } else if (selectedCategory === 'by-cuisine' || selectedCategory === 'by-genre') {
-      // Group cards by cuisine or genre
       const groupKey = activeType === 'food' ? 'cuisine' : 'genre';
       const groupMap = new Map<string, (FoodCard | EntertainmentCard)[]>();
       
@@ -335,7 +327,7 @@ const BrowsePage = () => {
                             cards
                           )}
                         >
-                          <CatalogCard card={card} compact />
+                          <CatalogCardCompact card={card} />
                         </div>
                       ))}
                       
@@ -362,7 +354,6 @@ const BrowsePage = () => {
         </div>
       );
     } else if (selectedCategory === 'by-status') {
-      // Group cards by status
       const statusMap = new Map<string, (FoodCard | EntertainmentCard)[]>();
       
       activeCards.forEach(card => {
@@ -409,7 +400,7 @@ const BrowsePage = () => {
                           className="cursor-pointer"
                           onClick={() => handleSubCategorySelect('by-status', status, cards)}
                         >
-                          <CatalogCard card={card} compact />
+                          <CatalogCardCompact card={card} />
                         </div>
                       ))}
                       
@@ -495,7 +486,7 @@ const BrowsePage = () => {
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
               {activeCards.slice(0, 5).map(card => (
                 <div key={card.id}>
-                  <CatalogCard card={card} compact />
+                  <CatalogCardCompact card={card} />
                 </div>
               ))}
             </div>
