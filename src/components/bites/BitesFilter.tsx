@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { FilterX, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,8 @@ const BitesFilter = ({
     handleFilterSelect,
     handleProximitySearch,
     closeFilteredCards,
-    setShowFilteredCards
+    setShowFilteredCards,
+    proximitySearch
   } = useFilteredCards(allCards);
   
   const handleFilterSelect_ = (filterType: string, value: string) => {
@@ -143,6 +145,7 @@ const BitesFilter = ({
             filteredCards={filteredCards}
             onCardSelect={handleCardSelect}
             onClose={closeFilteredCards}
+            proximitySearch={proximitySearch}
           />
         </DropdownMenuContent>
       </DropdownMenu>

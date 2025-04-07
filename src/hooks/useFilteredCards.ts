@@ -42,26 +42,88 @@ export const useFilteredCards = (allCards: FoodCard[] = []) => {
   // Calculate distance between two points using Haversine formula
   const calculateDistance = (location1: string, location2: string): number => {
     // In a real application, this would use geocoding to convert locations to coordinates
-    // and then calculate the actual distance
+    // and then calculate the actual distance using the Haversine formula
     
-    // For demo purposes, we're just doing a simple string comparison
-    // If locations match exactly, distance is 0, otherwise random distance between 1-20 miles
-    if (location1.toLowerCase() === location2.toLowerCase()) {
-      return 0;
-    }
-    
-    // Generate consistent but pseudo-random distance based on the two location strings
-    const stringToNum = (str: string) => {
-      let hash = 0;
-      for (let i = 0; i < str.length; i++) {
-        hash = ((hash << 5) - hash) + str.charCodeAt(i);
-        hash |= 0;
+    // Mock geocoding function to simulate real locations
+    const getCoordinates = (place: string): [number, number] => {
+      // Mock coordinates for common places
+      const coordinates: Record<string, [number, number]> = {
+        "New York": [-73.9857, 40.7484],
+        "Los Angeles": [-118.2437, 34.0522],
+        "Chicago": [-87.6298, 41.8781],
+        "San Francisco": [-122.4194, 37.7749],
+        "Miami": [-80.1918, 25.7617],
+        "Seattle": [-122.3321, 47.6062],
+        "Boston": [-71.0589, 42.3601],
+        "Austin": [-97.7431, 30.2672],
+        "Portland": [-122.6784, 45.5152],
+        "Philadelphia": [-75.1652, 39.9526],
+        "Savannah": [-81.0998, 32.0809],
+        "Denver": [-104.9903, 39.7392],
+        "Nashville": [-86.7844, 36.1627],
+        "New Orleans": [-90.0715, 29.9511],
+      };
+      
+      // Try to find an exact match
+      if (coordinates[place]) {
+        return coordinates[place];
       }
-      return Math.abs(hash);
+      
+      // Try to find a partial match
+      for (const [key, coords] of Object.entries(coordinates)) {
+        if (place.toLowerCase().includes(key.toLowerCase()) || 
+            key.toLowerCase().includes(place.toLowerCase())) {
+          return coords;
+        }
+      }
+      
+      // Generate consistent but pseudo-random coordinates based on input string
+      const hash = (str: string) => {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          hash = ((hash << 5) - hash) + str.charCodeAt(i);
+          hash |= 0;
+        }
+        return hash;
+      };
+      
+      const h = Math.abs(hash(place));
+      // Generate coordinates within continental US bounds
+      const lng = -98.5795 + (h % 50 - 25);
+      const lat = 39.8283 + ((h >> 8) % 20 - 10);
+      
+      return [lng, lat];
     };
     
-    const combinedHash = stringToNum(location1 + location2);
-    return (combinedHash % 20) + 1; // Distance between 1-20 miles
+    // Haversine formula implementation
+    const haversine = (
+      [lon1, lat1]: [number, number], 
+      [lon2, lat2]: [number, number]
+    ): number => {
+      // Convert degrees to radians
+      const toRad = (degree: number) => degree * Math.PI / 180;
+      
+      const R = 3958.8; // Earth's radius in miles
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      
+      const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * 
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c; // Distance in miles
+      
+      return distance;
+    };
+    
+    // Get coordinates for both locations
+    const coords1 = getCoordinates(location1);
+    const coords2 = getCoordinates(location2);
+    
+    // Calculate distance using Haversine formula
+    return haversine(coords1, coords2);
   };
   
   // Apply filter when selectedFilter changes
@@ -107,6 +169,14 @@ export const useFilteredCards = (allCards: FoodCard[] = []) => {
         
         const distance = calculateDistance(proximitySearch.location, card.location);
         return distance <= proximitySearch.distance;
+      });
+      
+      // Sort by distance from the selected location
+      filtered.sort((a, b) => {
+        if (!a.location || !b.location) return 0;
+        const distA = calculateDistance(proximitySearch.location, a.location);
+        const distB = calculateDistance(proximitySearch.location, b.location);
+        return distA - distB;
       });
     }
     

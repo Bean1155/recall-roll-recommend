@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import MapVisualization from "@/components/map/MapVisualization";
 
 interface LocationFiltersProps {
   activeLocations: string[];
@@ -41,6 +42,7 @@ const LocationFilters = ({
   const [searchLocation, setSearchLocation] = useState("");
   const [searchDistance, setSearchDistance] = useState(5);
   const [customLocation, setCustomLocation] = useState("");
+  const [showMap, setShowMap] = useState(false);
 
   const handleProximitySearch = () => {
     if (onProximitySearch) {
@@ -48,6 +50,16 @@ const LocationFilters = ({
       onProximitySearch({ location, distance: searchDistance });
     }
   };
+
+  const handleLocationSelect = (location: string) => {
+    setSearchLocation(location);
+    setShowMap(true);
+  };
+
+  // Determine which location to use for the map
+  const mapLocation = searchLocation === "custom" ? 
+    (customLocation || "United States") : 
+    (searchLocation || "United States");
 
   return (
     <>
@@ -93,7 +105,11 @@ const LocationFilters = ({
               <Label className="text-xs text-gray-500 mb-1 block">Search near:</Label>
               <Select 
                 value={searchLocation} 
-                onValueChange={setSearchLocation}
+                onValueChange={(value) => {
+                  setSearchLocation(value);
+                  // Show map when a location is selected
+                  setShowMap(!!value);
+                }}
               >
                 <SelectTrigger className="w-full h-8 text-sm">
                   <SelectValue placeholder="Select location" />
@@ -116,7 +132,12 @@ const LocationFilters = ({
                 <Label className="text-xs text-gray-500 mb-1 block">Enter location:</Label>
                 <Input 
                   value={customLocation}
-                  onChange={(e) => setCustomLocation(e.target.value)}
+                  onChange={(e) => {
+                    setCustomLocation(e.target.value);
+                    if (e.target.value) {
+                      setShowMap(true);
+                    }
+                  }}
                   className="h-8 text-sm"
                   placeholder="Enter city, address, etc."
                 />
@@ -137,6 +158,18 @@ const LocationFilters = ({
                 className="my-2"
               />
             </div>
+
+            {/* Map visualization */}
+            {showMap && (searchLocation || (searchLocation === "custom" && customLocation)) && (
+              <div className="mt-2 mb-3">
+                <MapVisualization 
+                  location={mapLocation}
+                  distance={searchDistance}
+                  uniqueLocations={uniqueLocations}
+                  onLocationSelect={handleLocationSelect}
+                />
+              </div>
+            )}
             
             <Button 
               onClick={handleProximitySearch}
