@@ -112,7 +112,7 @@ const BitesHeader = ({
             onOpenChange={setIsSearchOpen}
           >
             <DrawerContent className="p-0 border border-gray-200 bg-[#FAF3E3] rounded-t-xl overflow-hidden max-h-[280px]">
-              <div className="max-h-[280px] overflow-y-auto pb-0">
+              <div className="overflow-y-auto pb-0">
                 <CatalogSearch 
                   items={cards}
                   onFilteredItemsChange={onFilteredItemsChange}
