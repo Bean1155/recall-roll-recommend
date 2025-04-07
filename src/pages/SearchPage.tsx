@@ -1,17 +1,15 @@
-
 import React, { useState, useEffect } from "react";
 import GridLayout from "@/components/GridLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UtensilsCrossed, Film, Search } from "lucide-react";
+import { UtensilsCrossed, Film, Search, X } from "lucide-react";
 import { CatalogCard as CatalogCardType } from "@/lib/types";
 import { getAllCards } from "@/lib/data";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerOverlay } from "@/components/ui/drawer";
 import CatalogSearch from "@/components/CatalogSearch";
 import { useUser } from "@/contexts/UserContext";
 import { Button } from "@/components/ui/button";
+import SearchContainer from "@/components/search/SearchContainer";
 
 const SearchPage = () => {
   const [allCards, setAllCards] = useState<CatalogCardType[]>([]);
@@ -44,7 +42,6 @@ const SearchPage = () => {
       setSearchType('food');
     }
     
-    // Auto-open search when component mounts
     setTimeout(() => {
       setIsSearchOpen(true);
     }, 100);
@@ -63,7 +60,6 @@ const SearchPage = () => {
       setSearchType('entertainment');
     }
     
-    // Ensure search reopens after changing tab
     setTimeout(() => setIsSearchOpen(true), 100);
   };
 
@@ -75,9 +71,7 @@ const SearchPage = () => {
   const entertainmentTabBgColor = "#D6E5F0"; // Blue (Blockbusters) from the header
 
   const handleSearchClose = () => {
-    // Don't navigate away on the search page, just toggle the drawer
     if (location.pathname.includes('/search')) {
-      // Force it to reopen after a brief moment
       setIsSearchOpen(false);
       setTimeout(() => setIsSearchOpen(true), 100);
     } else {
@@ -85,7 +79,6 @@ const SearchPage = () => {
     }
   };
 
-  // Function to manually trigger the search drawer
   const openSearchDrawer = () => {
     setIsSearchOpen(true);
   };
@@ -155,57 +148,27 @@ const SearchPage = () => {
         </Tabs>
       </div>
 
-      {/* Display search UI */}
-      {isMobile ? (
-        <Drawer
-          open={isSearchOpen}
-          onOpenChange={(open) => {
-            setIsSearchOpen(open);
-            // Auto-reopen on search page
-            if (!open && location.pathname.includes('/search')) {
-              setTimeout(() => setIsSearchOpen(true), 200);
-            }
-          }}
-        >
-          <DrawerOverlay className="bg-black/70 backdrop-blur-sm" />
-          <DrawerContent className="p-0 border-t-4 border-t-[#d2b48c] border-x border-x-[#d2b48c] border-b border-b-[#d2b48c] bg-[#FAF3E3] rounded-t-xl overflow-visible shadow-lg" style={{ maxHeight: "95vh" }}>
-            <div className="relative overflow-y-auto pb-6">
-              {/* Decorative line connecting to the button */}
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-1.5 bg-[#d2b48c] rounded-b-md"></div>
-              
-              <CatalogSearch 
-                items={searchType === 'food' 
-                  ? allCards.filter(card => card.type === 'food')
-                  : allCards.filter(card => card.type === 'entertainment')
-                }
-                onFilteredItemsChange={handleFilteredItemsChange}
-                type={searchType}
-                onClose={handleSearchClose}
-                compact={true}
-              />
-            </div>
-          </DrawerContent>
-        </Drawer>
-      ) : (
-        <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
-          <DialogOverlay className="bg-black/70 backdrop-blur-sm" />
-          <DialogContent 
-            className="p-0 border-0 shadow-none bg-transparent"
-            style={{ maxWidth: "90vw", width: "550px" }}
-          >
-            <CatalogSearch 
-              items={searchType === 'food' 
-                ? allCards.filter(card => card.type === 'food')
-                : allCards.filter(card => card.type === 'entertainment')
-              }
-              onFilteredItemsChange={handleFilteredItemsChange}
-              type={searchType}
-              onClose={handleSearchClose}
-              compact={true}
-            />
-          </DialogContent>
-        </Dialog>
-      )}
+      <SearchContainer
+        isOpen={isSearchOpen}
+        onOpenChange={(open) => {
+          setIsSearchOpen(open);
+          if (!open && location.pathname.includes('/search')) {
+            setTimeout(() => setIsSearchOpen(true), 200);
+          }
+        }}
+        onClose={handleSearchClose}
+      >
+        <CatalogSearch 
+          items={searchType === 'food' 
+            ? allCards.filter(card => card.type === 'food')
+            : allCards.filter(card => card.type === 'entertainment')
+          }
+          onFilteredItemsChange={handleFilteredItemsChange}
+          type={searchType}
+          onClose={handleSearchClose}
+          compact={true}
+        />
+      </SearchContainer>
     </GridLayout>
   );
 };

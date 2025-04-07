@@ -39,6 +39,7 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
                 className="absolute right-4 top-3 z-50 rounded-full bg-white/90 p-2 h-8 w-8 shadow-md hover:bg-white"
                 variant="ghost"
                 size="icon"
+                aria-label="Close"
               >
                 <X size={20} className="text-gray-700" />
                 <span className="sr-only">Close</span>
