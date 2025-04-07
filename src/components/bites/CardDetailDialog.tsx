@@ -50,10 +50,12 @@ const CardDetailDialog = ({
         >
           <DrawerTitle className="sr-only">Card Details</DrawerTitle>
           <div className="relative h-full">
-            <DrawerClose className="absolute right-4 top-4 z-50 rounded-full bg-white/90 p-2 shadow-md hover:bg-white transition-colors">
-              <X size={20} className="text-gray-700" />
-              <span className="sr-only">Close</span>
-            </DrawerClose>
+            <div className="absolute right-4 top-4 z-50">
+              <DrawerClose className="rounded-full bg-white/90 p-2.5 shadow-md hover:bg-white transition-colors flex items-center justify-center">
+                <X size={24} className="text-gray-700" />
+                <span className="sr-only">Close</span>
+              </DrawerClose>
+            </div>
             
             <div className="p-6 animate-fade-in overflow-y-auto pb-16" style={{ height: "100%" }}>
               <Envelope label={card.title} backgroundColor={categoryColors[card.category]}>

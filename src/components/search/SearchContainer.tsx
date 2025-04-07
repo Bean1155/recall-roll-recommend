@@ -34,16 +34,18 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-1.5 bg-[#d2b48c] rounded-b-md"></div>
             
             {onClose && (
-              <Button 
-                onClick={onClose} 
-                className="absolute right-4 top-3 z-50 rounded-full bg-white/90 p-2 h-8 w-8 shadow-md hover:bg-white"
-                variant="ghost"
-                size="icon"
-                aria-label="Close"
-              >
-                <X size={20} className="text-gray-700" />
-                <span className="sr-only">Close</span>
-              </Button>
+              <div className="absolute right-4 top-3 z-50">
+                <Button 
+                  onClick={onClose} 
+                  className="rounded-full bg-white/90 p-2.5 h-10 w-10 shadow-md hover:bg-white flex items-center justify-center"
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Close"
+                >
+                  <X size={24} className="text-gray-700" />
+                  <span className="sr-only">Close</span>
+                </Button>
+              </div>
             )}
 
             {children}
