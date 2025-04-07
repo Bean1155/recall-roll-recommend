@@ -50,8 +50,8 @@ const CardDetailDialog = ({
         >
           <DrawerTitle className="sr-only">Card Details</DrawerTitle>
           <div className="relative h-full">
-            <DrawerClose className="absolute right-4 top-4 z-10 rounded-full bg-white/90 p-2 shadow-md hover:bg-white transition-colors">
-              <X size={18} className="text-gray-700" />
+            <DrawerClose className="absolute right-4 top-4 z-50 rounded-full bg-white/90 p-2 shadow-md hover:bg-white transition-colors">
+              <X size={20} className="text-gray-700" />
               <span className="sr-only">Close</span>
             </DrawerClose>
             

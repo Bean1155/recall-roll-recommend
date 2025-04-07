@@ -36,11 +36,11 @@ const SearchContainer: React.FC<SearchContainerProps> = ({
             {onClose && (
               <Button 
                 onClick={onClose} 
-                className="absolute right-4 top-3 z-20 rounded-full hover:bg-white/20"
+                className="absolute right-4 top-3 z-50 rounded-full bg-white/90 p-2 h-8 w-8 shadow-md hover:bg-white"
                 variant="ghost"
                 size="icon"
               >
-                <X size={24} />
+                <X size={20} className="text-gray-700" />
                 <span className="sr-only">Close</span>
               </Button>
             )}
