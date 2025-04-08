@@ -64,7 +64,7 @@ const EntertainmentCategoryDrawers = ({
     }
     
     const grouped = cards.reduce((acc: Record<string, EntertainmentCard[]>, card) => {
-      const cardCategory = card.entertainmentCategory.toLowerCase() || 'etc.';
+      const cardCategory = card.entertainmentCategory?.toLowerCase() || 'etc.';
       if (!acc[cardCategory]) {
         acc[cardCategory] = [];
       }
@@ -84,14 +84,10 @@ const EntertainmentCategoryDrawers = ({
     } else if (defaultOpenCategory && grouped[defaultOpenCategory]) {
       setOpenCategory(defaultOpenCategory);
     }
-  }, [cards, defaultOpenCategory, startCollapsed, openCategory]);
+  }, [cards, defaultOpenCategory, startCollapsed]);
 
   const handleOpenChange = (cat: string, isOpen: boolean) => {
-    if (isOpen) {
-      setOpenCategory(cat);
-    } else if (openCategory === cat) {
-      setOpenCategory(null);
-    }
+    setOpenCategory(isOpen ? cat : null);
   };
 
   // Get text color based on background color brightness

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { Film, Plus, Search } from "lucide-react";
+import { Film } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
 import { EntertainmentCard } from "@/lib/types";
 import { getEntertainmentCards } from "@/lib/data";
@@ -117,6 +117,7 @@ const BlockbustersPage = () => {
           isOpen={isCardDetailOpen}
           onOpenChange={setIsCardDetailOpen}
           card={selectedCard}
+          categoryColors={categoryColors}
         />
       )}
     </GridLayout>

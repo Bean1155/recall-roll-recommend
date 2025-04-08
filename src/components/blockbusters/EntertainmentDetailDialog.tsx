@@ -29,7 +29,7 @@ const EntertainmentDetailDialog = ({
   isOpen,
   onOpenChange,
   card,
-  categoryColors,
+  categoryColors = {},
 }: EntertainmentDetailDialogProps) => {
   const isMobile = useIsMobile();
   
