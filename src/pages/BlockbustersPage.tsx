@@ -28,6 +28,9 @@ const BlockbustersPage = () => {
     handleCardClick
   } = useEntertainmentCardDetailHandling(cards);
   
+  // Track which category is currently open
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
+  
   useEffect(() => {
     const entertainmentCards = getEntertainmentCards();
     setCards(entertainmentCards);
@@ -38,7 +41,6 @@ const BlockbustersPage = () => {
     
     if (fromSearch) {
       console.log("BlockbustersPage: Detected fromSearch parameter");
-      // Could add any special handling for cards coming from search here
     }
   }, [location]);
   
@@ -79,6 +81,12 @@ const BlockbustersPage = () => {
   // Get category colors from utility function
   const categoryColors = getDefaultCategoryColors();
   
+  // Handle the drawer open/close state
+  const handleCategoryToggle = (category: string, isOpen: boolean) => {
+    console.log(`BlockbustersPage: Category ${category} is now ${isOpen ? 'open' : 'closed'}`);
+    setOpenCategory(isOpen ? category : null);
+  };
+  
   return (
     <GridLayout 
       title="Blockbusters" 
@@ -99,6 +107,8 @@ const BlockbustersPage = () => {
             onCardClick={handleCardClick}
             hideEmptyCategories={false}
             startCollapsed={false}
+            openCategory={openCategory}
+            onCategoryToggle={handleCategoryToggle}
           />
         </div>
       </div>

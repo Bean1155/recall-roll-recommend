@@ -23,6 +23,8 @@ interface EntertainmentCategoryDrawersProps {
   defaultOpenCategory?: string;
   hideEmptyCategories?: boolean;
   startCollapsed?: boolean;
+  openCategory?: string | null;
+  onCategoryToggle?: (category: string, isOpen: boolean) => void;
 }
 
 const EntertainmentCategoryDrawers = ({
@@ -31,12 +33,11 @@ const EntertainmentCategoryDrawers = ({
   onCardClick,
   defaultOpenCategory,
   hideEmptyCategories = true,
-  startCollapsed = false
+  startCollapsed = false,
+  openCategory,
+  onCategoryToggle
 }: EntertainmentCategoryDrawersProps) => {
   const [categorizedCards, setCategorizedCards] = useState<Record<string, EntertainmentCard[]>>({});
-  const [openCategory, setOpenCategory] = useState<string | null>(
-    startCollapsed ? null : defaultOpenCategory || null
-  );
   
   useEffect(() => {
     if (!cards || cards.length === 0) {
@@ -55,22 +56,14 @@ const EntertainmentCategoryDrawers = ({
     }, {});
     
     setCategorizedCards(grouped);
-    
-    if (!startCollapsed && !openCategory) {
-      const firstCategoryWithCards = Object.entries(grouped)
-        .find(([_, catCards]) => catCards.length > 0)?.[0];
-      
-      if (firstCategoryWithCards) {
-        setOpenCategory(firstCategoryWithCards);
-      }
-    } else if (defaultOpenCategory && grouped[defaultOpenCategory]) {
-      setOpenCategory(defaultOpenCategory);
-    }
-  }, [cards, defaultOpenCategory, startCollapsed, openCategory]);
+  }, [cards]);
 
-  // Fixed open/close logic
+  // Handle when a collapsible changes state
   const handleOpenChange = (cat: string, isOpen: boolean) => {
-    setOpenCategory(isOpen ? cat : null);
+    console.log(`EntertainmentCategoryDrawers: Category ${cat} is now ${isOpen ? 'open' : 'closed'}`);
+    if (onCategoryToggle) {
+      onCategoryToggle(cat, isOpen);
+    }
   };
 
   // Get text color based on background color brightness
@@ -159,7 +152,7 @@ const EntertainmentCategoryDrawers = ({
             textColor={textColor}
             open={openCategory === cat}
             onOpenChange={(isOpen) => handleOpenChange(cat, isOpen)}
-            categoryName={displayName} // Explicit category name passed
+            categoryName={displayName}
           >
             {renderCards(cat, catCards, color, textColor)}
           </CatalogCollapsible>

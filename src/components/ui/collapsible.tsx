@@ -24,6 +24,12 @@ export const CatalogCollapsible = React.forwardRef<
   const [isHovering, setIsHovering] = React.useState(false);
   const displayName = categoryName || label;
   
+  const handleTriggerClick = React.useCallback(() => {
+    if (onOpenChange) {
+      onOpenChange(!open);
+    }
+  }, [open, onOpenChange]);
+  
   return (
     <Collapsible 
       ref={ref}
@@ -55,40 +61,39 @@ export const CatalogCollapsible = React.forwardRef<
           </div>
         </div>
         
-        <CollapsibleTrigger asChild>
+        <div 
+          onClick={handleTriggerClick}
+          className="catalog-drawer-front relative border-3 rounded-md transition-all duration-300 ease-in-out cursor-pointer"
+          style={{ 
+            backgroundColor, 
+            borderColor: backgroundColor,
+            borderWidth: "3px",
+            transform: open ? "translateY(15px)" : isHovering ? "translateY(8px)" : "translateY(0)",
+            boxShadow: open ? "0 5px 15px rgba(0,0,0,0.15)" : isHovering ? "0 3px 8px rgba(0,0,0,0.1)" : "none",
+          }}
+        >
           <div 
-            className="catalog-drawer-front relative border-3 rounded-md transition-all duration-300 ease-in-out cursor-pointer"
-            style={{ 
-              backgroundColor, 
-              borderColor: backgroundColor,
-              borderWidth: "3px",
-              transform: open ? "translateY(15px)" : isHovering ? "translateY(8px)" : "translateY(0)",
-              boxShadow: open ? "0 5px 15px rgba(0,0,0,0.15)" : isHovering ? "0 3px 8px rgba(0,0,0,0.1)" : "none",
+            className="catalog-handle mx-auto mt-1 mb-3 flex items-center justify-center"
+            style={{
+              width: "40%",
+              height: "12px",
+              backgroundColor: textColor,
+              borderRadius: "6px",
+              opacity: 0.6
             }}
           >
             <div 
-              className="catalog-handle mx-auto mt-1 mb-3 flex items-center justify-center"
+              className="catalog-handle-hole"
               style={{
-                width: "40%",
-                height: "12px",
-                backgroundColor: textColor,
-                borderRadius: "6px",
-                opacity: 0.6
+                width: "6px",
+                height: "6px",
+                backgroundColor: "black",
+                borderRadius: "50%",
+                opacity: 0.5
               }}
-            >
-              <div 
-                className="catalog-handle-hole"
-                style={{
-                  width: "6px",
-                  height: "6px",
-                  backgroundColor: "black",
-                  borderRadius: "50%",
-                  opacity: 0.5
-                }}
-              />
-            </div>
+            />
           </div>
-        </CollapsibleTrigger>
+        </div>
       </div>
       
       <CollapsibleContent 
