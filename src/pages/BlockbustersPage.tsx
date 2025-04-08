@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Film } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
@@ -112,7 +111,7 @@ const BlockbustersPage = () => {
   
   // Force refresh to help with rendering issues
   useEffect(() => {
-    if (isInitialized) {
+    if (isInitialized && cards.length > 0) {
       const timer = setTimeout(() => {
         console.log("BlockbustersPage: Forcing refresh to ensure category names display properly");
         // Force react to re-render the component
