@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import LaunchScreen from "@/components/LaunchScreen";
+import OnboardingScreen from "@/components/onboarding/OnboardingScreen";
 import { useUser } from "@/contexts/UserContext";
 import { CatalogCollapsible } from "@/components/ui/collapsible";
 
@@ -30,6 +31,9 @@ const Index = () => {
 
   return (
     <>
+      {/* Show onboarding screen */}
+      <OnboardingScreen />
+      
       {showLaunch && <LaunchScreen onClose={() => setShowLaunch(false)} />}
       <GridLayout>
         <div className="mb-8 text-center">
