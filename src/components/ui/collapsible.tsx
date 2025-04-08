@@ -43,7 +43,7 @@ export const CatalogCollapsible = React.forwardRef<
       ref={ref}
       open={open}
       onOpenChange={onOpenChange}
-      className={`catalog-drawer relative mb-4 ${className}`}
+      className={`catalog-drawer relative mb-2 ${className}`}
       {...props}
     >
       <div 

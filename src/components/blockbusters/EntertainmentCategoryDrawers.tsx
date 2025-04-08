@@ -132,20 +132,21 @@ const EntertainmentCategoryDrawers = ({
         // Get text color based on background color
         const textColor = getTextColor(color);
         
-        console.log(`Rendering category: ${cat}, Display name: '${displayName}'`);
+        console.log(`EntertainmentCategoryDrawers: Rendering category: ${cat}, Display name: '${displayName}'`);
         
         return (
-          <CatalogCollapsible
-            key={cat}
-            label={cat}
-            backgroundColor={color}
-            textColor={textColor}
-            open={openCategory === cat}
-            onOpenChange={(isOpen) => handleOpenChange(cat, isOpen)}
-            categoryName={displayName}
-          >
-            {renderCards(cat, catCards, color, textColor)}
-          </CatalogCollapsible>
+          <div key={cat} className="mb-6">
+            <CatalogCollapsible
+              label={cat}
+              backgroundColor={color}
+              textColor={textColor}
+              open={openCategory === cat}
+              onOpenChange={(isOpen) => handleOpenChange(cat, isOpen)}
+              categoryName={displayName}
+            >
+              {renderCards(cat, catCards, color, textColor)}
+            </CatalogCollapsible>
+          </div>
         );
       })}
     </div>

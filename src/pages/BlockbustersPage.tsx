@@ -93,15 +93,7 @@ const BlockbustersPage = () => {
   // Handle the drawer open/close state
   const handleCategoryToggle = (category: string, isOpen: boolean) => {
     console.log(`BlockbustersPage: Category ${category} is now ${isOpen ? 'open' : 'closed'}`);
-    
-    // If opening a category, set it as the open one
-    // If closing the currently open category, set to null
-    if (isOpen) {
-      setOpenCategory(category);
-    } else if (openCategory === category) {
-      setOpenCategory(null);
-    }
-    // Otherwise keep the current open category
+    setOpenCategory(isOpen ? category : null);
   };
   
   return (
@@ -123,7 +115,6 @@ const BlockbustersPage = () => {
             categoryColors={categoryColors}
             onCardClick={handleCardClick}
             hideEmptyCategories={false}
-            startCollapsed={false}
             openCategory={openCategory}
             onCategoryToggle={handleCategoryToggle}
           />
