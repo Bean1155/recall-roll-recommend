@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
 import GridLayout from "@/components/GridLayout";
 import { BarChart4, Gift } from "lucide-react";
 import RewardsCounter from "@/components/RewardsCounter";
@@ -11,6 +12,14 @@ import LeaderboardTab from "@/components/rewards/LeaderboardTab";
 
 const RewardsPage = () => {
   const { currentUser } = useUser();
+  // State to control each drawer's open/closed state
+  const [openSections, setOpenSections] = useState({
+    leaderboard: true,
+    howItWorks: false,
+    rewardSystem: false,
+    benefits: false,
+    trackProgress: false
+  });
   
   // Simplified refresh logic when page loads
   useEffect(() => {
@@ -38,6 +47,15 @@ const RewardsPage = () => {
     forceRewardsRefresh();
   };
   
+  // Toggle function to handle opening and closing drawers
+  const toggleSection = (section: keyof typeof openSections) => {
+    console.log(`RewardsPage: Toggling section ${section}`);
+    setOpenSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+  
   return (
     <GridLayout title={
       <>
@@ -62,38 +80,47 @@ const RewardsPage = () => {
             label="Live Leaderboard" 
             backgroundColor="#FFD700" 
             textColor="#603913"
-            defaultOpen={true}
+            open={openSections.leaderboard}
+            onOpenChange={() => toggleSection('leaderboard')}
           >
             <LeaderboardTab />
           </CatalogCollapsible>
         </div>
         
-        {/* Keep remaining UI components unchanged */}
+        {/* How It Works section */}
         <div className="mb-8">
           <CatalogCollapsible 
             label="How It Works" 
             backgroundColor="#ACC8E5" 
             textColor="#603913"
+            open={openSections.howItWorks}
+            onOpenChange={() => toggleSection('howItWorks')}
           >
             <HowItWorksTab />
           </CatalogCollapsible>
         </div>
         
+        {/* Reward System section */}
         <div className="mb-8">
           <CatalogCollapsible 
             label="Reward System" 
             backgroundColor="#d2b48c" 
             textColor="#603913"
+            open={openSections.rewardSystem}
+            onOpenChange={() => toggleSection('rewardSystem')}
           >
             <RewardSystemTab />
           </CatalogCollapsible>
         </div>
         
+        {/* Benefits section */}
         <div className="mb-8">
           <CatalogCollapsible 
             label="Benefits" 
             backgroundColor="#E5DEFF" 
             textColor="#603913"
+            open={openSections.benefits}
+            onOpenChange={() => toggleSection('benefits')}
           >
             <div className="space-y-2">
               <div className="flex items-center gap-2 mb-4">
@@ -110,11 +137,14 @@ const RewardsPage = () => {
           </CatalogCollapsible>
         </div>
         
+        {/* Track Progress section */}
         <div className="mb-8">
           <CatalogCollapsible 
             label="Track Progress" 
             backgroundColor="#FADADD" 
             textColor="#603913"
+            open={openSections.trackProgress}
+            onOpenChange={() => toggleSection('trackProgress')}
           >
             <div className="space-y-2">
               <div className="flex items-center gap-2 mb-4">
