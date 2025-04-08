@@ -14,7 +14,7 @@ import { format } from "date-fns";
 import { CalendarIcon, Star, PlusCircle } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import AddCategoryDialog from "@/components/bites/AddCategoryDialog";
-import { getAllEntertainmentCategories } from "@/utils/categoryUtils";
+import { getAllEntertainmentCategories, getAllCategories } from "@/utils/categoryUtils";
 
 interface CardFormProps {
   type: CardType;
@@ -106,10 +106,13 @@ const CardForm = ({
   const [visitCount, setVisitCount] = useState("0");
   
   const [entertainmentCategories, setEntertainmentCategories] = useState<string[]>([]);
+  const [foodCategories, setFoodCategories] = useState<string[]>([]);
   
   useEffect(() => {
     if (type === 'entertainment') {
       setEntertainmentCategories(getAllEntertainmentCategories());
+    } else {
+      setFoodCategories(getAllCategories());
     }
   }, [type, showAddCategoryDialog]);
 
@@ -125,6 +128,8 @@ const CardForm = ({
     setCategory(newCategory);
     if (type === 'entertainment') {
       setEntertainmentCategories(getAllEntertainmentCategories());
+    } else {
+      setFoodCategories(getAllCategories());
     }
   };
 
@@ -244,16 +249,17 @@ const CardForm = ({
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="restaurant">Restaurant</SelectItem>
-                <SelectItem value="cafe">Café</SelectItem>
-                <SelectItem value="bar">Bar</SelectItem>
-                <SelectItem value="food truck">Food Truck</SelectItem>
-                <SelectItem value="bakery">Bakery</SelectItem>
-                <SelectItem value="diner">Diner</SelectItem>
-                <SelectItem value="fine dining">Fine Dining</SelectItem>
-                <SelectItem value="specialty">Specialty</SelectItem>
-                <SelectItem value="take out">Take Out</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                {foodCategories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    {cat.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                  </SelectItem>
+                ))}
+                <SelectItem value="add_new" className="text-teal-700 font-medium">
+                  <div className="flex items-center">
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add New Category
+                  </div>
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -415,6 +421,13 @@ const CardForm = ({
             </Button>
           </div>
         </form>
+        
+        <AddCategoryDialog 
+          open={showAddCategoryDialog}
+          onOpenChange={setShowAddCategoryDialog}
+          onCategoryAdded={handleCategoryAdded}
+          type="food"
+        />
       </div>
     );
   }
