@@ -32,17 +32,21 @@ const BlockbustersPage = () => {
   const [openCategory, setOpenCategory] = useState<string | null>(null);
   
   useEffect(() => {
-    const entertainmentCards = getEntertainmentCards();
-    setCards(entertainmentCards);
-    
-    // Open first category if there are cards and no already open category
-    if (entertainmentCards.length > 0 && !openCategory) {
-      const firstCategory = entertainmentCards[0]?.entertainmentCategory?.toLowerCase();
-      if (firstCategory) {
-        console.log(`BlockbustersPage: Opening first category: ${firstCategory}`);
-        setOpenCategory(firstCategory);
+    const fetchCards = async () => {
+      const entertainmentCards = getEntertainmentCards();
+      setCards(entertainmentCards);
+      
+      // Open first category if there are cards and no already open category
+      if (entertainmentCards.length > 0 && !openCategory) {
+        const firstCategory = entertainmentCards[0]?.entertainmentCategory?.toLowerCase();
+        if (firstCategory) {
+          console.log(`BlockbustersPage: Opening first category: ${firstCategory}`);
+          setOpenCategory(firstCategory);
+        }
       }
-    }
+    };
+    
+    fetchCards();
     
     // Handle URL parameters like highlight if needed
     const params = new URLSearchParams(location.search);

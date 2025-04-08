@@ -132,7 +132,7 @@ const EntertainmentCategoryDrawers = ({
         // Get text color based on background color
         const textColor = getTextColor(color);
         
-        console.log(`EntertainmentCategoryDrawers: Rendering category: ${cat}, Display name: '${displayName}'`);
+        console.log(`EntertainmentCategoryDrawers: Rendering category: ${cat}, Display name: '${displayName}', open: ${openCategory === cat}`);
         
         return (
           <div key={cat} className="mb-6">
