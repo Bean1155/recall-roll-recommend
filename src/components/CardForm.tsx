@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FoodCard, EntertainmentCard, FoodStatus, EntertainmentStatus, ServiceRating, CardType } from "@/lib/types";
@@ -11,7 +12,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { CalendarIcon, Star } from "lucide-react";
+import { CalendarIcon, Star, PlusCircle } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 
 interface CardFormProps {
@@ -51,7 +52,6 @@ const CardForm = ({
           setRating(card.rating?.toString() || "");
           setIsFavorite(card.isFavorite || false);
           setTags(card.tags?.join(", ") || "");
-          setUrl(card.url || "");
           setDate(card.date ? new Date(card.date) : new Date());
           
           // Type guard to check card type before accessing type-specific properties
@@ -101,7 +101,6 @@ const CardForm = ({
   const [medium, setMedium] = useState("");
   
   // Common fields
-  const [url, setUrl] = useState("");
   const [tags, setTags] = useState("");
   const [rating, setRating] = useState("");
   const [status, setStatus] = useState("");
@@ -114,6 +113,18 @@ const CardForm = ({
     return format(date, "yyyy-MM-dd");
   }, []);
 
+  const handleAddNewCategory = () => {
+    // For now, just prompt the user for a new category
+    const newCategory = prompt("Enter a new category name:");
+    if (newCategory && newCategory.trim() !== "") {
+      setCategory(newCategory.trim().toLowerCase());
+      toast({
+        title: "New Category Added",
+        description: `${newCategory} has been added to your categories.`,
+      });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -124,7 +135,6 @@ const CardForm = ({
       category: category as FoodCard["category"],
       cuisine,
       location,
-      url,
       tags: tags.split(",").map((tag) => tag.trim()).filter(tag => tag !== ""),
       rating: parseFloat(rating) || 0,
       status: status as FoodStatus,
@@ -141,7 +151,6 @@ const CardForm = ({
       entertainmentCategory: category,
       genre,
       medium,
-      url,
       tags: tags.split(",").map((tag) => tag.trim()).filter(tag => tag !== ""),
       rating: parseFloat(rating) || 0,
       status: status as EntertainmentStatus,
@@ -400,131 +409,160 @@ const CardForm = ({
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-4 space-y-6">
+    <div className="w-full max-w-3xl mx-auto p-4 space-y-6 bg-white rounded-lg shadow">
+      <h1 className="text-2xl font-bold text-teal-700 mb-6">{isEdit ? 'Edit Blockbuster' : 'Add Blockbuster'}</h1>
+      
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <Label htmlFor="title">Title</Label>
+          <Label htmlFor="title" className="text-gray-700 font-medium">Title*</Label>
           <Input
             type="text"
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            placeholder="Name of Entertainment"
+            className="mt-1"
             required
           />
         </div>
         
         <div>
-          <Label htmlFor="creator">Creator</Label>
+          <Label htmlFor="creator" className="text-gray-700 font-medium">Creator/Author</Label>
           <Input
             type="text"
             id="creator"
             value={creator}
             onChange={(e) => setCreator(e.target.value)}
+            placeholder="Name of Developer"
+            className="mt-1"
           />
         </div>
 
         <div>
-          <Label htmlFor="category">Category</Label>
-          <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select" />
+          <Label htmlFor="category" className="text-gray-700 font-medium">Category*</Label>
+          <Select value={category} onValueChange={setCategory} required>
+            <SelectTrigger className="w-full mt-1">
+              <SelectValue placeholder="Select a category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="movies">Movies</SelectItem>
-              <SelectItem value="tv shows">TV Shows</SelectItem>
               <SelectItem value="books">Books</SelectItem>
+              <SelectItem value="comedies">Comedies</SelectItem>
+              <SelectItem value="events">Events</SelectItem>
               <SelectItem value="games">Games</SelectItem>
+              <SelectItem value="live performances">Live Performances</SelectItem>
+              <SelectItem value="movies">Movies</SelectItem>
               <SelectItem value="podcasts">Podcasts</SelectItem>
+              <SelectItem value="tv shows">TV Shows</SelectItem>
+              <SelectItem value="add_new" className="text-teal-700 font-medium">
+                <div className="flex items-center" onClick={() => handleAddNewCategory()}>
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Add New Category
+                </div>
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div>
-          <Label htmlFor="genre">Genre</Label>
+          <Label htmlFor="genre" className="text-gray-700 font-medium">Genre</Label>
           <Input
             type="text"
             id="genre"
             value={genre}
             onChange={(e) => setGenre(e.target.value)}
+            placeholder="Action, Drama, Comedy, etc."
+            className="mt-1"
           />
         </div>
 
         <div>
-          <Label htmlFor="medium">Medium</Label>
-          <Input
-            type="text"
-            id="medium"
-            value={medium}
-            onChange={(e) => setMedium(e.target.value)}
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="url">URL</Label>
-          <Input
-            type="url"
-            id="url"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="tags">Tags (comma separated)</Label>
-          <Input
-            type="text"
-            id="tags"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="rating">Rating (1-5)</Label>
-          <Input
-            type="number"
-            id="rating"
-            value={rating}
-            onChange={(e) => setRating(e.target.value)}
-            min="1"
-            max="5"
-            required
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="status">Status</Label>
-          <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select" />
+          <Label htmlFor="medium" className="text-gray-700 font-medium">Platform/Medium</Label>
+          <Select value={medium} onValueChange={setMedium}>
+            <SelectTrigger className="w-full mt-1">
+              <SelectValue placeholder="Streaming services" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Watched">Watched</SelectItem>
-              <SelectItem value="Want to Watch">Want to Watch</SelectItem>
-              <SelectItem value="Currently Watching">Currently Watching</SelectItem>
+              <SelectItem value="Netflix">Netflix</SelectItem>
+              <SelectItem value="Hulu">Hulu</SelectItem>
+              <SelectItem value="Amazon Prime">Amazon Prime</SelectItem>
+              <SelectItem value="Disney+">Disney+</SelectItem>
+              <SelectItem value="Apple TV+">Apple TV+</SelectItem>
+              <SelectItem value="HBO Max">HBO Max</SelectItem>
+              <SelectItem value="Paramount+">Paramount+</SelectItem>
+              <SelectItem value="Peacock">Peacock</SelectItem>
+              <SelectItem value="YouTube">YouTube</SelectItem>
+              <SelectItem value="Other">Other</SelectItem>
             </SelectContent>
           </Select>
         </div>
         
         <div>
-          <Label htmlFor="notes">Notes</Label>
-          <Textarea
-            id="notes"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
+          <Label htmlFor="tags" className="text-gray-700 font-medium">Tags (comma separated)</Label>
+          <Input
+            type="text"
+            id="tags"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            placeholder="thriller, sci-fi, favorite"
+            className="mt-1"
           />
         </div>
         
         <div>
-          <Label htmlFor="isFavorite" className="inline-flex items-center">
+          <Label htmlFor="rating" className="text-gray-700 font-medium">Rating (1-5)</Label>
+          <div className="flex items-center mt-1">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                onClick={() => setRating(star.toString())}
+                className="p-1 focus:outline-none"
+              >
+                <Star
+                  className={`h-6 w-6 ${
+                    parseInt(rating) >= star ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        <div>
+          <Label htmlFor="status" className="text-gray-700 font-medium">Status</Label>
+          <Select value={status} onValueChange={setStatus}>
+            <SelectTrigger className="w-full mt-1">
+              <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Watched">Watched/Completed</SelectItem>
+              <SelectItem value="Want to Watch">Want to Watch/Play/Read</SelectItem>
+              <SelectItem value="Currently Watching">Currently Watching/Playing/Reading</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div>
+          <Label htmlFor="notes" className="text-gray-700 font-medium">Notes</Label>
+          <Textarea
+            id="notes"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Your thoughts, impressions, memorable details"
+            className="mt-1"
+            rows={4}
+          />
+        </div>
+        
+        <div>
+          <Label className="flex items-center space-x-2 text-gray-700 font-medium">
             <Input
               type="checkbox"
-              id="isFavorite"
               checked={isFavorite}
               onChange={(e) => setIsFavorite(e.target.checked)}
-              className="mr-2"
+              className="w-5 h-5"
             />
-            <span>Is Favorite</span>
+            <span>Mark as favorite</span>
           </Label>
         </div>
         
@@ -535,7 +573,7 @@ const CardForm = ({
               <Button
                 variant={"outline"}
                 className={cn(
-                  "w-[240px] justify-start text-left font-normal",
+                  "w-full justify-start text-left font-normal mt-1",
                   !date && "text-muted-foreground"
                 )}
               >
@@ -548,16 +586,21 @@ const CardForm = ({
                 mode="single"
                 selected={date}
                 onSelect={(selectedDate) => selectedDate && setDate(selectedDate)}
-                disabled={(date) =>
-                  date > new Date()
-                }
+                disabled={(date) => date > new Date()}
                 initialFocus
               />
             </PopoverContent>
           </Popover>
         </div>
 
-        <Button type="submit">{isEdit ? "Update" : "Create"}</Button>
+        <div className="pt-4">
+          <Button 
+            type="submit"
+            className="bg-teal-700 hover:bg-teal-800 text-white w-full md:w-auto"
+          >
+            {isEdit ? "Update Blockbuster" : "Add Blockbuster"}
+          </Button>
+        </div>
       </form>
     </div>
   );
