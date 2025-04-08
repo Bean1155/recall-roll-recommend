@@ -47,7 +47,6 @@ const CardForm = ({
         if (card) {
           setFormData(card as FoodCard | EntertainmentCard);
           
-          // Set all form fields from the loaded card
           setTitle(card.title || "");
           setCreator(card.creator || "");
           setNotes(card.notes || "");
@@ -56,7 +55,6 @@ const CardForm = ({
           setTags(card.tags?.join(", ") || "");
           setDate(card.date ? new Date(card.date) : new Date());
           
-          // Type guard to check card type before accessing type-specific properties
           if (card.type === 'food') {
             const foodCard = card as FoodCard;
             setCategory(foodCard.category || "");
@@ -73,7 +71,6 @@ const CardForm = ({
             setStatus(entertainmentCard.status || "");
           }
         } else {
-          // If card not found and this is an edit page, we should show an error
           toast({
             title: "Error",
             description: "Card not found",
@@ -90,7 +87,6 @@ const CardForm = ({
     loadCardData();
   }, [cardId, initialData]);
 
-  // Food fields
   const [title, setTitle] = useState("");
   const [creator, setCreator] = useState("");
   const [category, setCategory] = useState(initialCategory);
@@ -98,11 +94,9 @@ const CardForm = ({
   const [location, setLocation] = useState("");
   const [serviceRating, setServiceRating] = useState<string>("");
   
-  // Entertainment fields
   const [genre, setGenre] = useState("");
   const [medium, setMedium] = useState("");
   
-  // Common fields
   const [tags, setTags] = useState("");
   const [rating, setRating] = useState("");
   const [status, setStatus] = useState("");
@@ -111,7 +105,6 @@ const CardForm = ({
   const [date, setDate] = useState(new Date());
   const [visitCount, setVisitCount] = useState("0");
   
-  // Get all entertainment categories for dropdown
   const [entertainmentCategories, setEntertainmentCategories] = useState<string[]>([]);
   
   useEffect(() => {
@@ -130,9 +123,16 @@ const CardForm = ({
   
   const handleCategoryAdded = (newCategory: string) => {
     setCategory(newCategory);
-    // Refresh the list of entertainment categories
     if (type === 'entertainment') {
       setEntertainmentCategories(getAllEntertainmentCategories());
+    }
+  };
+
+  const handleCategoryChange = (value: string) => {
+    if (value === "add_new") {
+      setShowAddCategoryDialog(true);
+    } else {
+      setCategory(value);
     }
   };
 
@@ -239,7 +239,7 @@ const CardForm = ({
 
           <div>
             <Label htmlFor="category" className="text-gray-700 font-medium">Category*</Label>
-            <Select value={category} onValueChange={setCategory} required>
+            <Select value={category} onValueChange={handleCategoryChange} required>
               <SelectTrigger className="w-full mt-1">
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
@@ -451,7 +451,7 @@ const CardForm = ({
 
         <div>
           <Label htmlFor="category" className="text-gray-700 font-medium">Category*</Label>
-          <Select value={category} onValueChange={setCategory} required>
+          <Select value={category} onValueChange={handleCategoryChange} required>
             <SelectTrigger className="w-full mt-1">
               <SelectValue placeholder="Select a category" />
             </SelectTrigger>

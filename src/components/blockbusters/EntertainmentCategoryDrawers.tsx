@@ -7,6 +7,7 @@ import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
 import { EntertainmentCard } from "@/lib/types";
 import { CatalogCollapsible } from "@/components/ui/collapsible";
+import { getCategoryDisplayName } from "@/utils/categoryUtils";
 import {
   Carousel,
   CarouselContent,
@@ -37,26 +38,6 @@ const EntertainmentCategoryDrawers = ({
     startCollapsed ? null : defaultOpenCategory || null
   );
   
-  // Helper function to get a readable display name for categories
-  const getCategoryDisplayName = (category: string): string => {
-    const customDisplayNames: Record<string, string> = {
-      "movies": "Movies",
-      "tv shows": "TV Shows",
-      "books": "Books",
-      "comedies": "Comedies",
-      "podcasts": "Podcasts",
-      "games": "Games",
-      "live performances": "Live Performances",
-      "events": "Events"
-    };
-
-    return customDisplayNames[category.toLowerCase()] || 
-      category
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-  };
-  
   useEffect(() => {
     if (!cards || cards.length === 0) {
       setCategorizedCards({});
@@ -84,7 +65,7 @@ const EntertainmentCategoryDrawers = ({
     } else if (defaultOpenCategory && grouped[defaultOpenCategory]) {
       setOpenCategory(defaultOpenCategory);
     }
-  }, [cards, defaultOpenCategory, startCollapsed]);
+  }, [cards, defaultOpenCategory, startCollapsed, openCategory]);
 
   const handleOpenChange = (cat: string, isOpen: boolean) => {
     setOpenCategory(isOpen ? cat : null);

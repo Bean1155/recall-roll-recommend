@@ -9,6 +9,7 @@ import EntertainmentCategoryDrawers from "@/components/blockbusters/Entertainmen
 import { useEntertainmentCardDetailHandling } from "@/components/blockbusters/useEntertainmentCardDetailHandling";
 import EntertainmentDetailDialog from "@/components/blockbusters/EntertainmentDetailDialog";
 import BitesHeader from "@/components/bites/BitesHeader";
+import { getCategoryDisplayName, getDefaultCategoryColors } from "@/utils/categoryUtils";
 
 const BlockbustersPage = () => {
   const location = useLocation();
@@ -75,18 +76,8 @@ const BlockbustersPage = () => {
     return filters.status.length > 0 || filters.rating.length > 0 || filters.tags.length > 0;
   };
 
-  // Define category colors for entertainment
-  const categoryColors: Record<string, string> = {
-    "movies": "#e9b44c",        // Gold/Yellow
-    "tv shows": "#a64b2a",      // Rust
-    "books": "#9de0d0",         // Mint
-    "comedies": "#e18336",      // Orange
-    "podcasts": "#e0c5c1",      // Light pink
-    "games": "#c1cc99",         // Light green
-    "live performances": "#a5b1c2", // Light blue
-    "events": "#ddb892",        // Tan
-    "etc.": "#F5F5F5",          // Light gray
-  };
+  // Get category colors from utility function
+  const categoryColors = getDefaultCategoryColors();
   
   return (
     <GridLayout 
