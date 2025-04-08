@@ -22,13 +22,15 @@ export const CatalogCollapsible = React.forwardRef<
   }
 >(({ className, label, backgroundColor = "#d2b48c", textColor = "#603913", categoryName, children, open, onOpenChange, ...props }, ref) => {
   const [isHovering, setIsHovering] = React.useState(false);
+  // Use categoryName if provided, otherwise fall back to label
   const displayName = categoryName || label;
   
   const handleTriggerClick = React.useCallback(() => {
+    console.log(`CatalogCollapsible: Trigger clicked for category ${displayName}`);
     if (onOpenChange) {
       onOpenChange(!open);
     }
-  }, [open, onOpenChange]);
+  }, [open, onOpenChange, displayName]);
   
   return (
     <Collapsible 

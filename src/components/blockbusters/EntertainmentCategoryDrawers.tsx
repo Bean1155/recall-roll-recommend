@@ -144,6 +144,8 @@ const EntertainmentCategoryDrawers = ({
         // Get text color based on background color
         const textColor = getTextColor(color);
         
+        console.log(`Rendering category: ${cat}, Display name: ${displayName}`);
+        
         return (
           <CatalogCollapsible
             key={cat}
