@@ -1,8 +1,14 @@
+
 import { FoodCategory } from "@/lib/types";
 
 export const defaultCategories: FoodCategory[] = [
   "cafe", "diner", "specialty", "fine dining", "take out", 
   "bakery", "bar", "food truck", "restaurant"
+];
+
+export const defaultEntertainmentCategories: string[] = [
+  "books", "comedies", "events", "games", "live performances", 
+  "movies", "podcasts", "tv shows"
 ];
 
 export const getCategoryDisplayName = (category: string): string => {
@@ -15,7 +21,15 @@ export const getCategoryDisplayName = (category: string): string => {
     "bakery": "Bakeries",
     "bar": "Bars",
     "food truck": "Food Trucks",
-    "restaurant": "Restaurants"
+    "restaurant": "Restaurants",
+    "books": "Books",
+    "comedies": "Comedies",
+    "events": "Events",
+    "games": "Games",
+    "live performances": "Live Performances",
+    "movies": "Movies",
+    "podcasts": "Podcasts",
+    "tv shows": "TV Shows"
   };
 
   return customDisplayNames[category] || 
@@ -35,7 +49,15 @@ export const getDefaultCategoryColors = (): Record<string, string> => {
     "bakery": "#9de0d0",
     "bar": "#a5b1c2",
     "food truck": "#a64b2a",
-    "restaurant": "#e18336"
+    "restaurant": "#e18336",
+    "books": "#7b9e89",
+    "comedies": "#f9c74f",
+    "events": "#90be6d",
+    "games": "#43aa8b",
+    "live performances": "#f3722c",
+    "movies": "#577590",
+    "podcasts": "#f8961e",
+    "tv shows": "#277da1"
   };
 };
 
@@ -84,4 +106,76 @@ export const getAllCategories = (): FoodCategory[] => {
   }
   
   return [...defaultCategories, ...customCategories];
+};
+
+// Add a custom category and save it to localStorage
+export const addCustomCategory = (category: string): void => {
+  try {
+    const normalizedCategory = category.trim().toLowerCase();
+    if (!normalizedCategory) return;
+    
+    // Skip if it's already in default categories
+    if (defaultCategories.includes(normalizedCategory as FoodCategory)) {
+      return;
+    }
+    
+    // Load existing custom categories
+    let customCategories: string[] = [];
+    const savedCategories = localStorage.getItem('customFoodCategories');
+    if (savedCategories) {
+      customCategories = JSON.parse(savedCategories);
+    }
+    
+    // Add the new category if it doesn't already exist
+    if (!customCategories.includes(normalizedCategory)) {
+      customCategories.push(normalizedCategory);
+      localStorage.setItem('customFoodCategories', JSON.stringify(customCategories));
+    }
+  } catch (e) {
+    console.error("Error saving custom category:", e);
+  }
+};
+
+// Load all entertainment categories including custom ones from localStorage
+export const getAllEntertainmentCategories = (): string[] => {
+  const customCategories: string[] = [];
+  try {
+    const savedCategories = localStorage.getItem('customEntertainmentCategories');
+    if (savedCategories) {
+      const parsed = JSON.parse(savedCategories);
+      customCategories.push(...parsed);
+    }
+  } catch (e) {
+    console.error("Error loading custom entertainment categories:", e);
+  }
+  
+  return [...defaultEntertainmentCategories, ...customCategories];
+};
+
+// Add a custom entertainment category and save it to localStorage
+export const addCustomEntertainmentCategory = (category: string): void => {
+  try {
+    const normalizedCategory = category.trim().toLowerCase();
+    if (!normalizedCategory) return;
+    
+    // Skip if it's already in default categories
+    if (defaultEntertainmentCategories.includes(normalizedCategory)) {
+      return;
+    }
+    
+    // Load existing custom categories
+    let customCategories: string[] = [];
+    const savedCategories = localStorage.getItem('customEntertainmentCategories');
+    if (savedCategories) {
+      customCategories = JSON.parse(savedCategories);
+    }
+    
+    // Add the new category if it doesn't already exist
+    if (!customCategories.includes(normalizedCategory)) {
+      customCategories.push(normalizedCategory);
+      localStorage.setItem('customEntertainmentCategories', JSON.stringify(customCategories));
+    }
+  } catch (e) {
+    console.error("Error saving custom entertainment category:", e);
+  }
 };

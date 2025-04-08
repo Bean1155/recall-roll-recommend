@@ -3,17 +3,23 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
+import { addCustomCategory, addCustomEntertainmentCategory } from "@/utils/categoryUtils";
 
 interface AddCategoryDialogProps {
   open?: boolean;
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  onCategoryAdded?: (category: string) => void;
+  type?: 'food' | 'entertainment';
 }
 
 const AddCategoryDialog = ({
   open, 
   isOpen, 
-  onOpenChange
+  onOpenChange,
+  onCategoryAdded,
+  type = 'food'
 }: AddCategoryDialogProps) => {
   const [categoryName, setCategoryName] = useState("");
   
@@ -22,10 +28,29 @@ const AddCategoryDialog = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle category creation logic
+    
     if (categoryName.trim()) {
-      // Add category
-      console.log("Creating category:", categoryName);
+      const normalizedCategory = categoryName.trim().toLowerCase();
+      
+      // Save the category based on type
+      if (type === 'food') {
+        addCustomCategory(normalizedCategory);
+      } else {
+        addCustomEntertainmentCategory(normalizedCategory);
+      }
+      
+      // Notify parent component
+      if (onCategoryAdded) {
+        onCategoryAdded(normalizedCategory);
+      }
+      
+      // Show toast notification
+      toast({
+        title: "New Category Added",
+        description: `${categoryName} has been added to your categories.`,
+      });
+      
+      // Clear input and close dialog
       setCategoryName("");
       if (handleOpenChange) {
         handleOpenChange(false);
@@ -46,6 +71,7 @@ const AddCategoryDialog = ({
               value={categoryName}
               onChange={(e) => setCategoryName(e.target.value)}
               className="w-full"
+              autoFocus
             />
           </div>
           <div className="flex justify-end">

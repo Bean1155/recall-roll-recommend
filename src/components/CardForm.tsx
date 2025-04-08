@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FoodCard, EntertainmentCard, FoodStatus, EntertainmentStatus, ServiceRating, CardType } from "@/lib/types";
@@ -14,6 +13,8 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon, Star, PlusCircle } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import AddCategoryDialog from "@/components/bites/AddCategoryDialog";
+import { getAllEntertainmentCategories } from "@/utils/categoryUtils";
 
 interface CardFormProps {
   type: CardType;
@@ -37,6 +38,7 @@ const CardForm = ({
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FoodCard | EntertainmentCard | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showAddCategoryDialog, setShowAddCategoryDialog] = useState(false);
 
   useEffect(() => {
     const loadCardData = () => {
@@ -108,20 +110,29 @@ const CardForm = ({
   const [isFavorite, setIsFavorite] = useState(false);
   const [date, setDate] = useState(new Date());
   const [visitCount, setVisitCount] = useState("0");
+  
+  // Get all entertainment categories for dropdown
+  const [entertainmentCategories, setEntertainmentCategories] = useState<string[]>([]);
+  
+  useEffect(() => {
+    if (type === 'entertainment') {
+      setEntertainmentCategories(getAllEntertainmentCategories());
+    }
+  }, [type, showAddCategoryDialog]);
 
   const formatDate = useCallback((date: Date): string => {
     return format(date, "yyyy-MM-dd");
   }, []);
 
   const handleAddNewCategory = () => {
-    // For now, just prompt the user for a new category
-    const newCategory = prompt("Enter a new category name:");
-    if (newCategory && newCategory.trim() !== "") {
-      setCategory(newCategory.trim().toLowerCase());
-      toast({
-        title: "New Category Added",
-        description: `${newCategory} has been added to your categories.`,
-      });
+    setShowAddCategoryDialog(true);
+  };
+  
+  const handleCategoryAdded = (newCategory: string) => {
+    setCategory(newCategory);
+    // Refresh the list of entertainment categories
+    if (type === 'entertainment') {
+      setEntertainmentCategories(getAllEntertainmentCategories());
     }
   };
 
@@ -445,16 +456,13 @@ const CardForm = ({
               <SelectValue placeholder="Select a category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="books">Books</SelectItem>
-              <SelectItem value="comedies">Comedies</SelectItem>
-              <SelectItem value="events">Events</SelectItem>
-              <SelectItem value="games">Games</SelectItem>
-              <SelectItem value="live performances">Live Performances</SelectItem>
-              <SelectItem value="movies">Movies</SelectItem>
-              <SelectItem value="podcasts">Podcasts</SelectItem>
-              <SelectItem value="tv shows">TV Shows</SelectItem>
+              {entertainmentCategories.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                </SelectItem>
+              ))}
               <SelectItem value="add_new" className="text-teal-700 font-medium">
-                <div className="flex items-center" onClick={() => handleAddNewCategory()}>
+                <div className="flex items-center">
                   <PlusCircle className="mr-2 h-4 w-4" />
                   Add New Category
                 </div>
@@ -602,6 +610,13 @@ const CardForm = ({
           </Button>
         </div>
       </form>
+      
+      <AddCategoryDialog 
+        open={showAddCategoryDialog}
+        onOpenChange={setShowAddCategoryDialog}
+        onCategoryAdded={handleCategoryAdded}
+        type="entertainment"
+      />
     </div>
   );
 };
