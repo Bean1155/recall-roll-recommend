@@ -30,12 +30,20 @@ const CreateCardPage = () => {
 
     // Force refresh rewards when component mounts
     if (currentUser) {
+      console.log("CreateCardPage: Component mounted, forcing rewards refresh");
       forceRewardsRefresh();
+      
+      // Add delayed refresh for better reliability
+      setTimeout(() => {
+        console.log("CreateCardPage: Follow-up rewards refresh");
+        forceRewardsRefresh();
+      }, 500);
     }
 
     return () => {
-      // Force a single refresh when leaving the page
+      // Force a final refresh when leaving the page
       if (currentUser) {
+        console.log("CreateCardPage: Component unmounting, final refresh");
         forceRewardsRefresh();
       }
     };
@@ -56,15 +64,23 @@ const CreateCardPage = () => {
     if (currentUser && !hasAddedRewardRef.current) {
       // Award points for card creation - CRITICAL: Make sure this works
       console.log(`CreateCardPage: Adding points for ${cardType} card creation to user ${currentUser.id}`);
+      
+      // Award points with multiple refreshes for reliability
       addPointsForCardCreation(currentUser.id, cardType);
       hasAddedRewardRef.current = true;
       
       toast.success(`Your ${cardType === 'food' ? 'bite' : 'blockbuster'} has been added and you earned points!`);
       
-      // Double-check that reward events are fired
+      // Double-check that reward events are fired with multiple attempts
       setTimeout(() => {
+        console.log("CreateCardPage: First follow-up rewards refresh");
         forceRewardsRefresh();
       }, 300);
+      
+      setTimeout(() => {
+        console.log("CreateCardPage: Second follow-up rewards refresh");
+        forceRewardsRefresh();
+      }, 1000);
     }
     
     // Dispatch a custom event to notify other components

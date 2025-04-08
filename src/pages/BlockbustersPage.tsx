@@ -77,7 +77,14 @@ const BlockbustersPage = () => {
     
     // Force a refresh of points when the page loads
     if (currentUser) {
+      console.log("BlockbustersPage: Initial mount - forcing rewards refresh");
       forceRewardsRefresh();
+      
+      // Add an immediate second refresh after a delay to ensure UI updates
+      setTimeout(() => {
+        console.log("BlockbustersPage: Follow-up rewards refresh");
+        forceRewardsRefresh();
+      }, 300);
     }
     
     // Increment render count to track component lifecycle
@@ -101,6 +108,10 @@ const BlockbustersPage = () => {
         if (currentUser && customEvent.detail?.cardId) {
           console.log("BlockbustersPage: Detected new card added, awarding points");
           addPointsForCardCreation(currentUser.id, 'entertainment');
+          
+          // Ensure rewards are refreshed multiple times to handle race conditions
+          setTimeout(() => forceRewardsRefresh(), 100);
+          setTimeout(() => forceRewardsRefresh(), 1000);
         }
       }
     };

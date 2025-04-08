@@ -70,7 +70,7 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
       } else {
         console.log("RewardsCounter: No rewards data found in localStorage, initializing");
         // Initialize empty rewards if none exist
-        localStorage.setItem('catalogUserRewards', JSON.stringify({[currentUser.id]: 0}));
+        localStorage.setItem('catalogUserRewards', JSON.stringify({[currentUser.id]: 1})); // Start with 1 point
       }
       
       // Fallback to API call if no localStorage update
@@ -115,6 +115,12 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     // Initial refresh
     refreshRewards();
     
+    // Follow up with additional refresh after a delay
+    setTimeout(() => {
+      console.log("RewardsCounter: Follow-up refresh after user change");
+      refreshRewards();
+    }, 500);
+    
     prevUserIdRef.current = currentUser.id;
   }, [currentUser, refreshRewards]);
   
@@ -131,7 +137,12 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
         window.clearTimeout(refreshTimeoutRef.current);
       }
       
+      // Immediate refresh for better responsiveness
+      refreshRewards();
+      
+      // Follow up with a debounced refresh
       refreshTimeoutRef.current = window.setTimeout(() => {
+        console.log("RewardsCounter: Debounced refresh triggered");
         refreshRewards();
         refreshTimeoutRef.current = null;
       }, 300); // 300ms debounce
@@ -166,10 +177,13 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     const intervalId = setInterval(() => {
       console.log("RewardsCounter: Interval refresh triggered");
       refreshRewards();
-    }, 5000); // Changed from 150ms to 5000ms
+    }, 5000);
     
     // Force immediate refresh when component mounts
     refreshRewards();
+    
+    // Additional refresh after a short delay for reliability
+    setTimeout(() => refreshRewards(), 1000);
     
     return () => {
       window.removeEventListener('refreshRewards', handleRefreshEvent);

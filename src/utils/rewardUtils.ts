@@ -53,8 +53,9 @@ export const showRewardToast = (
     duration: 5000, // Show for 5 seconds
   });
   
-  // Dispatch one event for real-time updates
+  // Dispatch multiple events for real-time updates with different delays
   try {
+    // Immediate event
     const realTimeEvent = new CustomEvent('realtime_rewards_update', {
       detail: { 
         userId,
@@ -66,6 +67,21 @@ export const showRewardToast = (
     });
     window.dispatchEvent(realTimeEvent);
     console.log("Dispatched realtime_rewards_update event");
+    
+    // Followed by additional events with delays to ensure UI updates
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('refreshRewards', { 
+        detail: { userId, points: totalPoints, timestamp: Date.now().toString() } 
+      }));
+      console.log("Dispatched delayed refreshRewards event");
+    }, 200);
+    
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('card_reward_update', { 
+        detail: { userId, points: totalPoints, timestamp: Date.now().toString() } 
+      }));
+      console.log("Dispatched delayed card_reward_update event");
+    }, 500);
   } catch (e) {
     console.error("Error dispatching realtime event:", e);
   }
@@ -88,13 +104,16 @@ export const forceRewardsRefresh = (): void => {
       const currentUser = JSON.parse(currentUserStr);
       if (currentUser?.id) {
         localStorage.setItem(`user_${currentUser.id}_last_reward`, timestamp);
+        
+        // Also make sure the user has rewards initialized
+        ensureUserHasRewards(currentUser.id);
       }
     }
   } catch (e) {
     console.error("Error updating user-specific timestamp:", e);
   }
   
-  // Dispatch events just once
+  // Dispatch multiple events with different timeouts to ensure updates
   try {
     // Primary refresh event
     const event = new CustomEvent('refreshRewards', { 
@@ -110,6 +129,19 @@ export const forceRewardsRefresh = (): void => {
     window.dispatchEvent(new CustomEvent('realtime_rewards_update', {
       detail: { timestamp: timestamp }
     }));
+    
+    // Additional delayed events to handle race conditions
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('refreshRewards', { 
+        detail: { timestamp: Date.now().toString() } 
+      }));
+    }, 200);
+    
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent('realtime_rewards_update', {
+        detail: { timestamp: Date.now().toString() }
+      }));
+    }, 500);
   } catch (error) {
     console.error("Error dispatching reward events:", error);
   }
@@ -173,8 +205,12 @@ export const addPointsForCardCreation = (userId: string, cardType: string): void
     // Show toast notification
     showRewardToast(userId, 1, `Creating a new ${cardType === 'food' ? 'bite' : 'blockbuster'}`);
     
-    // Trigger a refresh
+    // Trigger a refresh with multiple attempts
     forceRewardsRefresh();
+    // Second refresh after short delay
+    setTimeout(() => forceRewardsRefresh(), 200);
+    // Third refresh after longer delay
+    setTimeout(() => forceRewardsRefresh(), 1000);
   } catch (e) {
     console.error("Error adding points for card creation:", e);
   }
@@ -236,8 +272,10 @@ export const addPointsForSharing = (userId: string, recipientId: string = null):
       : 'Sharing a card externally';
     showRewardToast(userId, 1, reason);
     
-    // Force refresh to update UI
+    // Force refresh with multiple attempts to ensure UI updates
     forceRewardsRefresh();
+    setTimeout(() => forceRewardsRefresh(), 200);
+    setTimeout(() => forceRewardsRefresh(), 1000);
     
     console.log(`Added 1 point to user ${userId} for sharing. Total: ${rewards[userId]}`);
   } catch (e) {
