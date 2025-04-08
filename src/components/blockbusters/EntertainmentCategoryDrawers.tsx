@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, ChevronDown } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
 import { EntertainmentCard } from "@/lib/types";
@@ -141,34 +140,18 @@ const EntertainmentCategoryDrawers = ({
         
         return (
           <div key={cat} className="mb-6" data-category={cat} data-display-name={displayName}>
-            <div className="relative">
-              {/* Enhanced drawer pull indicator */}
-              <div 
-                className={`absolute right-4 top-1/2 -translate-y-1/2 z-10 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-                style={{ pointerEvents: 'none' }}
-              >
-                <div className="bg-white rounded-full p-2 shadow-md flex items-center justify-center">
-                  <ChevronDown 
-                    size={24} 
-                    className={`text-${color} animate-bounce`}
-                    style={{ color, animationDuration: '2s', animationIterationCount: isOpen ? '1' : 'infinite' }}
-                  />
-                </div>
-              </div>
-              
-              <CatalogCollapsible
-                key={drawerKey}
-                label={cat}
-                categoryName={displayName}
-                backgroundColor={color}
-                textColor={textColor}
-                open={isOpen}
-                onOpenChange={(isOpen) => handleOpenChange(cat, isOpen)}
-                className="drawer-with-indicator hover:brightness-95 transition-all duration-200"
-              >
-                {renderCards(cat, catCards, color, textColor)}
-              </CatalogCollapsible>
-            </div>
+            <CatalogCollapsible
+              key={drawerKey}
+              label={cat}
+              categoryName={displayName}
+              backgroundColor={color}
+              textColor={textColor}
+              open={isOpen}
+              onOpenChange={(isOpen) => handleOpenChange(cat, isOpen)}
+              className="hover:brightness-95 transition-all duration-200"
+            >
+              {renderCards(cat, catCards, color, textColor)}
+            </CatalogCollapsible>
           </div>
         );
       })}

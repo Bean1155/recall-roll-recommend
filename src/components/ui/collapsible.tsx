@@ -70,7 +70,6 @@ export const CatalogCollapsible = React.forwardRef<
             className="w-full flex items-center justify-center px-4 py-3 font-typewriter font-semibold text-base sm:text-xl"
             style={{ color: textColor }}
           >
-            {/* Enhanced category name styling with better contrast and visibility */}
             <span 
               className="catalog-category-name block w-full text-center font-bold text-lg"
               data-testid="category-name"
