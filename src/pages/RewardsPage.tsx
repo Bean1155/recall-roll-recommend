@@ -41,12 +41,10 @@ const RewardsPage = () => {
   return (
     <GridLayout title={
       <>
-        {/* Rewards Status above the title */}
-        <div className="mb-8">
+        {/* Rewards Status centered */}
+        <div className="mb-8 w-full flex justify-center">
           <RewardsCounter />
         </div>
-        
-        <div>How to Earn Rewards</div>
       </>
     }>
       <div className="max-w-3xl mx-auto">
