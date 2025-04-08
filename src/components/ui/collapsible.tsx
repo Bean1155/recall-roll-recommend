@@ -28,6 +28,7 @@ export const CatalogCollapsible = React.forwardRef<
   
   // Debug output to track what's happening
   console.log(`CatalogCollapsible: Rendering with label=${label}, categoryName=${categoryName}, displayName=${displayName}`);
+  console.log(`CatalogCollapsible: Style properties - backgroundColor=${backgroundColor}, textColor=${textColor}`);
   
   // Simplified click handler with debugging
   const handleTriggerClick = (e: React.MouseEvent) => {
@@ -41,6 +42,9 @@ export const CatalogCollapsible = React.forwardRef<
       console.log(`CatalogCollapsible: State changed to ${!open ? 'open' : 'closed'} for "${displayName}"`);
     }
   };
+
+  // Force render of category name with key to ensure re-rendering
+  const categoryNameKey = `${displayName}-${open ? 'open' : 'closed'}-${Math.random()}`;
   
   return (
     <Collapsible 
@@ -70,14 +74,17 @@ export const CatalogCollapsible = React.forwardRef<
             style={{ color: textColor }}
           >
             <span 
-              className="block w-full text-center font-medium"
+              key={categoryNameKey}
+              className="catalog-category-name block w-full text-center font-bold text-lg"
               data-testid="category-name"
               style={{ 
-                textShadow: "0 0 1px rgba(0,0,0,0.1)",
-                visibility: displayName ? "visible" : "hidden" // Make sure text is visible
+                color: textColor,
+                opacity: 1,
+                fontWeight: 600,
+                textShadow: "0 0 1px rgba(0,0,0,0.2)"
               }}
             >
-              {displayName || "Category"}
+              {displayName}
             </span>
           </div>
         </div>

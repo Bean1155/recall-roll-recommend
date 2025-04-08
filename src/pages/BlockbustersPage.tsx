@@ -31,6 +31,7 @@ const BlockbustersPage = () => {
   
   // Track which category is currently open
   const [openCategory, setOpenCategory] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   // This effect loads cards and sets the initial open category
   useEffect(() => {
@@ -40,8 +41,8 @@ const BlockbustersPage = () => {
         setCards(entertainmentCards);
         console.log(`BlockbustersPage: Loaded ${entertainmentCards.length} cards`);
         
-        // Set first category as open if there are cards and no category is currently open
-        if (entertainmentCards.length > 0 && openCategory === null) {
+        // Only set first category as open if we haven't initialized yet
+        if (!isInitialized && entertainmentCards.length > 0) {
           const categories = [...new Set(entertainmentCards.map(card => 
             card.entertainmentCategory?.toLowerCase() || 'etc.'
           ))];
@@ -55,6 +56,7 @@ const BlockbustersPage = () => {
             const displayName = getCategoryDisplayName(firstCategory);
             console.log(`BlockbustersPage: Display name for "${firstCategory}" is "${displayName}"`);
           }
+          setIsInitialized(true);
         }
       } catch (error) {
         console.error("Error fetching entertainment cards:", error);
@@ -63,7 +65,7 @@ const BlockbustersPage = () => {
     };
     
     fetchCards();
-  }, []);
+  }, [isInitialized]);
   
   // Listen for changes from other components
   useEffect(() => {
@@ -110,15 +112,16 @@ const BlockbustersPage = () => {
   
   // Force refresh to help with rendering issues
   useEffect(() => {
-    const timer = setTimeout(() => {
-      console.log("BlockbustersPage: Forcing refresh to ensure category names display properly");
+    if (isInitialized) {
+      const timer = setTimeout(() => {
+        console.log("BlockbustersPage: Forcing refresh to ensure category names display properly");
+        // Force react to re-render the component
+        setOpenCategory(curr => curr);
+      }, 300);
       
-      // This will trigger a re-render
-      setOpenCategory(openCategory);
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, []);
+      return () => clearTimeout(timer);
+    }
+  }, [isInitialized, cards.length]);
   
   return (
     <GridLayout 

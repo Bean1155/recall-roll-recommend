@@ -134,11 +134,12 @@ const EntertainmentCategoryDrawers = ({
         const textColor = getTextColor(color);
         
         const isOpen = openCategory === cat;
-        console.log(`EntertainmentCategoryDrawers: Rendering category "${cat}" with displayName="${displayName}", isOpen=${isOpen}`);
+        console.log(`EntertainmentCategoryDrawers: Rendering category "${cat}" with displayName="${displayName}", isOpen=${isOpen}, color=${color}, textColor=${textColor}`);
         
         return (
-          <div key={cat} className="mb-6" data-category={cat}>
+          <div key={cat} className="mb-6" data-category={cat} data-display-name={displayName}>
             <CatalogCollapsible
+              key={`${cat}-drawer-${isOpen ? 'open' : 'closed'}`}
               label={cat}
               categoryName={displayName}
               backgroundColor={color}
