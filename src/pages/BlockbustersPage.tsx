@@ -11,6 +11,8 @@ import EntertainmentDetailDialog from "@/components/blockbusters/EntertainmentDe
 import BitesHeader from "@/components/bites/BitesHeader";
 import { getDefaultCategoryColors, getCategoryDisplayName } from "@/utils/categoryUtils";
 import { toast } from "sonner";
+import { useUser } from "@/contexts/UserContext";
+import { addPointsForCardCreation } from "@/utils/rewardUtils";
 
 const BlockbustersPage = () => {
   const location = useLocation();
@@ -20,6 +22,7 @@ const BlockbustersPage = () => {
     rating: [] as number[],
     tags: [] as string[]
   });
+  const { currentUser } = useUser();
   
   // Ref to track rerenders and help with debugging
   const renderCountRef = useRef(0);
@@ -88,6 +91,12 @@ const BlockbustersPage = () => {
       const customEvent = event as CustomEvent;
       if (customEvent.detail?.action === 'card_added' && customEvent.detail?.cardType === 'entertainment') {
         fetchCards();
+        
+        // Award a point for adding a blockbuster card
+        if (currentUser && customEvent.detail?.cardId) {
+          console.log("BlockbustersPage: Detected new card added, awarding points");
+          addPointsForCardCreation(currentUser.id, 'entertainment');
+        }
       }
     };
     
@@ -96,7 +105,7 @@ const BlockbustersPage = () => {
     return () => {
       window.removeEventListener('catalog_action', handleCardAdded);
     };
-  }, []);
+  }, [currentUser]);
   
   const clearFilters = () => {
     setFilters({

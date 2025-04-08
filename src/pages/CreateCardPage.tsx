@@ -4,9 +4,9 @@ import CardForm from "@/components/CardForm";
 import { CardType } from "@/lib/types";
 import GridLayout from "@/components/GridLayout";
 import { useEffect, useRef, useState } from "react";
-import { forceRewardsRefresh } from "@/utils/rewardUtils";
+import { forceRewardsRefresh, addPointsForCardCreation } from "@/utils/rewardUtils";
 import { useUser } from "@/contexts/UserContext";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 const CreateCardPage = () => {
   const { type } = useParams<{ type: string }>();
@@ -49,16 +49,11 @@ const CreateCardPage = () => {
     setSubmittedCardId(cardId);
     
     if (currentUser && !hasAddedRewardRef.current) {
-      // We'll add reward in the data.ts addCard function instead
-      // This avoids duplicate rewards and ensures rewards are only given on save
+      // Award points for card creation
+      addPointsForCardCreation(currentUser.id, cardType);
       hasAddedRewardRef.current = true;
       
-      toast({
-        title: "Card Created!",
-        description: `Your ${cardType === 'food' ? 'bite' : 'blockbuster'} has been added and you earned points!`,
-        className: "bg-catalog-cream border-catalog-teal border-4 text-catalog-darkBrown font-medium z-[2000]",
-        duration: 5000,
-      });
+      toast.success(`Your ${cardType === 'food' ? 'bite' : 'blockbuster'} has been added and you earned points!`);
     }
     
     // Dispatch a custom event to notify other components

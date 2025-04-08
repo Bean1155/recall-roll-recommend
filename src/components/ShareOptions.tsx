@@ -80,23 +80,40 @@ const ShareOptions = ({
     return shareText;
   };
   
+  const awardPointsForSharing = () => {
+    if (!currentUser) return;
+    
+    addUserRewardPoints(currentUser.id, 1, `Sharing "${card.title}" externally`);
+    
+    toast({
+      title: "Share Successful",
+      description: `You earned 1 point for sharing "${card.title}". Keep sharing!`,
+    });
+  };
+  
   const handleShareEmail = () => {
     const subject = `Check out: ${card.title}`;
     const body = encodeURIComponent(generateShareText());
     window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${body}`);
+    
     toast({
       title: "Email App Opened",
       description: "Share this recommendation via email",
     });
+    
+    awardPointsForSharing();
   };
   
   const handleShareMessage = () => {
     const text = encodeURIComponent(generateShareText());
     window.open(`sms:?body=${text}`);
+    
     toast({
       title: "Message App Opened",
       description: "Share this recommendation via text message",
     });
+    
+    awardPointsForSharing();
   };
   
   const handleShareSocial = (platform: string) => {
@@ -121,10 +138,13 @@ const ShareOptions = ({
     
     if (shareUrl) {
       window.open(shareUrl, '_blank');
+      
       toast({
         title: `Sharing to ${platform}`,
         description: `Opening ${platform} sharing dialog`,
       });
+      
+      awardPointsForSharing();
     }
   };
   
@@ -139,6 +159,8 @@ const ShareOptions = ({
         title: "Copied to clipboard",
         description: "You can now paste and share this recommendation",
       });
+      
+      awardPointsForSharing();
       
       setTimeout(() => setIsCopied(false), 2000);
     } catch (error) {
@@ -156,10 +178,8 @@ const ShareOptions = ({
     if (user && currentUser) {
       console.log(`ShareOptions: Sharing with user ${userId}, awarding points to ${currentUser.id}`);
       
-      // Award exactly 1 point for sharing
       addUserRewardPoints(currentUser.id, 1, `Sharing "${card.title}" with ${user.name}`);
       
-      // Award 1 point to the recipient
       addUserRewardPoints(userId, 1, `Receiving "${card.title}" recommendation`);
       
       toast({

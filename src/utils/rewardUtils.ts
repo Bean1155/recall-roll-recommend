@@ -1,5 +1,5 @@
 
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { getUserRewards } from "@/lib/data";
 
 /**
@@ -45,12 +45,8 @@ export const showRewardToast = (
   }
   
   // Use a visible toast with reasonable duration
-  toast({
-    title: `🎉 You earned ${pointsAdded} point${pointsAdded > 1 ? 's' : ''}!`,
-    description: `${reason}. You now have ${totalPoints} total points.`,
-    className: "bg-catalog-cream border-catalog-teal text-catalog-darkBrown font-medium border-4 z-[2000] shadow-lg",
+  toast.success(`You earned ${pointsAdded} point${pointsAdded > 1 ? 's' : ''}! ${reason}. You now have ${totalPoints} total points.`, {
     duration: 5000, // Show for 5 seconds
-    variant: "default",
   });
   
   // Dispatch one event for real-time updates
@@ -134,7 +130,7 @@ export const ensureUserHasRewards = (userId: string): void => {
   }
 }
 
-// Direct function to add points for card creation - fixed to ONLY add points during explicit save
+// Direct function to add points for card creation
 export const addPointsForCardCreation = (userId: string, cardType: string): void => {
   if (!userId) return;
   
@@ -179,5 +175,3 @@ export const addPointsForCardCreation = (userId: string, cardType: string): void
     console.error("Error adding points for card creation:", e);
   }
 }
-
-// Remove the addPointsForSearch function as we don't want to award points for search
