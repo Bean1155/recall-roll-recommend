@@ -9,7 +9,7 @@ import EntertainmentCategoryDrawers from "@/components/blockbusters/Entertainmen
 import { useEntertainmentCardDetailHandling } from "@/components/blockbusters/useEntertainmentCardDetailHandling";
 import EntertainmentDetailDialog from "@/components/blockbusters/EntertainmentDetailDialog";
 import BitesHeader from "@/components/bites/BitesHeader";
-import { getDefaultCategoryColors } from "@/utils/categoryUtils";
+import { getDefaultCategoryColors, getCategoryDisplayName } from "@/utils/categoryUtils";
 import { toast } from "sonner";
 
 const BlockbustersPage = () => {
@@ -50,6 +50,10 @@ const BlockbustersPage = () => {
             const firstCategory = categories[0];
             console.log(`BlockbustersPage: Setting initial open category to "${firstCategory}"`);
             setOpenCategory(firstCategory);
+            
+            // Debug to see what the display name would be
+            const displayName = getCategoryDisplayName(firstCategory);
+            console.log(`BlockbustersPage: Display name for "${firstCategory}" is "${displayName}"`);
           }
         }
       } catch (error) {

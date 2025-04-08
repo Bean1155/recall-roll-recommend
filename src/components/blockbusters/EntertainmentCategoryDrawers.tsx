@@ -15,7 +15,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { toast } from "sonner";
 
 interface EntertainmentCategoryDrawersProps {
   cards: EntertainmentCard[];

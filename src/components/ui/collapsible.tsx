@@ -26,6 +26,9 @@ export const CatalogCollapsible = React.forwardRef<
   // Use categoryName if available, otherwise fallback to label
   const displayName = categoryName || label;
   
+  // Debug code to check what values we're getting
+  console.log(`CatalogCollapsible: Rendering with label=${label}, categoryName=${categoryName}, displayName=${displayName}`);
+  
   // Simplified click handler with debugging
   const handleTriggerClick = (e: React.MouseEvent) => {
     console.log(`CatalogCollapsible: Click triggered for "${displayName}", current open state: ${open}`);
@@ -67,10 +70,10 @@ export const CatalogCollapsible = React.forwardRef<
             style={{ color: textColor }}
           >
             <span 
-              className="truncate max-w-full text-center" 
+              className="truncate max-w-full text-center"
               data-testid="category-name"
             >
-              {displayName}
+              {displayName || "Category"}
             </span>
           </div>
         </div>
