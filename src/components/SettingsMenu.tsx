@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Settings, Stamp, PresentationChart } from 'lucide-react';
+import { Settings, Stamp, Presentation } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -114,7 +114,7 @@ const SettingsMenu = () => {
                       size="sm"
                       className="w-full border-dashed border-catalog-softBrown flex items-center justify-center gap-2"
                     >
-                      <PresentationChart size={16} />
+                      <Presentation size={16} />
                       Preview Onboarding
                     </Button>
                     <p className="text-xs text-muted-foreground mt-1">
