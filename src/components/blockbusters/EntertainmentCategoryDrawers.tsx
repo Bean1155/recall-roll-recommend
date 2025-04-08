@@ -130,11 +130,11 @@ const EntertainmentCategoryDrawers = ({
         const color = categoryColors[cat] || '#d2b48c';
         // Get proper display name for the category
         const displayName = getCategoryDisplayName(cat);
-        // Get text color based on background color
-        const textColor = getTextColor(color);
+        // Always use black for category names to ensure visibility
+        const textColor = "#000000";
         
         const isOpen = openCategory === cat;
-        console.log(`EntertainmentCategoryDrawers: Rendering category "${cat}" with displayName="${displayName}", isOpen=${isOpen}, color=${color}, textColor=${textColor}`);
+        console.log(`EntertainmentCategoryDrawers: Rendering category "${cat}" with displayName="${displayName}", isOpen=${isOpen}, color=${color}`);
         
         // Key directly includes both category and display name to force re-rendering
         const drawerKey = `${cat}-drawer-${displayName}-${isOpen ? 'open' : 'closed'}`;

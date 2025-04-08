@@ -36,6 +36,9 @@ const BlockbustersPage = () => {
   const [openCategory, setOpenCategory] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   
+  // Force component re-render
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  
   // This effect loads cards and sets the initial open category
   useEffect(() => {
     const fetchCards = async () => {
@@ -72,7 +75,7 @@ const BlockbustersPage = () => {
     // Increment render count to track component lifecycle
     renderCountRef.current += 1;
     console.log(`BlockbustersPage: Render count: ${renderCountRef.current}`);
-  }, [isInitialized]);
+  }, [isInitialized, refreshTrigger]);
   
   // Listen for changes from other components
   useEffect(() => {
@@ -117,28 +120,15 @@ const BlockbustersPage = () => {
     setOpenCategory(isOpen ? category : null);
   };
   
-  // Force refresh to help with rendering issues - with multiple attempts
+  // Force refresh when component mounts
   useEffect(() => {
-    if (isInitialized && cards.length > 0) {
-      // First attempt after a short delay
-      const firstTimer = setTimeout(() => {
-        console.log("BlockbustersPage: First refresh attempt for category names");
-        setOpenCategory(curr => curr);
-      }, 100);
-      
-      // Second attempt after a longer delay
-      const secondTimer = setTimeout(() => {
-        console.log("BlockbustersPage: Second refresh attempt for category names");
-        // Force component update
-        setOpenCategory(openCategory);
-      }, 500);
-      
-      return () => {
-        clearTimeout(firstTimer);
-        clearTimeout(secondTimer);
-      };
-    }
-  }, [isInitialized, cards.length, openCategory]);
+    // Initial refresh
+    const initialTimer = setTimeout(() => {
+      setRefreshTrigger(prev => prev + 1);
+    }, 100);
+    
+    return () => clearTimeout(initialTimer);
+  }, []);
   
   return (
     <GridLayout 
