@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 import { getUserRewards } from "@/lib/data";
 
@@ -26,7 +25,7 @@ export const showRewardToast = (
   localStorage.setItem('lastRewardUpdate', timestamp);
   localStorage.setItem(`user_${userId}_last_reward`, timestamp);
   
-  // Ensure rewards data exists in localStorage (critical fix)
+  // CRITICAL FIX: Ensure rewards data exists in localStorage with improved reliability
   try {
     const rewardsData = localStorage.getItem('catalogUserRewards');
     if (rewardsData) {
@@ -34,15 +33,18 @@ export const showRewardToast = (
       if (typeof rewards[userId] === 'undefined') {
         rewards[userId] = pointsAdded;
         localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
+        console.log(`REWARD SYSTEM: Initialized user ${userId} with ${pointsAdded} points`);
       } else {
         // Add the points to existing total
         rewards[userId] += pointsAdded;
         localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
+        console.log(`REWARD SYSTEM: Updated user ${userId} to ${rewards[userId]} points`);
       }
     } else {
       // Initialize rewards data if it doesn't exist
       const initialRewards = { [userId]: pointsAdded };
       localStorage.setItem('catalogUserRewards', JSON.stringify(initialRewards));
+      console.log(`REWARD SYSTEM: Created new rewards data for user ${userId} with ${pointsAdded} points`);
     }
   } catch (e) {
     console.error("Error ensuring user rewards exist:", e);
@@ -166,9 +168,14 @@ export const ensureUserHasRewards = (userId: string): void => {
   }
 }
 
-// Direct function to add points for card creation
+// Direct function to add points for card creation - FIXED
 export const addPointsForCardCreation = (userId: string, cardType: string): void => {
-  if (!userId) return;
+  if (!userId) {
+    console.error("Cannot add points: userId is empty");
+    return;
+  }
+  
+  console.log(`REWARD SYSTEM: Adding points for ${cardType} card creation to user ${userId}`);
   
   // Check if we've already added points for this exact card creation action
   const trackingKey = `last_${cardType}_added_${userId}`;
@@ -177,7 +184,7 @@ export const addPointsForCardCreation = (userId: string, cardType: string): void
   
   if (lastAdded) {
     const timeSinceLastAdd = now - Number(lastAdded);
-    // If we've added points in the last 5 seconds, don't add more
+    // If we've added points in the last 5 seconds, don't add more - this prevents duplicates
     if (timeSinceLastAdd < 5000) {
       console.log(`Skipping duplicate points for ${userId} - already added recently`);
       return;
@@ -185,34 +192,39 @@ export const addPointsForCardCreation = (userId: string, cardType: string): void
   }
   
   try {
+    // CRITICAL FIX: Directly manipulate localStorage for maximum reliability
     const rewardsData = localStorage.getItem('catalogUserRewards');
     let rewards = rewardsData ? JSON.parse(rewardsData) : {};
     
     // Initialize or update user rewards
     if (typeof rewards[userId] === 'undefined') {
       rewards[userId] = 1;
+      console.log(`REWARD SYSTEM: Initialized user ${userId} with 1 point`);
     } else {
       // Add exactly 1 point per card creation
       rewards[userId] += 1;
+      console.log(`REWARD SYSTEM: Added 1 point to user ${userId}. Now has ${rewards[userId]} points`);
     }
     
-    // Save back to localStorage
+    // Save back to localStorage with timestamp tracking
     localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
     localStorage.setItem(trackingKey, now.toString());
+    localStorage.setItem('lastRewardUpdate', now.toString());
     
     console.log(`Added 1 point to user ${userId} for creating a ${cardType} card. Total: ${rewards[userId]}`);
     
-    // Show toast notification
+    // Show toast notification - this will also trigger events
     showRewardToast(userId, 1, `Creating a new ${cardType === 'food' ? 'bite' : 'blockbuster'}`);
     
-    // Trigger a refresh with multiple attempts
+    // Multiple refreshes with different timing for reliability
     forceRewardsRefresh();
-    // Second refresh after short delay
-    setTimeout(() => forceRewardsRefresh(), 200);
-    // Third refresh after longer delay
-    setTimeout(() => forceRewardsRefresh(), 1000);
+    setTimeout(() => forceRewardsRefresh(), 300);
+    setTimeout(() => forceRewardsRefresh(), 1200);
   } catch (e) {
     console.error("Error adding points for card creation:", e);
+    
+    // Fallback method - try to add points via toast directly if the above fails
+    showRewardToast(userId, 1, `Creating a new ${cardType === 'food' ? 'bite' : 'blockbuster'}`);
   }
 }
 

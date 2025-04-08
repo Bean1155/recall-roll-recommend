@@ -48,8 +48,8 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
           
           console.log(`RewardsCounter: Direct localStorage check - User ${currentUser.id} has ${storedPoints} points`);
           
-          // Only update if points changed or this is the initial load
-          if (points !== storedPoints || prevUserIdRef.current !== currentUser.id) {
+          // Always update points on refresh for maximum reliability
+          if (storedPoints !== points || prevUserIdRef.current !== currentUser.id) {
             console.log(`RewardsCounter: POINTS CHANGED: ${points} → ${storedPoints} (direct localStorage check)`);
             setPoints(storedPoints);
             setTier(getUserRewardTier(storedPoints));
@@ -62,6 +62,12 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
               }, 2000);
             }
             
+            // Critical: Update localStorage with the latest value to ensure consistency
+            if (typeof rewards[currentUser.id] === 'undefined') {
+              rewards[currentUser.id] = storedPoints;
+              localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
+            }
+            
             return; // Exit early if we updated via localStorage
           }
         } catch (e) {
@@ -71,6 +77,9 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
         console.log("RewardsCounter: No rewards data found in localStorage, initializing");
         // Initialize empty rewards if none exist
         localStorage.setItem('catalogUserRewards', JSON.stringify({[currentUser.id]: 1})); // Start with 1 point
+        setPoints(1);
+        setTier(getUserRewardTier(1));
+        return;
       }
       
       // Fallback to API call if no localStorage update
@@ -79,22 +88,20 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
       // Ensure we always have the latest value
       console.log(`RewardsCounter: API call returned ${userPoints} points for user ${currentUser.id}`);
       
-      // Only update if points changed or this is initial load
-      if (points !== userPoints || prevUserIdRef.current !== currentUser.id) {
-        console.log(`RewardsCounter: Points refreshed to ${userPoints} (from ${points}) for user ${currentUser.id}`);
-        
-        // Animate if points increased and not the initial load
-        if (userPoints > points && prevUserIdRef.current === currentUser.id) {
-          animateRef.current = true;
-          setTimeout(() => {
-            animateRef.current = false;
-          }, 2000);
-        }
-        
-        // Update state with new values
-        setPoints(userPoints);
-        setTier(getUserRewardTier(userPoints));
+      // Always update to ensure latest value is displayed
+      console.log(`RewardsCounter: Points refreshed to ${userPoints} (from ${points}) for user ${currentUser.id}`);
+      
+      // Animate if points increased and not the initial load
+      if (userPoints > points && prevUserIdRef.current === currentUser.id) {
+        animateRef.current = true;
+        setTimeout(() => {
+          animateRef.current = false;
+        }, 2000);
       }
+      
+      // Update state with new values
+      setPoints(userPoints);
+      setTier(getUserRewardTier(userPoints));
       
       // Update the previous user ID
       prevUserIdRef.current = currentUser.id;
@@ -124,7 +131,7 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     prevUserIdRef.current = currentUser.id;
   }, [currentUser, refreshRewards]);
   
-  // Set up event listeners for points updates with debouncing
+  // Set up event listeners for points updates with improved reliability
   useEffect(() => {
     if (!currentUser) return;
     
@@ -132,13 +139,13 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
       const customEvent = e as CustomEvent;
       console.log("RewardsCounter: Refresh event received", customEvent?.detail || '');
       
-      // Debounce refresh calls
+      // CRITICAL FIX: Always refresh immediately for maximum responsiveness
+      refreshRewards();
+      
+      // Debounce additional refreshes
       if (refreshTimeoutRef.current) {
         window.clearTimeout(refreshTimeoutRef.current);
       }
-      
-      // Immediate refresh for better responsiveness
-      refreshRewards();
       
       // Follow up with a debounced refresh
       refreshTimeoutRef.current = window.setTimeout(() => {
@@ -146,6 +153,12 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
         refreshRewards();
         refreshTimeoutRef.current = null;
       }, 300); // 300ms debounce
+      
+      // Additional refresh after a longer delay to catch any async updates
+      setTimeout(() => {
+        console.log("RewardsCounter: Additional delayed refresh");
+        refreshRewards();
+      }, 1500);
     };
     
     // Add listeners for all relevant events

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Film } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
@@ -102,16 +101,20 @@ const BlockbustersPage = () => {
     const handleCardAdded = (event: Event) => {
       const customEvent = event as CustomEvent;
       if (customEvent.detail?.action === 'card_added' && customEvent.detail?.cardType === 'entertainment') {
+        console.log("BlockbustersPage: Detected new entertainment card added");
         fetchCards();
         
-        // Award a point for adding a blockbuster card
+        // CRITICAL FIX: Award points more reliably for adding a blockbuster card
         if (currentUser && customEvent.detail?.cardId) {
-          console.log("BlockbustersPage: Detected new card added, awarding points");
+          console.log(`BlockbustersPage: Detected new card ${customEvent.detail.cardId} added by user ${currentUser.id}`);
+          
+          // Direct call to add points without checking
           addPointsForCardCreation(currentUser.id, 'entertainment');
           
           // Ensure rewards are refreshed multiple times to handle race conditions
           setTimeout(() => forceRewardsRefresh(), 100);
-          setTimeout(() => forceRewardsRefresh(), 1000);
+          setTimeout(() => forceRewardsRefresh(), 500);
+          setTimeout(() => forceRewardsRefresh(), 1500);
         }
       }
     };
