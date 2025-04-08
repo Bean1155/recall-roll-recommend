@@ -1,11 +1,13 @@
 
 import React from "react";
+import QuoteBubble from "./QuoteBubble";
 
 interface OnboardingStepProps {
   title: string;
   description: string;
   image: string;
   backgroundColor?: string;
+  stepType?: "intro" | "bites" | "blockbusters" | "other";
 }
 
 const OnboardingStep: React.FC<OnboardingStepProps> = ({
@@ -13,6 +15,7 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
   description,
   image,
   backgroundColor = "#F5F1E6",
+  stepType = "other",
 }) => {
   return (
     <div className="flex flex-col items-center text-center">
@@ -26,23 +29,42 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
         </h2>
       </div>
       
-      {/* Image section */}
-      <div className="p-6 w-full flex justify-center">
-        <div 
-          className="rounded-md overflow-hidden border-2 border-catalog-softBrown shadow-md"
-          style={{ 
-            maxWidth: "250px",
-            maxHeight: "250px",
-            backgroundColor: "#FFFFFF"
-          }}
-        >
-          <img 
-            src={image} 
-            alt={title} 
-            className="w-full h-full object-cover"
+      {/* Content section with either quote bubbles or normal image */}
+      {stepType === "bites" ? (
+        <div className="p-6 w-full flex flex-col items-center justify-center">
+          <QuoteBubble 
+            text="BEEN TO ANY GOOD RESTAURANTS?" 
+            color="#add8e6"
+            delay={300}
           />
         </div>
-      </div>
+      ) : stepType === "blockbusters" ? (
+        <div className="p-6 w-full flex flex-col items-center justify-center">
+          <QuoteBubble 
+            text="WATCH ANY GOOD SHOWS OR MOVIES LATELY?" 
+            color="#add8e6" 
+            delay={300}
+            isEntertainment={true}
+          />
+        </div>
+      ) : (
+        <div className="p-6 w-full flex justify-center">
+          <div 
+            className="rounded-md overflow-hidden border-2 border-catalog-softBrown shadow-md"
+            style={{ 
+              maxWidth: "250px",
+              maxHeight: "250px",
+              backgroundColor: "#FFFFFF"
+            }}
+          >
+            <img 
+              src={image} 
+              alt={title} 
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      )}
       
       {/* Description section */}
       <div className="px-8 pb-6">

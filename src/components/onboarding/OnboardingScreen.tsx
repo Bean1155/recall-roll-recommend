@@ -35,30 +35,35 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
       description: "Your personal library for tracking and sharing all your favorite food and entertainment experiences.",
       image: "/lovable-uploads/b1c69d28-6949-4945-8501-dcc72236d701.png",
       backgroundColor: "#FFDEE2", // Light pink for Bites
+      stepType: "intro"
     },
     {
       title: "Track Your BITES",
       description: "Record all your favorite restaurants, dishes, and recipes in beautifully designed catalog cards.",
       image: "/lovable-uploads/8408dab2-58e0-488d-927d-f0930cf39585.png",
       backgroundColor: "#FFDEE2", // Light pink for Bites
+      stepType: "bites"
     },
     {
       title: "Save Your BLOCKBUSTERS",
       description: "Create a personal library of films, shows, and entertainment you've enjoyed or want to experience.",
       image: "/lovable-uploads/c1229700-5ec5-4c21-baef-dc535d219a0e.png",
       backgroundColor: "#D3E4FD", // Light blue for Blockbusters
+      stepType: "blockbusters"
     },
     {
       title: "Share Your Discoveries",
       description: "Recommend your favorite finds to friends and track who follows your suggestions.",
       image: "/lovable-uploads/fafe4c18-7a01-4f90-8483-06834c0e1170.png",
       backgroundColor: "#e18336", // Orange from catalog
+      stepType: "other"
     },
     {
       title: "Earn Rewards",
       description: "Collect points for adding and sharing catalog cards and become a Happy Sharer!",
       image: "/lovable-uploads/7fb0b78f-1a67-4fae-8211-8416211d5728.png", 
       backgroundColor: "#D8E4C8", // Light green from catalog
+      stepType: "other"
     }
   ];
   
@@ -103,6 +108,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
           description={onboardingSteps[currentStep].description}
           image={onboardingSteps[currentStep].image}
           backgroundColor={onboardingSteps[currentStep].backgroundColor}
+          stepType={onboardingSteps[currentStep].stepType as "intro" | "bites" | "blockbusters" | "other"}
         />
         
         <div className="p-4 flex justify-between items-center border-t border-catalog-softBrown/30 bg-catalog-cream">

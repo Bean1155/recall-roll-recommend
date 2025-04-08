@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 interface LaunchScreenAnimationProps {
   open: boolean;
@@ -14,11 +14,6 @@ const LaunchScreenAnimation: React.FC<LaunchScreenAnimationProps> = ({
   setStamped,
   stamped 
 }) => {
-  const [displayTextLine1, setDisplayTextLine1] = useState("");
-  const [displayTextLine2, setDisplayTextLine2] = useState("");
-  const fullTextLine1 = "TOTAL RECALL CATALOG";
-  const fullTextLine2 = "Tracking Every Bite and Blockbuster";
-  
   // Animation sequence for the stamp effect
   useEffect(() => {
     if (open && !stamped) {
@@ -41,41 +36,6 @@ const LaunchScreenAnimation: React.FC<LaunchScreenAnimationProps> = ({
     }
   }, [forcedOpen, setStamped]);
 
-  // Typewriter effect for the envelope title
-  useEffect(() => {
-    if (stamped) {
-      // Reset text first
-      setDisplayTextLine1("");
-      setDisplayTextLine2("");
-      
-      // Start typing first line
-      let currentIndex = 0;
-      const typeInterval = setInterval(() => {
-        if (currentIndex < fullTextLine1.length) {
-          setDisplayTextLine1(fullTextLine1.substring(0, currentIndex + 1));
-          currentIndex++;
-        } else {
-          clearInterval(typeInterval);
-          
-          // Start typing second line after first is complete
-          let secondIndex = 0;
-          const typeSecondInterval = setInterval(() => {
-            if (secondIndex < fullTextLine2.length) {
-              setDisplayTextLine2(fullTextLine2.substring(0, secondIndex + 1));
-              secondIndex++;
-            } else {
-              clearInterval(typeSecondInterval);
-            }
-          }, 50);
-        }
-      }, 100);
-      
-      return () => {
-        clearInterval(typeInterval);
-      };
-    }
-  }, [stamped]);
-
   return (
     <div 
       className={`relative transition-all duration-1000 transform w-full ${stamped ? 'scale-100 opacity-100' : 'scale-150 opacity-0'}`}
@@ -95,12 +55,7 @@ const LaunchScreenAnimation: React.FC<LaunchScreenAnimationProps> = ({
           }}
         >
           <div className="font-bold text-amber-900 uppercase tracking-wider text-sm sm:text-base font-typewriter">
-            {displayTextLine1}
-            <span className={`inline-block ${displayTextLine1.length < fullTextLine1.length ? 'animate-pulse' : 'opacity-0'}`}>|</span>
-          </div>
-          <div className="mt-0 sm:mt-1 text-amber-800 text-xs sm:text-sm font-semibold">
-            {displayTextLine2}
-            <span className={`inline-block ${displayTextLine1.length === fullTextLine1.length && displayTextLine2.length < fullTextLine2.length ? 'animate-pulse' : 'opacity-0'}`}>|</span>
+            CATALOG COMPANION
           </div>
         </div>
       </div>
