@@ -52,7 +52,8 @@ type UserContextType = {
   sharingSettings: SharingSettings;
   updateSharingSettings: (settings: Partial<SharingSettings>) => void;
   currentUser: UserType;
-  setCurrentUser: (user: UserType) => void; // Add this line to fix the error
+  setCurrentUser: (user: UserType) => void;
+  login: (email: string) => void; // Add the login function type
 };
 
 const defaultUserName = "Food Lover";
@@ -97,7 +98,8 @@ const UserContext = createContext<UserContextType>({
   sharingSettings: defaultSharingSettings,
   updateSharingSettings: () => {},
   currentUser: defaultCurrentUser,
-  setCurrentUser: () => {}, // Add this line to include in the default context value
+  setCurrentUser: () => {},
+  login: () => {}, // Add login to default context
 });
 
 export const useUser = () => useContext(UserContext);
@@ -147,6 +149,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setSharingSettings(prev => ({ ...prev, ...newSettings }));
   };
 
+  // Login function implementation
+  const login = (email: string) => {
+    // Find a user with matching email or use default
+    // In a real app, this would authenticate against a backend
+    const newUser = { 
+      ...defaultCurrentUser, 
+      email 
+    };
+    
+    setCurrentUser(newUser);
+    updateProfile({ email, isRegistered: true });
+  };
+
   // Save to localStorage whenever settings change
   useEffect(() => {
     localStorage.setItem('catalogUserName', userName);
@@ -181,7 +196,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         sharingSettings,
         updateSharingSettings,
         currentUser,
-        setCurrentUser // Include setCurrentUser in the context value
+        setCurrentUser,
+        login // Provide the login function to consumers
       }}
     >
       {children}
