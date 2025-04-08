@@ -102,9 +102,9 @@ export const CatalogCollapsible = React.forwardRef<
             style={{
               width: "40%",
               height: "12px",
-              backgroundColor: textColor,
+              backgroundColor: "#FFFFFF", // Changed from textColor to white
               borderRadius: "6px",
-              opacity: 0.6
+              opacity: 0.9 // Increased opacity for better visibility
             }}
           >
             <div 
@@ -112,9 +112,9 @@ export const CatalogCollapsible = React.forwardRef<
               style={{
                 width: "6px",
                 height: "6px",
-                backgroundColor: "black",
+                backgroundColor: "rgba(0,0,0,0.2)", // Made the hole more subtle
                 borderRadius: "50%",
-                opacity: 0.5
+                opacity: 0.7
               }}
             />
           </div>
