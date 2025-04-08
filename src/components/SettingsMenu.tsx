@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Settings, Stamp } from 'lucide-react';
+import { Settings, Stamp, PresentationChart } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,11 +14,13 @@ import {
 } from '@/components/ui/menubar';
 import { toast } from '@/components/ui/use-toast';
 import LaunchScreen from './LaunchScreen';
+import OnboardingScreen from './onboarding/OnboardingScreen';
 
 const SettingsMenu = () => {
   const { userName, setUserName } = useUser();
   const [newName, setNewName] = useState(userName);
   const [showLaunchScreen, setShowLaunchScreen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const handleSaveName = () => {
     if (newName.trim()) {
@@ -34,12 +36,25 @@ const SettingsMenu = () => {
     setShowLaunchScreen(true);
   };
 
+  const handleShowOnboarding = () => {
+    // Remove the flag from localStorage to make the onboarding show
+    localStorage.removeItem("hasSeenOnboarding");
+    setShowOnboarding(true);
+  };
+
   return (
     <>
       {showLaunchScreen && (
         <LaunchScreen 
           forcedOpen={true} 
           onClose={() => setShowLaunchScreen(false)} 
+        />
+      )}
+      
+      {showOnboarding && (
+        <OnboardingScreen 
+          forcedOpen={true}
+          onClose={() => setShowOnboarding(false)} 
         />
       )}
       
@@ -83,18 +98,29 @@ const SettingsMenu = () => {
                 
                 <div>
                   <h4 className="text-sm font-medium mb-2">Developer Options</h4>
-                  <Button 
-                    onClick={handleShowLaunchScreen}
-                    variant="outline" 
-                    size="sm"
-                    className="w-full border-dashed border-catalog-softBrown flex items-center justify-center gap-2"
-                  >
-                    <Stamp size={16} />
-                    Preview Launch Screen
-                  </Button>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    View and test the app's onboarding experience
-                  </p>
+                  <div className="space-y-2">
+                    <Button 
+                      onClick={handleShowLaunchScreen}
+                      variant="outline" 
+                      size="sm"
+                      className="w-full border-dashed border-catalog-softBrown flex items-center justify-center gap-2"
+                    >
+                      <Stamp size={16} />
+                      Preview Launch Screen
+                    </Button>
+                    <Button 
+                      onClick={handleShowOnboarding}
+                      variant="outline" 
+                      size="sm"
+                      className="w-full border-dashed border-catalog-softBrown flex items-center justify-center gap-2"
+                    >
+                      <PresentationChart size={16} />
+                      Preview Onboarding
+                    </Button>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      View and test the app's onboarding experiences
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

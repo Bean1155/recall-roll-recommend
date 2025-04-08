@@ -7,7 +7,15 @@ import OnboardingStep from "./OnboardingStep";
 import { useUser } from "@/contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 
-const OnboardingScreen = () => {
+interface OnboardingScreenProps {
+  forcedOpen?: boolean;
+  onClose?: () => void;
+}
+
+const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ 
+  forcedOpen = false,
+  onClose
+}) => {
   const [open, setOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const { currentUser } = useUser();
@@ -57,17 +65,32 @@ const OnboardingScreen = () => {
   const handleComplete = () => {
     localStorage.setItem("hasSeenOnboarding", "true");
     setOpen(false);
-    navigate("/login");
+    if (onClose) {
+      onClose();
+    } else {
+      navigate("/login");
+    }
   };
   
   const handleSkip = () => {
     localStorage.setItem("hasSeenOnboarding", "true");
     setOpen(false);
-    navigate("/login");
+    if (onClose) {
+      onClose();
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    if (!newOpen && onClose) {
+      onClose();
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open || forcedOpen} onOpenChange={handleOpenChange}>
       <DialogContent 
         className="sm:max-w-md md:max-w-lg p-0 border-catalog-softBrown border-2 overflow-hidden rounded-lg"
         style={{
