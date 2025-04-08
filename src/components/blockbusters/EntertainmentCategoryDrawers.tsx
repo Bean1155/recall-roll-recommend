@@ -45,6 +45,7 @@ const EntertainmentCategoryDrawers = ({
     }
     
     const grouped = cards.reduce((acc: Record<string, EntertainmentCard[]>, card) => {
+      // Normalize category to lowercase for consistent mapping and ensure it's never undefined
       const cardCategory = card.entertainmentCategory?.toLowerCase() || 'etc.';
       if (!acc[cardCategory]) {
         acc[cardCategory] = [];
@@ -68,6 +69,7 @@ const EntertainmentCategoryDrawers = ({
   }, [cards, defaultOpenCategory, startCollapsed, openCategory]);
 
   const handleOpenChange = (cat: string, isOpen: boolean) => {
+    // Only set the open category, don't close it if it's already open
     setOpenCategory(isOpen ? cat : null);
   };
 
@@ -142,8 +144,11 @@ const EntertainmentCategoryDrawers = ({
           return null;
         }
         
+        // Get color from categoryColors or use default
         const color = categoryColors[cat] || '#d2b48c';
+        // Get proper display name for the category
         const displayName = getCategoryDisplayName(cat);
+        // Get text color based on background color
         const textColor = getTextColor(color);
         
         return (

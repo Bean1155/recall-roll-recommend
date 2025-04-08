@@ -9,7 +9,7 @@ import EntertainmentCategoryDrawers from "@/components/blockbusters/Entertainmen
 import { useEntertainmentCardDetailHandling } from "@/components/blockbusters/useEntertainmentCardDetailHandling";
 import EntertainmentDetailDialog from "@/components/blockbusters/EntertainmentDetailDialog";
 import BitesHeader from "@/components/bites/BitesHeader";
-import { getCategoryDisplayName, getDefaultCategoryColors } from "@/utils/categoryUtils";
+import { getCategoryDisplayName, getDefaultCategoryColors, getTextColor } from "@/utils/categoryUtils";
 
 const BlockbustersPage = () => {
   const location = useLocation();

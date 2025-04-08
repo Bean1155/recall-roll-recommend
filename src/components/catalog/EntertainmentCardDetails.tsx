@@ -21,15 +21,15 @@ const EntertainmentCardDetails = ({ card }: EntertainmentCardDetailsProps) => {
             <p>Genre</p>
           </TooltipContent>
         </Tooltip>
-        <span className="font-bold">Genre:</span> {card.genre}
+        <span className="font-bold">Genre:</span> {card.genre || 'Not specified'}
       </p>
       <p className="flex items-center gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
             <span className="inline-flex items-center text-catalog-teal">
-              {card.medium.toLowerCase().includes('tv') ? (
+              {card.medium?.toLowerCase().includes('tv') ? (
                 <Tv size={16} className="mr-1" />
-              ) : card.medium.toLowerCase().includes('podcast') ? (
+              ) : card.medium?.toLowerCase().includes('podcast') ? (
                 <Headphones size={16} className="mr-1" />
               ) : (
                 <Film size={16} className="mr-1" />
@@ -40,7 +40,7 @@ const EntertainmentCardDetails = ({ card }: EntertainmentCardDetailsProps) => {
             <p>Medium</p>
           </TooltipContent>
         </Tooltip>
-        <span className="font-bold">Medium:</span> {card.medium}
+        <span className="font-bold">Medium:</span> {card.medium || 'Not specified'}
       </p>
       <p className="flex items-center gap-2">
         <Tooltip>
@@ -53,7 +53,7 @@ const EntertainmentCardDetails = ({ card }: EntertainmentCardDetailsProps) => {
             <p>Category</p>
           </TooltipContent>
         </Tooltip>
-        <span className="font-bold">Category:</span> {card.entertainmentCategory}
+        <span className="font-bold">Category:</span> {card.entertainmentCategory || 'Not categorized'}
       </p>
     </TooltipProvider>
   );
