@@ -10,6 +10,7 @@ import { useEntertainmentCardDetailHandling } from "@/components/blockbusters/us
 import EntertainmentDetailDialog from "@/components/blockbusters/EntertainmentDetailDialog";
 import BitesHeader from "@/components/bites/BitesHeader";
 import { getDefaultCategoryColors } from "@/utils/categoryUtils";
+import { toast } from "sonner";
 
 const BlockbustersPage = () => {
   const location = useLocation();
@@ -97,7 +98,12 @@ const BlockbustersPage = () => {
   // Handle the drawer open/close state
   const handleCategoryToggle = (category: string, isOpen: boolean) => {
     console.log(`BlockbustersPage: Category ${category} is now ${isOpen ? 'open' : 'closed'}`);
-    setOpenCategory(isOpen ? category : null);
+    
+    if (isOpen) {
+      setOpenCategory(category);
+    } else if (openCategory === category) {
+      setOpenCategory(null);
+    }
   };
   
   return (

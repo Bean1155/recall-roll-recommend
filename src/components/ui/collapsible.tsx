@@ -34,7 +34,7 @@ export const CatalogCollapsible = React.forwardRef<
   const handleTriggerClick = React.useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log(`CatalogCollapsible: Trigger clicked for category "${displayName}"`);
+    console.log(`CatalogCollapsible: Trigger clicked for category "${displayName}", current open state: ${open}, will change to: ${!open}`);
     if (onOpenChange) {
       onOpenChange(!open);
     }
@@ -68,7 +68,12 @@ export const CatalogCollapsible = React.forwardRef<
             style={{ color: textColor }}
           >
             {/* Display name with improved visibility */}
-            <span className="truncate max-w-full text-center" data-testid="category-name">{displayName}</span>
+            <span 
+              className="truncate max-w-full text-center" 
+              data-testid="category-name"
+            >
+              {displayName}
+            </span>
           </div>
         </div>
         
