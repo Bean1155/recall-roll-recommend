@@ -96,6 +96,7 @@ const BlockbustersPage = () => {
         <BitesHeader 
           onClearFilters={clearFilters}
           hasActiveFilters={hasActiveFilters()}
+          type="entertainment"
         />
       }
     >
@@ -114,7 +115,7 @@ const BlockbustersPage = () => {
       {selectedCard && (
         <EntertainmentDetailDialog
           isOpen={isCardDetailOpen}
-          setIsOpen={setIsCardDetailOpen}
+          onOpenChange={setIsCardDetailOpen}
           card={selectedCard}
         />
       )}

@@ -2,10 +2,11 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
 import { EntertainmentCard } from "@/lib/types";
+import { CatalogCollapsible } from "@/components/ui/collapsible";
 import {
   Carousel,
   CarouselContent,
@@ -32,7 +33,9 @@ const EntertainmentCategoryDrawers = ({
   startCollapsed = false
 }: EntertainmentCategoryDrawersProps) => {
   const [categorizedCards, setCategorizedCards] = useState<Record<string, EntertainmentCard[]>>({});
-  const [openCategories, setOpenCategories] = useState<string[]>([]);
+  const [openCategory, setOpenCategory] = useState<string | null>(
+    startCollapsed ? null : defaultOpenCategory || null
+  );
   
   // Helper function to get a readable display name for categories
   const getCategoryDisplayName = (category: string): string => {
@@ -71,26 +74,24 @@ const EntertainmentCategoryDrawers = ({
     
     setCategorizedCards(grouped);
     
-    if (!startCollapsed) {
+    if (!startCollapsed && !openCategory) {
       const firstCategoryWithCards = Object.entries(grouped)
         .find(([_, catCards]) => catCards.length > 0)?.[0];
       
       if (firstCategoryWithCards) {
-        setOpenCategories([firstCategoryWithCards]);
+        setOpenCategory(firstCategoryWithCards);
       }
     } else if (defaultOpenCategory && grouped[defaultOpenCategory]) {
-      setOpenCategories([defaultOpenCategory]);
+      setOpenCategory(defaultOpenCategory);
     }
-  }, [cards, defaultOpenCategory, startCollapsed]);
+  }, [cards, defaultOpenCategory, startCollapsed, openCategory]);
 
-  const toggleCategory = (cat: string) => {
-    setOpenCategories(prev => {
-      if (prev.includes(cat)) {
-        return prev.filter(c => c !== cat);
-      } else {
-        return [...prev, cat];
-      }
-    });
+  const handleOpenChange = (cat: string, isOpen: boolean) => {
+    if (isOpen) {
+      setOpenCategory(cat);
+    } else if (openCategory === cat) {
+      setOpenCategory(null);
+    }
   };
 
   // Get text color based on background color brightness
@@ -104,6 +105,58 @@ const EntertainmentCategoryDrawers = ({
     
     return brightness > 145 ? "#603913" : "#ffffff";
   };
+  
+  const renderCards = (cat: string, catCards: EntertainmentCard[], color: string, textColor: string) => {
+    if (catCards.length === 0) {
+      return (
+        <div className="text-center py-4">
+          <p className="text-catalog-softBrown mb-4">No entries in this category yet.</p>
+          <Button asChild 
+            className="text-sm py-2 px-4 h-auto" 
+            style={{ backgroundColor: color, color: textColor }}
+          >
+            <Link to={`/create/entertainment?category=${cat}`}>
+              <PlusCircle size={16} className="mr-2" />
+              <span>Add {getCategoryDisplayName(cat)}</span>
+            </Link>
+          </Button>
+        </div>
+      );
+    }
+    
+    return (
+      <Carousel className="w-full">
+        <CarouselContent>
+          {catCards.map(card => (
+            <CarouselItem key={card.id} className="basis-full">
+              <div 
+                className="catalog-card cursor-pointer p-1"
+                onClick={() => onCardClick?.(card)}
+                id={`card-${card.id}`}
+              >
+                <Envelope
+                  label={card.title}
+                  backgroundColor={color}
+                >
+                  <CatalogCard card={card} />
+                </Envelope>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <div className="flex justify-end gap-2 mt-4">
+          <CarouselPrevious 
+            className="relative static translate-y-0 h-8 w-8" 
+            style={{ backgroundColor: color, color: textColor }}
+          />
+          <CarouselNext 
+            className="relative static translate-y-0 h-8 w-8" 
+            style={{ backgroundColor: color, color: textColor }}
+          />
+        </div>
+      </Carousel>
+    );
+  };
 
   return (
     <div className="space-y-6 pb-20">
@@ -115,82 +168,18 @@ const EntertainmentCategoryDrawers = ({
         const color = categoryColors[cat] || '#d2b48c';
         const displayName = getCategoryDisplayName(cat);
         const textColor = getTextColor(color);
-        const isOpen = openCategories.includes(cat);
         
         return (
-          <div 
-            key={cat} 
-            className="catalog-drawer mb-6 border rounded-lg overflow-hidden shadow-md"
-            style={{ borderColor: color }}
+          <CatalogCollapsible
+            key={cat}
+            label={displayName}
+            backgroundColor={color}
+            textColor={textColor}
+            open={openCategory === cat}
+            onOpenChange={(isOpen) => handleOpenChange(cat, isOpen)}
           >
-            <div 
-              className="catalog-drawer-header flex justify-between items-center p-3 cursor-pointer"
-              style={{ backgroundColor: color, color: textColor }}
-              onClick={() => toggleCategory(cat)}
-            >
-              <h2 className="text-lg font-semibold">{displayName}</h2>
-              <div className="flex items-center">
-                <span className="mr-2 text-sm">
-                  {catCards.length} {catCards.length === 1 ? 'item' : 'items'}
-                </span>
-                {isOpen ? (
-                  <ChevronUp size={20} />
-                ) : (
-                  <ChevronDown size={20} />
-                )}
-              </div>
-            </div>
-            
-            {isOpen && (
-              <div className="catalog-drawer-content p-3 bg-white">
-                {catCards.length > 0 ? (
-                  <Carousel className="w-full">
-                    <CarouselContent>
-                      {catCards.map(card => (
-                        <CarouselItem key={card.id} className="basis-full">
-                          <div 
-                            className="catalog-card cursor-pointer p-1"
-                            onClick={() => onCardClick?.(card)}
-                            id={`card-${card.id}`}
-                          >
-                            <Envelope
-                              label={card.title}
-                              backgroundColor={color}
-                            >
-                              <CatalogCard card={card} />
-                            </Envelope>
-                          </div>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    <div className="flex justify-end gap-2 mt-4">
-                      <CarouselPrevious 
-                        className="relative static translate-y-0 h-8 w-8" 
-                        style={{ backgroundColor: color, color: textColor }}
-                      />
-                      <CarouselNext 
-                        className="relative static translate-y-0 h-8 w-8" 
-                        style={{ backgroundColor: color, color: textColor }}
-                      />
-                    </div>
-                  </Carousel>
-                ) : (
-                  <div className="text-center py-4">
-                    <p className="text-catalog-softBrown mb-4">No entries in this category yet.</p>
-                    <Button asChild 
-                      className="text-sm py-2 px-4 h-auto" 
-                      style={{ backgroundColor: color, color: textColor }}
-                    >
-                      <Link to={`/create/entertainment?category=${cat}`}>
-                        <PlusCircle size={16} className="mr-2" />
-                        <span>Add {displayName}</span>
-                      </Link>
-                    </Button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+            {renderCards(cat, catCards, color, textColor)}
+          </CatalogCollapsible>
         );
       })}
     </div>
