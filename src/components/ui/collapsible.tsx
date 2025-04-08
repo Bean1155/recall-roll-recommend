@@ -65,13 +65,15 @@ export const CatalogCollapsible = React.forwardRef<
             marginBottom: "-1px"
           }}
         >
+          {/* Increased padding and made text more visible */}
           <div 
-            className="w-full flex items-center justify-center px-4 py-2 font-typewriter font-semibold text-sm sm:text-lg"
+            className="w-full flex items-center justify-center px-4 py-3 font-typewriter font-semibold text-base sm:text-xl"
             style={{ color: textColor }}
           >
             <span 
-              className="truncate max-w-full text-center"
+              className="block w-full text-center font-medium"
               data-testid="category-name"
+              style={{ textShadow: "0 0 1px rgba(0,0,0,0.1)" }}
             >
               {displayName || "Category"}
             </span>
