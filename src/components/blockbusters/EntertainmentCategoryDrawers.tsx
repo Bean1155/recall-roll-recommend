@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -64,7 +65,7 @@ const EntertainmentCategoryDrawers = ({
       onCategoryToggle(cat, isOpen);
     }
   };
-  
+   
   const renderCards = (cat: string, catCards: EntertainmentCard[], color: string, textColor: string) => {
     if (catCards.length === 0) {
       return (
