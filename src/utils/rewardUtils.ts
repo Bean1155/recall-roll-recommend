@@ -26,13 +26,17 @@ export const showRewardToast = (
   localStorage.setItem('lastRewardUpdate', timestamp);
   localStorage.setItem(`user_${userId}_last_reward`, timestamp);
   
-  // Ensure rewards data exists for this user
+  // Ensure rewards data exists in localStorage (critical fix)
   try {
     const rewardsData = localStorage.getItem('catalogUserRewards');
     if (rewardsData) {
       const rewards = JSON.parse(rewardsData);
-      if (!rewards[userId]) {
+      if (typeof rewards[userId] === 'undefined') {
         rewards[userId] = pointsAdded;
+        localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
+      } else {
+        // Add the points to existing total
+        rewards[userId] += pointsAdded;
         localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
       }
     } else {
@@ -173,5 +177,70 @@ export const addPointsForCardCreation = (userId: string, cardType: string): void
     forceRewardsRefresh();
   } catch (e) {
     console.error("Error adding points for card creation:", e);
+  }
+}
+
+// New function to add points for sharing a card
+export const addPointsForSharing = (userId: string, recipientId: string = null): void => {
+  if (!userId) return;
+  
+  // Track this share to prevent duplicates
+  const trackingKey = recipientId 
+    ? `last_share_to_${recipientId}_by_${userId}` 
+    : `last_external_share_by_${userId}`;
+  const lastShared = localStorage.getItem(trackingKey);
+  const now = Date.now();
+  
+  if (lastShared) {
+    const timeSinceLastShare = now - Number(lastShared);
+    // Only allow one point per recipient per 5 minutes
+    if (timeSinceLastShare < 300000) { // 5 minutes
+      console.log(`Skipping duplicate share points for ${userId} - already shared recently`);
+      return;
+    }
+  }
+  
+  try {
+    // Get rewards data
+    const rewardsData = localStorage.getItem('catalogUserRewards');
+    let rewards = rewardsData ? JSON.parse(rewardsData) : {};
+    
+    // Add points to sharing user
+    if (typeof rewards[userId] === 'undefined') {
+      rewards[userId] = 1;
+    } else {
+      rewards[userId] += 1;
+    }
+    
+    // Save tracking timestamp
+    localStorage.setItem(trackingKey, now.toString());
+    
+    // Add points to recipient if internal share
+    if (recipientId) {
+      if (typeof rewards[recipientId] === 'undefined') {
+        rewards[recipientId] = 1;
+      } else {
+        rewards[recipientId] += 1;
+      }
+      
+      // Show toast for recipient points (which they'll see next time they log in)
+      showRewardToast(recipientId, 1, 'Receiving a shared card');
+    }
+    
+    // Save rewards data
+    localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
+    
+    // Show toast for sharer
+    const reason = recipientId 
+      ? 'Sharing a card with a friend' 
+      : 'Sharing a card externally';
+    showRewardToast(userId, 1, reason);
+    
+    // Force refresh to update UI
+    forceRewardsRefresh();
+    
+    console.log(`Added 1 point to user ${userId} for sharing. Total: ${rewards[userId]}`);
+  } catch (e) {
+    console.error("Error adding points for sharing:", e);
   }
 }

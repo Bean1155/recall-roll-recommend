@@ -28,6 +28,11 @@ const CreateCardPage = () => {
     hasAddedRewardRef.current = false;
     setSubmittedCardId(null);
 
+    // Force refresh rewards when component mounts
+    if (currentUser) {
+      forceRewardsRefresh();
+    }
+
     return () => {
       // Force a single refresh when leaving the page
       if (currentUser) {
@@ -49,11 +54,17 @@ const CreateCardPage = () => {
     setSubmittedCardId(cardId);
     
     if (currentUser && !hasAddedRewardRef.current) {
-      // Award points for card creation
+      // Award points for card creation - CRITICAL: Make sure this works
+      console.log(`CreateCardPage: Adding points for ${cardType} card creation to user ${currentUser.id}`);
       addPointsForCardCreation(currentUser.id, cardType);
       hasAddedRewardRef.current = true;
       
       toast.success(`Your ${cardType === 'food' ? 'bite' : 'blockbuster'} has been added and you earned points!`);
+      
+      // Double-check that reward events are fired
+      setTimeout(() => {
+        forceRewardsRefresh();
+      }, 300);
     }
     
     // Dispatch a custom event to notify other components

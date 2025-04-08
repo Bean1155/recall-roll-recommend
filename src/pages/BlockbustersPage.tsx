@@ -12,7 +12,7 @@ import BitesHeader from "@/components/bites/BitesHeader";
 import { getDefaultCategoryColors, getCategoryDisplayName } from "@/utils/categoryUtils";
 import { toast } from "sonner";
 import { useUser } from "@/contexts/UserContext";
-import { addPointsForCardCreation } from "@/utils/rewardUtils";
+import { addPointsForCardCreation, forceRewardsRefresh } from "@/utils/rewardUtils";
 
 const BlockbustersPage = () => {
   const location = useLocation();
@@ -75,10 +75,15 @@ const BlockbustersPage = () => {
     
     fetchCards();
     
+    // Force a refresh of points when the page loads
+    if (currentUser) {
+      forceRewardsRefresh();
+    }
+    
     // Increment render count to track component lifecycle
     renderCountRef.current += 1;
     console.log(`BlockbustersPage: Render count: ${renderCountRef.current}`);
-  }, [isInitialized, refreshTrigger]);
+  }, [isInitialized, refreshTrigger, currentUser]);
   
   // Listen for changes from other components
   useEffect(() => {

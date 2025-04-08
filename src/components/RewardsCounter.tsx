@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { getUserRewards, getUserRewardTier } from "@/lib/data";
 import { useUser } from "@/contexts/UserContext";
@@ -38,15 +39,17 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     console.log(`RewardsCounter: Refreshing points, current count: ${points}`);
     
     try {
-      // First try to get direct from localStorage for maximum reliability
+      // CRITICAL FIX: First try to get direct from localStorage for maximum reliability
       const rewardsData = localStorage.getItem('catalogUserRewards');
       if (rewardsData) {
         try {
           const rewards = JSON.parse(rewardsData);
           const storedPoints = rewards[currentUser.id] || 0;
           
-          // Only log if points changed
-          if (points !== storedPoints) {
+          console.log(`RewardsCounter: Direct localStorage check - User ${currentUser.id} has ${storedPoints} points`);
+          
+          // Only update if points changed or this is the initial load
+          if (points !== storedPoints || prevUserIdRef.current !== currentUser.id) {
             console.log(`RewardsCounter: POINTS CHANGED: ${points} → ${storedPoints} (direct localStorage check)`);
             setPoints(storedPoints);
             setTier(getUserRewardTier(storedPoints));
@@ -64,13 +67,20 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
         } catch (e) {
           console.error("Error parsing localStorage rewards:", e);
         }
+      } else {
+        console.log("RewardsCounter: No rewards data found in localStorage, initializing");
+        // Initialize empty rewards if none exist
+        localStorage.setItem('catalogUserRewards', JSON.stringify({[currentUser.id]: 0}));
       }
       
       // Fallback to API call if no localStorage update
       const userPoints = getUserRewards(currentUser.id);
       
-      // Only update if points changed
-      if (points !== userPoints) {
+      // Ensure we always have the latest value
+      console.log(`RewardsCounter: API call returned ${userPoints} points for user ${currentUser.id}`);
+      
+      // Only update if points changed or this is initial load
+      if (points !== userPoints || prevUserIdRef.current !== currentUser.id) {
         console.log(`RewardsCounter: Points refreshed to ${userPoints} (from ${points}) for user ${currentUser.id}`);
         
         // Animate if points increased and not the initial load
@@ -112,8 +122,9 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
   useEffect(() => {
     if (!currentUser) return;
     
-    const handleRefreshEvent = () => {
-      console.log("RewardsCounter: Refresh event received");
+    const handleRefreshEvent = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      console.log("RewardsCounter: Refresh event received", customEvent?.detail || '');
       
       // Debounce refresh calls
       if (refreshTimeoutRef.current) {
@@ -132,8 +143,11 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     window.addEventListener('card_reward_update', handleRefreshEvent);
     window.addEventListener('catalog_action', (e) => {
       const customEvent = e as CustomEvent;
-      if (customEvent.detail?.action === 'card_added') {
-        handleRefreshEvent();
+      console.log("RewardsCounter: Received catalog_action event:", customEvent.detail?.action);
+      if (customEvent.detail?.action === 'card_added' || 
+          customEvent.detail?.action === 'recommendation_added' ||
+          customEvent.detail?.action === 'card_shared') {
+        handleRefreshEvent(e);
       }
     });
     
@@ -141,14 +155,21 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'catalogUserRewards' || e.key === 'lastRewardUpdate' || 
           e.key === `user_${currentUser.id}_last_reward`) {
-        handleRefreshEvent();
+        console.log(`RewardsCounter: Storage change detected for ${e.key}`);
+        handleRefreshEvent(new Event('storage'));
       }
     };
     
     window.addEventListener('storage', handleStorageChange);
     
     // Refresh on a less frequent interval
-    const intervalId = setInterval(refreshRewards, 5000); // Changed from 150ms to 5000ms
+    const intervalId = setInterval(() => {
+      console.log("RewardsCounter: Interval refresh triggered");
+      refreshRewards();
+    }, 5000); // Changed from 150ms to 5000ms
+    
+    // Force immediate refresh when component mounts
+    refreshRewards();
     
     return () => {
       window.removeEventListener('refreshRewards', handleRefreshEvent);
