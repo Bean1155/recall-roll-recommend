@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,7 @@ import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
 import { EntertainmentCard } from "@/lib/types";
 import { CatalogCollapsible } from "@/components/ui/collapsible";
-import { getCategoryDisplayName } from "@/utils/categoryUtils";
+import { getCategoryDisplayName, getTextColor } from "@/utils/categoryUtils";
 import {
   Carousel,
   CarouselContent,
@@ -64,18 +63,6 @@ const EntertainmentCategoryDrawers = ({
     if (onCategoryToggle) {
       onCategoryToggle(cat, isOpen);
     }
-  };
-
-  // Get text color based on background color brightness
-  const getTextColor = (backgroundColor: string): string => {
-    const hex = backgroundColor.replace('#', '');
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-    
-    return brightness > 145 ? "#603913" : "#ffffff";
   };
   
   const renderCards = (cat: string, catCards: EntertainmentCard[], color: string, textColor: string) => {
@@ -144,12 +131,12 @@ const EntertainmentCategoryDrawers = ({
         // Get text color based on background color
         const textColor = getTextColor(color);
         
-        console.log(`Rendering category: ${cat}, Display name: ${displayName}`);
+        console.log(`Rendering category: ${cat}, Display name: '${displayName}'`);
         
         return (
           <CatalogCollapsible
             key={cat}
-            label={displayName}
+            label={cat}
             backgroundColor={color}
             textColor={textColor}
             open={openCategory === cat}
