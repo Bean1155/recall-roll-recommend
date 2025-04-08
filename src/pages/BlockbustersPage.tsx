@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useRef } from "react";
 import { Film } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
 import { EntertainmentCard } from "@/lib/types";
@@ -19,6 +20,9 @@ const BlockbustersPage = () => {
     rating: [] as number[],
     tags: [] as string[]
   });
+  
+  // Ref to track rerenders and help with debugging
+  const renderCountRef = useRef(0);
   
   const {
     selectedCardId,
@@ -64,6 +68,10 @@ const BlockbustersPage = () => {
     };
     
     fetchCards();
+    
+    // Increment render count to track component lifecycle
+    renderCountRef.current += 1;
+    console.log(`BlockbustersPage: Render count: ${renderCountRef.current}`);
   }, [isInitialized]);
   
   // Listen for changes from other components
@@ -109,18 +117,28 @@ const BlockbustersPage = () => {
     setOpenCategory(isOpen ? category : null);
   };
   
-  // Force refresh to help with rendering issues
+  // Force refresh to help with rendering issues - with multiple attempts
   useEffect(() => {
     if (isInitialized && cards.length > 0) {
-      const timer = setTimeout(() => {
-        console.log("BlockbustersPage: Forcing refresh to ensure category names display properly");
-        // Force react to re-render the component
+      // First attempt after a short delay
+      const firstTimer = setTimeout(() => {
+        console.log("BlockbustersPage: First refresh attempt for category names");
         setOpenCategory(curr => curr);
-      }, 300);
+      }, 100);
       
-      return () => clearTimeout(timer);
+      // Second attempt after a longer delay
+      const secondTimer = setTimeout(() => {
+        console.log("BlockbustersPage: Second refresh attempt for category names");
+        // Force component update
+        setOpenCategory(openCategory);
+      }, 500);
+      
+      return () => {
+        clearTimeout(firstTimer);
+        clearTimeout(secondTimer);
+      };
     }
-  }, [isInitialized, cards.length]);
+  }, [isInitialized, cards.length, openCategory]);
   
   return (
     <GridLayout 

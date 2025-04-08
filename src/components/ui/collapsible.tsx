@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -22,10 +23,10 @@ export const CatalogCollapsible = React.forwardRef<
 >(({ className, label, backgroundColor = "#d2b48c", textColor = "#603913", categoryName, children, open, onOpenChange, ...props }, ref) => {
   const [isHovering, setIsHovering] = React.useState(false);
   
-  // Use categoryName if available, otherwise fallback to label
+  // Ensure displayName always has a value - critical for rendering
   const displayName = categoryName || label;
   
-  // Debug output to track what's happening
+  // More detailed logging to help diagnose the issue
   console.log(`CatalogCollapsible: Rendering with label=${label}, categoryName=${categoryName}, displayName=${displayName}`);
   console.log(`CatalogCollapsible: Style properties - backgroundColor=${backgroundColor}, textColor=${textColor}`);
   
@@ -42,9 +43,6 @@ export const CatalogCollapsible = React.forwardRef<
     }
   };
 
-  // Force render of category name with key to ensure re-rendering
-  const categoryNameKey = `${displayName}-${open ? 'open' : 'closed'}-${Math.random()}`;
-  
   return (
     <Collapsible 
       ref={ref}
@@ -72,15 +70,15 @@ export const CatalogCollapsible = React.forwardRef<
             className="w-full flex items-center justify-center px-4 py-3 font-typewriter font-semibold text-base sm:text-xl"
             style={{ color: textColor }}
           >
+            {/* Make category name more prominent with improved styling and contrast */}
             <span 
-              key={categoryNameKey}
               className="catalog-category-name block w-full text-center font-bold text-lg"
               data-testid="category-name"
               style={{ 
                 color: textColor,
                 opacity: 1,
-                fontWeight: 600,
-                textShadow: "0 0 1px rgba(0,0,0,0.2)"
+                fontWeight: 700,
+                textShadow: "0 0 1px rgba(0,0,0,0.3)"
               }}
             >
               {displayName}

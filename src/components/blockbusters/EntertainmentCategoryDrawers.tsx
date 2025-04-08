@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -135,10 +136,13 @@ const EntertainmentCategoryDrawers = ({
         const isOpen = openCategory === cat;
         console.log(`EntertainmentCategoryDrawers: Rendering category "${cat}" with displayName="${displayName}", isOpen=${isOpen}, color=${color}, textColor=${textColor}`);
         
+        // Key directly includes both category and display name to force re-rendering
+        const drawerKey = `${cat}-drawer-${displayName}-${isOpen ? 'open' : 'closed'}`;
+        
         return (
           <div key={cat} className="mb-6" data-category={cat} data-display-name={displayName}>
             <CatalogCollapsible
-              key={`${cat}-drawer-${isOpen ? 'open' : 'closed'}`}
+              key={drawerKey}
               label={cat}
               categoryName={displayName}
               backgroundColor={color}
