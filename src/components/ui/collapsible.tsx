@@ -23,6 +23,11 @@ export const CatalogCollapsible = React.forwardRef<
 >(({ className, label, backgroundColor = "#d2b48c", textColor = "#603913", categoryName, children, open, onOpenChange, ...props }, ref) => {
   const [isHovering, setIsHovering] = React.useState(false);
   
+  // Log for debugging
+  React.useEffect(() => {
+    console.log(`CatalogCollapsible rendering with label: "${label}", categoryName: "${categoryName}"`);
+  }, [label, categoryName]);
+  
   // Always prioritize categoryName if available
   const displayName = categoryName || label;
   
@@ -60,8 +65,8 @@ export const CatalogCollapsible = React.forwardRef<
             className="w-full flex items-center justify-center px-4 py-2 font-typewriter font-semibold text-sm sm:text-lg"
             style={{ color: textColor }}
           >
-            {/* Ensure the display name is visible with proper styling */}
-            <span className="truncate max-w-full text-center">{displayName}</span>
+            {/* Display name with improved visibility */}
+            <span className="truncate max-w-full text-center" data-testid="category-name">{displayName}</span>
           </div>
         </div>
         

@@ -39,6 +39,11 @@ const EntertainmentCategoryDrawer = ({
 }: EntertainmentCategoryDrawerProps) => {
   const [visibleCards, setVisibleCards] = useState<EntertainmentCard[]>([]);
 
+  // Debug logging
+  useEffect(() => {
+    console.log(`EntertainmentCategoryDrawer rendering: category=${category}, displayName=${categoryDisplayName}`);
+  }, [category, categoryDisplayName]);
+
   // Filter cards that match the current category
   useEffect(() => {
     if (category) {
@@ -59,11 +64,12 @@ const EntertainmentCategoryDrawer = ({
   return (
     <div className="w-full">
       <CatalogCollapsible
-        label={categoryDisplayName || "Category"}
+        label={category || ""}
         backgroundColor={backgroundColor}
         textColor={textColor}
         open={isOpen}
         onOpenChange={onOpenChange}
+        categoryName={categoryDisplayName}
       >
         <EntertainmentCardsDisplay
           category={category}

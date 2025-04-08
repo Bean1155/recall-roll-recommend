@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Film } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
@@ -34,6 +35,15 @@ const BlockbustersPage = () => {
     const entertainmentCards = getEntertainmentCards();
     setCards(entertainmentCards);
     
+    // Open first category if there are cards and no already open category
+    if (entertainmentCards.length > 0 && !openCategory) {
+      const firstCategory = entertainmentCards[0]?.entertainmentCategory?.toLowerCase();
+      if (firstCategory) {
+        console.log(`BlockbustersPage: Opening first category: ${firstCategory}`);
+        setOpenCategory(firstCategory);
+      }
+    }
+    
     // Handle URL parameters like highlight if needed
     const params = new URLSearchParams(location.search);
     const fromSearch = params.get('fromSearch') === 'true';
@@ -41,7 +51,7 @@ const BlockbustersPage = () => {
     if (fromSearch) {
       console.log("BlockbustersPage: Detected fromSearch parameter");
     }
-  }, [location]);
+  }, [location, openCategory]);
   
   useEffect(() => {
     const fetchCards = () => {
