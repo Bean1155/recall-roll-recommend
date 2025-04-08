@@ -68,8 +68,8 @@ const EntertainmentCategoryDrawers = ({
     }
   }, [cards, defaultOpenCategory, startCollapsed, openCategory]);
 
+  // Fixed open/close logic
   const handleOpenChange = (cat: string, isOpen: boolean) => {
-    // Only set the open category, don't close it if it's already open
     setOpenCategory(isOpen ? cat : null);
   };
 
@@ -140,7 +140,7 @@ const EntertainmentCategoryDrawers = ({
   return (
     <div className="space-y-6 pb-20">
       {Object.entries(categorizedCards).map(([cat, catCards]) => {
-        if (catCards.length === 0 && hideEmptyCategories) {
+        if (hideEmptyCategories && catCards.length === 0) {
           return null;
         }
         
@@ -159,6 +159,7 @@ const EntertainmentCategoryDrawers = ({
             textColor={textColor}
             open={openCategory === cat}
             onOpenChange={(isOpen) => handleOpenChange(cat, isOpen)}
+            categoryName={displayName} // Explicit category name passed
           >
             {renderCards(cat, catCards, color, textColor)}
           </CatalogCollapsible>

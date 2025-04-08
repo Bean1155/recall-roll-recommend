@@ -18,9 +18,11 @@ export const CatalogCollapsible = React.forwardRef<
     label: string;
     backgroundColor?: string;
     textColor?: string;
+    categoryName?: string;
   }
->(({ className, label, backgroundColor = "#d2b48c", textColor = "#603913", children, open, onOpenChange, ...props }, ref) => {
+>(({ className, label, backgroundColor = "#d2b48c", textColor = "#603913", categoryName, children, open, onOpenChange, ...props }, ref) => {
   const [isHovering, setIsHovering] = React.useState(false);
+  const displayName = categoryName || label;
   
   return (
     <Collapsible 
@@ -49,7 +51,7 @@ export const CatalogCollapsible = React.forwardRef<
             className="w-full flex items-center justify-center px-4 py-2 font-typewriter font-semibold text-sm sm:text-lg"
             style={{ color: textColor }}
           >
-            {label}
+            {displayName}
           </div>
         </div>
         
