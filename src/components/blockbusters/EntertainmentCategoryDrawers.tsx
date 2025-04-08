@@ -56,8 +56,6 @@ const EntertainmentCategoryDrawers = ({
     }, {});
     
     setCategorizedCards(grouped);
-    
-    // Debug log to see what categories we have
     console.log("EntertainmentCategoryDrawers: Categorized cards", Object.keys(grouped));
   }, [cards]);
 
@@ -135,18 +133,17 @@ const EntertainmentCategoryDrawers = ({
         // Get text color based on background color
         const textColor = getTextColor(color);
         
-        // Debug logging for each drawer being rendered
-        console.log(`EntertainmentCategoryDrawers: Rendering category: ${cat}, displayName: '${displayName}', open: ${openCategory === cat}`);
+        console.log(`EntertainmentCategoryDrawers: Rendering for ${cat}, displayName: '${displayName}', open: ${openCategory === cat}`);
         
         return (
           <div key={cat} className="mb-6" data-category={cat}>
             <CatalogCollapsible
               label={cat}
+              categoryName={displayName}
               backgroundColor={color}
               textColor={textColor}
               open={openCategory === cat}
               onOpenChange={(isOpen) => handleOpenChange(cat, isOpen)}
-              categoryName={displayName}
             >
               {renderCards(cat, catCards, color, textColor)}
             </CatalogCollapsible>
