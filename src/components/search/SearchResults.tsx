@@ -2,6 +2,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CatalogCard } from "@/lib/types";
+import { useNavigate } from "react-router-dom";
 
 interface SearchResultsProps {
   searchResults: CatalogCard[];
@@ -14,9 +15,29 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   searchTerm,
   handleCardClick
 }) => {
+  const navigate = useNavigate();
+
   if (searchResults.length === 0 || !searchTerm) {
     return null;
   }
+
+  const onCardClick = (card: CatalogCard) => {
+    console.log("SearchResults: Card clicked with ID:", card.id);
+    console.log("SearchResults: Card data:", JSON.stringify(card));
+    
+    // Use the provided handler if it exists
+    if (handleCardClick) {
+      handleCardClick(card);
+      return;
+    }
+    
+    // Default navigation behavior
+    if (card.type === 'food') {
+      navigate(`/bites?highlight=${card.id}&fromSearch=true`);
+    } else if (card.type === 'entertainment') {
+      navigate(`/blockbusters?highlight=${card.id}&fromSearch=true`);
+    }
+  };
 
   return (
     <div className="mt-6 border-t border-[#8B7D6B]/40 pt-4">
@@ -26,11 +47,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
           <Card 
             key={item.id} 
             className="bg-catalog-cream hover:bg-vintage-tan cursor-pointer border border-catalog-softBrown/40 transition-colors duration-150"
-            onClick={() => {
-              console.log("SearchResults: Card clicked with ID:", item.id);
-              console.log("SearchResults: Card data:", JSON.stringify(item));
-              handleCardClick(item);
-            }}
+            onClick={() => onCardClick(item)}
           >
             <CardContent className="p-3">
               <div className="flex items-center gap-2">

@@ -1,28 +1,52 @@
 
 import React from "react";
-import { Search, PlusCircle } from "lucide-react";
+import { Search, PlusCircle, FilterX } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface BitesHeaderProps {
   onClearFilters: () => void;
   hasActiveFilters?: boolean;
+  type?: 'food' | 'entertainment';
 }
 
 const BitesHeader = ({
   onClearFilters,
-  hasActiveFilters = false
+  hasActiveFilters = false,
+  type = 'food'
 }: BitesHeaderProps) => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Determine if we're on the blockbusters page
+  const isBlockbustersPage = location.pathname.includes('blockbusters');
+  // If type is not explicitly set, infer it from the current page
+  const cardType = type || (isBlockbustersPage ? 'entertainment' : 'food');
+  
+  // Text to display based on card type
+  const addButtonText = cardType === 'entertainment' ? 'Add Blockbuster' : 'Add Bite';
+  const browseButtonText = isMobile ? 'Browse & Filter' : 'Browse';
 
   const handleBrowseClick = () => {
-    navigate('/browse?type=food');
+    navigate(`/browse?type=${cardType}`);
   };
 
   return (
     <div className="flex items-center justify-center gap-2 w-full max-w-md mx-auto">
+      {hasActiveFilters && (
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={onClearFilters}
+          className={`flex items-center gap-1 ${isMobile ? 'px-2' : ''}`}
+        >
+          <FilterX className="h-4 w-4" />
+          <span className={isMobile ? 'sr-only' : 'hidden sm:inline'}>Clear Filters</span>
+        </Button>
+      )}
+      
       <Button 
         variant="outline" 
         size="sm" 
@@ -31,20 +55,9 @@ const BitesHeader = ({
       >
         <Search className="h-4 w-4" />
         <span className={isMobile ? 'inline' : 'hidden sm:inline'}>
-          {isMobile ? 'Browse & Filter' : 'Browse'}
+          {browseButtonText}
         </span>
       </Button>
-      
-      {hasActiveFilters && (
-        <Button 
-          size="sm"
-          variant="outline"
-          className="flex items-center gap-1"
-          onClick={onClearFilters}
-        >
-          <span className="hidden sm:inline">Clear Filters</span>
-        </Button>
-      )}
       
       <Button 
         variant="outline" 
@@ -52,9 +65,11 @@ const BitesHeader = ({
         className={`flex items-center gap-1 bg-teal-700 text-white hover:bg-teal-800 ${isMobile ? 'flex-1 justify-center' : ''}`}
         asChild
       >
-        <Link to="/create/food">
+        <Link to={`/create/${cardType}`}>
           <PlusCircle className="h-4 w-4" />
-          <span className={isMobile ? 'inline' : 'hidden sm:inline'}>Add</span>
+          <span className={isMobile ? 'inline' : 'hidden sm:inline'}>
+            {isMobile ? 'Add' : addButtonText}
+          </span>
         </Link>
       </Button>
     </div>
