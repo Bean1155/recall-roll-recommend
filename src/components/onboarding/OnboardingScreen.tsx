@@ -31,21 +31,22 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
   
   const onboardingSteps = [
     {
-      title: "Welcome to TOTAL RECALL CATALOG",
-      description: "Your personal library for tracking and sharing all your favorite food and entertainment experiences.",
-      image: "/lovable-uploads/b1c69d28-6949-4945-8501-dcc72236d701.png",
+      title: "Welcome to",
+      subtitle: "TOTAL RECALL CATALOG",
+      description: "Your personal library for tracking and sharing your favorite bites and blockbusters.",
+      image: "/lovable-uploads/8408dab2-58e0-488d-927d-f0930cf39585.png",
       backgroundColor: "#FFDEE2", // Light pink for Bites
       stepType: "intro"
     },
     {
       title: "Track Your BITES",
-      description: "Record all your favorite restaurants, dishes, and recipes in beautifully designed catalog cards.",
+      description: "Record your favorites, share and always recall!",
       image: "/lovable-uploads/8408dab2-58e0-488d-927d-f0930cf39585.png",
       backgroundColor: "#FFDEE2", // Light pink for Bites
       stepType: "bites"
     },
     {
-      title: "Save Your BLOCKBUSTERS",
+      title: "Create Your Personal Library",
       description: "Create a personal library of films, shows, and entertainment you've enjoyed or want to experience.",
       image: "/lovable-uploads/c1229700-5ec5-4c21-baef-dc535d219a0e.png",
       backgroundColor: "#D3E4FD", // Light blue for Blockbusters
@@ -105,6 +106,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
       >
         <OnboardingStep
           title={onboardingSteps[currentStep].title}
+          subtitle={onboardingSteps[currentStep].subtitle}
           description={onboardingSteps[currentStep].description}
           image={onboardingSteps[currentStep].image}
           backgroundColor={onboardingSteps[currentStep].backgroundColor}
