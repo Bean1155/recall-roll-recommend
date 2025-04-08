@@ -23,23 +23,19 @@ export const CatalogCollapsible = React.forwardRef<
 >(({ className, label, backgroundColor = "#d2b48c", textColor = "#603913", categoryName, children, open, onOpenChange, ...props }, ref) => {
   const [isHovering, setIsHovering] = React.useState(false);
   
-  // Debugging log for rendering
-  React.useEffect(() => {
-    console.log(`CatalogCollapsible: Render with label: "${label}", categoryName: "${categoryName}", open: ${open}`);
-  }, [label, categoryName, open]);
-  
-  // Always prioritize categoryName if available
+  // Use categoryName if available, otherwise fallback to label
   const displayName = categoryName || label;
   
-  // Simplified click handler to ensure proper state propagation
+  // Simplified click handler with debugging
   const handleTriggerClick = (e: React.MouseEvent) => {
+    console.log(`CatalogCollapsible: Click triggered for "${displayName}", current open state: ${open}`);
+    
     e.preventDefault();
     e.stopPropagation();
     
-    console.log(`CatalogCollapsible: Trigger clicked for "${displayName}", currently ${open ? 'open' : 'closed'}, changing to ${!open}`);
-    
     if (onOpenChange) {
       onOpenChange(!open);
+      console.log(`CatalogCollapsible: State changed to ${!open ? 'open' : 'closed'} for "${displayName}"`);
     }
   };
   

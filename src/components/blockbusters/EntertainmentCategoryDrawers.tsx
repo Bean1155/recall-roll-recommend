@@ -15,6 +15,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { toast } from "sonner";
 
 interface EntertainmentCategoryDrawersProps {
   cards: EntertainmentCard[];
@@ -56,12 +57,12 @@ const EntertainmentCategoryDrawers = ({
     }, {});
     
     setCategorizedCards(grouped);
-    console.log("EntertainmentCategoryDrawers: Categorized cards", Object.keys(grouped));
   }, [cards]);
 
   // Handle when a collapsible changes state
   const handleOpenChange = (cat: string, isOpen: boolean) => {
-    console.log(`EntertainmentCategoryDrawers: Category ${cat} toggle called, isOpen=${isOpen}`);
+    console.log(`EntertainmentCategoryDrawers: Category ${cat} toggle called with isOpen=${isOpen}`);
+    
     if (onCategoryToggle) {
       onCategoryToggle(cat, isOpen);
     }
@@ -133,7 +134,8 @@ const EntertainmentCategoryDrawers = ({
         // Get text color based on background color
         const textColor = getTextColor(color);
         
-        console.log(`EntertainmentCategoryDrawers: Rendering for ${cat}, displayName: '${displayName}', open: ${openCategory === cat}`);
+        const isOpen = openCategory === cat;
+        console.log(`EntertainmentCategoryDrawers: Rendering category "${cat}" with displayName="${displayName}", isOpen=${isOpen}`);
         
         return (
           <div key={cat} className="mb-6" data-category={cat}>
@@ -142,7 +144,7 @@ const EntertainmentCategoryDrawers = ({
               categoryName={displayName}
               backgroundColor={color}
               textColor={textColor}
-              open={openCategory === cat}
+              open={isOpen}
               onOpenChange={(isOpen) => handleOpenChange(cat, isOpen)}
             >
               {renderCards(cat, catCards, color, textColor)}
@@ -150,6 +152,18 @@ const EntertainmentCategoryDrawers = ({
           </div>
         );
       })}
+      
+      {Object.keys(categorizedCards).length === 0 && (
+        <div className="text-center py-8">
+          <p className="text-gray-500 mb-4">No entertainment cards found.</p>
+          <Button asChild>
+            <Link to="/create/entertainment">
+              <PlusCircle size={16} className="mr-2" />
+              Add Your First Entertainment
+            </Link>
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

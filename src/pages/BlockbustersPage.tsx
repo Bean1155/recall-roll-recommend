@@ -32,39 +32,41 @@ const BlockbustersPage = () => {
   // Track which category is currently open
   const [openCategory, setOpenCategory] = useState<string | null>(null);
   
+  // This effect loads cards and sets the initial open category
   useEffect(() => {
     const fetchCards = async () => {
-      const entertainmentCards = getEntertainmentCards();
-      setCards(entertainmentCards);
-      
-      // Open first category if there are cards and no already open category
-      if (entertainmentCards.length > 0 && !openCategory) {
-        const firstCategory = entertainmentCards[0]?.entertainmentCategory?.toLowerCase();
-        if (firstCategory) {
-          console.log(`BlockbustersPage: Opening first category: ${firstCategory}`);
-          setOpenCategory(firstCategory);
+      try {
+        const entertainmentCards = getEntertainmentCards();
+        setCards(entertainmentCards);
+        console.log(`BlockbustersPage: Loaded ${entertainmentCards.length} cards`);
+        
+        // Set first category as open if there are cards and no category is currently open
+        if (entertainmentCards.length > 0 && openCategory === null) {
+          const categories = [...new Set(entertainmentCards.map(card => 
+            card.entertainmentCategory?.toLowerCase() || 'etc.'
+          ))];
+          
+          if (categories.length > 0) {
+            const firstCategory = categories[0];
+            console.log(`BlockbustersPage: Setting initial open category to "${firstCategory}"`);
+            setOpenCategory(firstCategory);
+          }
         }
+      } catch (error) {
+        console.error("Error fetching entertainment cards:", error);
+        toast.error("Failed to load entertainment cards");
       }
     };
     
     fetchCards();
-    
-    // Handle URL parameters like highlight if needed
-    const params = new URLSearchParams(location.search);
-    const fromSearch = params.get('fromSearch') === 'true';
-    
-    if (fromSearch) {
-      console.log("BlockbustersPage: Detected fromSearch parameter");
-    }
-  }, [location, openCategory]);
+  }, []);
   
+  // Listen for changes from other components
   useEffect(() => {
     const fetchCards = () => {
       const entertainmentCards = getEntertainmentCards();
       setCards(entertainmentCards);
     };
-    
-    fetchCards();
     
     const handleCardAdded = (event: Event) => {
       const customEvent = event as CustomEvent;
@@ -97,7 +99,8 @@ const BlockbustersPage = () => {
   
   // Handle the drawer open/close state
   const handleCategoryToggle = (category: string, isOpen: boolean) => {
-    console.log(`BlockbustersPage: Category ${category} toggle - setting to ${isOpen ? 'open' : 'closed'}`);
+    console.log(`BlockbustersPage: Category "${category}" toggled to ${isOpen ? 'open' : 'closed'}`);
+    // When opening a category, close any previously open one
     setOpenCategory(isOpen ? category : null);
   };
   
