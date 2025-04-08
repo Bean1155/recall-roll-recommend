@@ -108,6 +108,18 @@ const BlockbustersPage = () => {
     setOpenCategory(isOpen ? category : null);
   };
   
+  // Force refresh to help with rendering issues
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log("BlockbustersPage: Forcing refresh to ensure category names display properly");
+      
+      // This will trigger a re-render
+      setOpenCategory(openCategory);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
   return (
     <GridLayout 
       title="Blockbusters" 

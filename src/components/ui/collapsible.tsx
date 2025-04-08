@@ -26,7 +26,7 @@ export const CatalogCollapsible = React.forwardRef<
   // Use categoryName if available, otherwise fallback to label
   const displayName = categoryName || label;
   
-  // Debug code to check what values we're getting
+  // Debug output to track what's happening
   console.log(`CatalogCollapsible: Rendering with label=${label}, categoryName=${categoryName}, displayName=${displayName}`);
   
   // Simplified click handler with debugging
@@ -65,7 +65,6 @@ export const CatalogCollapsible = React.forwardRef<
             marginBottom: "-1px"
           }}
         >
-          {/* Increased padding and made text more visible */}
           <div 
             className="w-full flex items-center justify-center px-4 py-3 font-typewriter font-semibold text-base sm:text-xl"
             style={{ color: textColor }}
@@ -73,7 +72,10 @@ export const CatalogCollapsible = React.forwardRef<
             <span 
               className="block w-full text-center font-medium"
               data-testid="category-name"
-              style={{ textShadow: "0 0 1px rgba(0,0,0,0.1)" }}
+              style={{ 
+                textShadow: "0 0 1px rgba(0,0,0,0.1)",
+                visibility: displayName ? "visible" : "hidden" // Make sure text is visible
+              }}
             >
               {displayName || "Category"}
             </span>
