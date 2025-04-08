@@ -62,32 +62,31 @@ const CreateCardPage = () => {
     setSubmittedCardId(cardId);
     
     if (currentUser) {
-      // CRITICAL FIX: Make point awarding more reliable by skipping hasAddedRewardRef check
+      // SUPER CRITICAL FIX: Always award points directly without any checks
       console.log(`CreateCardPage: Adding points for ${cardType} card creation to user ${currentUser.id}`);
       
-      // Award points with explicit direct call - this should fix the issue
+      // Directly add points (most reliable method)
       addPointsForCardCreation(currentUser.id, cardType);
       
-      // Also set the flag
+      // Set flag for tracking purposes
       hasAddedRewardRef.current = true;
       
+      // Show success message to user
       toast.success(`Your ${cardType === 'food' ? 'bite' : 'blockbuster'} has been added and you earned points!`);
       
-      // Double-check that reward events are fired with multiple attempts for reliability
+      // Trigger multiple reward refreshes for maximum reliability
+      forceRewardsRefresh();
+      setTimeout(() => forceRewardsRefresh(), 300);
+      setTimeout(() => forceRewardsRefresh(), 800);
+      setTimeout(() => forceRewardsRefresh(), 1500);
+      
+      // Try adding points again in case first attempt failed
       setTimeout(() => {
-        console.log("CreateCardPage: First follow-up rewards refresh");
-        forceRewardsRefresh();
-        
-        // Try adding points again in case first attempt failed
-        if (currentUser && !processingSubmitRef.current) {
+        if (currentUser && !hasAddedRewardRef.current) {
+          console.log("CreateCardPage: Follow-up attempt to add points");
           addPointsForCardCreation(currentUser.id, cardType);
         }
-      }, 300);
-      
-      setTimeout(() => {
-        console.log("CreateCardPage: Second follow-up rewards refresh");
-        forceRewardsRefresh();
-      }, 1000);
+      }, 500);
     }
     
     // Dispatch a custom event to notify other components

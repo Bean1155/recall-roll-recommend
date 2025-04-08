@@ -1,6 +1,6 @@
 import { CatalogCard, FoodCard, EntertainmentCard, FoodStatus, RecommendationBadge, UserNote, AgreementStatus } from './types';
 import { appUsers } from '@/contexts/UserContext';
-import { showRewardToast, forceRewardsRefresh } from '@/utils/rewardUtils';
+import { showRewardToast, forceRewardsRefresh, addPointsForCardCreation } from '@/utils/rewardUtils';
 
 // Mock data
 const mockCards: CatalogCard[] = [
@@ -143,6 +143,9 @@ export const addCard = (card: Omit<CatalogCard, 'id'>): CatalogCard => {
   if (card.type && currentUser?.id) {
     console.log(`User ${currentUser.id} added a ${card.type} card - tracked for rewards`);
     
+    // CRITICAL FIX: Directly add points using the dedicated function
+    addPointsForCardCreation(currentUser.id, card.type);
+    
     // Store timestamp to prevent duplicate rewards
     const trackingKey = `last_${card.type}_added_${currentUser.id}`;
     localStorage.setItem(trackingKey, Date.now().toString());
@@ -158,6 +161,14 @@ export const addCard = (card: Omit<CatalogCard, 'id'>): CatalogCard => {
     });
     window.dispatchEvent(event);
     console.log(`Dispatched card_added event for ${card.type} with ID ${newCard.id}`);
+    
+    // Additional followup refreshes to ensure points are updated
+    setTimeout(() => {
+      forceRewardsRefresh();
+    }, 300);
+    setTimeout(() => {
+      forceRewardsRefresh();
+    }, 1200);
   }
   
   return newCard;

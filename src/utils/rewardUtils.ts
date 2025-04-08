@@ -168,7 +168,7 @@ export const ensureUserHasRewards = (userId: string): void => {
   }
 }
 
-// Direct function to add points for card creation - FIXED
+// Direct function to add points for card creation - SUPER CRITICAL FIX
 export const addPointsForCardCreation = (userId: string, cardType: string): void => {
   if (!userId) {
     console.error("Cannot add points: userId is empty");
@@ -177,22 +177,11 @@ export const addPointsForCardCreation = (userId: string, cardType: string): void
   
   console.log(`REWARD SYSTEM: Adding points for ${cardType} card creation to user ${userId}`);
   
-  // Check if we've already added points for this exact card creation action
-  const trackingKey = `last_${cardType}_added_${userId}`;
-  const lastAdded = localStorage.getItem(trackingKey);
+  // Remove tracking to make this more reliable - always add points when called
   const now = Date.now();
   
-  if (lastAdded) {
-    const timeSinceLastAdd = now - Number(lastAdded);
-    // If we've added points in the last 5 seconds, don't add more - this prevents duplicates
-    if (timeSinceLastAdd < 5000) {
-      console.log(`Skipping duplicate points for ${userId} - already added recently`);
-      return;
-    }
-  }
-  
   try {
-    // CRITICAL FIX: Directly manipulate localStorage for maximum reliability
+    // Directly manipulate localStorage for maximum reliability
     const rewardsData = localStorage.getItem('catalogUserRewards');
     let rewards = rewardsData ? JSON.parse(rewardsData) : {};
     
@@ -208,8 +197,8 @@ export const addPointsForCardCreation = (userId: string, cardType: string): void
     
     // Save back to localStorage with timestamp tracking
     localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
-    localStorage.setItem(trackingKey, now.toString());
     localStorage.setItem('lastRewardUpdate', now.toString());
+    localStorage.setItem(`user_${userId}_last_reward`, now.toString());
     
     console.log(`Added 1 point to user ${userId} for creating a ${cardType} card. Total: ${rewards[userId]}`);
     
@@ -220,6 +209,21 @@ export const addPointsForCardCreation = (userId: string, cardType: string): void
     forceRewardsRefresh();
     setTimeout(() => forceRewardsRefresh(), 300);
     setTimeout(() => forceRewardsRefresh(), 1200);
+    
+    // Dispatch a direct event
+    try {
+      const event = new CustomEvent('card_reward_update', {
+        detail: { 
+          userId, 
+          action: 'card_added', 
+          cardType,
+          timestamp: now
+        }
+      });
+      window.dispatchEvent(event);
+    } catch (error) {
+      console.error("Error dispatching event:", error);
+    }
   } catch (e) {
     console.error("Error adding points for card creation:", e);
     

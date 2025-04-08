@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { getUserRewards, getUserRewardTier } from "@/lib/data";
 import { useUser } from "@/contexts/UserContext";
@@ -23,6 +22,7 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
   const animateRef = useRef(false);
   const refreshTimeoutRef = useRef<number | null>(null);
   const lastUpdateTimestampRef = useRef<string | null>(null);
+  const refreshCountRef = useRef(0);
   
   const handleClick = () => {
     if (onClick) {
@@ -32,14 +32,13 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     }
   };
   
-  // Function to refresh rewards display with improved reliability
   const refreshRewards = useCallback(() => {
     if (!currentUser) return;
     
-    console.log(`RewardsCounter: Refreshing points, current count: ${points}`);
+    refreshCountRef.current += 1;
+    console.log(`RewardsCounter: Refreshing points (attempt #${refreshCountRef.current}), current count: ${points}`);
     
     try {
-      // CRITICAL FIX: First try to get direct from localStorage for maximum reliability
       const rewardsData = localStorage.getItem('catalogUserRewards');
       if (rewardsData) {
         try {
@@ -48,13 +47,11 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
           
           console.log(`RewardsCounter: Direct localStorage check - User ${currentUser.id} has ${storedPoints} points`);
           
-          // Always update points on refresh for maximum reliability
           if (storedPoints !== points || prevUserIdRef.current !== currentUser.id) {
             console.log(`RewardsCounter: POINTS CHANGED: ${points} → ${storedPoints} (direct localStorage check)`);
             setPoints(storedPoints);
             setTier(getUserRewardTier(storedPoints));
             
-            // Animate if points increased and not the initial load
             if (storedPoints > points && prevUserIdRef.current === currentUser.id) {
               animateRef.current = true;
               setTimeout(() => {
@@ -62,36 +59,28 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
               }, 2000);
             }
             
-            // Critical: Update localStorage with the latest value to ensure consistency
-            if (typeof rewards[currentUser.id] === 'undefined') {
-              rewards[currentUser.id] = storedPoints;
-              localStorage.setItem('catalogUserRewards', JSON.stringify(rewards));
-            }
-            
-            return; // Exit early if we updated via localStorage
+            prevUserIdRef.current = currentUser.id;
+            return;
           }
         } catch (e) {
           console.error("Error parsing localStorage rewards:", e);
         }
       } else {
         console.log("RewardsCounter: No rewards data found in localStorage, initializing");
-        // Initialize empty rewards if none exist
-        localStorage.setItem('catalogUserRewards', JSON.stringify({[currentUser.id]: 1})); // Start with 1 point
+        localStorage.setItem('catalogUserRewards', JSON.stringify({[currentUser.id]: 1}));
         setPoints(1);
         setTier(getUserRewardTier(1));
+        prevUserIdRef.current = currentUser.id;
         return;
       }
       
-      // Fallback to API call if no localStorage update
       const userPoints = getUserRewards(currentUser.id);
       
-      // Ensure we always have the latest value
       console.log(`RewardsCounter: API call returned ${userPoints} points for user ${currentUser.id}`);
       
-      // Always update to ensure latest value is displayed
-      console.log(`RewardsCounter: Points refreshed to ${userPoints} (from ${points}) for user ${currentUser.id}`);
+      setPoints(userPoints);
+      setTier(getUserRewardTier(userPoints));
       
-      // Animate if points increased and not the initial load
       if (userPoints > points && prevUserIdRef.current === currentUser.id) {
         animateRef.current = true;
         setTimeout(() => {
@@ -99,30 +88,21 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
         }, 2000);
       }
       
-      // Update state with new values
-      setPoints(userPoints);
-      setTier(getUserRewardTier(userPoints));
-      
-      // Update the previous user ID
       prevUserIdRef.current = currentUser.id;
     } catch (error) {
       console.error("Error refreshing points:", error);
     }
   }, [currentUser, points]);
   
-  // Initial load of points and whenever currentUser changes
   useEffect(() => {
     if (!currentUser) return;
     
-    // Log when user changes
     if (prevUserIdRef.current !== currentUser.id) {
       console.log(`RewardsCounter: User changed from ${prevUserIdRef.current} to ${currentUser.id}`);
     }
     
-    // Initial refresh
     refreshRewards();
     
-    // Follow up with additional refresh after a delay
     setTimeout(() => {
       console.log("RewardsCounter: Follow-up refresh after user change");
       refreshRewards();
@@ -131,7 +111,6 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     prevUserIdRef.current = currentUser.id;
   }, [currentUser, refreshRewards]);
   
-  // Set up event listeners for points updates with improved reliability
   useEffect(() => {
     if (!currentUser) return;
     
@@ -139,32 +118,27 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
       const customEvent = e as CustomEvent;
       console.log("RewardsCounter: Refresh event received", customEvent?.detail || '');
       
-      // CRITICAL FIX: Always refresh immediately for maximum responsiveness
       refreshRewards();
       
-      // Debounce additional refreshes
       if (refreshTimeoutRef.current) {
         window.clearTimeout(refreshTimeoutRef.current);
       }
       
-      // Follow up with a debounced refresh
       refreshTimeoutRef.current = window.setTimeout(() => {
         console.log("RewardsCounter: Debounced refresh triggered");
         refreshRewards();
         refreshTimeoutRef.current = null;
-      }, 300); // 300ms debounce
+      }, 300);
       
-      // Additional refresh after a longer delay to catch any async updates
       setTimeout(() => {
         console.log("RewardsCounter: Additional delayed refresh");
         refreshRewards();
-      }, 1500);
+      }, 1000);
     };
     
-    // Add listeners for all relevant events
-    window.addEventListener('refreshRewards', handleRefreshEvent);
-    window.addEventListener('realtime_rewards_update', handleRefreshEvent);
-    window.addEventListener('card_reward_update', handleRefreshEvent);
+    window.addEventListener('refreshRewards', handleRefreshEvent, true);
+    window.addEventListener('realtime_rewards_update', handleRefreshEvent, true);
+    window.addEventListener('card_reward_update', handleRefreshEvent, true);
     window.addEventListener('catalog_action', (e) => {
       const customEvent = e as CustomEvent;
       console.log("RewardsCounter: Received catalog_action event:", customEvent.detail?.action);
@@ -173,9 +147,8 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
           customEvent.detail?.action === 'card_shared') {
         handleRefreshEvent(e);
       }
-    });
+    }, true);
     
-    // Check for storage changes
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'catalogUserRewards' || e.key === 'lastRewardUpdate' || 
           e.key === `user_${currentUser.id}_last_reward`) {
@@ -184,26 +157,29 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
       }
     };
     
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('storage', handleStorageChange, true);
     
-    // Refresh on a less frequent interval
     const intervalId = setInterval(() => {
       console.log("RewardsCounter: Interval refresh triggered");
       refreshRewards();
     }, 5000);
     
-    // Force immediate refresh when component mounts
     refreshRewards();
     
-    // Additional refresh after a short delay for reliability
-    setTimeout(() => refreshRewards(), 1000);
+    const refreshAttempts = [500, 1000, 2000, 5000];
+    refreshAttempts.forEach((delay, index) => {
+      setTimeout(() => {
+        console.log(`RewardsCounter: Delayed refresh #${index + 1}`);
+        refreshRewards();
+      }, delay);
+    });
     
     return () => {
-      window.removeEventListener('refreshRewards', handleRefreshEvent);
-      window.removeEventListener('realtime_rewards_update', handleRefreshEvent);
-      window.removeEventListener('card_reward_update', handleRefreshEvent);
-      window.removeEventListener('catalog_action', handleRefreshEvent);
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('refreshRewards', handleRefreshEvent, true);
+      window.removeEventListener('realtime_rewards_update', handleRefreshEvent, true);
+      window.removeEventListener('card_reward_update', handleRefreshEvent, true);
+      window.removeEventListener('catalog_action', handleRefreshEvent, true);
+      window.removeEventListener('storage', handleStorageChange, true);
       
       if (refreshTimeoutRef.current) {
         window.clearTimeout(refreshTimeoutRef.current);
@@ -213,7 +189,6 @@ const RewardsCounter = ({ variant = "detailed", className = "", onClick }: Rewar
     };
   }, [currentUser, refreshRewards]);
   
-  // Function to get background color based on tier
   const getTierColor = () => {
     switch(tier) {
       case "Needs Improvement": return "bg-orange-100 text-orange-800";
