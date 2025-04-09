@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import QuoteBubble from "./QuoteBubble";
+import { Sparkles } from "lucide-react";
 
 interface OnboardingStepProps {
   title: string;
@@ -23,6 +24,7 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [showLogo, setShowLogo] = useState(false);
   const [showDrawers, setShowDrawers] = useState(false);
+  const [sparkleAngle, setSparkleAngle] = useState(0);
 
   // Start the animation after component mounts
   useEffect(() => {
@@ -52,6 +54,15 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
       };
     }
   }, [stepType]);
+
+  // Animate the sparkles icon
+  useEffect(() => {
+    const sparkleInterval = setInterval(() => {
+      setSparkleAngle(prev => (prev + 15) % 360);
+    }, 1000);
+    
+    return () => clearInterval(sparkleInterval);
+  }, []);
 
   return (
     <div className="flex flex-col items-center text-center">
@@ -94,7 +105,7 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
                 transform: isAnimating ? "rotateY(0deg)" : "rotateY(180deg)"
               }}
             >
-              {/* Card front (showing logo) */}
+              {/* Card front (showing icon) */}
               <div 
                 className="absolute inset-0 flex items-center justify-center bg-white rounded-md border-2 border-catalog-softBrown shadow-md"
                 style={{
@@ -107,11 +118,21 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
                     showLogo ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
                   }`}
                 >
-                  <img 
-                    src={image} 
-                    alt="Total Recall Catalog Logo" 
-                    className="max-w-full max-h-full object-contain p-4"
-                  />
+                  {/* Animated sparkles icon instead of static logo */}
+                  <div className="flex items-center justify-center h-32 w-32 relative">
+                    <Sparkles 
+                      size={64}
+                      className="text-[#D3E4FD] absolute"
+                      style={{
+                        transform: `rotate(${sparkleAngle}deg)`,
+                        transition: 'transform 1s ease-in-out',
+                      }}
+                    />
+                    <Sparkles 
+                      size={48}
+                      className="text-catalog-teal"
+                    />
+                  </div>
                 </div>
               </div>
               
@@ -186,7 +207,8 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
                 >
                   <div className="flex items-center justify-between">
                     <div className="font-typewriter text-sm ml-3">MOVIES</div>
-                    <div className="w-4 h-6 rounded-l-sm bg-gray-300 border-l border-t border-b border-catalog-softBrown"></div>
+                    {/* Changed tab color to the blue used in blockbusters home page */}
+                    <div className="w-4 h-6 rounded-l-sm bg-[#D3E4FD] border-l border-t border-b border-catalog-softBrown"></div>
                   </div>
                 </div>
                 
@@ -198,7 +220,8 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
                 >
                   <div className="flex items-center justify-between">
                     <div className="font-typewriter text-sm ml-3">BAKERIES</div>
-                    <div className="w-4 h-6 rounded-l-sm bg-gray-300 border-l border-t border-b border-catalog-softBrown"></div>
+                    {/* Changed tab color to the blue used in blockbusters home page */}
+                    <div className="w-4 h-6 rounded-l-sm bg-[#D3E4FD] border-l border-t border-b border-catalog-softBrown"></div>
                   </div>
                 </div>
                 
@@ -210,7 +233,8 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
                 >
                   <div className="flex items-center justify-between">
                     <div className="font-typewriter text-sm ml-3">TV SHOWS</div>
-                    <div className="w-4 h-6 rounded-l-sm bg-gray-300 border-l border-t border-b border-catalog-softBrown"></div>
+                    {/* Changed tab color to the blue used in blockbusters home page */}
+                    <div className="w-4 h-6 rounded-l-sm bg-[#D3E4FD] border-l border-t border-b border-catalog-softBrown"></div>
                   </div>
                 </div>
               </div>
@@ -254,4 +278,3 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
 };
 
 export default OnboardingStep;
-
