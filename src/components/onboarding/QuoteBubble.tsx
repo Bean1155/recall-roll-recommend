@@ -48,10 +48,10 @@ const QuoteBubble: React.FC<QuoteBubbleProps> = ({
     
     switch (position) {
       case "left":
-        positionStyles = { left: "5%", top: "20%" };
+        positionStyles = { left: "10%", top: "30%" };
         break;
       case "right":
-        positionStyles = { right: "5%", top: "60%" };
+        positionStyles = { right: "10%", top: "70%" };
         break;
       default:
         positionStyles = { left: "50%", top: "50%", transform: "translate(-50%, -50%)" };
@@ -89,20 +89,20 @@ const QuoteBubble: React.FC<QuoteBubbleProps> = ({
       }}
     >
       <div 
-        className="relative p-4 md:p-6 mb-8 rounded-lg border-2 border-black shadow-lg"
+        className="relative p-3 md:p-4 mb-8 rounded-lg border-2 border-black shadow-lg"
         style={{ 
           backgroundColor: color,
-          minHeight: "100px",
-          maxWidth: isEntertainment ? "450px" : "280px",
+          minHeight: "80px",
+          maxWidth: isEntertainment ? "400px" : "240px",
         }}
       >
-        <p className="font-bold text-xl md:text-2xl text-center text-black">
+        <p className="font-bold text-lg md:text-xl text-center text-black">
           {text}
         </p>
         
         {/* Triangular pointer at the bottom */}
         <div 
-          className="absolute bottom-0 w-6 h-6 transform translate-y-1/2 rotate-45"
+          className="absolute bottom-0 w-5 h-5 transform translate-y-1/2 rotate-45"
           style={{
             backgroundColor: color,
             borderRight: "2px solid black",
