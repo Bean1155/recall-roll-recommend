@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import QuoteBubble from "./QuoteBubble";
 
@@ -180,45 +179,39 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
             <div className="relative bg-catalog-cream border-2 border-catalog-softBrown rounded-lg p-4 shadow-lg">
               {/* Catalog drawer animation */}
               <div className="space-y-3">
-                {/* First drawer */}
+                {/* First drawer - Movies */}
                 <div 
                   className={`transition-all duration-500 ease-in-out transform bg-[#D3E4FD] border border-catalog-softBrown rounded-md p-3 shadow ${
                     showDrawers ? 'translate-x-0' : 'translate-x-[-100%]'
                   }`}
                 >
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 rounded-full bg-white border border-catalog-softBrown flex items-center justify-center text-xs font-bold">
-                      1
-                    </div>
-                    <div className="ml-3 font-typewriter text-sm">Movies</div>
+                  <div className="flex items-center justify-between">
+                    <div className="font-typewriter text-sm ml-3">MOVIES</div>
+                    <div className="w-4 h-6 rounded-l-sm bg-gray-300 border-l border-t border-b border-catalog-softBrown"></div>
                   </div>
                 </div>
                 
-                {/* Second drawer */}
+                {/* Second drawer - Bakeries */}
                 <div 
                   className={`transition-all duration-500 delay-100 ease-in-out transform bg-[#FFDEE2] border border-catalog-softBrown rounded-md p-3 shadow ${
                     showDrawers ? 'translate-x-0' : 'translate-x-[-100%]'
                   }`}
                 >
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 rounded-full bg-white border border-catalog-softBrown flex items-center justify-center text-xs font-bold">
-                      2
-                    </div>
-                    <div className="ml-3 font-typewriter text-sm">TV Shows</div>
+                  <div className="flex items-center justify-between">
+                    <div className="font-typewriter text-sm ml-3">BAKERIES</div>
+                    <div className="w-4 h-6 rounded-l-sm bg-gray-300 border-l border-t border-b border-catalog-softBrown"></div>
                   </div>
                 </div>
                 
-                {/* Third drawer */}
+                {/* Third drawer - TV Shows */}
                 <div 
                   className={`transition-all duration-500 delay-200 ease-in-out transform bg-[#D8E4C8] border border-catalog-softBrown rounded-md p-3 shadow ${
                     showDrawers ? 'translate-x-0' : 'translate-x-[-100%]'
                   }`}
                 >
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 rounded-full bg-white border border-catalog-softBrown flex items-center justify-center text-xs font-bold">
-                      3
-                    </div>
-                    <div className="ml-3 font-typewriter text-sm">Books</div>
+                  <div className="flex items-center justify-between">
+                    <div className="font-typewriter text-sm ml-3">TV SHOWS</div>
+                    <div className="w-4 h-6 rounded-l-sm bg-gray-300 border-l border-t border-b border-catalog-softBrown"></div>
                   </div>
                 </div>
               </div>
