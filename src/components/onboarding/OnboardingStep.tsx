@@ -22,6 +22,7 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
   // State for controlling the catalog card animation
   const [isAnimating, setIsAnimating] = useState(false);
   const [showLogo, setShowLogo] = useState(false);
+  const [showDrawers, setShowDrawers] = useState(false);
 
   // Start the animation after component mounts
   useEffect(() => {
@@ -39,6 +40,15 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
       return () => {
         clearTimeout(animationTimer);
         clearTimeout(logoTimer);
+      };
+    } else if (stepType === "blockbusters") {
+      // Start the catalog drawers animation
+      const drawerTimer = setTimeout(() => {
+        setShowDrawers(true);
+      }, 500);
+      
+      return () => {
+        clearTimeout(drawerTimer);
       };
     }
   }, [stepType]);
@@ -161,12 +171,63 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
         </div>
       ) : stepType === "blockbusters" ? (
         <div className="p-6 w-full flex flex-col items-center justify-center bg-white">
-          <QuoteBubble 
-            text="WATCH ANY GOOD SHOWS OR MOVIES LATELY?" 
-            color="#add8e6" 
-            delay={300}
-            isEntertainment={true}
-          />
+          {/* Animated catalog box with drawers */}
+          <div className="w-full max-w-md mx-auto">
+            <h3 className="text-xl font-bold font-typewriter text-center mb-4 text-[#5D4037]">
+              BUILD YOUR PERSONAL LIBRARY
+            </h3>
+            
+            <div className="relative bg-catalog-cream border-2 border-catalog-softBrown rounded-lg p-4 shadow-lg">
+              {/* Catalog drawer animation */}
+              <div className="space-y-3">
+                {/* First drawer */}
+                <div 
+                  className={`transition-all duration-500 ease-in-out transform bg-[#D3E4FD] border border-catalog-softBrown rounded-md p-3 shadow ${
+                    showDrawers ? 'translate-x-0' : 'translate-x-[-100%]'
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <div className="w-6 h-6 rounded-full bg-white border border-catalog-softBrown flex items-center justify-center text-xs font-bold">
+                      1
+                    </div>
+                    <div className="ml-3 font-typewriter text-sm">Movies</div>
+                  </div>
+                </div>
+                
+                {/* Second drawer */}
+                <div 
+                  className={`transition-all duration-500 delay-100 ease-in-out transform bg-[#FFDEE2] border border-catalog-softBrown rounded-md p-3 shadow ${
+                    showDrawers ? 'translate-x-0' : 'translate-x-[-100%]'
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <div className="w-6 h-6 rounded-full bg-white border border-catalog-softBrown flex items-center justify-center text-xs font-bold">
+                      2
+                    </div>
+                    <div className="ml-3 font-typewriter text-sm">TV Shows</div>
+                  </div>
+                </div>
+                
+                {/* Third drawer */}
+                <div 
+                  className={`transition-all duration-500 delay-200 ease-in-out transform bg-[#D8E4C8] border border-catalog-softBrown rounded-md p-3 shadow ${
+                    showDrawers ? 'translate-x-0' : 'translate-x-[-100%]'
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <div className="w-6 h-6 rounded-full bg-white border border-catalog-softBrown flex items-center justify-center text-xs font-bold">
+                      3
+                    </div>
+                    <div className="ml-3 font-typewriter text-sm">Books</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <h3 className="text-xl font-bold font-typewriter text-center mt-4 text-[#5D4037]">
+              BROWSE YOUR COLLECTIONS
+            </h3>
+          </div>
         </div>
       ) : (
         <div className="p-6 w-full flex justify-center bg-white">
