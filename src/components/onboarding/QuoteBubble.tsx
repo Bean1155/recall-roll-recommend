@@ -48,10 +48,10 @@ const QuoteBubble: React.FC<QuoteBubbleProps> = ({
     
     switch (position) {
       case "left":
-        positionStyles = { left: "5%", top: "10%" };
+        positionStyles = { left: "5%", top: "20%" };
         break;
       case "right":
-        positionStyles = { right: "5%", top: "40%" };
+        positionStyles = { right: "5%", top: "60%" };
         break;
       default:
         positionStyles = { left: "50%", top: "50%", transform: "translate(-50%, -50%)" };
@@ -96,7 +96,7 @@ const QuoteBubble: React.FC<QuoteBubbleProps> = ({
           maxWidth: isEntertainment ? "450px" : "280px",
         }}
       >
-        <p className="font-bold text-xl md:text-2xl text-center">
+        <p className="font-bold text-xl md:text-2xl text-center text-black">
           {text}
         </p>
         

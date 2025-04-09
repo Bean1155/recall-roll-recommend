@@ -121,8 +121,8 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
         </div>
       ) : stepType === "bites" ? (
         <div className="p-6 w-full flex flex-col items-center justify-center bg-white">
-          {/* Two animated speech clouds for bites page */}
-          <div className="relative w-full h-[250px] overflow-hidden">
+          {/* Two animated speech clouds for bites page with increased height for better spacing */}
+          <div className="relative w-full h-[300px] overflow-hidden">
             {/* First speech cloud - moving up/down */}
             <QuoteBubble 
               text="WE JUST WENT TO A GREAT RESTAURANT!" 
