@@ -173,9 +173,7 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
         <div className="p-6 w-full flex flex-col items-center justify-center bg-white">
           {/* Animated catalog box with drawers */}
           <div className="w-full max-w-md mx-auto">
-            <h3 className="text-xl font-bold font-typewriter text-center mb-4 text-[#5D4037]">
-              BUILD YOUR PERSONAL LIBRARY
-            </h3>
+            {/* Removed the title "BUILD YOUR PERSONAL LIBRARY" that was here */}
             
             <div className="relative bg-catalog-cream border-2 border-catalog-softBrown rounded-lg p-4 shadow-lg">
               {/* Catalog drawer animation */}
@@ -219,7 +217,7 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
             </div>
             
             <h3 className="text-xl font-bold font-typewriter text-center mt-4 text-[#5D4037]">
-              BROWSE YOUR COLLECTIONS
+              RECOMMEND BITES AND BLOCKBUSTERS BY SHARING INDIVIDUAL CARDS
             </h3>
           </div>
         </div>
@@ -256,3 +254,4 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
 };
 
 export default OnboardingStep;
+
