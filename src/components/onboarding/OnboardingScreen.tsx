@@ -47,7 +47,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
     },
     {
       title: "Create Your Personal Library",
-      description: "Create a personal library of films, shows, and entertainment you've enjoyed or want to experience.",
+      description: "", // Removed the description text here
       image: "/lovable-uploads/c1229700-5ec5-4c21-baef-dc535d219a0e.png",
       backgroundColor: "#D3E4FD", // Light blue for Blockbusters
       stepType: "blockbusters"

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import QuoteBubble from "./QuoteBubble";
 
@@ -241,13 +242,15 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
         </div>
       )}
       
-      {/* Description section */}
-      <div className="px-8 pb-6 bg-white w-full">
-        <p className="text-lg font-typewriter text-gray-700"
-           style={{ lineHeight: 1.6 }}>
-          {description}
-        </p>
-      </div>
+      {/* Description section - only display if there's a description */}
+      {description && (
+        <div className="px-8 pb-6 bg-white w-full">
+          <p className="text-lg font-typewriter text-gray-700"
+             style={{ lineHeight: 1.6 }}>
+            {description}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
