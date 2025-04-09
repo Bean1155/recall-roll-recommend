@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -55,7 +54,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
     {
       title: "Share Your Discoveries",
       description: "Recommend your favorite finds to friends and track who follows your suggestions.",
-      image: "/lovable-uploads/fafe4c18-7a01-4f90-8483-06834c0e1170.png",
+      image: "/lovable-uploads/34a59979-7077-413b-a547-452796892364.png", // Updated to the new logo image
       backgroundColor: "#ea384c", // Changed to vintage bright red
       stepType: "share" // New step type for the animated stamp
     },

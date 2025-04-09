@@ -57,6 +57,16 @@ const LaunchScreenAnimation: React.FC<LaunchScreenAnimationProps> = ({
           <div className="font-bold text-amber-900 uppercase tracking-wider text-sm sm:text-base font-typewriter">
             CATALOG COMPANION
           </div>
+          
+          {/* Added Total Recall logo beneath the envelope text for consistency */}
+          <div className="mt-2 opacity-75">
+            <img 
+              src="/lovable-uploads/34a59979-7077-413b-a547-452796892364.png" 
+              alt="Total Recall Catalog" 
+              className="w-24 h-24 object-contain mx-auto"
+              style={{ filter: "brightness(0.8)" }}
+            />
+          </div>
         </div>
       </div>
     </div>

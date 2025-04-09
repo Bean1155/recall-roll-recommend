@@ -256,9 +256,9 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
           </div>
         </div>
       ) : stepType === "share" ? (
-        <div className="p-6 w-full flex justify-center bg-white">
+        <div className="p-6 w-full flex flex-col justify-center items-center bg-white">
           {/* Animated stamp effect */}
-          <div className="relative w-48 h-48 flex items-center justify-center">
+          <div className="relative w-48 h-48 flex items-center justify-center mb-4">
             {/* Paper background */}
             <div className="absolute inset-0 bg-amber-50 border border-amber-200 rounded-md"></div>
             
@@ -299,6 +299,17 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
                 stampPressed ? 'shadow-lg opacity-50' : 'shadow-none opacity-0'
               }`}
             ></div>
+          </div>
+
+          {/* Total Recall Logo underneath the stamp */}
+          <div className={`transition-all duration-700 transform mt-2 ${
+            stampPressed ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
+          }`}>
+            <img 
+              src="/lovable-uploads/34a59979-7077-413b-a547-452796892364.png" 
+              alt="Total Recall Catalog" 
+              className="w-48 h-48 object-contain"
+            />
           </div>
         </div>
       ) : (
