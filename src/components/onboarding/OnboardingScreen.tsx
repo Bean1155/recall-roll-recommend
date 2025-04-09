@@ -56,8 +56,8 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
       title: "Share Your Discoveries",
       description: "Recommend your favorite finds to friends and track who follows your suggestions.",
       image: "/lovable-uploads/fafe4c18-7a01-4f90-8483-06834c0e1170.png",
-      backgroundColor: "#e18336", // Orange from catalog
-      stepType: "other"
+      backgroundColor: "#ea384c", // Changed to vintage bright red
+      stepType: "share" // New step type for the animated stamp
     },
     {
       title: "Earn Rewards",
@@ -110,7 +110,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
           description={onboardingSteps[currentStep].description}
           image={onboardingSteps[currentStep].image}
           backgroundColor={onboardingSteps[currentStep].backgroundColor}
-          stepType={onboardingSteps[currentStep].stepType as "intro" | "bites" | "blockbusters" | "other"}
+          stepType={onboardingSteps[currentStep].stepType as "intro" | "bites" | "blockbusters" | "share" | "other"}
         />
         
         <div className="p-4 flex justify-between items-center border-t border-catalog-softBrown/30 bg-catalog-cream">

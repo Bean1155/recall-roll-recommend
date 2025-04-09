@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import QuoteBubble from "./QuoteBubble";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Stamp } from "lucide-react";
 
 interface OnboardingStepProps {
   title: string;
@@ -9,7 +9,7 @@ interface OnboardingStepProps {
   description: string;
   image: string;
   backgroundColor?: string;
-  stepType?: "intro" | "bites" | "blockbusters" | "other";
+  stepType?: "intro" | "bites" | "blockbusters" | "other" | "share";
 }
 
 const OnboardingStep: React.FC<OnboardingStepProps> = ({
@@ -25,6 +25,7 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
   const [showLogo, setShowLogo] = useState(false);
   const [showDrawers, setShowDrawers] = useState(false);
   const [sparkleAngle, setSparkleAngle] = useState(0);
+  const [stampPressed, setStampPressed] = useState(false);
 
   // Start the animation after component mounts
   useEffect(() => {
@@ -51,6 +52,15 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
       
       return () => {
         clearTimeout(drawerTimer);
+      };
+    } else if (stepType === "share") {
+      // Start the stamp animation
+      const stampTimer = setTimeout(() => {
+        setStampPressed(true);
+      }, 800);
+      
+      return () => {
+        clearTimeout(stampTimer);
       };
     }
   }, [stepType]);
@@ -243,6 +253,52 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
             <h3 className="text-xl font-bold font-typewriter text-center mt-4 text-[#5D4037]">
               RECOMMEND BITES AND BLOCKBUSTERS BY SHARING INDIVIDUAL CARDS
             </h3>
+          </div>
+        </div>
+      ) : stepType === "share" ? (
+        <div className="p-6 w-full flex justify-center bg-white">
+          {/* Animated stamp effect */}
+          <div className="relative w-48 h-48 flex items-center justify-center">
+            {/* Paper background */}
+            <div className="absolute inset-0 bg-amber-50 border border-amber-200 rounded-md"></div>
+            
+            {/* Stamp impression that appears */}
+            <div 
+              className={`absolute transition-all duration-700 ${
+                stampPressed 
+                  ? 'opacity-100 scale-100 rotate-0' 
+                  : 'opacity-0 scale-150 rotate-45'
+              }`}
+              style={{
+                transitionTimingFunction: stampPressed ? 'cubic-bezier(0.175, 0.885, 0.32, 1.275)' : 'ease',
+              }}
+            >
+              <div className="relative">
+                {/* Outer stamp ring */}
+                <div className="absolute inset-0 rounded-full border-4 border-red-700 opacity-30"></div>
+                
+                {/* Stamp icon */}
+                <Stamp 
+                  size={100} 
+                  className="text-red-700 opacity-70" 
+                  strokeWidth={1.5} 
+                />
+                
+                {/* Ink impression effect */}
+                <div 
+                  className={`absolute inset-0 bg-red-800 mix-blend-color-burn rounded-full transition-opacity duration-500 ${
+                    stampPressed ? 'opacity-20' : 'opacity-0'
+                  }`}
+                ></div>
+              </div>
+            </div>
+            
+            {/* Stamp shadow that appears when pressed */}
+            <div 
+              className={`absolute inset-0 transition-all duration-300 rounded-md ${
+                stampPressed ? 'shadow-lg opacity-50' : 'shadow-none opacity-0'
+              }`}
+            ></div>
           </div>
         </div>
       ) : (
