@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -133,6 +134,15 @@
   .rotate-y-180 {
     transform: rotateY(180deg);
   }
+  
+  /* Speech bubble animation classes */
+  .float-vertical {
+    animation: float-vertical 4s ease-in-out infinite;
+  }
+  
+  .float-horizontal {
+    animation: float-horizontal 6s ease-in-out infinite;
+  }
 }
 
 /* TailwindCSS doesn't have these colors by default */
@@ -249,6 +259,25 @@
 @keyframes typing {
   from { width: 0 }
   to { width: 100% }
+}
+
+/* Animation for speech clouds */
+@keyframes float-vertical {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes float-horizontal {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(15px);
+  }
 }
 
 .envelope-open-animation {

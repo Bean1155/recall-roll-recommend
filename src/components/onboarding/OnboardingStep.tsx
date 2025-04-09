@@ -121,11 +121,26 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
         </div>
       ) : stepType === "bites" ? (
         <div className="p-6 w-full flex flex-col items-center justify-center bg-white">
-          <QuoteBubble 
-            text="BEEN TO ANY GOOD RESTAURANTS?" 
-            color="#add8e6"
-            delay={300}
-          />
+          {/* Two animated speech clouds for bites page */}
+          <div className="relative w-full h-[250px] overflow-hidden">
+            {/* First speech cloud - moving up/down */}
+            <QuoteBubble 
+              text="WE JUST WENT TO A GREAT RESTAURANT!" 
+              color="#FFDEE2"
+              delay={300}
+              position="left"
+              animation="vertical"
+            />
+            
+            {/* Second speech cloud - moving side to side */}
+            <QuoteBubble 
+              text="OOOH, WHAT'S THE NAME?" 
+              color="#D3E4FD" 
+              delay={800}
+              position="right"
+              animation="horizontal"
+            />
+          </div>
         </div>
       ) : stepType === "blockbusters" ? (
         <div className="p-6 w-full flex flex-col items-center justify-center bg-white">
