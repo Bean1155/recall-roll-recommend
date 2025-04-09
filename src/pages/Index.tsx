@@ -11,12 +11,10 @@ import { Link } from "react-router-dom";
 import LaunchScreen from "@/components/LaunchScreen";
 import OnboardingScreen from "@/components/onboarding/OnboardingScreen";
 import { useUser } from "@/contexts/UserContext";
-import { CatalogCollapsible } from "@/components/ui/collapsible";
 
 const Index = () => {
   const { currentUser } = useUser();
   const [showLaunch, setShowLaunch] = useState(false);
-  const [howItWorksOpen, setHowItWorksOpen] = useState(false);
   
   const currentDate = new Date();
   const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
@@ -40,58 +38,6 @@ const Index = () => {
           <h1 className="text-4xl font-bold mb-2 text-black font-typewriter">TOTAL RECALL CATALOG</h1>
           <p className="text-xl text-vintage-red font-typewriter">Tracking Every Bite and Blockbuster</p>
         </div>
-        
-        {/* How It Works Section - Moved above Bites/Blockbusters grid */}
-        <CatalogCollapsible
-          label="How It Works"
-          backgroundColor="#e18336" 
-          textColor="#4a3f35"
-          open={howItWorksOpen}
-          onOpenChange={setHowItWorksOpen}
-          className="mb-12"
-        >
-          <div className="relative bg-[#FCFCF7] p-8">
-            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-[#FF9999] opacity-70"></div>
-            
-            <div className="relative pl-12 pr-4" 
-              style={{
-                backgroundImage: `repeating-linear-gradient(#FCFCF7, #FCFCF7 30px, #ACC8E5 30px, #ACC8E5 31px)`,
-                backgroundPosition: '0 10px',
-                lineHeight: '31px',
-                paddingTop: '10px'
-              }}>
-              
-              <ol className="space-y-[31px] list-none relative z-10">
-                <li className="flex items-start">
-                  <span className="font-bold text-xl mr-4 text-vintage-red">1.</span>
-                  <p className="text-xl">Add your favorite BITES and BLOCKBUSTERS and create individual catalog cards.</p>
-                </li>
-                <li className="flex items-start">
-                  <span className="font-bold text-xl mr-4 text-vintage-red">2.</span>
-                  <p className="text-xl">Build your personal library and browse collections.</p>
-                </li>
-                <li className="flex items-start">
-                  <span className="font-bold text-xl mr-4 text-vintage-red">3.</span>
-                  <p className="text-xl">Recommend Bites and Blockbusters by sharing individual catalog cards.</p>
-                </li>
-                <li className="flex items-start">
-                  <span className="font-bold text-xl mr-4 text-vintage-red">4.</span>
-                  <p className="text-xl">Track referrals and notifications from in app users and compare recommendations.</p>
-                </li>
-                <li className="flex items-start">
-                  <span className="font-bold text-xl mr-4 text-vintage-red">5.</span>
-                  <div>
-                    <p className="text-xl">Collect and track points for adding and sharing cards and become a Happy Sharer!</p>
-                  </div>
-                </li>
-              </ol>
-              
-              <div className="absolute left-2 top-[10%] h-6 w-6 rounded-full bg-white border-2 border-[#9E8979] shadow-inner"></div>
-              <div className="absolute left-2 top-[50%] h-6 w-6 rounded-full bg-white border-2 border-[#9E8979] shadow-inner"></div>
-              <div className="absolute left-2 bottom-[10%] h-6 w-6 rounded-full bg-white border-2 border-[#9E8979] shadow-inner"></div>
-            </div>
-          </div>
-        </CatalogCollapsible>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {/* Bites Card */}
