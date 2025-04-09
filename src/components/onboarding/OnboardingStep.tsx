@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 import QuoteBubble from "./QuoteBubble";
-import { Sparkles, Stamp } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 interface OnboardingStepProps {
   title: string;
@@ -25,7 +24,7 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
   const [showLogo, setShowLogo] = useState(false);
   const [showDrawers, setShowDrawers] = useState(false);
   const [sparkleAngle, setSparkleAngle] = useState(0);
-  const [stampPressed, setStampPressed] = useState(false);
+  const [logoVisible, setLogoVisible] = useState(false);
 
   // Start the animation after component mounts
   useEffect(() => {
@@ -54,13 +53,13 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
         clearTimeout(drawerTimer);
       };
     } else if (stepType === "share") {
-      // Start the stamp animation
-      const stampTimer = setTimeout(() => {
-        setStampPressed(true);
-      }, 800);
+      // Show the logo with a simple fade-in animation
+      const logoTimer = setTimeout(() => {
+        setLogoVisible(true);
+      }, 500);
       
       return () => {
-        clearTimeout(stampTimer);
+        clearTimeout(logoTimer);
       };
     }
   }, [stepType]);
@@ -257,58 +256,16 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
         </div>
       ) : stepType === "share" ? (
         <div className="p-6 w-full flex flex-col justify-center items-center bg-white">
-          {/* Animated stamp effect */}
-          <div className="relative w-48 h-48 flex items-center justify-center mb-4">
-            {/* Paper background */}
-            <div className="absolute inset-0 bg-amber-50 border border-amber-200 rounded-md"></div>
-            
-            {/* Stamp impression that appears */}
-            <div 
-              className={`absolute transition-all duration-700 ${
-                stampPressed 
-                  ? 'opacity-100 scale-100 rotate-0' 
-                  : 'opacity-0 scale-150 rotate-45'
-              }`}
-              style={{
-                transitionTimingFunction: stampPressed ? 'cubic-bezier(0.175, 0.885, 0.32, 1.275)' : 'ease',
-              }}
-            >
-              <div className="relative">
-                {/* Outer stamp ring */}
-                <div className="absolute inset-0 rounded-full border-4 border-red-700 opacity-30"></div>
-                
-                {/* Stamp icon */}
-                <Stamp 
-                  size={100} 
-                  className="text-red-700 opacity-70" 
-                  strokeWidth={1.5} 
-                />
-                
-                {/* Ink impression effect */}
-                <div 
-                  className={`absolute inset-0 bg-red-800 mix-blend-color-burn rounded-full transition-opacity duration-500 ${
-                    stampPressed ? 'opacity-20' : 'opacity-0'
-                  }`}
-                ></div>
-              </div>
-            </div>
-            
-            {/* Stamp shadow that appears when pressed */}
-            <div 
-              className={`absolute inset-0 transition-all duration-300 rounded-md ${
-                stampPressed ? 'shadow-lg opacity-50' : 'shadow-none opacity-0'
-              }`}
-            ></div>
-          </div>
-
-          {/* Total Recall Logo underneath the stamp */}
-          <div className={`transition-all duration-700 transform mt-2 ${
-            stampPressed ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
-          }`}>
+          {/* Simple logo display with fade-in animation */}
+          <div 
+            className={`transition-all duration-1000 transform ${
+              logoVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
+            }`}
+          >
             <img 
               src="/lovable-uploads/34a59979-7077-413b-a547-452796892364.png" 
               alt="Total Recall Catalog" 
-              className="w-48 h-48 object-contain"
+              className="w-64 h-64 object-contain"
             />
           </div>
         </div>
