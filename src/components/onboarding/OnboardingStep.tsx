@@ -121,24 +121,41 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
         </div>
       ) : stepType === "bites" ? (
         <div className="p-6 w-full flex flex-col items-center justify-center bg-white">
-          {/* Two animated speech clouds for bites page with increased height for better spacing */}
-          <div className="relative w-full h-[350px] overflow-hidden">
-            {/* First speech cloud - moving up/down */}
-            <QuoteBubble 
-              text="WE JUST WENT TO A GREAT RESTAURANT!" 
-              color="#FFDEE2"
-              delay={300}
-              position="left"
-              animation="vertical"
-            />
+          {/* Three animated speech clouds arranged in two rows */}
+          <div className="relative w-full h-[400px] overflow-hidden">
+            {/* First row: two speech clouds side by side */}
+            <div className="flex justify-between mb-10 pt-10">
+              {/* Left speech cloud - Restaurant */}
+              <QuoteBubble 
+                text="WE JUST WENT TO A GREAT RESTAURANT!" 
+                color="#FFDEE2"
+                delay={300}
+                position="left"
+                animation="vertical"
+                size="small"
+              />
+              
+              {/* Right speech cloud - Movie */}
+              <QuoteBubble 
+                text="YOU'VE GOT TO SEE THIS MOVIE!" 
+                color="#D3E4FD" 
+                delay={500}
+                position="right"
+                animation="vertical"
+                size="small"
+                style={{ top: "5%" }}
+              />
+            </div>
             
-            {/* Second speech cloud - moving side to side */}
+            {/* Second row: one speech cloud centered */}
             <QuoteBubble 
               text="OOOH, WHAT'S THE NAME?" 
-              color="#D3E4FD" 
+              color="#D8E4C8" 
               delay={800}
-              position="right"
+              position="center"
               animation="horizontal"
+              size="medium"
+              style={{ top: "60%" }}
             />
           </div>
         </div>

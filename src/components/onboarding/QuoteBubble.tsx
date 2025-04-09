@@ -8,6 +8,8 @@ interface QuoteBubbleProps {
   isEntertainment?: boolean;
   position?: "left" | "right" | "center";
   animation?: "vertical" | "horizontal" | "static";
+  size?: "small" | "medium" | "large";
+  style?: React.CSSProperties;
 }
 
 const QuoteBubble: React.FC<QuoteBubbleProps> = ({ 
@@ -16,7 +18,9 @@ const QuoteBubble: React.FC<QuoteBubbleProps> = ({
   delay = 0,
   isEntertainment = false,
   position = "center",
-  animation = "static"
+  animation = "static",
+  size = "medium",
+  style = {}
 }) => {
   const [visible, setVisible] = useState(false);
   const [animationOffset, setAnimationOffset] = useState(0);
@@ -42,6 +46,28 @@ const QuoteBubble: React.FC<QuoteBubbleProps> = ({
     return () => clearTimeout(timer);
   }, [delay, animation]);
   
+  // Calculate size styles
+  const getSizeStyle = () => {
+    switch (size) {
+      case "small":
+        return { 
+          maxWidth: isEntertainment ? "300px" : "200px",
+          minHeight: "60px"
+        };
+      case "large":
+        return { 
+          maxWidth: isEntertainment ? "450px" : "280px",
+          minHeight: "100px" 
+        };
+      case "medium":
+      default:
+        return { 
+          maxWidth: isEntertainment ? "400px" : "240px",
+          minHeight: "80px"
+        };
+    }
+  };
+  
   // Calculate position styles
   const getPositionStyle = () => {
     let positionStyles = {};
@@ -51,7 +77,7 @@ const QuoteBubble: React.FC<QuoteBubbleProps> = ({
         positionStyles = { left: "10%", top: "30%" };
         break;
       case "right":
-        positionStyles = { right: "10%", top: "70%" };
+        positionStyles = { right: "10%", top: "30%" };
         break;
       default:
         positionStyles = { left: "50%", top: "50%", transform: "translate(-50%, -50%)" };
@@ -59,14 +85,14 @@ const QuoteBubble: React.FC<QuoteBubbleProps> = ({
     
     // Add animation transforms
     if (animation === "vertical") {
-      const yOffset = animationOffset === 0 ? "0px" : "-15px";
+      const yOffset = animationOffset === 0 ? "0px" : "-12px";
       return {
         ...positionStyles,
         transform: `translateY(${yOffset})`,
         transition: "transform 2s ease-in-out"
       };
     } else if (animation === "horizontal") {
-      const xOffset = animationOffset === 0 ? "0px" : "15px";
+      const xOffset = animationOffset === 0 ? "0px" : "12px";
       return {
         ...positionStyles,
         transform: `translateX(${xOffset})`,
@@ -85,18 +111,18 @@ const QuoteBubble: React.FC<QuoteBubbleProps> = ({
       style={{ 
         ...getPositionStyle(),
         transitionDelay: `${delay}ms`,
-        zIndex: position === "right" ? 2 : 1
+        zIndex: position === "right" ? 2 : 1,
+        ...style
       }}
     >
       <div 
-        className="relative p-3 md:p-4 mb-8 rounded-lg border-2 border-black shadow-lg"
+        className="relative p-3 mb-8 rounded-lg border-2 border-black shadow-lg"
         style={{ 
           backgroundColor: color,
-          minHeight: "80px",
-          maxWidth: isEntertainment ? "400px" : "240px",
+          ...getSizeStyle()
         }}
       >
-        <p className="font-bold text-lg md:text-xl text-center text-black">
+        <p className="font-bold text-lg text-center text-black">
           {text}
         </p>
         
@@ -107,7 +133,7 @@ const QuoteBubble: React.FC<QuoteBubbleProps> = ({
             backgroundColor: color,
             borderRight: "2px solid black",
             borderBottom: "2px solid black",
-            right: position === "left" ? "20%" : (position === "right" ? "75%" : "20%")
+            right: position === "left" ? "20%" : (position === "right" ? "75%" : "45%")
           }}
         >
         </div>

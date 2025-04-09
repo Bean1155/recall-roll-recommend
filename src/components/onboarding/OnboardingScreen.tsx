@@ -39,7 +39,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
       stepType: "intro"
     },
     {
-      title: "TRACK YOUR BITES",
+      title: "TRACK YOUR BITES AND BLOCKBUSTERS",
       description: "WE RECALL SO YOU DON'T HAVE TO!",
       image: "/lovable-uploads/8408dab2-58e0-488d-927d-f0930cf39585.png",
       backgroundColor: "#FFDEE2", // Light pink for Bites
