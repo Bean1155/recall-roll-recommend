@@ -185,7 +185,7 @@ const RecommendPage = () => {
             
             <div className="mt-8 pb-4">
               <p className="text-lg font-typewriter text-center text-gray-700">
-                Recommend Bites &amp; Blockbusters to friends and track who follows your suggestions.
+                RECOMMEND BITES &amp; BLOCKBUSTERS TO FRIENDS AND TRACK WHO FOLLOWS YOUR SUGGESTIONS.
               </p>
             </div>
           </TabsContent>
@@ -331,7 +331,7 @@ const RecommendPage = () => {
             
             <div className="mt-8 pb-4">
               <p className="text-lg font-typewriter text-center text-gray-700">
-                Collect points for adding and sharing! I told two friends, they told two friends and so on...
+                COLLECT POINTS FOR ADDING AND SHARING! I TOLD TWO FRIENDS, THEY TOLD TWO FRIENDS AND SO ON...
               </p>
             </div>
           </TabsContent>

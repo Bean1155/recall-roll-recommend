@@ -1,842 +1,291 @@
-import React, { useState, useEffect } from "react";
-import GridLayout from "@/components/GridLayout";
-import { useNavigate, Link, useLocation } from "react-router-dom";
-import { ChevronRight, ArrowLeft, Star, Heart, MapPin, Calendar, Clock, Film, UtensilsCrossed, Share2, List, ShoppingBag } from "lucide-react";
-import { FoodCard, EntertainmentCard, FoodCategory } from "@/lib/types";
-import { getAllCards } from "@/lib/data";
-import { useIsMobile } from "@/hooks/use-mobile";
-import CatalogCardCompact from "@/components/CatalogCardCompact";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { getAllCategories, defaultEntertainmentCategories } from "@/utils/categoryUtils";
 
-type BrowseCategory = {
-  name: string;
-  description: string;
-  path: string;
-  icon: React.ReactNode;
-  filterFunction: (cards: (FoodCard | EntertainmentCard)[]) => (FoodCard | EntertainmentCard)[];
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { CatalogCard, CategoryWithCount, EntertainmentCategory } from "@/lib/types";
+import CatalogSearch from "@/components/CatalogSearch";
+import CategoryCardsDisplay from "@/components/bites/CategoryCardsDisplay";
+import { Badge } from "@/components/ui/badge";
+import GridLayout from "@/components/GridLayout";
+import { useFilteredCards } from "@/hooks/useFilteredCards";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getCategories, getEntertainmentCategories } from "@/utils/categoryUtils";
+import { Utensils, Film, Music, VideoGame, Map, Book, Tv, ListFilter } from "lucide-react";
+import { useCategoryColors } from "@/components/bites/useCategoryColors";
+import EntertainmentCategoryDrawers from "@/components/blockbusters/EntertainmentCategoryDrawers";
+import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+// Category type mapping object for consistent display
+const categoryTypeIcons: Record<string, React.ReactNode> = {
+  "Restaurant": <Utensils className="h-4 w-4" />,
+  "Café": <Utensils className="h-4 w-4" />,
+  "Food Truck": <Utensils className="h-4 w-4" />,
+  "Bakery": <Utensils className="h-4 w-4" />,
+  "Bar": <Utensils className="h-4 w-4" />,
+  "Ice Cream": <Utensils className="h-4 w-4" />,
+  "Movie": <Film className="h-4 w-4" />,
+  "TV Show": <Tv className="h-4 w-4" />,
+  "Book": <Book className="h-4 w-4" />,
+  "Video Game": <VideoGame className="h-4 w-4" />,
+  "Music": <Music className="h-4 w-4" />,
+  "Travel": <Map className="h-4 w-4" />,
 };
 
 const BrowsePage = () => {
-  const [activeType, setActiveType] = useState<'food' | 'entertainment'>('food');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [locationFilter, setLocationFilter] = useState<string | null>(null);
+  const [ratingFilter, setRatingFilter] = useState<number | null>(null);
+  const [typeFilter, setTypeFilter] = useState<'food' | 'entertainment'>(
+    (searchParams.get('type') as 'food' | 'entertainment') || 'food'
+  );
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(
+    searchParams.get('category')
+  );
+  const [activeTab, setActiveTab] = useState<string>(
+    searchParams.get('view') || 'search'
+  );
+  const { colorForCategory, colorForEntertainmentCategory } = useCategoryColors();
   const isMobile = useIsMobile();
-  const location = useLocation();
-  const allCards = getAllCards();
-
+  
+  // Get all cards based on current filters
+  const { filteredCards } = useFilteredCards({
+    type: typeFilter,
+    location: locationFilter,
+    minRating: ratingFilter,
+    category: categoryFilter,
+  });
+  
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const typeParam = searchParams.get('type');
-    
-    if (typeParam === 'entertainment') {
-      setActiveType('entertainment');
+    // Update search params whenever the filters change
+    const params = new URLSearchParams();
+    if (typeFilter) params.set('type', typeFilter);
+    if (locationFilter) params.set('location', locationFilter);
+    if (ratingFilter) params.set('rating', ratingFilter.toString());
+    if (categoryFilter) params.set('category', categoryFilter);
+    params.set('view', activeTab);
+    setSearchParams(params);
+  }, [typeFilter, locationFilter, ratingFilter, categoryFilter, activeTab, setSearchParams]);
+  
+  // Get food categories with count
+  const foodCategories: CategoryWithCount[] = getCategories(filteredCards)
+    .filter(cat => cat.type === 'food')
+    .map(cat => ({
+      ...cat,
+      count: filteredCards.filter(card => 
+        card.type === 'food' && 
+        card.category === cat.name
+      ).length
+    }));
+  
+  // Get entertainment categories with count
+  const entertainmentCategories: EntertainmentCategory[] = getEntertainmentCategories(filteredCards);
+  
+  // Calculate counts for entertainment categories
+  const entertainmentCategoriesWithCount = entertainmentCategories.map(cat => ({
+    ...cat,
+    count: filteredCards.filter(card => 
+      card.type === 'entertainment' && 
+      card.entertainmentType === cat.name
+    ).length
+  }));
+
+  // Handle category filter click
+  const handleCategoryFilterClick = (categoryName: string) => {
+    if (categoryFilter === categoryName) {
+      setCategoryFilter(null);
     } else {
-      setActiveType('food');
-    }
-  }, [location.search]);
-
-  const foodCards = allCards.filter(card => card.type === 'food') as FoodCard[];
-  const entertainmentCards = allCards.filter(card => card.type === 'entertainment') as EntertainmentCard[];
-  const activeCards = activeType === 'food' ? foodCards : entertainmentCards;
-
-  const browseCategories: BrowseCategory[] = [
-    {
-      name: "Favorites",
-      description: "Items you've marked as favorites",
-      path: "favorites",
-      icon: <Heart className="h-5 w-5 text-pink-500" />,
-      filterFunction: (cards) => cards.filter(card => card.isFavorite),
-    },
-    {
-      name: "Highest Rated",
-      description: "Items with 4-5 star ratings",
-      path: "highest-rated",
-      icon: <Star className="h-5 w-5 text-yellow-500" />,
-      filterFunction: (cards) => cards.filter(card => card.rating >= 4).sort((a, b) => b.rating - a.rating),
-    },
-    {
-      name: "By Location",
-      description: "Browse items by their location",
-      path: "by-location",
-      icon: <MapPin className="h-5 w-5 text-blue-500" />,
-      filterFunction: (cards) => {
-        const locations = new Set<string>();
-        cards.forEach(card => {
-          if ('location' in card && card.location) {
-            locations.add(card.location);
-          }
-        });
-        
-        const result: (FoodCard | EntertainmentCard)[] = [];
-        locations.forEach(location => {
-          const locationCards = cards.filter(card => 
-            'location' in card && card.location === location
-          );
-          if (locationCards.length > 0) {
-            result.push(locationCards[0]);
-          }
-        });
-        return result;
-      },
-    },
-    {
-      name: "By Category",
-      description: activeType === 'food' ? "Browse food by establishment type" : "Browse entertainment by category type",
-      path: "by-category",
-      icon: <ShoppingBag className="h-5 w-5 text-green-600" />,
-      filterFunction: (cards) => {
-        if (activeType === 'food') {
-          const categories = new Set<FoodCategory>();
-          (cards as FoodCard[]).forEach(card => {
-            if (card.category) {
-              categories.add(card.category);
-            }
-          });
-          
-          const result: FoodCard[] = [];
-          categories.forEach(category => {
-            const categoryCards = (cards as FoodCard[]).filter(card => card.category === category);
-            if (categoryCards.length > 0) {
-              result.push(categoryCards[0]);
-            }
-          });
-          return result;
-        } else {
-          const categories = new Set<string>();
-          (cards as EntertainmentCard[]).forEach(card => {
-            if (card.entertainmentCategory) {
-              categories.add(card.entertainmentCategory.toLowerCase());
-            }
-          });
-          
-          const result: EntertainmentCard[] = [];
-          categories.forEach(category => {
-            const categoryCards = (cards as EntertainmentCard[]).filter(card => 
-              card.entertainmentCategory && card.entertainmentCategory.toLowerCase() === category
-            );
-            if (categoryCards.length > 0) {
-              result.push(categoryCards[0]);
-            }
-          });
-          return result;
-        }
-      },
-    },
-    {
-      name: activeType === 'food' ? "By Cuisine" : "By Genre",
-      description: activeType === 'food' ? "Browse food by cuisine type" : "Browse entertainment by genre",
-      path: activeType === 'food' ? "by-cuisine" : "by-genre",
-      icon: activeType === 'food' ? 
-        <UtensilsCrossed className="h-5 w-5 text-red-500" /> : 
-        <Film className="h-5 w-5 text-purple-500" />,
-      filterFunction: (cards) => {
-        if (activeType === 'food') {
-          const cuisines = new Set<string>();
-          (cards as FoodCard[]).forEach(card => {
-            if (card.cuisine) {
-              cuisines.add(card.cuisine);
-            }
-          });
-          
-          const result: FoodCard[] = [];
-          cuisines.forEach(cuisine => {
-            const cuisineCards = (cards as FoodCard[]).filter(card => card.cuisine === cuisine);
-            if (cuisineCards.length > 0) {
-              result.push(cuisineCards[0]);
-            }
-          });
-          return result;
-        } else {
-          const genres = new Set<string>();
-          (cards as EntertainmentCard[]).forEach(card => {
-            if (card.genre) {
-              genres.add(card.genre);
-            }
-          });
-          
-          const result: EntertainmentCard[] = [];
-          genres.forEach(genre => {
-            const genreCards = (cards as EntertainmentCard[]).filter(card => card.genre === genre);
-            if (genreCards.length > 0) {
-              result.push(genreCards[0]);
-            }
-          });
-          return result;
-        }
-      },
-    },
-    {
-      name: "Most Recent",
-      description: "Recently added items",
-      path: "recent",
-      icon: <Clock className="h-5 w-5 text-gray-500" />,
-      filterFunction: (cards) => [...cards].sort((a, b) => {
-        const dateA = a.date ? new Date(a.date).getTime() : 0;
-        const dateB = b.date ? new Date(b.date).getTime() : 0;
-        return dateB - dateA;
-      }).slice(0, 20),
-    },
-    {
-      name: "By Status",
-      description: activeType === 'food' ? "Browse by visited or interested" : "Browse by watched or interested",
-      path: "by-status",
-      icon: <Calendar className="h-5 w-5 text-green-500" />,
-      filterFunction: (cards) => {
-        const statuses = new Set<string>();
-        cards.forEach(card => {
-          if ('status' in card && card.status) {
-            statuses.add(card.status);
-          }
-        });
-        
-        const result: (FoodCard | EntertainmentCard)[] = [];
-        statuses.forEach(status => {
-          const statusCards = cards.filter(card => 
-            'status' in card && card.status === status
-          );
-          if (statusCards.length > 0) {
-            result.push(statusCards[0]);
-          }
-        });
-        return result;
-      },
-    },
-    {
-      name: "Top Referrals",
-      description: "Items that have been shared or referred the most",
-      path: "top-referrals",
-      icon: <Share2 className="h-5 w-5 text-purple-500" />,
-      filterFunction: (cards) => {
-        return [...cards]
-          .filter(card => card.recommendedTo && card.recommendedTo.length > 0)
-          .sort((a, b) => {
-            const aReferrals = a.recommendedTo ? a.recommendedTo.length : 0;
-            const bReferrals = b.recommendedTo ? b.recommendedTo.length : 0;
-            return bReferrals - aReferrals;
-          })
-          .slice(0, 20);
-      },
-    },
-    {
-      name: activeType === 'food' ? "All Bites" : "All Blockbusters",
-      description: activeType === 'food' ? "Browse all food items" : "Browse all entertainment items",
-      path: "all-items",
-      icon: <List className="h-5 w-5 text-teal-500" />,
-      filterFunction: (cards) => cards,
-    },
-  ];
-
-  const getFilteredCards = (category: BrowseCategory) => {
-    return category.filterFunction(activeCards);
-  };
-
-  const handleCategorySelect = (category: BrowseCategory) => {
-    setSelectedCategory(category.path);
-    
-    const filteredCards = getFilteredCards(category);
-    
-    if (filteredCards.length > 0) {
-      setSelectedCategory(category.path);
+      setCategoryFilter(categoryName);
     }
   };
-
-  const handleSubCategorySelect = (category: string, subCategory: string, cards: (FoodCard | EntertainmentCard)[]) => {
-    const cardIds = cards.map(card => card.id).join(',');
-    
-    if (activeType === 'food') {
-      navigate(`/bites?browse=${category}&subcategory=${subCategory}&ids=${cardIds}`);
+  
+  // Handle entertainment category filter click
+  const handleEntertainmentCategoryFilterClick = (categoryName: string) => {
+    if (categoryFilter === categoryName) {
+      setCategoryFilter(null);
     } else {
-      navigate(`/blockbusters?browse=${category}&subcategory=${subCategory}&ids=${cardIds}`);
+      setCategoryFilter(categoryName);
     }
   };
-
-  const handleCardClick = (card: FoodCard | EntertainmentCard) => {
-    if (activeType === 'food') {
-      navigate(`/bites?highlight=${card.id}`);
-    } else {
-      navigate(`/blockbusters?highlight=${card.id}`);
-    }
+  
+  // Clear all filters
+  const clearFilters = () => {
+    setLocationFilter(null);
+    setRatingFilter(null);
+    setCategoryFilter(null);
   };
-
-  const handleTabChange = (value: 'food' | 'entertainment') => {
-    setActiveType(value);
-    navigate(`/browse?type=${value}`);
+  
+  // Group cards by category
+  const cardsByCategory: Record<string, CatalogCard[]> = {};
+  
+  if (typeFilter === 'food') {
+    foodCategories.forEach(category => {
+      cardsByCategory[category.name] = filteredCards.filter(
+        card => card.type === 'food' && card.category === category.name
+      );
+    });
+  } else {
+    entertainmentCategories.forEach(category => {
+      cardsByCategory[category.name] = filteredCards.filter(
+        card => card.type === 'entertainment' && card.entertainmentType === category.name
+      );
+    });
+  }
+  
+  // Get count of visible categories (with at least one card)
+  const visibleCategoryCount = Object.keys(cardsByCategory).filter(
+    key => cardsByCategory[key].length > 0
+  ).length;
+  
+  // Handle type change
+  const handleTypeChange = (newType: 'food' | 'entertainment') => {
+    setTypeFilter(newType);
+    setCategoryFilter(null); // Reset category filter when changing types
   };
-
-  const renderSubcategories = () => {
-    if (!selectedCategory) return null;
-    
-    const category = browseCategories.find(cat => cat.path === selectedCategory);
-    if (!category) return null;
-
-    if (selectedCategory === 'all-items') {
-      const allItems = category.filterFunction(activeCards);
-      
-      return (
-        <div className="mt-4">
-          <div className="flex items-center mb-4">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="flex items-center gap-2"
-              onClick={() => setSelectedCategory(null)}
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Browse
-            </Button>
-            <h2 className="text-xl font-semibold ml-2">
-              {activeType === 'food' ? 'All Bites' : 'All Blockbusters'}
-            </h2>
-          </div>
-          
-          <ScrollArea className="h-[70vh]">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
-              {allItems.map((card) => (
-                <div 
-                  key={card.id} 
-                  className="cursor-pointer"
-                  onClick={() => handleCardClick(card)}
-                >
-                  <CatalogCardCompact card={card} />
-                </div>
-              ))}
-            </div>
-          </ScrollArea>
-        </div>
-      );
-    }
-    
-    if (selectedCategory === 'by-location') {
-      const locationMap = new Map<string, (FoodCard | EntertainmentCard)[]>();
-      
-      activeCards.forEach(card => {
-        if ('location' in card && card.location) {
-          const location = card.location;
-          if (!locationMap.has(location)) {
-            locationMap.set(location, []);
-          }
-          locationMap.get(location)?.push(card);
-        }
-      });
-      
-      return (
-        <div className="mt-4">
-          <div className="flex items-center mb-4">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="flex items-center gap-2"
-              onClick={() => setSelectedCategory(null)}
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Browse
-            </Button>
-            <h2 className="text-xl font-semibold ml-2">Browse By Location</h2>
-          </div>
-          
-          <ScrollArea className="h-[70vh]">
-            <Accordion type="single" collapsible className="w-full">
-              {Array.from(locationMap.entries()).map(([location, cards]) => (
-                <AccordionItem key={location} value={location}>
-                  <AccordionTrigger className="hover:bg-gray-100 px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-blue-500" />
-                      <span>{location}</span>
-                      <span className="text-xs text-gray-500 ml-2">({cards.length} items)</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-3">
-                      {cards.map((card) => (
-                        <div 
-                          key={card.id} 
-                          className="cursor-pointer"
-                          onClick={() => handleCardClick(card)}
-                        >
-                          <CatalogCardCompact card={card} />
-                        </div>
-                      ))}
-                      
-                      {cards.length > 8 && (
-                        <Button 
-                          variant="outline"
-                          className="h-full min-h-[100px] flex flex-col items-center justify-center"
-                          onClick={() => handleSubCategorySelect('by-location', location, cards)}
-                        >
-                          <span>View all</span>
-                          <span className="text-sm">{cards.length} items</span>
-                        </Button>
-                      )}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </ScrollArea>
-        </div>
-      );
-    } else if (selectedCategory === 'by-category') {
-      const categoryMap = new Map<string, FoodCard[]>();
-      
-      if (activeType === 'food') {
-        (activeCards as FoodCard[]).forEach(card => {
-          if (card.category) {
-            const category = card.category;
-            if (!categoryMap.has(category)) {
-              categoryMap.set(category, []);
-            }
-            categoryMap.get(category)?.push(card);
-          }
-        });
-        
-        return (
-          <div className="mt-4">
-            <div className="flex items-center mb-4">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="flex items-center gap-2"
-                onClick={() => setSelectedCategory(null)}
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Browse
-              </Button>
-              <h2 className="text-xl font-semibold ml-2">Browse By Category</h2>
-            </div>
-            
-            <ScrollArea className="h-[70vh]">
-              <Accordion type="single" collapsible className="w-full">
-                {Array.from(categoryMap.entries()).map(([category, cards]) => (
-                  <AccordionItem key={category} value={category}>
-                    <AccordionTrigger className="hover:bg-gray-100 px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <ShoppingBag className="h-4 w-4 text-green-600" />
-                        <span>{category}</span>
-                        <span className="text-xs text-gray-500 ml-2">({cards.length} items)</span>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-3">
-                        {cards.map((card) => (
-                          <div 
-                            key={card.id} 
-                            className="cursor-pointer"
-                            onClick={() => handleCardClick(card)}
-                          >
-                            <CatalogCardCompact card={card} />
-                          </div>
-                        ))}
-                        
-                        {cards.length > 8 && (
-                          <Button 
-                            variant="outline"
-                            className="h-full min-h-[100px] flex flex-col items-center justify-center"
-                            onClick={() => handleSubCategorySelect('by-category', category, cards)}
-                          >
-                            <span>View all</span>
-                            <span className="text-sm">{cards.length} items</span>
-                          </Button>
-                        )}
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </ScrollArea>
-          </div>
-        );
-      } else {
-        const categoryMap = new Map<string, EntertainmentCard[]>();
-        
-        (activeCards as EntertainmentCard[]).forEach(card => {
-          if (card.entertainmentCategory) {
-            const category = card.entertainmentCategory.toLowerCase();
-            if (!categoryMap.has(category)) {
-              categoryMap.set(category, []);
-            }
-            categoryMap.get(category)?.push(card);
-          }
-        });
-        
-        if (!hideEmptyCategories) {
-          defaultEntertainmentCategories.forEach(cat => {
-            if (!categoryMap.has(cat.toLowerCase())) {
-              categoryMap.set(cat.toLowerCase(), []);
-            }
-          });
-        }
-        
-        return (
-          <div className="mt-4">
-            <div className="flex items-center mb-4">
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="flex items-center gap-2"
-                onClick={() => setSelectedCategory(null)}
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Browse
-              </Button>
-              <h2 className="text-xl font-semibold ml-2">Browse By Entertainment Category</h2>
-            </div>
-            
-            <ScrollArea className="h-[70vh]">
-              <Accordion type="single" collapsible className="w-full">
-                {Array.from(categoryMap.entries()).map(([category, cards]) => {
-                  if (hideEmptyCategories && cards.length === 0) {
-                    return null;
-                  }
-                  
-                  let categoryIcon;
-                  switch(category.toLowerCase()) {
-                    case 'movies': categoryIcon = <Film className="h-4 w-4 text-blue-500" />; break;
-                    case 'tv shows': categoryIcon = <Film className="h-4 w-4 text-purple-500" />; break;
-                    case 'books': categoryIcon = <Film className="h-4 w-4 text-yellow-500" />; break;
-                    case 'podcasts': categoryIcon = <Film className="h-4 w-4 text-green-500" />; break;
-                    case 'games': categoryIcon = <Film className="h-4 w-4 text-red-500" />; break;
-                    default: categoryIcon = <Film className="h-4 w-4 text-gray-500" />;
-                  }
-                  
-                  const displayName = category
-                    .split(' ')
-                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(' ');
-                  
-                  return (
-                    <AccordionItem key={category} value={category}>
-                      <AccordionTrigger className="hover:bg-gray-100 px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          {categoryIcon}
-                          <span>{displayName}</span>
-                          <span className="text-xs text-gray-500 ml-2">({cards.length} items)</span>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-3">
-                          {cards.map((card) => (
-                            <div 
-                              key={card.id} 
-                              className="cursor-pointer"
-                              onClick={() => handleCardClick(card)}
-                            >
-                              <CatalogCardCompact card={card} />
-                            </div>
-                          ))}
-                          
-                          {cards.length > 8 && (
-                            <Button 
-                              variant="outline"
-                              className="h-full min-h-[100px] flex flex-col items-center justify-center"
-                              onClick={() => handleSubCategorySelect('by-category', category, cards)}
-                            >
-                              <span>View all</span>
-                              <span className="text-sm">{cards.length} items</span>
-                            </Button>
-                          )}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  );
-                })}
-              </Accordion>
-            </ScrollArea>
-          </div>
-        );
-      }
-    } else if (selectedCategory === 'by-cuisine' || selectedCategory === 'by-genre') {
-      const groupKey = activeType === 'food' ? 'cuisine' : 'genre';
-      const groupMap = new Map<string, (FoodCard | EntertainmentCard)[]>();
-      
-      activeCards.forEach(card => {
-        if (activeType === 'food' && 'cuisine' in card && card.cuisine) {
-          const groupValue = card.cuisine;
-          if (!groupMap.has(groupValue)) {
-            groupMap.set(groupValue, []);
-          }
-          groupMap.get(groupValue)?.push(card);
-        } else if (activeType === 'entertainment' && 'genre' in card && card.genre) {
-          const groupValue = card.genre;
-          if (!groupMap.has(groupValue)) {
-            groupMap.set(groupValue, []);
-          }
-          groupMap.get(groupValue)?.push(card);
-        }
-      });
-      
-      return (
-        <div className="mt-4">
-          <div className="flex items-center mb-4">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="flex items-center gap-2"
-              onClick={() => setSelectedCategory(null)}
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Browse
-            </Button>
-            <h2 className="text-xl font-semibold ml-2">
-              Browse By {activeType === 'food' ? 'Cuisine' : 'Genre'}
-            </h2>
-          </div>
-          
-          <ScrollArea className="h-[70vh]">
-            <Accordion type="single" collapsible className="w-full">
-              {Array.from(groupMap.entries()).map(([groupValue, cards]) => (
-                <AccordionItem key={groupValue} value={groupValue}>
-                  <AccordionTrigger className="hover:bg-gray-100 px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      {activeType === 'food' ? (
-                        <UtensilsCrossed className="h-4 w-5 text-red-500" />
-                      ) : (
-                        <Film className="h-4 w-5 text-purple-500" />
-                      )}
-                      <span>{groupValue}</span>
-                      <span className="text-xs text-gray-500 ml-2">({cards.length} items)</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-3">
-                      {cards.map((card) => (
-                        <div 
-                          key={card.id} 
-                          className="cursor-pointer"
-                          onClick={() => handleCardClick(card)}
-                        >
-                          <CatalogCardCompact card={card} />
-                        </div>
-                      ))}
-                      
-                      {cards.length > 8 && (
-                        <Button 
-                          variant="outline"
-                          className="h-full min-h-[100px] flex flex-col items-center justify-center"
-                          onClick={() => handleSubCategorySelect(
-                            activeType === 'food' ? 'by-cuisine' : 'by-genre', 
-                            groupValue, 
-                            cards
-                          )}
-                        >
-                          <span>View all</span>
-                          <span className="text-sm">{cards.length} items</span>
-                        </Button>
-                      )}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </ScrollArea>
-        </div>
-      );
-    } else if (selectedCategory === 'by-status') {
-      const statusMap = new Map<string, (FoodCard | EntertainmentCard)[]>();
-      
-      activeCards.forEach(card => {
-        if ('status' in card && card.status) {
-          const status = card.status;
-          if (!statusMap.has(status)) {
-            statusMap.set(status, []);
-          }
-          statusMap.get(status)?.push(card);
-        }
-      });
-      
-      return (
-        <div className="mt-4">
-          <div className="flex items-center mb-4">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="flex items-center gap-2"
-              onClick={() => setSelectedCategory(null)}
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Browse
-            </Button>
-            <h2 className="text-xl font-semibold ml-2">Browse By Status</h2>
-          </div>
-          
-          <ScrollArea className="h-[70vh]">
-            <Accordion type="single" collapsible className="w-full">
-              {Array.from(statusMap.entries()).map(([status, cards]) => (
-                <AccordionItem key={status} value={status}>
-                  <AccordionTrigger className="hover:bg-gray-100 px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-green-500" />
-                      <span>{status}</span>
-                      <span className="text-xs text-gray-500 ml-2">({cards.length} items)</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-3">
-                      {cards.map((card) => (
-                        <div 
-                          key={card.id} 
-                          className="cursor-pointer"
-                          onClick={() => handleCardClick(card)}
-                        >
-                          <CatalogCardCompact card={card} />
-                        </div>
-                      ))}
-                      
-                      {cards.length > 8 && (
-                        <Button 
-                          variant="outline"
-                          className="h-full min-h-[100px] flex flex-col items-center justify-center"
-                          onClick={() => handleSubCategorySelect('by-status', status, cards)}
-                        >
-                          <span>View all</span>
-                          <span className="text-sm">{cards.length} items</span>
-                        </Button>
-                      )}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </ScrollArea>
-        </div>
-      );
-    } else if (selectedCategory === 'favorites' || selectedCategory === 'highest-rated' || selectedCategory === 'recent' || selectedCategory === 'top-referrals') {
-      const filteredCards = category.filterFunction(activeCards);
-      const categoryTitle = {
-        'favorites': 'Favorites',
-        'highest-rated': 'Highest Rated',
-        'recent': 'Most Recent',
-        'top-referrals': 'Top Referrals'
-      }[selectedCategory] || category.name;
-      
-      return (
-        <div className="mt-4">
-          <div className="flex items-center mb-4">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="flex items-center gap-2"
-              onClick={() => setSelectedCategory(null)}
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Browse
-            </Button>
-            <h2 className="text-xl font-semibold ml-2">{categoryTitle}</h2>
-          </div>
-          
-          <ScrollArea className="h-[70vh]">
-            {filteredCards.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
-                {filteredCards.map((card) => (
-                  <div 
-                    key={card.id} 
-                    className="cursor-pointer"
-                    onClick={() => handleCardClick(card)}
-                  >
-                    <CatalogCardCompact card={card} />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center p-8">
-                <p className="text-gray-500">No items found in this category.</p>
-              </div>
-            )}
-          </ScrollArea>
-        </div>
-      );
-    }
-    
-    return null;
-  };
-
+  
   return (
-    <GridLayout title="Browse">
-      <div className="mb-6">
-        <Tabs value={activeType} onValueChange={handleTabChange} className="mb-6">
-          <TabsList className="w-full bg-transparent p-0 rounded-md mb-4 flex gap-4">
-            <TabsTrigger 
-              value="food" 
-              className="flex items-center gap-2 flex-1 py-3 rounded-md border-2 transition-colors text-black font-medium"
-              style={{
-                backgroundColor: "#FDE1D3",
-                borderColor: activeType === "food" ? "#d2b48c" : "transparent",
-                boxShadow: activeType === "food" ? "0 2px 4px rgba(0,0,0,0.1)" : "none"
-              }}
+    <GridLayout title="Browse Catalog">
+      <div className="flex flex-col space-y-4 max-w-5xl mx-auto w-full">
+        {/* Type toggle */}
+        <div className="flex justify-center mb-2">
+          <div className="bg-catalog-cream rounded-full p-1 inline-flex">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleTypeChange('food')}
+              className={`rounded-full px-4 ${
+                typeFilter === 'food' 
+                ? 'bg-white text-catalog-softBrown shadow-sm' 
+                : 'text-catalog-softBrown/70 hover:text-catalog-softBrown'
+              }`}
             >
-              <UtensilsCrossed size={18} />
+              <Utensils className="h-4 w-4 mr-2" />
               Bites
-            </TabsTrigger>
-            <TabsTrigger 
-              value="entertainment" 
-              className="flex items-center gap-2 flex-1 py-3 rounded-md border-2 transition-colors text-black font-medium"
-              style={{
-                backgroundColor: "#D6E5F0",
-                borderColor: activeType === "entertainment" ? "#d2b48c" : "transparent",
-                boxShadow: activeType === "entertainment" ? "0 2px 4px rgba(0,0,0,0.1)" : "none"
-              }}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleTypeChange('entertainment')}
+              className={`rounded-full px-4 ${
+                typeFilter === 'entertainment' 
+                ? 'bg-white text-catalog-softBrown shadow-sm' 
+                : 'text-catalog-softBrown/70 hover:text-catalog-softBrown'
+              }`}
             >
-              <Film size={18} />
+              <Film className="h-4 w-4 mr-2" />
               Blockbusters
+            </Button>
+          </div>
+        </div>
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="w-full grid grid-cols-2 mb-4">
+            <TabsTrigger value="search">
+              <ListFilter className="h-4 w-4 mr-2" />
+              Browse and Filter
+            </TabsTrigger>
+            <TabsTrigger value="byCategory">
+              {typeFilter === 'food' ? (
+                <Utensils className="h-4 w-4 mr-2" />
+              ) : (
+                <Film className="h-4 w-4 mr-2" />
+              )}
+              Browse by Category
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="search" className="space-y-4">
+            <CatalogSearch
+              type={typeFilter}
+              cards={filteredCards}
+              onLocationFilter={setLocationFilter}
+              onRatingFilter={setRatingFilter}
+              onCategoryFilter={setCategoryFilter}
+              selectedCategory={categoryFilter}
+              clearFilters={clearFilters}
+              hasActiveFilters={!!(locationFilter || ratingFilter || categoryFilter)}
+              selectedLocation={locationFilter}
+              selectedRating={ratingFilter}
+            />
+          </TabsContent>
+
+          <TabsContent value="byCategory">
+            {/* Conditional display based on type */}
+            {typeFilter === 'food' ? (
+              <div className="space-y-8">
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {foodCategories
+                    .filter(category => category.count > 0)
+                    .map(category => (
+                    <Badge
+                      key={category.name}
+                      className={`cursor-pointer flex items-center gap-1 px-3 py-1 ${
+                        categoryFilter === category.name
+                          ? 'bg-catalog-teal text-white hover:bg-catalog-darkTeal'
+                          : `hover:bg-catalog-softBrown/20`
+                      }`}
+                      style={{
+                        backgroundColor: categoryFilter === category.name 
+                          ? undefined
+                          : colorForCategory(category.name, 0.15),
+                        color: categoryFilter === category.name 
+                          ? undefined 
+                          : colorForCategory(category.name, 1)
+                      }}
+                      onClick={() => handleCategoryFilterClick(category.name)}
+                    >
+                      {categoryTypeIcons[category.name] || <Utensils className="h-4 w-4" />}
+                      {category.name} ({category.count})
+                    </Badge>
+                  ))}
+                </div>
+                
+                <CategoryCardsDisplay
+                  categories={foodCategories}
+                  cardsByCategory={cardsByCategory}
+                  colorForCategory={colorForCategory}
+                  showEmptyCategories={false}
+                />
+              </div>
+            ) : (
+              <div className="space-y-8">
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {entertainmentCategoriesWithCount
+                    .filter(category => category.count > 0) 
+                    .map(category => (
+                    <Badge
+                      key={category.name}
+                      className={`cursor-pointer flex items-center gap-1 px-3 py-1 ${
+                        categoryFilter === category.name
+                          ? 'bg-catalog-teal text-white hover:bg-catalog-darkTeal'
+                          : `hover:bg-catalog-softBrown/20`
+                      }`}
+                      style={{
+                        backgroundColor: categoryFilter === category.name 
+                          ? undefined
+                          : colorForEntertainmentCategory(category.name, 0.15),
+                        color: categoryFilter === category.name 
+                          ? undefined 
+                          : colorForEntertainmentCategory(category.name, 1)
+                      }}
+                      onClick={() => handleEntertainmentCategoryFilterClick(category.name)}
+                    >
+                      {categoryTypeIcons[category.name] || <Film className="h-4 w-4" />}
+                      {category.name} ({category.count})
+                    </Badge>
+                  ))}
+                </div>
+                
+                <EntertainmentCategoryDrawers
+                  categories={entertainmentCategoriesWithCount}
+                  cardsByCategory={cardsByCategory}
+                  colorForCategory={colorForEntertainmentCategory}
+                  showEmptyCategories={false}
+                />
+              </div>
+            )}
+          </TabsContent>
         </Tabs>
       </div>
-
-      {selectedCategory ? (
-        renderSubcategories()
-      ) : (
-        <>
-          <h1 className="text-2xl font-bold mb-6">Browse by</h1>
-
-          <div className="space-y-0.5 rounded-lg bg-gray-100 overflow-hidden">
-            {browseCategories.map((category) => (
-              <button
-                key={category.path}
-                className="w-full hover:bg-gray-200 py-4 px-4 flex justify-between items-center transition-colors border-b border-gray-200 last:border-0 bg-white"
-                onClick={() => handleCategorySelect(category)}
-              >
-                <div className="flex items-center">
-                  {category.icon}
-                  <span className="ml-3 text-lg">{category.name}</span>
-                </div>
-                <ChevronRight className="h-5 w-5 text-gray-400" />
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-8">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Recent Activity</h2>
-              <Button variant="link" size="sm" asChild>
-                <Link to={`/${activeType === 'food' ? 'bites' : 'blockbusters'}`}>
-                  View all
-                </Link>
-              </Button>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-              {activeCards.slice(0, 5).map(card => (
-                <div 
-                  key={card.id}
-                  className="cursor-pointer"
-                  onClick={() => handleCardClick(card)}
-                >
-                  <CatalogCardCompact card={card} />
-                </div>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
     </GridLayout>
   );
 };
