@@ -1,10 +1,13 @@
 
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
 import { Search, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { defaultCategories, defaultEntertainmentCategories } from "@/utils/categoryUtils";
+import { useBrowseState } from "@/hooks/useBrowseState";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // List of browse options for the Letterboxd-style interface
 interface BrowseOption {
@@ -39,19 +42,33 @@ const appSpecificOptions: BrowseOption[] = [
 
 const BrowsePage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isMobile = useIsMobile();
+  const typeParam = searchParams.get('type') as 'food' | 'entertainment' | null;
+  const [activeType, setActiveType] = useState<'food' | 'entertainment'>(typeParam || 'food');
+  
+  // Use the appropriate options list based on the active type
+  const browseOptions = activeType === 'food' ? foodBrowseOptions : entertainmentBrowseOptions;
   
   const navigateToSearch = () => {
     navigate('/search');
   };
+  
+  const toggleType = () => {
+    const newType = activeType === 'food' ? 'entertainment' : 'food';
+    setActiveType(newType);
+    // Update URL params when toggling
+    navigate(`/browse?type=${newType}`);
+  };
 
   return (
-    <GridLayout title="Browse">
+    <GridLayout title="Browse" className="bg-gray-900 text-white">
       <div className="flex flex-col max-w-3xl mx-auto w-full">
         {/* Search Bar */}
         <div className="px-4 py-8 flex justify-center">
           <Button 
             variant="outline" 
-            className="w-full max-w-md h-12 flex justify-start gap-2 text-gray-500 border-gray-300 bg-gray-100/70"
+            className="w-full max-w-md h-12 flex justify-start gap-2 text-gray-200 border-gray-700 bg-gray-800"
             onClick={navigateToSearch}
           >
             <Search className="h-5 w-5" />
@@ -59,46 +76,36 @@ const BrowsePage = () => {
           </Button>
         </div>
         
-        {/* Browse By Section - Food/Bites */}
-        <div className="px-4 pb-8">
-          <h2 className="text-2xl font-bold mb-4">Browse Bites by</h2>
-          
-          <div className="space-y-0">
-            {foodBrowseOptions.map((option, index) => (
-              <React.Fragment key={option.title}>
-                <Button
-                  variant="ghost"
-                  className="w-full flex justify-between items-center py-4 h-auto text-lg"
-                  onClick={() => navigate(option.route)}
-                >
-                  <span>{option.title}</span>
-                  <ChevronRight className="h-5 w-5" />
-                </Button>
-                {index < foodBrowseOptions.length - 1 && (
-                  <Separator className="my-1" />
-                )}
-              </React.Fragment>
-            ))}
-          </div>
+        {/* Type Toggle Button */}
+        <div className="px-4 mb-6 flex justify-center">
+          <Button
+            variant="outline"
+            className="bg-gray-800 text-gray-200 border-gray-700 hover:bg-gray-700"
+            onClick={toggleType}
+          >
+            {activeType === 'food' ? 'Switch to Blockbusters' : 'Switch to Bites'}
+          </Button>
         </div>
         
-        {/* Browse By Section - Entertainment/Blockbusters */}
+        {/* Browse By Section */}
         <div className="px-4 pb-8">
-          <h2 className="text-2xl font-bold mb-4">Browse Blockbusters by</h2>
+          <h2 className="text-2xl font-bold mb-4 text-gray-200">
+            Browse {activeType === 'food' ? 'Bites' : 'Blockbusters'} by
+          </h2>
           
-          <div className="space-y-0">
-            {entertainmentBrowseOptions.map((option, index) => (
+          <div className="space-y-0 bg-gray-800 rounded-lg overflow-hidden border border-gray-700">
+            {browseOptions.map((option, index) => (
               <React.Fragment key={option.title}>
                 <Button
                   variant="ghost"
-                  className="w-full flex justify-between items-center py-4 h-auto text-lg"
+                  className="w-full flex justify-between items-center py-4 h-auto text-lg text-gray-200 hover:bg-gray-700"
                   onClick={() => navigate(option.route)}
                 >
                   <span>{option.title}</span>
                   <ChevronRight className="h-5 w-5" />
                 </Button>
-                {index < entertainmentBrowseOptions.length - 1 && (
-                  <Separator className="my-1" />
+                {index < browseOptions.length - 1 && (
+                  <Separator className="my-0 bg-gray-700" />
                 )}
               </React.Fragment>
             ))}
@@ -107,21 +114,21 @@ const BrowsePage = () => {
         
         {/* App-specific Browse Options */}
         <div className="px-4 pb-20">
-          <h2 className="text-2xl font-bold mb-4">Catalog Features</h2>
+          <h2 className="text-2xl font-bold mb-4 text-gray-200">Catalog Features</h2>
           
-          <div className="space-y-0">
+          <div className="space-y-0 bg-gray-800 rounded-lg overflow-hidden border border-gray-700">
             {appSpecificOptions.map((option, index) => (
               <React.Fragment key={option.title}>
                 <Button
                   variant="ghost"
-                  className="w-full flex justify-between items-center py-4 h-auto text-lg"
+                  className="w-full flex justify-between items-center py-4 h-auto text-lg text-gray-200 hover:bg-gray-700"
                   onClick={() => navigate(option.route)}
                 >
                   <span>{option.title}</span>
                   <ChevronRight className="h-5 w-5" />
                 </Button>
                 {index < appSpecificOptions.length - 1 && (
-                  <Separator className="my-1" />
+                  <Separator className="my-0 bg-gray-700" />
                 )}
               </React.Fragment>
             ))}

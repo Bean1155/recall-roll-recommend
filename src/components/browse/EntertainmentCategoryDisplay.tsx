@@ -1,6 +1,6 @@
 
 import React from "react";
-import { EntertainmentCard } from "@/lib/types";
+import CategoryCardsDisplay from "@/components/bites/CategoryCardsDisplay";
 
 interface EntertainmentCategoryDisplayProps {
   entertainmentCategories: string[] | { name: string; count: number; type?: string }[];
@@ -16,22 +16,17 @@ const EntertainmentCategoryDisplay: React.FC<EntertainmentCategoryDisplayProps> 
   // Convert simple string array to object array if needed
   const processedCategories = entertainmentCategories.map(category => 
     typeof category === 'string' 
-      ? { name: category, count: cardsByCategory[category]?.length || 0 }
+      ? { name: category, count: cardsByCategory[category]?.length || 0, type: 'entertainment' }
       : category
   );
 
-  // Create category colors map for the EntertainmentCategoryDrawers component
-  const categoryColorsMap: Record<string, string> = {};
-  processedCategories.forEach(category => {
-    const categoryName = typeof category === 'string' ? category : category.name;
-    categoryColorsMap[categoryName] = colorForEntertainmentCategory(categoryName);
-  });
-
   return (
-    <div className="space-y-4">
-      {/* EntertainmentCategoryDrawers would go here, but for now we'll show a simple message */}
-      <p className="text-center py-4">Browse entertainment categories</p>
-    </div>
+    <CategoryCardsDisplay
+      categories={processedCategories}
+      cards={cardsByCategory}
+      colorForCategory={colorForEntertainmentCategory}
+      showEmptyCategories={false}
+    />
   );
 };
 

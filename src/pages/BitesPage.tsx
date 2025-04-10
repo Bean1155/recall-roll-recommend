@@ -23,7 +23,7 @@ const BitesPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  const categoryColors = useCategoryColors(cards);
+  const { categoryColors, colorForCategory, colorForEntertainmentCategory } = useCategoryColors(cards);
 
   useEffect(() => {
     const fetchCards = () => {
