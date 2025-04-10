@@ -23,10 +23,11 @@ interface UseFilteredCardsProps {
   location?: string | null;
   minRating?: number | null;
   category?: string | null;
+  initialCards?: CatalogCard[];
 }
 
 export const useFilteredCards = (props: UseFilteredCardsProps = {}) => {
-  const { type, location, minRating, category } = props;
+  const { type, location, minRating, category, initialCards = [] } = props;
   const [selectedFilter, setSelectedFilter] = useState<FilteredSelection | null>(null);
   const [filteredCards, setFilteredCards] = useState<CatalogCard[]>([]);
   const [showFilteredCards, setShowFilteredCards] = useState(false);
@@ -38,22 +39,22 @@ export const useFilteredCards = (props: UseFilteredCardsProps = {}) => {
   // since the actual filtering logic is not implemented in the provided code
   useEffect(() => {
     // In a real implementation, this would filter cards based on type, location, etc.
-    setFilteredCards([]);
-  }, [type, location, minRating, category]);
+    setFilteredCards(initialCards || []);
+  }, [type, location, minRating, category, initialCards]);
   
   // Extract unique locations from cards
   useEffect(() => {
-    // if (allCards.length > 0) {
-    //   const locations = Array.from(new Set(
-    //     allCards
-    //       .filter(card => card.location && card.location.trim() !== '')
-    //       .map(card => card.location)
-    //   )).sort();
+    if (initialCards && initialCards.length > 0) {
+      const locations = Array.from(new Set(
+        initialCards
+          .filter(card => 'location' in card && card.location && card.location.trim() !== '')
+          .map(card => (card as any).location)
+      )).sort();
       
-    //   setUniqueLocations(locations);
-    // }
-  }, []);
-  
+      setUniqueLocations(locations);
+    }
+  }, [initialCards]);
+
   // Calculate distance between two points using Haversine formula
   const calculateDistance = (location1: string, location2: string): number => {
     // In a real application, this would use geocoding to convert locations to coordinates

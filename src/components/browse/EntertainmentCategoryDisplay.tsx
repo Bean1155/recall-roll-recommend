@@ -1,9 +1,10 @@
 
 import React from "react";
 import EntertainmentCategoryDrawers from "@/components/blockbusters/EntertainmentCategoryDrawers";
+import { EntertainmentCard } from "@/lib/types";
 
 interface EntertainmentCategoryDisplayProps {
-  entertainmentCategories: string[] | { name: string; count: number }[];
+  entertainmentCategories: string[] | { name: string; count: number; type?: string }[];
   cardsByCategory: Record<string, any[]>;
   colorForEntertainmentCategory: (categoryName: string) => string;
 }
@@ -23,9 +24,14 @@ const EntertainmentCategoryDisplay: React.FC<EntertainmentCategoryDisplayProps> 
   return (
     <EntertainmentCategoryDrawers
       categories={processedCategories}
-      cards={cardsByCategory}
-      colorForCategory={colorForEntertainmentCategory}
-      showEmptyCategories={false}
+      categoryColors={Object.fromEntries(
+        processedCategories.map(cat => [
+          typeof cat === 'string' ? cat : cat.name, 
+          colorForEntertainmentCategory(typeof cat === 'string' ? cat : cat.name)
+        ])
+      )}
+      cards={Object.values(cardsByCategory).flat()}
+      hideEmptyCategories={false}
     />
   );
 };

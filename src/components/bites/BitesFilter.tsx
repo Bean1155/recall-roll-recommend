@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { FilterX, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FoodCard } from "@/lib/types";
+import { FoodCard, CatalogCard } from "@/lib/types";
 import StatusFilters from "./StatusFilters";
 import RatingFilters from "./RatingFilters";
 import LocationFilters from "./LocationFilters";
@@ -54,7 +55,10 @@ const BitesFilter = ({
     setShowFilteredCards,
     proximitySearch,
     selectedFilter
-  } = useFilteredCards(allCards);
+  } = useFilteredCards({
+    type: 'food',
+    initialCards: allCards
+  });
   
   const handleFilterSelect_ = (filterType: string, value: string) => {
     handleFilterSelect(filterType, value);
@@ -92,9 +96,9 @@ const BitesFilter = ({
     }, 100);
   };
 
-  const handleCardSelect = (card: FoodCard) => {
-    if (onCardClick) {
-      onCardClick(card);
+  const handleCardSelect = (card: CatalogCard) => {
+    if (onCardClick && 'cuisine' in card) {
+      onCardClick(card as FoodCard);
       setOpen(false);
       setShowFilteredCards(false);
     }
@@ -171,8 +175,8 @@ const BitesFilter = ({
 
           <FilteredCardsList
             showFilteredCards={showFilteredCards}
-            filteredCards={filteredCards}
-            onCardSelect={handleCardSelect}
+            filteredCards={filteredCards as FoodCard[]}
+            onCardSelect={(card) => handleCardSelect(card)}
             onClose={closeFilteredCards}
             proximitySearch={proximitySearch}
             onShowAll={handleShowAllResults}

@@ -36,11 +36,19 @@ export const getCategoryDisplayName = (category: string | undefined): string => 
     "tv shows": "TV Shows"
   };
 
-  return customDisplayNames[category] || 
-    category
+  if (customDisplayNames[category]) {
+    return customDisplayNames[category];
+  }
+
+  // Only try to split and capitalize if it's a string
+  if (typeof category === 'string') {
+    return category
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
+  }
+  
+  return String(category);
 };
 
 export const getDefaultCategoryColors = (): Record<string, string> => {

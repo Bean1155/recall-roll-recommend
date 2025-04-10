@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import CatalogCard from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
-import { EntertainmentCard } from "@/lib/types";
+import { EntertainmentCard, CatalogCard as CatalogCardType } from "@/lib/types";
 import { CatalogCollapsible } from "@/components/ui/collapsible";
 import { getCategoryDisplayName, getTextColor } from "@/utils/categoryUtils";
 import {
@@ -15,8 +15,15 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
+interface Category {
+  name: string;
+  count: number;
+  type?: string;
+}
+
 interface EntertainmentCategoryDrawersProps {
-  cards: EntertainmentCard[];
+  categories?: Category[];
+  cards?: CatalogCardType[];
   categoryColors?: Record<string, string>;
   onCardClick?: (card: EntertainmentCard) => void;
   defaultOpenCategory?: string;
@@ -27,7 +34,8 @@ interface EntertainmentCategoryDrawersProps {
 }
 
 const EntertainmentCategoryDrawers = ({
-  cards,
+  categories = [],
+  cards = [],
   categoryColors = {},
   onCardClick,
   defaultOpenCategory,
@@ -36,7 +44,7 @@ const EntertainmentCategoryDrawers = ({
   openCategory,
   onCategoryToggle
 }: EntertainmentCategoryDrawersProps) => {
-  const [categorizedCards, setCategorizedCards] = useState<Record<string, EntertainmentCard[]>>({});
+  const [categorizedCards, setCategorizedCards] = useState<Record<string, CatalogCardType[]>>({});
   
   useEffect(() => {
     if (!cards || cards.length === 0) {
@@ -44,9 +52,11 @@ const EntertainmentCategoryDrawers = ({
       return;
     }
     
-    const grouped = cards.reduce((acc: Record<string, EntertainmentCard[]>, card) => {
+    const grouped = cards.reduce((acc: Record<string, CatalogCardType[]>, card) => {
       // Normalize category to lowercase for consistent mapping and ensure it's never undefined
-      const cardCategory = card.entertainmentCategory?.toLowerCase() || 'etc.';
+      const cardCategory = card.type === 'entertainment' && 'entertainmentType' in card 
+        ? card.entertainmentType?.toLowerCase() || 'etc.'
+        : 'etc.';
       if (!acc[cardCategory]) {
         acc[cardCategory] = [];
       }
@@ -66,7 +76,7 @@ const EntertainmentCategoryDrawers = ({
     }
   };
    
-  const renderCards = (cat: string, catCards: EntertainmentCard[], color: string, textColor: string) => {
+  const renderCards = (cat: string, catCards: CatalogCardType[], color: string, textColor: string) => {
     if (catCards.length === 0) {
       return (
         <div className="text-center py-4">
@@ -91,7 +101,7 @@ const EntertainmentCategoryDrawers = ({
             <CarouselItem key={card.id} className="basis-full">
               <div 
                 className="catalog-card cursor-pointer p-1"
-                onClick={() => onCardClick?.(card)}
+                onClick={() => onCardClick?.(card as EntertainmentCard)}
                 id={`card-${card.id}`}
               >
                 <Envelope
@@ -120,7 +130,10 @@ const EntertainmentCategoryDrawers = ({
 
   return (
     <div className="space-y-6 pb-20">
-      {Object.entries(categorizedCards).map(([cat, catCards]) => {
+      {categories.map((category) => {
+        const cat = typeof category === 'string' ? category : category.name;
+        const catCards = categorizedCards[cat.toLowerCase()] || [];
+
         if (hideEmptyCategories && catCards.length === 0) {
           return null;
         }
@@ -147,7 +160,7 @@ const EntertainmentCategoryDrawers = ({
               backgroundColor={color}
               textColor={textColor}
               open={isOpen}
-              onOpenChange={(isOpen) => handleOpenChange(cat, isOpen)}
+              onOpenChange={(isOpen) => onCategoryToggle?.(cat, isOpen)}
               className="hover:brightness-95 transition-all duration-200"
             >
               {renderCards(cat, catCards, color, textColor)}
@@ -156,7 +169,7 @@ const EntertainmentCategoryDrawers = ({
         );
       })}
       
-      {Object.keys(categorizedCards).length === 0 && (
+      {categories.length === 0 && (
         <div className="text-center py-8">
           <p className="text-gray-500 mb-4">No entertainment cards found.</p>
           <Button asChild>
