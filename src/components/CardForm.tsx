@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FoodCard, EntertainmentCard, FoodStatus, EntertainmentStatus, ServiceRating, CardType } from "@/lib/types";
@@ -69,6 +70,7 @@ const CardForm = ({
             setGenre(entertainmentCard.genre || "");
             setMedium(entertainmentCard.medium || "");
             setStatus(entertainmentCard.status || "");
+            setEntertainmentType(entertainmentCard.entertainmentType || "");
           }
         } else {
           toast({
@@ -96,6 +98,7 @@ const CardForm = ({
   
   const [genre, setGenre] = useState("");
   const [medium, setMedium] = useState("");
+  const [entertainmentType, setEntertainmentType] = useState("");
   
   const [tags, setTags] = useState("");
   const [rating, setRating] = useState("");
@@ -107,6 +110,9 @@ const CardForm = ({
   
   const [entertainmentCategories, setEntertainmentCategories] = useState<string[]>([]);
   const [foodCategories, setFoodCategories] = useState<string[]>([]);
+  const [entertainmentTypes, setEntertainmentTypes] = useState<string[]>([
+    "movies", "tv shows", "books", "games", "music", "podcasts", "other"
+  ]);
   
   useEffect(() => {
     if (type === 'entertainment') {
@@ -165,6 +171,7 @@ const CardForm = ({
       title,
       creator,
       entertainmentCategory: category,
+      entertainmentType: entertainmentType || category, // Use the category value as default if not set
       genre,
       medium,
       tags: tags.split(",").map((tag) => tag.trim()).filter(tag => tag !== ""),
@@ -480,6 +487,22 @@ const CardForm = ({
                   Add New Category
                 </div>
               </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor="entertainmentType" className="text-gray-700 font-medium">Type*</Label>
+          <Select value={entertainmentType} onValueChange={setEntertainmentType} required>
+            <SelectTrigger className="w-full mt-1">
+              <SelectValue placeholder="Select entertainment type" />
+            </SelectTrigger>
+            <SelectContent>
+              {entertainmentTypes.map((type) => (
+                <SelectItem key={type} value={type}>
+                  {type.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
