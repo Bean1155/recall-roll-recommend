@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getCategoryDisplayName } from '@/utils/categoryUtils';
 import { Link } from 'react-router-dom';
-import { Caret, Plus, PlusIcon } from 'lucide-react';
+import { Plus, PlusIcon } from 'lucide-react';
 
 interface Category {
   name: string;
