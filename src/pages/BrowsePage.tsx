@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
-import { Search, ChevronRight, Chef, Utensils, MapPin, Star, Clock, Filter } from "lucide-react";
+import { Search, ChevronRight, ChefHat, Utensils, MapPin, Star, Clock, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { defaultCategories, defaultEntertainmentCategories, getCategoryDisplayName } from "@/utils/categoryUtils";
@@ -25,7 +24,7 @@ interface BrowseOption {
 }
 
 const foodBrowseOptions: BrowseOption[] = [
-  { title: "By Cuisine", route: "/bites?filter=cuisine", type: "food", icon: <Chef className="h-5 w-5" /> },
+  { title: "By Cuisine", route: "/bites?filter=cuisine", type: "food", icon: <ChefHat className="h-5 w-5" /> },
   { title: "By Restaurant Type", route: "/bites?filter=category", type: "food", icon: <Utensils className="h-5 w-5" /> },
   { title: "Top Rated", route: "/bites?filter=topRated", type: "food", icon: <Star className="h-5 w-5" /> },
   { title: "Most Popular", route: "/bites?filter=popular", type: "food", icon: <Utensils className="h-5 w-5" /> },
@@ -150,8 +149,8 @@ const BrowsePage = () => {
           }, {} as Record<string, EntertainmentCard[]>);
         case 'medium':
           return entertainmentCards.reduce((acc, card) => {
-            // Use category as a fallback for entertainmentType
-            const medium = (card as any).entertainmentType || card.category || 'Other';
+            // Use entertainmentCategory as a fallback for entertainmentType
+            const medium = card.entertainmentCategory || 'Other';
             if (!acc[medium]) acc[medium] = [];
             acc[medium].push(card);
             return acc;
