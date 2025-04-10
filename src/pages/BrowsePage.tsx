@@ -22,26 +22,69 @@ interface BrowseOption {
   route: string;
   type: "food" | "entertainment";
   icon: React.ReactNode;
+  subcategories?: string[];
 }
 
 const foodBrowseOptions: BrowseOption[] = [
-  { title: "By Cuisine", route: "/bites?filter=cuisine", type: "food", icon: <ChefHat className="h-5 w-5" /> },
-  { title: "By Category", route: "/bites?filter=category", type: "food", icon: <Utensils className="h-5 w-5" /> },
+  { 
+    title: "By Cuisine", 
+    route: "/bites?filter=cuisine", 
+    type: "food", 
+    icon: <ChefHat className="h-5 w-5" />,
+    subcategories: ["Italian", "Mexican", "Chinese", "Japanese", "Indian", "Thai", "American", "French", "Mediterranean", "Other"]
+  },
+  { 
+    title: "By Category", 
+    route: "/bites?filter=category", 
+    type: "food", 
+    icon: <Utensils className="h-5 w-5" />,
+    subcategories: ["Restaurant", "Cafe", "Fast Food", "Dessert", "Bakery", "Food Truck", "Homemade", "Takeout", "Other"]
+  },
   { title: "Top Rated", route: "/bites?filter=topRated", type: "food", icon: <Star className="h-5 w-5" /> },
   { title: "Favorites", route: "/bites?filter=favorites", type: "food", icon: <Heart className="h-5 w-5" /> },
   { title: "Recently Added", route: "/bites?filter=recent", type: "food", icon: <Clock className="h-5 w-5" /> },
-  { title: "Location", route: "/bites?filter=location", type: "food", icon: <MapPin className="h-5 w-5" /> },
-  { title: "By Status", route: "/bites?filter=status", type: "food", icon: <FileText className="h-5 w-5" /> }
+  { 
+    title: "Location", 
+    route: "/bites?filter=location", 
+    type: "food", 
+    icon: <MapPin className="h-5 w-5" />,
+    subcategories: ["New York", "Los Angeles", "Chicago", "San Francisco", "Miami", "Seattle", "Other"]
+  },
+  { 
+    title: "By Status", 
+    route: "/bites?filter=status", 
+    type: "food", 
+    icon: <FileText className="h-5 w-5" />,
+    subcategories: ["Want to Try", "Tried", "Favorite", "Not Interested"]
+  }
 ];
 
 const entertainmentBrowseOptions: BrowseOption[] = [
-  { title: "By Genre", route: "/blockbusters?filter=genre", type: "entertainment", icon: <Filter className="h-5 w-5" /> },
-  { title: "By Medium", route: "/blockbusters?filter=medium", type: "entertainment", icon: <Filter className="h-5 w-5" /> },
+  { 
+    title: "By Genre", 
+    route: "/blockbusters?filter=genre", 
+    type: "entertainment", 
+    icon: <Filter className="h-5 w-5" />,
+    subcategories: ["Action", "Comedy", "Drama", "Horror", "Sci-Fi", "Fantasy", "Romance", "Thriller", "Documentary", "Other"]
+  },
+  { 
+    title: "By Medium", 
+    route: "/blockbusters?filter=medium", 
+    type: "entertainment", 
+    icon: <Filter className="h-5 w-5" />,
+    subcategories: ["Movies", "TV Shows", "Books", "Podcasts", "Games"]
+  },
   { title: "Top Rated", route: "/blockbusters?filter=topRated", type: "entertainment", icon: <Star className="h-5 w-5" /> },
   { title: "Favorites", route: "/blockbusters?filter=favorites", type: "entertainment", icon: <Heart className="h-5 w-5" /> },
   { title: "Recently Added", route: "/blockbusters?filter=recent", type: "entertainment", icon: <Clock className="h-5 w-5" /> },
   { title: "Featured Lists", route: "/blockbusters?filter=lists", type: "entertainment", icon: <Filter className="h-5 w-5" /> },
-  { title: "By Status", route: "/blockbusters?filter=status", type: "entertainment", icon: <FileText className="h-5 w-5" /> }
+  { 
+    title: "By Status", 
+    route: "/blockbusters?filter=status", 
+    type: "entertainment", 
+    icon: <FileText className="h-5 w-5" />,
+    subcategories: ["Want to Watch", "Watched", "Favorite", "Not Interested"]
+  }
 ];
 
 const BrowsePage = () => {
@@ -53,6 +96,7 @@ const BrowsePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
   const [foodCards, setFoodCards] = useState<FoodCard[]>([]);
   const [entertainmentCards, setEntertainmentCards] = useState<EntertainmentCard[]>([]);
   
@@ -73,12 +117,25 @@ const BrowsePage = () => {
     const newType = activeType === 'food' ? 'entertainment' : 'food';
     setActiveType(newType);
     setSelectedCategory(null);
+    setSelectedSubcategory(null);
     navigate(`/browse?type=${newType}`);
   };
 
   const handleCategoryClick = (option: BrowseOption) => {
     const categoryFromRoute = new URL(option.route, window.location.origin).searchParams.get('filter');
-    setSelectedCategory(categoryFromRoute);
+    if (selectedCategory === categoryFromRoute) {
+      // If clicking the same category again, close it
+      setSelectedCategory(null);
+      setSelectedSubcategory(null);
+    } else {
+      // Otherwise, open the clicked category
+      setSelectedCategory(categoryFromRoute);
+      setSelectedSubcategory(null);
+    }
+  };
+  
+  const handleSubcategoryClick = (subcategory: string) => {
+    setSelectedSubcategory(subcategory);
   };
   
   const handleSearch = (e: React.FormEvent) => {
@@ -88,95 +145,37 @@ const BrowsePage = () => {
     }
   };
   
-  const groupCardsByCategory = () => {
-    if (!selectedCategory) return {};
+  const getFilteredCards = () => {
+    if (!selectedCategory || !selectedSubcategory) return [];
     
     if (activeType === 'food') {
       switch (selectedCategory) {
         case 'cuisine':
-          return foodCards.reduce((acc, card) => {
-            const cuisine = card.cuisine || 'Other';
-            if (!acc[cuisine]) acc[cuisine] = [];
-            acc[cuisine].push(card);
-            return acc;
-          }, {} as Record<string, FoodCard[]>);
+          return foodCards.filter(card => card.cuisine?.toLowerCase() === selectedSubcategory.toLowerCase());
         case 'category':
-          return foodCards.reduce((acc, card) => {
-            const category = card.category || 'Other';
-            if (!acc[category]) acc[category] = [];
-            acc[category].push(card);
-            return acc;
-          }, {} as Record<string, FoodCard[]>);
-        case 'topRated':
-          return { 'Top Rated': foodCards.sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 10) };
-        case 'favorites':
-          return { 'Favorites': foodCards.filter(card => (card as any).favorite === true).slice(0, 10) };
-        case 'recent':
-          return { 'Recently Added': [...foodCards].sort((a, b) => {
-            const dateA = (a as any).createdAt ? new Date((a as any).createdAt).getTime() : Date.now();
-            const dateB = (b as any).createdAt ? new Date((b as any).createdAt).getTime() : Date.now();
-            return dateB - dateA;
-          }).slice(0, 10) };
+          return foodCards.filter(card => card.category?.toLowerCase() === selectedSubcategory.toLowerCase());
         case 'location':
-          return foodCards.reduce((acc, card) => {
-            const location = card.location || 'Unknown';
-            if (!acc[location]) acc[location] = [];
-            acc[location].push(card);
-            return acc;
-          }, {} as Record<string, FoodCard[]>);
+          return foodCards.filter(card => card.location?.toLowerCase() === selectedSubcategory.toLowerCase());
         case 'status':
-          return foodCards.reduce((acc, card) => {
-            const status = card.status || 'Unknown';
-            if (!acc[status]) acc[status] = [];
-            acc[status].push(card);
-            return acc;
-          }, {} as Record<string, FoodCard[]>);
+          return foodCards.filter(card => card.status?.toLowerCase() === selectedSubcategory.toLowerCase());
         default:
-          return {};
+          return [];
       }
     } else {
       switch (selectedCategory) {
         case 'genre':
-          return entertainmentCards.reduce((acc, card) => {
-            const genre = card.genre || 'Other';
-            if (!acc[genre]) acc[genre] = [];
-            acc[genre].push(card);
-            return acc;
-          }, {} as Record<string, EntertainmentCard[]>);
+          return entertainmentCards.filter(card => card.genre?.toLowerCase() === selectedSubcategory.toLowerCase());
         case 'medium':
-          return entertainmentCards.reduce((acc, card) => {
-            const medium = card.entertainmentCategory || 'Other';
-            if (!acc[medium]) acc[medium] = [];
-            acc[medium].push(card);
-            return acc;
-          }, {} as Record<string, EntertainmentCard[]>);
-        case 'topRated':
-          return { 'Top Rated': entertainmentCards.sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 10) };
-        case 'favorites':
-          return { 'Favorites': entertainmentCards.filter(card => (card as any).favorite === true).slice(0, 10) };
-        case 'recent':
-          return { 'Recently Added': [...entertainmentCards].sort((a, b) => {
-            const dateA = (a as any).createdAt ? new Date((a as any).createdAt).getTime() : Date.now();
-            const dateB = (b as any).createdAt ? new Date((b as any).createdAt).getTime() : Date.now();
-            return dateB - dateA;
-          }).slice(0, 10) };
-        case 'lists':
-          return { 'Featured Lists': entertainmentCards.filter(card => (card as any).featured || false).slice(0, 10) };
+          return entertainmentCards.filter(card => card.entertainmentCategory?.toLowerCase() === selectedSubcategory.toLowerCase());
         case 'status':
-          return entertainmentCards.reduce((acc, card) => {
-            const status = card.status || 'Unknown';
-            if (!acc[status]) acc[status] = [];
-            acc[status].push(card);
-            return acc;
-          }, {} as Record<string, EntertainmentCard[]>);
+          return entertainmentCards.filter(card => card.status?.toLowerCase() === selectedSubcategory.toLowerCase());
         default:
-          return {};
+          return [];
       }
     }
   };
   
-  const cardsByCategory = groupCardsByCategory();
-  const categories = Object.keys(cardsByCategory);
+  const filteredCards = getFilteredCards();
 
   return (
     <GridLayout title="Browse">
@@ -219,47 +218,79 @@ const BrowsePage = () => {
                 : colorForEntertainmentCategory(option.title);
                 
               return (
-                <Button
-                  key={option.title}
-                  variant="ghost"
-                  className="w-full flex justify-between items-center py-3 h-auto text-lg hover:bg-opacity-10 border-b border-gray-100"
-                  onClick={() => handleCategoryClick(option)}
-                >
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-8 h-8 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: bgColor }}
-                    >
-                      {option.icon}
+                <div key={option.title}>
+                  <Button
+                    variant="ghost"
+                    className="w-full flex justify-between items-center py-3 h-auto text-lg hover:bg-opacity-10 border-b border-gray-100"
+                    onClick={() => handleCategoryClick(option)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-8 h-8 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: bgColor }}
+                      >
+                        {option.icon}
+                      </div>
+                      <span>{option.title}</span>
                     </div>
-                    <span>{option.title}</span>
-                  </div>
-                  <ChevronRight className="h-5 w-5 text-gray-400" />
-                </Button>
+                    <ChevronRight className="h-5 w-5 text-gray-400" />
+                  </Button>
+                  
+                  {option.subcategories && selectedCategory === new URL(option.route, window.location.origin).searchParams.get('filter') && (
+                    <div className="ml-10 mt-2 mb-4">
+                      <Accordion type="single" collapsible className="w-full" defaultValue="subcategories">
+                        <AccordionItem value="subcategories" className="border-0">
+                          <AccordionContent>
+                            <div className="grid grid-cols-2 gap-2 mt-2">
+                              {option.subcategories.map(subcat => (
+                                <Button
+                                  key={subcat}
+                                  variant={selectedSubcategory === subcat ? "default" : "outline"}
+                                  size="sm"
+                                  className={`text-sm justify-start ${selectedSubcategory === subcat ? 'bg-catalog-teal text-white' : 'bg-white'}`}
+                                  onClick={() => handleSubcategoryClick(subcat)}
+                                >
+                                  {subcat}
+                                </Button>
+                              ))}
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    </div>
+                  )}
+                </div>
               );
             })}
           </div>
         </div>
         
-        {selectedCategory && categories.length > 0 && (
+        {selectedSubcategory && filteredCards.length > 0 && (
           <div className="px-4 pb-20">
             <h3 className="text-xl font-bold mb-4 text-gray-700">
-              {getCategoryDisplayName(selectedCategory)} Results
+              {selectedSubcategory} ({filteredCards.length} items)
             </h3>
             
-            {activeType === 'food' ? (
-              <FoodCategoryDisplay 
-                foodCategories={categories}
-                cardsByCategory={cardsByCategory}
-                colorForCategory={colorForCategory}
-              />
-            ) : (
-              <EntertainmentCategoryDisplay
-                entertainmentCategories={categories}
-                cardsByCategory={cardsByCategory}
-                colorForEntertainmentCategory={colorForEntertainmentCategory}
-              />
-            )}
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
+              {filteredCards.map(card => (
+                <Link to={`/edit/${card.id}`} key={card.id} className="block">
+                  <div className="letterboxd-style-card">
+                    <CatalogCardCompact card={card} compact={true} />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {selectedSubcategory && filteredCards.length === 0 && (
+          <div className="px-4 pb-20 text-center">
+            <p className="text-gray-500 py-8">No items found for {selectedSubcategory}</p>
+            <Button asChild>
+              <Link to={`/create/${activeType === 'food' ? 'food' : 'entertainment'}?${selectedCategory}=${selectedSubcategory}`}>
+                Add your first {selectedSubcategory} item
+              </Link>
+            </Button>
           </div>
         )}
       </div>
