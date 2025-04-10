@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import QuoteBubble from "./QuoteBubble";
-import { Sparkles } from "lucide-react";
+import { Sparkles, BookOpen } from "lucide-react";
 
 interface OnboardingStepProps {
   title: string;
@@ -25,23 +25,34 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
   const [showDrawers, setShowDrawers] = useState(false);
   const [sparkleAngle, setSparkleAngle] = useState(0);
   const [logoVisible, setLogoVisible] = useState(false);
+  const [bookOpen, setBookOpen] = useState(false);
+  const [showTitle, setShowTitle] = useState(false);
 
   // Start the animation after component mounts
   useEffect(() => {
     if (stepType === "intro") {
+      // First animate the book opening
+      const bookTimer = setTimeout(() => {
+        setBookOpen(true);
+      }, 500);
+      
+      // Then show the title
+      const titleTimer = setTimeout(() => {
+        setShowTitle(true);
+      }, 1400);
+      
+      return () => {
+        clearTimeout(bookTimer);
+        clearTimeout(titleTimer);
+      };
+    } else if (stepType === "bites") {
       // Start the card opening animation
       const animationTimer = setTimeout(() => {
         setIsAnimating(true);
       }, 500);
       
-      // Show logo after card opens
-      const logoTimer = setTimeout(() => {
-        setShowLogo(true);
-      }, 1200);
-      
       return () => {
         clearTimeout(animationTimer);
-        clearTimeout(logoTimer);
       };
     } else if (stepType === "blockbusters") {
       // Start the catalog drawers animation
@@ -93,68 +104,55 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
       {/* Content section with either quote bubbles, animated catalog card, or normal image */}
       {stepType === "intro" ? (
         <div className="p-6 w-full flex justify-center bg-white">
-          {/* Animated catalog card */}
-          <div 
-            className={`relative transition-all duration-1000 ease-in-out transform ${
-              isAnimating ? 'scale-100' : 'scale-90'
-            }`}
-            style={{
-              width: "250px",
-              height: "250px",
-              perspective: "1000px"
-            }}
-          >
-            {/* Catalog card container */}
+          {/* Animated book */}
+          <div className="perspective-1000 w-64 h-64 relative">
+            {/* Book cover */}
             <div 
-              className={`relative w-full h-full transition-all duration-1000 transform ${
-                isAnimating ? 'rotate-y-0' : 'rotate-y-180'
+              className={`absolute inset-0 bg-[#D3E4FD] border-2 border-catalog-softBrown rounded-md shadow-lg transition-all duration-1000 ease-in-out ${
+                bookOpen ? 'rotate-y-90 opacity-0' : 'rotate-y-0 opacity-100'
               }`}
               style={{
                 transformStyle: "preserve-3d",
-                transform: isAnimating ? "rotateY(0deg)" : "rotateY(180deg)"
+                transform: bookOpen ? "rotateY(-90deg)" : "rotateY(0deg)",
+                transformOrigin: "left center",
+                boxShadow: "rgba(0, 0, 0, 0.2) 0px 5px 15px"
               }}
             >
-              {/* Card front (showing icon) */}
-              <div 
-                className="absolute inset-0 flex items-center justify-center bg-white rounded-md border-2 border-catalog-softBrown shadow-md"
-                style={{
-                  backfaceVisibility: "hidden",
-                  zIndex: 2
-                }}
-              >
-                <div 
-                  className={`transition-all duration-700 transform ${
-                    showLogo ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
-                  }`}
-                >
-                  {/* Animated sparkles icon instead of static logo */}
-                  <div className="flex items-center justify-center h-32 w-32 relative">
-                    <Sparkles 
-                      size={64}
-                      className="text-[#D3E4FD] absolute"
-                      style={{
-                        transform: `rotate(${sparkleAngle}deg)`,
-                        transition: 'transform 1s ease-in-out',
-                      }}
-                    />
-                    <Sparkles 
-                      size={48}
-                      className="text-catalog-teal"
-                    />
-                  </div>
-                </div>
+              {/* Book cover design */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
+                <BookOpen size={48} className="text-[#5D4037] mb-4" />
+                <div className="text-[#5D4037] font-typewriter text-lg font-bold tracking-wider">CATALOG</div>
               </div>
-              
-              {/* Card back */}
+            </div>
+            
+            {/* Book pages */}
+            <div 
+              className="absolute inset-0 bg-white border border-gray-300 rounded-md"
+              style={{
+                transformStyle: "preserve-3d",
+                boxShadow: "rgba(0, 0, 0, 0.1) -5px 0px 10px inset"
+              }}
+            >
+              {/* Book content (appears after book opens) */}
               <div 
-                className="absolute inset-0 bg-amber-100 rounded-md border-2 border-catalog-softBrown flex items-center justify-center"
-                style={{
-                  backfaceVisibility: "hidden",
-                  transform: "rotateY(180deg)",
-                  zIndex: 1
-                }}
+                className={`absolute inset-0 flex flex-col items-center justify-center p-4 transition-all duration-700 ${
+                  showTitle ? 'opacity-100' : 'opacity-0'
+                }`}
               >
-                <div className="w-4/5 h-4/5 border border-dashed border-amber-800 rounded opacity-50"></div>
+                <h1 className="text-2xl font-bold text-[#5D4037] font-typewriter mb-2">TOTAL</h1>
+                <h1 className="text-2xl font-bold text-[#5D4037] font-typewriter mb-4">RECALL</h1>
+                <h1 className="text-2xl font-bold text-[#5D4037] font-typewriter">CATALOG</h1>
+                
+                <div className="absolute bottom-4 right-4">
+                  <Sparkles 
+                    size={24}
+                    className="text-catalog-teal"
+                    style={{
+                      transform: `rotate(${sparkleAngle}deg)`,
+                      transition: 'transform 1s ease-in-out',
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>

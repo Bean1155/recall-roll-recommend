@@ -131,8 +131,17 @@
     transform: rotateY(0deg);
   }
   
+  .rotate-y-90 {
+    transform: rotateY(90deg);
+  }
+  
   .rotate-y-180 {
     transform: rotateY(180deg);
+  }
+  
+  /* Add perspective utility for 3D animations */
+  .perspective-1000 {
+    perspective: 1000px;
   }
   
   /* Speech bubble animation classes */
