@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
-import { Search, ChevronRight, ChefHat, Utensils, MapPin, Star, Clock, Filter, Heart, FileText } from "lucide-react";
+import { Search, ChevronRight, ChefHat, Utensils, MapPin, Star, Clock, Filter, Heart, FileText, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { defaultCategories, defaultEntertainmentCategories, getCategoryDisplayName } from "@/utils/categoryUtils";
@@ -100,6 +101,7 @@ const BrowsePage = () => {
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
   const [foodCards, setFoodCards] = useState<FoodCard[]>([]);
   const [entertainmentCards, setEntertainmentCards] = useState<EntertainmentCard[]>([]);
+  const [showAllCards, setShowAllCards] = useState(false);
   
   const browseOptions = activeType === 'food' ? foodBrowseOptions : entertainmentBrowseOptions;
   
@@ -119,6 +121,7 @@ const BrowsePage = () => {
     setActiveType(newTypeValue);
     setSelectedCategory(null);
     setSelectedSubcategory(null);
+    setShowAllCards(false);
     navigate(`/browse?type=${newTypeValue}`);
   };
 
@@ -133,17 +136,22 @@ const BrowsePage = () => {
     if (selectedCategory === categoryFromRoute) {
       setSelectedCategory(null);
       setSelectedSubcategory(null);
+      setShowAllCards(false);
     } else {
       setSelectedCategory(categoryFromRoute);
       setSelectedSubcategory(null);
+      setShowAllCards(false);
     }
   };
   
   const handleSubcategoryClick = (subcategory: string) => {
     setSelectedSubcategory(subcategory);
+    setShowAllCards(true);
     
     if (selectedCategory) {
-      navigate(`/${activeType === 'food' ? 'bites' : 'blockbusters'}?filter=${selectedCategory}&value=${subcategory}`);
+      // No longer navigate away immediately
+      // Instead, show all the cards in this category at the bottom of the page
+      // navigate(`/${activeType === 'food' ? 'bites' : 'blockbusters'}?filter=${selectedCategory}&value=${subcategory}`);
     }
   };
   
@@ -195,6 +203,10 @@ const BrowsePage = () => {
     const targetPath = card.type === 'food' ? '/bites' : '/blockbusters';
     console.log(`BrowsePage: handleCardClick - Redirecting to ${targetPath}?highlight=${card.id}`);
     navigate(`${targetPath}?highlight=${card.id}`);
+  };
+  
+  const handleCloseAllCards = () => {
+    setShowAllCards(false);
   };
 
   return (
@@ -279,13 +291,19 @@ const BrowsePage = () => {
           </div>
         </div>
         
-        {selectedSubcategory && filteredCards.length > 0 && (
-          <div className="px-4 pb-20">
-            <h3 className="text-xl font-bold mb-4 text-gray-700">
-              {selectedSubcategory} ({filteredCards.length} items)
-            </h3>
+        {/* We show the filtered cards section regardless of selection, but content is conditional */}
+        <div className={`px-4 pb-20 ${showAllCards && filteredCards.length > 0 ? '' : 'hidden'}`}>
+          <div className="bg-gray-50 border rounded-lg shadow-sm p-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-700">
+                {selectedSubcategory} ({filteredCards.length} items)
+              </h3>
+              <Button variant="ghost" size="sm" onClick={handleCloseAllCards} className="h-8 w-8 p-0">
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
             
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {filteredCards.map(card => (
                 <div 
                   key={card.id} 
@@ -299,7 +317,7 @@ const BrowsePage = () => {
               ))}
             </div>
           </div>
-        )}
+        </div>
         
         {selectedSubcategory && filteredCards.length === 0 && (
           <div className="px-4 pb-20 text-center">

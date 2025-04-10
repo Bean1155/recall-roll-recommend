@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 interface CatalogCardCompactProps {
   card: CatalogCardType;
   onClick?: (card: CatalogCardType) => void;
-  compact?: boolean; // New prop for letterboxd-style compact cards
+  compact?: boolean; // Prop for letterboxd-style compact cards
 }
 
 const CatalogCardCompact = ({ card, onClick, compact = false }: CatalogCardCompactProps) => {
