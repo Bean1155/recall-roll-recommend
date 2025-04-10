@@ -1,19 +1,25 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
 import { Search, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { defaultCategories, defaultEntertainmentCategories } from "@/utils/categoryUtils";
+import { defaultCategories, defaultEntertainmentCategories, getCategoryDisplayName } from "@/utils/categoryUtils";
 import { useBrowseState } from "@/hooks/useBrowseState";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useCategoryColors } from "@/components/bites/useCategoryColors";
+import { Card, CardContent } from "@/components/ui/card";
+import FoodCategoryDisplay from "@/components/browse/FoodCategoryDisplay";
+import EntertainmentCategoryDisplay from "@/components/browse/EntertainmentCategoryDisplay";
+import { getFoodCards, getEntertainmentCards } from "@/lib/data";
+import { FoodCard, EntertainmentCard } from "@/lib/types";
 
 // List of browse options for the Letterboxd-style interface
 interface BrowseOption {
   title: string;
   route: string;
-  type: "food" | "entertainment" | "other";
+  type: "food" | "entertainment";
 }
 
 const foodBrowseOptions: BrowseOption[] = [
@@ -34,12 +40,6 @@ const entertainmentBrowseOptions: BrowseOption[] = [
   { title: "Featured Lists", route: "/blockbusters?filter=lists", type: "entertainment" }
 ];
 
-const appSpecificOptions: BrowseOption[] = [
-  { title: "Journal", route: "/journal", type: "other" },
-  { title: "Collections", route: "/collections", type: "other" },
-  { title: "Rewards", route: "/rewards", type: "other" }
-];
-
 const BrowsePage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -47,8 +47,22 @@ const BrowsePage = () => {
   const typeParam = searchParams.get('type') as 'food' | 'entertainment' | null;
   const [activeType, setActiveType] = useState<'food' | 'entertainment'>(typeParam || 'food');
   
+  // For displaying cards at the bottom when category is clicked
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [foodCards, setFoodCards] = useState<FoodCard[]>([]);
+  const [entertainmentCards, setEntertainmentCards] = useState<EntertainmentCard[]>([]);
+  
   // Use the appropriate options list based on the active type
   const browseOptions = activeType === 'food' ? foodBrowseOptions : entertainmentBrowseOptions;
+  
+  // Get category colors
+  const { categoryColors, colorForCategory, colorForEntertainmentCategory } = useCategoryColors([]);
+  
+  // Load cards for display
+  useEffect(() => {
+    setFoodCards(getFoodCards());
+    setEntertainmentCards(getEntertainmentCards());
+  }, []);
   
   const navigateToSearch = () => {
     navigate('/search');
@@ -57,18 +71,103 @@ const BrowsePage = () => {
   const toggleType = () => {
     const newType = activeType === 'food' ? 'entertainment' : 'food';
     setActiveType(newType);
+    setSelectedCategory(null); // Reset selection when toggling type
     // Update URL params when toggling
     navigate(`/browse?type=${newType}`);
   };
 
+  const handleCategoryClick = (option: BrowseOption) => {
+    // Set the selected category for display at bottom
+    const categoryFromRoute = new URL(option.route, window.location.origin).searchParams.get('filter');
+    setSelectedCategory(categoryFromRoute);
+    
+    // Optional: navigate to the route as well
+    // navigate(option.route);
+  };
+  
+  // Organize cards by category for the selected category view
+  const groupCardsByCategory = () => {
+    if (!selectedCategory) return {};
+    
+    if (activeType === 'food') {
+      // Group food cards by the selected filter type
+      switch (selectedCategory) {
+        case 'cuisine':
+          return foodCards.reduce((acc, card) => {
+            const cuisine = card.cuisine || 'Other';
+            if (!acc[cuisine]) acc[cuisine] = [];
+            acc[cuisine].push(card);
+            return acc;
+          }, {} as Record<string, FoodCard[]>);
+        case 'category':
+          return foodCards.reduce((acc, card) => {
+            const category = card.category || 'Other';
+            if (!acc[category]) acc[category] = [];
+            acc[category].push(card);
+            return acc;
+          }, {} as Record<string, FoodCard[]>);
+        case 'topRated':
+          return { 'Top Rated': foodCards.sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 10) };
+        case 'popular':
+          return { 'Most Popular': foodCards.sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 10) };
+        case 'recent':
+          return { 'Recently Added': [...foodCards].sort((a, b) => 
+            new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+          ).slice(0, 10) };
+        case 'location':
+          return foodCards.reduce((acc, card) => {
+            const location = card.location || 'Unknown';
+            if (!acc[location]) acc[location] = [];
+            acc[location].push(card);
+            return acc;
+          }, {} as Record<string, FoodCard[]>);
+        default:
+          return {};
+      }
+    } else {
+      // Group entertainment cards by the selected filter type
+      switch (selectedCategory) {
+        case 'genre':
+          return entertainmentCards.reduce((acc, card) => {
+            const genre = card.genre || 'Other';
+            if (!acc[genre]) acc[genre] = [];
+            acc[genre].push(card);
+            return acc;
+          }, {} as Record<string, EntertainmentCard[]>);
+        case 'medium':
+          return entertainmentCards.reduce((acc, card) => {
+            const medium = card.entertainmentType || 'Other';
+            if (!acc[medium]) acc[medium] = [];
+            acc[medium].push(card);
+            return acc;
+          }, {} as Record<string, EntertainmentCard[]>);
+        case 'topRated':
+          return { 'Top Rated': entertainmentCards.sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 10) };
+        case 'popular':
+          return { 'Most Popular': entertainmentCards.sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 10) };
+        case 'recent':
+          return { 'Recently Added': [...entertainmentCards].sort((a, b) => 
+            new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+          ).slice(0, 10) };
+        case 'lists':
+          return { 'Featured Lists': entertainmentCards.filter(card => card.featured).slice(0, 10) };
+        default:
+          return {};
+      }
+    }
+  };
+  
+  const cardsByCategory = groupCardsByCategory();
+  const categories = Object.keys(cardsByCategory);
+
   return (
-    <GridLayout title="Browse" className="bg-gray-900 text-white">
+    <GridLayout title="Browse">
       <div className="flex flex-col max-w-3xl mx-auto w-full">
         {/* Search Bar */}
         <div className="px-4 py-8 flex justify-center">
           <Button 
             variant="outline" 
-            className="w-full max-w-md h-12 flex justify-start gap-2 text-gray-200 border-gray-700 bg-gray-800"
+            className="w-full max-w-md h-12 flex justify-start gap-2 text-gray-700 border-gray-300 bg-white shadow-sm"
             onClick={navigateToSearch}
           >
             <Search className="h-5 w-5" />
@@ -80,7 +179,7 @@ const BrowsePage = () => {
         <div className="px-4 mb-6 flex justify-center">
           <Button
             variant="outline"
-            className="bg-gray-800 text-gray-200 border-gray-700 hover:bg-gray-700"
+            className="bg-white text-gray-700 border-gray-300 hover:bg-gray-100 shadow-sm"
             onClick={toggleType}
           >
             {activeType === 'food' ? 'Switch to Blockbusters' : 'Switch to Bites'}
@@ -89,51 +188,53 @@ const BrowsePage = () => {
         
         {/* Browse By Section */}
         <div className="px-4 pb-8">
-          <h2 className="text-2xl font-bold mb-4 text-gray-200">
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">
             Browse {activeType === 'food' ? 'Bites' : 'Blockbusters'} by
           </h2>
           
-          <div className="space-y-0 bg-gray-800 rounded-lg overflow-hidden border border-gray-700">
-            {browseOptions.map((option, index) => (
-              <React.Fragment key={option.title}>
-                <Button
-                  variant="ghost"
-                  className="w-full flex justify-between items-center py-4 h-auto text-lg text-gray-200 hover:bg-gray-700"
-                  onClick={() => navigate(option.route)}
-                >
-                  <span>{option.title}</span>
-                  <ChevronRight className="h-5 w-5" />
-                </Button>
-                {index < browseOptions.length - 1 && (
-                  <Separator className="my-0 bg-gray-700" />
-                )}
-              </React.Fragment>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {browseOptions.map((option) => (
+              <Button
+                key={option.title}
+                variant="outline"
+                className="flex justify-between items-center py-4 h-auto text-lg bg-white hover:bg-gray-100 shadow-sm"
+                onClick={() => handleCategoryClick(option)}
+                style={{
+                  backgroundColor: activeType === 'food' 
+                    ? colorForCategory(option.title) 
+                    : colorForEntertainmentCategory(option.title),
+                  color: '#ffffff'
+                }}
+              >
+                <span>{option.title}</span>
+                <ChevronRight className="h-5 w-5" />
+              </Button>
             ))}
           </div>
         </div>
         
-        {/* App-specific Browse Options */}
-        <div className="px-4 pb-20">
-          <h2 className="text-2xl font-bold mb-4 text-gray-200">Catalog Features</h2>
-          
-          <div className="space-y-0 bg-gray-800 rounded-lg overflow-hidden border border-gray-700">
-            {appSpecificOptions.map((option, index) => (
-              <React.Fragment key={option.title}>
-                <Button
-                  variant="ghost"
-                  className="w-full flex justify-between items-center py-4 h-auto text-lg text-gray-200 hover:bg-gray-700"
-                  onClick={() => navigate(option.route)}
-                >
-                  <span>{option.title}</span>
-                  <ChevronRight className="h-5 w-5" />
-                </Button>
-                {index < appSpecificOptions.length - 1 && (
-                  <Separator className="my-0 bg-gray-700" />
-                )}
-              </React.Fragment>
-            ))}
+        {/* Display selected category cards */}
+        {selectedCategory && categories.length > 0 && (
+          <div className="px-4 pb-20">
+            <h3 className="text-xl font-bold mb-4 text-gray-700">
+              {getCategoryDisplayName(selectedCategory)} Results
+            </h3>
+            
+            {activeType === 'food' ? (
+              <FoodCategoryDisplay 
+                foodCategories={categories}
+                cardsByCategory={cardsByCategory}
+                colorForCategory={colorForCategory}
+              />
+            ) : (
+              <EntertainmentCategoryDisplay
+                entertainmentCategories={categories}
+                cardsByCategory={cardsByCategory}
+                colorForEntertainmentCategory={colorForEntertainmentCategory}
+              />
+            )}
           </div>
-        </div>
+        )}
       </div>
     </GridLayout>
   );

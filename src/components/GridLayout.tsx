@@ -10,9 +10,16 @@ interface GridLayoutProps {
   title?: React.ReactNode;
   icon?: React.ReactNode;
   headerContent?: React.ReactNode;
+  className?: string;
 }
 
-const GridLayout: React.FC<GridLayoutProps> = ({ children, title, icon, headerContent }) => {
+const GridLayout: React.FC<GridLayoutProps> = ({ 
+  children, 
+  title, 
+  icon, 
+  headerContent,
+  className
+}) => {
   const isMobile = useIsMobile();
   
   // Force a rewards refresh when any page using GridLayout is loaded
@@ -32,7 +39,7 @@ const GridLayout: React.FC<GridLayoutProps> = ({ children, title, icon, headerCo
   
   return (
     <div 
-      className="min-h-screen flex flex-col font-typewriter w-full"
+      className={`min-h-screen flex flex-col font-typewriter w-full ${className || ''}`}
       style={{
         backgroundImage: `
           linear-gradient(to bottom, rgba(173, 200, 229, 0.5) 1px, transparent 1px)
