@@ -9,9 +9,10 @@ import { useNavigate } from "react-router-dom";
 interface CatalogCardCompactProps {
   card: CatalogCardType;
   onClick?: (card: CatalogCardType) => void;
+  compact?: boolean; // New prop for letterboxd-style compact cards
 }
 
-const CatalogCardCompact = ({ card, onClick }: CatalogCardCompactProps) => {
+const CatalogCardCompact = ({ card, onClick, compact = false }: CatalogCardCompactProps) => {
   const navigate = useNavigate();
   
   const handleCardClick = () => {
@@ -77,6 +78,48 @@ const CatalogCardCompact = ({ card, onClick }: CatalogCardCompactProps) => {
   
   const imageUrl = getImageUrl();
   
+  // Use different styles based on compact mode
+  if (compact) {
+    return (
+      <div 
+        className="cursor-pointer rounded overflow-hidden shadow-sm hover:shadow-md transition-all h-full"
+        onClick={handleCardClick}
+      >
+        <div className={cn("relative aspect-[2/3] flex items-center justify-center", bgColorClass)}>
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={card.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="text-xs font-semibold text-gray-600 p-1 text-center">
+              {truncateText(card.title, 15)}
+            </div>
+          )}
+          
+          {card.isFavorite && (
+            <div className="absolute top-1 right-1">
+              <Heart className="h-3 w-3 fill-red-500 text-red-500" />
+            </div>
+          )}
+          
+          {card.rating && card.rating > 0 && (
+            <div className="absolute bottom-1 left-1 flex items-center">
+              {Array.from({ length: Math.min(card.rating, 3) }).map((_, i) => (
+                <Star key={i} className="h-2 w-2 fill-amber-400 text-amber-400" />
+              ))}
+              {card.rating > 3 && (
+                <span className="text-[8px] text-amber-400">+{card.rating - 3}</span>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+  
+  // Regular non-compact card (original design)
   return (
     <Card 
       className={cn(
