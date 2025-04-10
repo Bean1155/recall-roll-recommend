@@ -27,7 +27,7 @@ const BitesHeader = ({
   
   // Text to display based on card type
   const addButtonText = cardType === 'entertainment' ? 'Add Blockbuster' : 'Add Bite';
-  const browseButtonText = isMobile ? 'Browse & Filter' : 'Browse';
+  const browseButtonText = 'Browse';
 
   const handleBrowseClick = () => {
     navigate(`/browse?type=${cardType}`);
@@ -54,7 +54,7 @@ const BitesHeader = ({
         className={`flex items-center gap-1 ${isMobile ? 'flex-1 justify-center' : ''}`}
       >
         <Search className="h-4 w-4" />
-        <span className={isMobile ? 'inline' : 'hidden sm:inline'}>
+        <span>
           {browseButtonText}
         </span>
       </Button>
@@ -67,7 +67,7 @@ const BitesHeader = ({
       >
         <Link to={`/create/${cardType}`}>
           <PlusCircle className="h-4 w-4" />
-          <span className={isMobile ? 'inline' : 'hidden sm:inline'}>
+          <span className={isMobile ? 'inline' : 'inline'}>
             {isMobile ? 'Add' : addButtonText}
           </span>
         </Link>

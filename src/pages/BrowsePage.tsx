@@ -15,7 +15,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { getAllCategories } from "@/utils/categoryUtils";
+import { getAllCategories, defaultEntertainmentCategories } from "@/utils/categoryUtils";
 
 type BrowseCategory = {
   name: string;
@@ -90,7 +90,7 @@ const BrowsePage = () => {
     },
     {
       name: "By Category",
-      description: "Browse food by establishment type",
+      description: activeType === 'food' ? "Browse food by establishment type" : "Browse entertainment by category type",
       path: "by-category",
       icon: <ShoppingBag className="h-5 w-5 text-green-600" />,
       filterFunction: (cards) => {
@@ -110,8 +110,25 @@ const BrowsePage = () => {
             }
           });
           return result;
+        } else {
+          const categories = new Set<string>();
+          (cards as EntertainmentCard[]).forEach(card => {
+            if (card.entertainmentCategory) {
+              categories.add(card.entertainmentCategory.toLowerCase());
+            }
+          });
+          
+          const result: EntertainmentCard[] = [];
+          categories.forEach(category => {
+            const categoryCards = (cards as EntertainmentCard[]).filter(card => 
+              card.entertainmentCategory && card.entertainmentCategory.toLowerCase() === category
+            );
+            if (categoryCards.length > 0) {
+              result.push(categoryCards[0]);
+            }
+          });
+          return result;
         }
-        return [];
       },
     },
     {
@@ -433,6 +450,104 @@ const BrowsePage = () => {
                     </AccordionContent>
                   </AccordionItem>
                 ))}
+              </Accordion>
+            </ScrollArea>
+          </div>
+        );
+      } else {
+        const categoryMap = new Map<string, EntertainmentCard[]>();
+        
+        (activeCards as EntertainmentCard[]).forEach(card => {
+          if (card.entertainmentCategory) {
+            const category = card.entertainmentCategory.toLowerCase();
+            if (!categoryMap.has(category)) {
+              categoryMap.set(category, []);
+            }
+            categoryMap.get(category)?.push(card);
+          }
+        });
+        
+        if (!hideEmptyCategories) {
+          defaultEntertainmentCategories.forEach(cat => {
+            if (!categoryMap.has(cat.toLowerCase())) {
+              categoryMap.set(cat.toLowerCase(), []);
+            }
+          });
+        }
+        
+        return (
+          <div className="mt-4">
+            <div className="flex items-center mb-4">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="flex items-center gap-2"
+                onClick={() => setSelectedCategory(null)}
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Browse
+              </Button>
+              <h2 className="text-xl font-semibold ml-2">Browse By Entertainment Category</h2>
+            </div>
+            
+            <ScrollArea className="h-[70vh]">
+              <Accordion type="single" collapsible className="w-full">
+                {Array.from(categoryMap.entries()).map(([category, cards]) => {
+                  if (hideEmptyCategories && cards.length === 0) {
+                    return null;
+                  }
+                  
+                  let categoryIcon;
+                  switch(category.toLowerCase()) {
+                    case 'movies': categoryIcon = <Film className="h-4 w-4 text-blue-500" />; break;
+                    case 'tv shows': categoryIcon = <Film className="h-4 w-4 text-purple-500" />; break;
+                    case 'books': categoryIcon = <Film className="h-4 w-4 text-yellow-500" />; break;
+                    case 'podcasts': categoryIcon = <Film className="h-4 w-4 text-green-500" />; break;
+                    case 'games': categoryIcon = <Film className="h-4 w-4 text-red-500" />; break;
+                    default: categoryIcon = <Film className="h-4 w-4 text-gray-500" />;
+                  }
+                  
+                  const displayName = category
+                    .split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+                  
+                  return (
+                    <AccordionItem key={category} value={category}>
+                      <AccordionTrigger className="hover:bg-gray-100 px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          {categoryIcon}
+                          <span>{displayName}</span>
+                          <span className="text-xs text-gray-500 ml-2">({cards.length} items)</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-3">
+                          {cards.map((card) => (
+                            <div 
+                              key={card.id} 
+                              className="cursor-pointer"
+                              onClick={() => handleCardClick(card)}
+                            >
+                              <CatalogCardCompact card={card} />
+                            </div>
+                          ))}
+                          
+                          {cards.length > 8 && (
+                            <Button 
+                              variant="outline"
+                              className="h-full min-h-[100px] flex flex-col items-center justify-center"
+                              onClick={() => handleSubCategorySelect('by-category', category, cards)}
+                            >
+                              <span>View all</span>
+                              <span className="text-sm">{cards.length} items</span>
+                            </Button>
+                          )}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  );
+                })}
               </Accordion>
             </ScrollArea>
           </div>

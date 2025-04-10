@@ -12,7 +12,7 @@ interface SearchButtonProps {
 
 const SearchButton: React.FC<SearchButtonProps> = ({ path, color, onClick }) => {
   const location = useLocation();
-  const isActive = location.pathname === path || location.pathname === "/browse" || location.pathname === "/search";
+  const isActive = location.pathname === path || location.pathname === "/browse";
 
   return (
     <TooltipProvider>
