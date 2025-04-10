@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { getCategoryDisplayName } from "@/utils/categoryUtils";
 import CatalogCardCompact from "@/components/CatalogCardCompact";
-import { Utensils, ChefHat, MapPin, Star } from "lucide-react";
+import { Utensils, ChefHat, MapPin, Star, FileText, Heart } from "lucide-react";
 
 interface FoodCategoryDisplayProps {
   foodCategories: string[];
@@ -15,11 +15,12 @@ interface FoodCategoryDisplayProps {
 
 const categoryIcons: Record<string, React.ReactNode> = {
   "Cuisine": <ChefHat className="h-5 w-5 text-white" />,
-  "Restaurant": <Utensils className="h-5 w-5 text-white" />,
+  "Category": <Utensils className="h-5 w-5 text-white" />,
   "Location": <MapPin className="h-5 w-5 text-white" />,
   "Top Rated": <Star className="h-5 w-5 text-white" />,
-  "Most Popular": <Star className="h-5 w-5 text-white" />,
-  "Recently Added": <Utensils className="h-5 w-5 text-white" />
+  "Favorites": <Heart className="h-5 w-5 text-white" />,
+  "Recently Added": <Utensils className="h-5 w-5 text-white" />,
+  "Status": <FileText className="h-5 w-5 text-white" />
 };
 
 const FoodCategoryDisplay: React.FC<FoodCategoryDisplayProps> = ({

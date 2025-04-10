@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
-import { Search, ChevronRight, ChefHat, Utensils, MapPin, Star, Clock, Filter } from "lucide-react";
+import { Search, ChevronRight, ChefHat, Utensils, MapPin, Star, Clock, Filter, Heart, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { defaultCategories, defaultEntertainmentCategories, getCategoryDisplayName } from "@/utils/categoryUtils";
@@ -25,20 +26,22 @@ interface BrowseOption {
 
 const foodBrowseOptions: BrowseOption[] = [
   { title: "By Cuisine", route: "/bites?filter=cuisine", type: "food", icon: <ChefHat className="h-5 w-5" /> },
-  { title: "By Restaurant Type", route: "/bites?filter=category", type: "food", icon: <Utensils className="h-5 w-5" /> },
+  { title: "By Category", route: "/bites?filter=category", type: "food", icon: <Utensils className="h-5 w-5" /> },
   { title: "Top Rated", route: "/bites?filter=topRated", type: "food", icon: <Star className="h-5 w-5" /> },
-  { title: "Most Popular", route: "/bites?filter=popular", type: "food", icon: <Utensils className="h-5 w-5" /> },
+  { title: "Favorites", route: "/bites?filter=favorites", type: "food", icon: <Heart className="h-5 w-5" /> },
   { title: "Recently Added", route: "/bites?filter=recent", type: "food", icon: <Clock className="h-5 w-5" /> },
-  { title: "Location", route: "/bites?filter=location", type: "food", icon: <MapPin className="h-5 w-5" /> }
+  { title: "Location", route: "/bites?filter=location", type: "food", icon: <MapPin className="h-5 w-5" /> },
+  { title: "By Status", route: "/bites?filter=status", type: "food", icon: <FileText className="h-5 w-5" /> }
 ];
 
 const entertainmentBrowseOptions: BrowseOption[] = [
   { title: "By Genre", route: "/blockbusters?filter=genre", type: "entertainment", icon: <Filter className="h-5 w-5" /> },
   { title: "By Medium", route: "/blockbusters?filter=medium", type: "entertainment", icon: <Filter className="h-5 w-5" /> },
   { title: "Top Rated", route: "/blockbusters?filter=topRated", type: "entertainment", icon: <Star className="h-5 w-5" /> },
-  { title: "Most Popular", route: "/blockbusters?filter=popular", type: "entertainment", icon: <Filter className="h-5 w-5" /> },
+  { title: "Favorites", route: "/blockbusters?filter=favorites", type: "entertainment", icon: <Heart className="h-5 w-5" /> },
   { title: "Recently Added", route: "/blockbusters?filter=recent", type: "entertainment", icon: <Clock className="h-5 w-5" /> },
-  { title: "Featured Lists", route: "/blockbusters?filter=lists", type: "entertainment", icon: <Filter className="h-5 w-5" /> }
+  { title: "Featured Lists", route: "/blockbusters?filter=lists", type: "entertainment", icon: <Filter className="h-5 w-5" /> },
+  { title: "By Status", route: "/blockbusters?filter=status", type: "entertainment", icon: <FileText className="h-5 w-5" /> }
 ];
 
 const BrowsePage = () => {
@@ -114,12 +117,9 @@ const BrowsePage = () => {
           }, {} as Record<string, FoodCard[]>);
         case 'topRated':
           return { 'Top Rated': foodCards.sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 10) };
-        case 'popular':
-          // Using a default sorting if views property doesn't exist
-          return { 'Most Popular': foodCards.sort((a, b) => {
-            // If the views property doesn't exist, fall back to using rating
-            return ((b as any).views || b.rating || 0) - ((a as any).views || a.rating || 0);
-          }).slice(0, 10) };
+        case 'favorites':
+          // Using favorites property instead of popularity
+          return { 'Favorites': foodCards.filter(card => (card as any).favorite === true).slice(0, 10) };
         case 'recent':
           return { 'Recently Added': [...foodCards].sort((a, b) => {
             // If the createdAt property doesn't exist, use the current timestamp
@@ -132,6 +132,13 @@ const BrowsePage = () => {
             const location = card.location || 'Unknown';
             if (!acc[location]) acc[location] = [];
             acc[location].push(card);
+            return acc;
+          }, {} as Record<string, FoodCard[]>);
+        case 'status':
+          return foodCards.reduce((acc, card) => {
+            const status = card.status || 'Unknown';
+            if (!acc[status]) acc[status] = [];
+            acc[status].push(card);
             return acc;
           }, {} as Record<string, FoodCard[]>);
         default:
@@ -157,12 +164,9 @@ const BrowsePage = () => {
           }, {} as Record<string, EntertainmentCard[]>);
         case 'topRated':
           return { 'Top Rated': entertainmentCards.sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 10) };
-        case 'popular':
-          // Using a default sorting if views property doesn't exist
-          return { 'Most Popular': entertainmentCards.sort((a, b) => {
-            // If the views property doesn't exist, fall back to using rating
-            return ((b as any).views || b.rating || 0) - ((a as any).views || a.rating || 0);
-          }).slice(0, 10) };
+        case 'favorites':
+          // Using favorites property instead of popularity
+          return { 'Favorites': entertainmentCards.filter(card => (card as any).favorite === true).slice(0, 10) };
         case 'recent':
           return { 'Recently Added': [...entertainmentCards].sort((a, b) => {
             // If the createdAt property doesn't exist, use the current timestamp
@@ -173,6 +177,13 @@ const BrowsePage = () => {
         case 'lists':
           // If featured property doesn't exist, default to false
           return { 'Featured Lists': entertainmentCards.filter(card => (card as any).featured || false).slice(0, 10) };
+        case 'status':
+          return entertainmentCards.reduce((acc, card) => {
+            const status = card.status || 'Unknown';
+            if (!acc[status]) acc[status] = [];
+            acc[status].push(card);
+            return acc;
+          }, {} as Record<string, EntertainmentCard[]>);
         default:
           return {};
       }
