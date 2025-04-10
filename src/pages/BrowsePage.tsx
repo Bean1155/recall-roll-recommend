@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
 import { Search, ChevronRight, ChefHat, Utensils, MapPin, Star, Clock, Filter, Heart, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,10 +12,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import FoodCategoryDisplay from "@/components/browse/FoodCategoryDisplay";
 import EntertainmentCategoryDisplay from "@/components/browse/EntertainmentCategoryDisplay";
 import { getFoodCards, getEntertainmentCards } from "@/lib/data";
-import { FoodCard, EntertainmentCard } from "@/lib/types";
+import { FoodCard, EntertainmentCard, CatalogCard } from "@/lib/types";
 import { Input } from "@/components/ui/input";
+import { Accordion, AccordionItem, AccordionContent, AccordionTrigger } from "@/components/ui/accordion";
+import CatalogCardCompact from "@/components/CatalogCardCompact";
 
-// List of browse options for the Letterboxd-style interface
 interface BrowseOption {
   title: string;
   route: string;
@@ -52,18 +52,14 @@ const BrowsePage = () => {
   const [activeType, setActiveType] = useState<'food' | 'entertainment'>(typeParam || 'food');
   const [searchTerm, setSearchTerm] = useState("");
   
-  // For displaying cards at the bottom when category is clicked
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [foodCards, setFoodCards] = useState<FoodCard[]>([]);
   const [entertainmentCards, setEntertainmentCards] = useState<EntertainmentCard[]>([]);
   
-  // Use the appropriate options list based on the active type
   const browseOptions = activeType === 'food' ? foodBrowseOptions : entertainmentBrowseOptions;
   
-  // Get category colors
   const { categoryColors, colorForCategory, colorForEntertainmentCategory } = useCategoryColors([]);
   
-  // Load cards for display
   useEffect(() => {
     setFoodCards(getFoodCards());
     setEntertainmentCards(getEntertainmentCards());
@@ -76,13 +72,11 @@ const BrowsePage = () => {
   const toggleType = () => {
     const newType = activeType === 'food' ? 'entertainment' : 'food';
     setActiveType(newType);
-    setSelectedCategory(null); // Reset selection when toggling type
-    // Update URL params when toggling
+    setSelectedCategory(null);
     navigate(`/browse?type=${newType}`);
   };
 
   const handleCategoryClick = (option: BrowseOption) => {
-    // Set the selected category for display at bottom
     const categoryFromRoute = new URL(option.route, window.location.origin).searchParams.get('filter');
     setSelectedCategory(categoryFromRoute);
   };
@@ -94,12 +88,10 @@ const BrowsePage = () => {
     }
   };
   
-  // Organize cards by category for the selected category view
   const groupCardsByCategory = () => {
     if (!selectedCategory) return {};
     
     if (activeType === 'food') {
-      // Group food cards by the selected filter type
       switch (selectedCategory) {
         case 'cuisine':
           return foodCards.reduce((acc, card) => {
@@ -118,11 +110,9 @@ const BrowsePage = () => {
         case 'topRated':
           return { 'Top Rated': foodCards.sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 10) };
         case 'favorites':
-          // Using favorites property instead of popularity
           return { 'Favorites': foodCards.filter(card => (card as any).favorite === true).slice(0, 10) };
         case 'recent':
           return { 'Recently Added': [...foodCards].sort((a, b) => {
-            // If the createdAt property doesn't exist, use the current timestamp
             const dateA = (a as any).createdAt ? new Date((a as any).createdAt).getTime() : Date.now();
             const dateB = (b as any).createdAt ? new Date((b as any).createdAt).getTime() : Date.now();
             return dateB - dateA;
@@ -145,7 +135,6 @@ const BrowsePage = () => {
           return {};
       }
     } else {
-      // Group entertainment cards by the selected filter type
       switch (selectedCategory) {
         case 'genre':
           return entertainmentCards.reduce((acc, card) => {
@@ -156,7 +145,6 @@ const BrowsePage = () => {
           }, {} as Record<string, EntertainmentCard[]>);
         case 'medium':
           return entertainmentCards.reduce((acc, card) => {
-            // Use entertainmentCategory as a fallback for entertainmentType
             const medium = card.entertainmentCategory || 'Other';
             if (!acc[medium]) acc[medium] = [];
             acc[medium].push(card);
@@ -165,17 +153,14 @@ const BrowsePage = () => {
         case 'topRated':
           return { 'Top Rated': entertainmentCards.sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 10) };
         case 'favorites':
-          // Using favorites property instead of popularity
           return { 'Favorites': entertainmentCards.filter(card => (card as any).favorite === true).slice(0, 10) };
         case 'recent':
           return { 'Recently Added': [...entertainmentCards].sort((a, b) => {
-            // If the createdAt property doesn't exist, use the current timestamp
             const dateA = (a as any).createdAt ? new Date((a as any).createdAt).getTime() : Date.now();
             const dateB = (b as any).createdAt ? new Date((b as any).createdAt).getTime() : Date.now();
             return dateB - dateA;
           }).slice(0, 10) };
         case 'lists':
-          // If featured property doesn't exist, default to false
           return { 'Featured Lists': entertainmentCards.filter(card => (card as any).featured || false).slice(0, 10) };
         case 'status':
           return entertainmentCards.reduce((acc, card) => {
@@ -196,7 +181,6 @@ const BrowsePage = () => {
   return (
     <GridLayout title="Browse">
       <div className="flex flex-col max-w-3xl mx-auto w-full">
-        {/* Search Bar at the Top */}
         <div className="px-4 py-4 pb-6">
           <form onSubmit={handleSearch} className="flex gap-2">
             <Input
@@ -213,7 +197,6 @@ const BrowsePage = () => {
           </form>
         </div>
         
-        {/* Type Toggle Button */}
         <div className="px-4 mb-6 flex justify-center">
           <Button
             variant="outline"
@@ -224,7 +207,6 @@ const BrowsePage = () => {
           </Button>
         </div>
         
-        {/* Browse By Section */}
         <div className="px-4 pb-8">
           <h2 className="text-2xl font-bold mb-4 text-gray-800">
             Browse {activeType === 'food' ? 'Bites' : 'Blockbusters'} by
@@ -259,7 +241,6 @@ const BrowsePage = () => {
           </div>
         </div>
         
-        {/* Display selected category cards */}
         {selectedCategory && categories.length > 0 && (
           <div className="px-4 pb-20">
             <h3 className="text-xl font-bold mb-4 text-gray-700">

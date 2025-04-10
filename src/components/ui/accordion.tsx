@@ -13,7 +13,7 @@ const AccordionItem = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AccordionPrimitive.Item
     ref={ref}
-    className={cn("mb-4 rounded-lg overflow-hidden border-none shadow-md", className)}
+    className={cn("mb-2 rounded-lg overflow-hidden shadow-sm", className)}
     {...props}
   />
 ))
@@ -34,7 +34,7 @@ const AccordionTrigger = React.forwardRef<
     >
       {children}
       <ChevronDown
-        className="h-5 w-5 shrink-0 transition-transform duration-200 accordion-icon"
+        className="h-5 w-5 shrink-0 text-gray-400 transition-transform duration-200 accordion-icon"
         aria-hidden
       />
     </AccordionPrimitive.Trigger>
@@ -51,7 +51,7 @@ const AccordionContent = React.forwardRef<
     className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
     {...props}
   >
-    <div className={cn("px-4 py-4", className)}>{children}</div>
+    <div className={cn("pb-4", className)}>{children}</div>
   </AccordionPrimitive.Content>
 ))
 
