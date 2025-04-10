@@ -52,13 +52,11 @@ const BlockbustersPage = () => {
         const entertainmentCards = getEntertainmentCards();
         setCards(entertainmentCards);
         
-        // Handle filter parameters - particularly for Top Rated
         if (filterParam === 'topRated') {
           const topRatedCards = entertainmentCards.filter(card => card.rating && card.rating >= 4);
           setFilteredCards(topRatedCards);
           console.log(`BlockbustersPage: Filtered to ${topRatedCards.length} top rated cards`);
         } 
-        // Handle category + value filter
         else if (filterParam && filterValueParam) {
           let filteredResults = [...entertainmentCards];
           
@@ -78,6 +76,11 @@ const BlockbustersPage = () => {
                 card.status?.toLowerCase() === filterValueParam.toLowerCase()
               );
               break;
+            case 'entertainmentType':
+              filteredResults = filteredResults.filter(card => 
+                card.entertainmentType?.toLowerCase() === filterValueParam.toLowerCase()
+              );
+              break;
           }
           
           setFilteredCards(filteredResults);
@@ -93,12 +96,12 @@ const BlockbustersPage = () => {
           setOpenCategory(categoryParam.toLowerCase());
         }
         else if (!isInitialized && entertainmentCards.length > 0 && !openCategory) {
-          const categories = [...new Set(entertainmentCards.map(card => 
-            card.entertainmentCategory?.toLowerCase() || 'etc.'
+          const entertainmentTypes = [...new Set(entertainmentCards.map(card => 
+            card.entertainmentType?.toLowerCase() || 'etc.'
           ))];
           
-          if (categories.length > 0) {
-            const firstCategory = categories[0];
+          if (entertainmentTypes.length > 0) {
+            const firstCategory = entertainmentTypes[0];
             console.log(`BlockbustersPage: Setting initial open category to "${firstCategory}"`);
             setOpenCategory(firstCategory);
             
@@ -196,6 +199,10 @@ const BlockbustersPage = () => {
     return () => clearTimeout(initialTimer);
   }, []);
   
+  const entertainmentTypes = [...new Set(filteredCards.map(card => 
+    card.entertainmentType?.toLowerCase() || 'etc.'
+  ))];
+  
   return (
     <GridLayout 
       title="Blockbusters" 
@@ -211,6 +218,7 @@ const BlockbustersPage = () => {
       <div className="w-full flex justify-center">
         <div className="w-full max-w-md">
           <EntertainmentCategoryDrawers 
+            categories={entertainmentTypes}
             cards={filteredCards}
             categoryColors={categoryColors}
             onCardClick={handleCardClick}

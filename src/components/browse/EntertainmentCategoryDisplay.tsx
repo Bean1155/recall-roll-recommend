@@ -36,7 +36,11 @@ const EntertainmentCategoryDisplay: React.FC<EntertainmentCategoryDisplayProps> 
               {cards.length > 0 ? (
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
                   {cards.slice(0, 12).map(card => (
-                    <Link to={`/edit/${card.id}`} key={card.id} className="block">
+                    <Link 
+                      to={`/blockbusters?highlight=${card.id}`} 
+                      key={card.id} 
+                      className="block"
+                    >
                       <div className="letterboxd-style-card">
                         <CatalogCardCompact card={card} compact={true} />
                       </div>

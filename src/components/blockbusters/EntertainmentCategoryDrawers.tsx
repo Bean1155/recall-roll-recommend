@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import CatalogCard from "@/components/CatalogCard";
+import CatalogCardCompact from "@/components/CatalogCardCompact";
 import Envelope from "@/components/Envelope";
 import { EntertainmentCard, CatalogCard as CatalogCardType } from "@/lib/types";
 import { CatalogCollapsible } from "@/components/ui/collapsible";
@@ -23,7 +24,7 @@ interface Category {
 }
 
 interface EntertainmentCategoryDrawersProps {
-  categories?: Category[];
+  categories?: Category[] | string[];
   cards?: CatalogCardType[];
   categoryColors?: Record<string, string>;
   onCardClick?: (card: EntertainmentCard) => void;
@@ -54,7 +55,7 @@ const EntertainmentCategoryDrawers = ({
     }
     
     const grouped = cards.reduce((acc: Record<string, CatalogCardType[]>, card) => {
-      // Normalize category to lowercase for consistent mapping and ensure it's never undefined
+      // Group by entertainmentType instead of entertainmentCategory
       const cardCategory = card.type === 'entertainment' && 'entertainmentType' in card 
         ? (card.entertainmentType && typeof card.entertainmentType === 'string' 
             ? card.entertainmentType.toLowerCase() 
@@ -98,36 +99,18 @@ const EntertainmentCategoryDrawers = ({
     }
     
     return (
-      <Carousel className="w-full">
-        <CarouselContent>
-          {catCards.map(card => (
-            <CarouselItem key={card.id} className="basis-full">
-              <div 
-                className="catalog-card cursor-pointer p-1"
-                onClick={() => onCardClick?.(card as EntertainmentCard)}
-                id={`card-${card.id}`}
-              >
-                <Envelope
-                  label={card.title}
-                  backgroundColor={color}
-                >
-                  <CatalogCard card={card} />
-                </Envelope>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <div className="flex justify-end gap-2 mt-4">
-          <CarouselPrevious 
-            className="relative static translate-y-0 h-8 w-8" 
-            style={{ backgroundColor: color, color: textColor }}
-          />
-          <CarouselNext 
-            className="relative static translate-y-0 h-8 w-8" 
-            style={{ backgroundColor: color, color: textColor }}
-          />
-        </div>
-      </Carousel>
+      <div className="grid grid-cols-3 gap-2">
+        {catCards.map(card => (
+          <div 
+            key={card.id}
+            className="cursor-pointer"
+            onClick={() => onCardClick?.(card as EntertainmentCard)}
+            id={`card-${card.id}`}
+          >
+            <CatalogCardCompact card={card} compact={true} />
+          </div>
+        ))}
+      </div>
     );
   };
 
