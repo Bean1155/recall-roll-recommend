@@ -115,7 +115,6 @@ const BrowsePage = () => {
     navigate('/search');
   };
   
-  // Add the missing handleTypeChange function
   const handleTypeChange = (newType: 'food' | 'entertainment') => {
     const newTypeValue = newType === 'food' ? 'food' : 'entertainment';
     setActiveType(newTypeValue);
@@ -192,6 +191,12 @@ const BrowsePage = () => {
   };
   
   const filteredCards = getFilteredCards();
+
+  const handleCardClick = (card: CatalogCard) => {
+    // Redirect to the appropriate page with the highlight parameter to open the card
+    const targetPath = card.type === 'food' ? '/bites' : '/blockbusters';
+    navigate(`${targetPath}?highlight=${card.id}`);
+  };
 
   return (
     <GridLayout title="Browse">
@@ -283,11 +288,15 @@ const BrowsePage = () => {
             
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
               {filteredCards.map(card => (
-                <Link to={`/edit/${card.id}`} key={card.id} className="block">
+                <div 
+                  key={card.id} 
+                  className="cursor-pointer"
+                  onClick={() => handleCardClick(card)}
+                >
                   <div className="letterboxd-style-card">
                     <CatalogCardCompact card={card} compact={true} />
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           </div>

@@ -27,11 +27,9 @@ const CatalogCardCompact = ({ card, onClick, compact = false }: CatalogCardCompa
     // Navigate to the appropriate page with highlight parameter
     console.log("CatalogCardCompact: Navigating to card page with highlight parameter");
     if (card.type === 'food') {
-      // Include fromSearch parameter to indicate this came from a search
-      navigate(`/bites?highlight=${card.id}&fromSearch=true`);
+      navigate(`/bites?highlight=${card.id}`);
     } else {
-      // Include fromSearch parameter to indicate this came from a search
-      navigate(`/blockbusters?highlight=${card.id}&fromSearch=true`);
+      navigate(`/blockbusters?highlight=${card.id}`);
     }
   };
 
