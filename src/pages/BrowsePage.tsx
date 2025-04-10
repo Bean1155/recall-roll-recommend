@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
@@ -193,8 +192,8 @@ const BrowsePage = () => {
   const filteredCards = getFilteredCards();
 
   const handleCardClick = (card: CatalogCard) => {
-    // Redirect to the appropriate page with the highlight parameter to open the card
     const targetPath = card.type === 'food' ? '/bites' : '/blockbusters';
+    console.log(`BrowsePage: handleCardClick - Redirecting to ${targetPath}?highlight=${card.id}`);
     navigate(`${targetPath}?highlight=${card.id}`);
   };
 
