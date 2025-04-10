@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
@@ -17,6 +16,7 @@ import { FoodCard, EntertainmentCard, CatalogCard } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Accordion, AccordionItem, AccordionContent, AccordionTrigger } from "@/components/ui/accordion";
 import CatalogCardCompact from "@/components/CatalogCardCompact";
+import TypeToggle from "@/components/browse/TypeToggle";
 
 interface BrowseOption {
   title: string;
@@ -125,18 +125,15 @@ const BrowsePage = () => {
   const handleCategoryClick = (option: BrowseOption) => {
     const categoryFromRoute = new URL(option.route, window.location.origin).searchParams.get('filter');
     
-    // Handle Top Rated directly - navigate to filtered results page
     if (categoryFromRoute === 'topRated') {
       navigate(`/${activeType === 'food' ? 'bites' : 'blockbusters'}?filter=topRated`);
       return;
     }
     
     if (selectedCategory === categoryFromRoute) {
-      // If clicking the same category again, close it
       setSelectedCategory(null);
       setSelectedSubcategory(null);
     } else {
-      // Otherwise, open the clicked category
       setSelectedCategory(categoryFromRoute);
       setSelectedSubcategory(null);
     }
@@ -145,7 +142,6 @@ const BrowsePage = () => {
   const handleSubcategoryClick = (subcategory: string) => {
     setSelectedSubcategory(subcategory);
     
-    // Directly navigate to filtered results page based on selected category and subcategory
     if (selectedCategory) {
       navigate(`/${activeType === 'food' ? 'bites' : 'blockbusters'}?filter=${selectedCategory}&value=${subcategory}`);
     }
@@ -154,7 +150,8 @@ const BrowsePage = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchTerm) {
-      navigate(`/search?term=${searchTerm}&type=${activeType}`);
+      const targetPath = activeType === 'entertainment' ? '/blockbusters' : '/bites';
+      navigate(`${targetPath}?search=${searchTerm}&fromSearch=true`);
     }
   };
   
@@ -214,13 +211,7 @@ const BrowsePage = () => {
         </div>
         
         <div className="px-4 mb-6 flex justify-center">
-          <Button
-            variant="outline"
-            className="bg-white text-gray-700 border-gray-300 hover:bg-gray-100 shadow-sm"
-            onClick={toggleType}
-          >
-            {activeType === 'food' ? 'Switch to Blockbusters' : 'Switch to Bites'}
-          </Button>
+          <TypeToggle currentType={activeType} onTypeChange={handleTypeChange} />
         </div>
         
         <div className="px-4 pb-8">
@@ -282,7 +273,6 @@ const BrowsePage = () => {
           </div>
         </div>
         
-        {/* This section won't be visible anymore since we're redirecting instead */}
         {selectedSubcategory && filteredCards.length > 0 && (
           <div className="px-4 pb-20">
             <h3 className="text-xl font-bold mb-4 text-gray-700">

@@ -121,6 +121,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
         setIsSearchOpen(false);
       }
       
+      // Correct destination based on type
       const path = type === 'food' ? '/bites' : '/blockbusters';
       const resultIds = filteredItems.map(card => card.id).join(',');
       
@@ -142,7 +143,8 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
       setIsSearchOpen(false);
     }
     
-    const path = type === 'food' ? '/bites' : '/blockbusters';
+    // Ensure we're using the right path based on the card type
+    const path = card.type === 'food' ? '/bites' : '/blockbusters';
     
     console.log(`CatalogSearch: Navigating to ${path} with highlight=${card.id}`);
     navigate(`${path}?highlight=${card.id}&fromSearch=true`);

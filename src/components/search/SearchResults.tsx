@@ -31,7 +31,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
       return;
     }
     
-    // Default navigation behavior
+    // Default navigation behavior based on card type
     if (card.type === 'food') {
       navigate(`/bites?highlight=${card.id}&fromSearch=true`);
     } else if (card.type === 'entertainment') {
