@@ -15,7 +15,7 @@ export const useCategoryColors = (cards: FoodCard[] = []) => {
     setCategoryColors(colors);
   }, [cards]);
   
-  // Vibrant food category colors
+  // Fun, vibrant food category colors
   const foodCategoryColorMap: Record<string, string> = {
     'Cuisine': '#FF6B6B', 
     'By Cuisine': '#FF6B6B',
@@ -31,7 +31,16 @@ export const useCategoryColors = (cards: FoodCard[] = []) => {
     'Café': '#5D8233',
     'Restaurant': '#FF6B6B',
     'Bar': '#3D5A80',
-    'Food Truck': '#FF9A3C'
+    'Food Truck': '#FF9A3C',
+    'Italian': '#FF6B6B',
+    'Chinese': '#4ECDC4',
+    'Japanese': '#7209B7',
+    'Mexican': '#F72585',
+    'Indian': '#3F37C9',
+    'Thai': '#4CC9F0',
+    'American': '#3D5A80',
+    'Mediterranean': '#5D8233',
+    'Korean': '#FF8C42'
   };
   
   // Entertainment category colors
