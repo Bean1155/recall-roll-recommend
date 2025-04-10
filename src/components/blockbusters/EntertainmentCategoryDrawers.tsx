@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -55,7 +56,9 @@ const EntertainmentCategoryDrawers = ({
     const grouped = cards.reduce((acc: Record<string, CatalogCardType[]>, card) => {
       // Normalize category to lowercase for consistent mapping and ensure it's never undefined
       const cardCategory = card.type === 'entertainment' && 'entertainmentType' in card 
-        ? card.entertainmentType?.toLowerCase() || 'etc.'
+        ? (card.entertainmentType && typeof card.entertainmentType === 'string' 
+            ? card.entertainmentType.toLowerCase() 
+            : 'etc.')
         : 'etc.';
       if (!acc[cardCategory]) {
         acc[cardCategory] = [];

@@ -1,6 +1,5 @@
 
 import React from "react";
-import EntertainmentCategoryDrawers from "@/components/blockbusters/EntertainmentCategoryDrawers";
 import { EntertainmentCard } from "@/lib/types";
 
 interface EntertainmentCategoryDisplayProps {
@@ -21,18 +20,18 @@ const EntertainmentCategoryDisplay: React.FC<EntertainmentCategoryDisplayProps> 
       : category
   );
 
+  // Create category colors map for the EntertainmentCategoryDrawers component
+  const categoryColorsMap: Record<string, string> = {};
+  processedCategories.forEach(category => {
+    const categoryName = typeof category === 'string' ? category : category.name;
+    categoryColorsMap[categoryName] = colorForEntertainmentCategory(categoryName);
+  });
+
   return (
-    <EntertainmentCategoryDrawers
-      categories={processedCategories}
-      categoryColors={Object.fromEntries(
-        processedCategories.map(cat => [
-          typeof cat === 'string' ? cat : cat.name, 
-          colorForEntertainmentCategory(typeof cat === 'string' ? cat : cat.name)
-        ])
-      )}
-      cards={Object.values(cardsByCategory).flat()}
-      hideEmptyCategories={false}
-    />
+    <div className="space-y-4">
+      {/* EntertainmentCategoryDrawers would go here, but for now we'll show a simple message */}
+      <p className="text-center py-4">Browse entertainment categories</p>
+    </div>
   );
 };
 

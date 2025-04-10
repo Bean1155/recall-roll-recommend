@@ -1,7 +1,6 @@
 
 import React from "react";
 import CategoryCardsDisplay from "@/components/bites/CategoryCardsDisplay";
-import { FoodCard } from "@/lib/types";
 
 interface FoodCategoryDisplayProps {
   foodCategories: string[] | { name: string; count: number; type?: string }[];

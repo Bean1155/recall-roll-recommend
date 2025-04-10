@@ -1,154 +1,130 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import CatalogSearch from "@/components/CatalogSearch";
 import GridLayout from "@/components/GridLayout";
-import { useBrowseState } from "@/hooks/useBrowseState";
-import { getAllCategories, getAllEntertainmentCategories } from "@/utils/categoryUtils";
-import { useCategoryColors } from "@/components/bites/useCategoryColors";
-import { groupCardsByCategory } from "@/utils/categoryHelpers";
-
-// Import refactored components
-import TypeToggle from "@/components/browse/TypeToggle";
-import BrowseTabs from "@/components/browse/BrowseTabs";
-import CategoryFilters from "@/components/browse/CategoryFilters";
-import FoodCategoryDisplay from "@/components/browse/FoodCategoryDisplay";
-import EntertainmentCategoryDisplay from "@/components/browse/EntertainmentCategoryDisplay";
+import { Search, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Utensils, Film } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+
+// List of browse options for the Letterboxd-style interface
+interface BrowseOption {
+  title: string;
+  route: string;
+  type: "food" | "entertainment" | "other";
+}
+
+const foodBrowseOptions: BrowseOption[] = [
+  { title: "By Cuisine", route: "/bites?filter=cuisine", type: "food" },
+  { title: "By Restaurant Type", route: "/bites?filter=category", type: "food" },
+  { title: "Top Rated", route: "/bites?filter=topRated", type: "food" },
+  { title: "Most Popular", route: "/bites?filter=popular", type: "food" },
+  { title: "Recently Added", route: "/bites?filter=recent", type: "food" },
+  { title: "Location", route: "/bites?filter=location", type: "food" }
+];
+
+const entertainmentBrowseOptions: BrowseOption[] = [
+  { title: "By Genre", route: "/blockbusters?filter=genre", type: "entertainment" },
+  { title: "By Medium", route: "/blockbusters?filter=medium", type: "entertainment" },
+  { title: "Top Rated", route: "/blockbusters?filter=topRated", type: "entertainment" },
+  { title: "Most Popular", route: "/blockbusters?filter=popular", type: "entertainment" },
+  { title: "Recently Added", route: "/blockbusters?filter=recent", type: "entertainment" },
+  { title: "Featured Lists", route: "/blockbusters?filter=lists", type: "entertainment" }
+];
+
+const appSpecificOptions: BrowseOption[] = [
+  { title: "Journal", route: "/journal", type: "other" },
+  { title: "Collections", route: "/collections", type: "other" },
+  { title: "Rewards", route: "/rewards", type: "other" }
+];
 
 const BrowsePage = () => {
   const navigate = useNavigate();
-  const {
-    typeFilter,
-    categoryFilter,
-    activeTab,
-    setActiveTab,
-    filteredCards,
-    handleCategoryFilterClick,
-    handleTypeChange,
-  } = useBrowseState();
   
-  const { colorForCategory, colorForEntertainmentCategory } = useCategoryColors();
-  
-  // Get food categories
-  const foodCategories = getAllCategories();
-  
-  // Get entertainment categories
-  const entertainmentCategories = getAllEntertainmentCategories();
-
-  // Group cards by category
-  const cardsByCategory = groupCardsByCategory(
-    filteredCards, 
-    typeFilter, 
-    foodCategories, 
-    entertainmentCategories
-  );
-  
-  // Navigate to dedicated pages
-  const navigateToBites = () => {
-    navigate('/bites');
-  };
-  
-  const navigateToBlockbusters = () => {
-    navigate('/blockbusters');
+  const navigateToSearch = () => {
+    navigate('/search');
   };
 
   return (
-    <GridLayout title="Browse Catalog">
-      <div className="flex flex-col space-y-4 max-w-5xl mx-auto w-full">
-        {/* Browse Options */}
-        <div className="flex flex-col items-center justify-center py-6 px-4 space-y-6">
-          <h2 className="text-2xl font-bold text-catalog-softBrown">Browse By Category</h2>
+    <GridLayout title="Browse">
+      <div className="flex flex-col max-w-3xl mx-auto w-full">
+        {/* Search Bar */}
+        <div className="px-4 py-8 flex justify-center">
+          <Button 
+            variant="outline" 
+            className="w-full max-w-md h-12 flex justify-start gap-2 text-gray-500 border-gray-300 bg-gray-100/70"
+            onClick={navigateToSearch}
+          >
+            <Search className="h-5 w-5" />
+            <span>Find items, tags, categories...</span>
+          </Button>
+        </div>
+        
+        {/* Browse By Section - Food/Bites */}
+        <div className="px-4 pb-8">
+          <h2 className="text-2xl font-bold mb-4">Browse Bites by</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
-            {/* Bites Browse Card */}
-            <div className="bg-catalog-cream rounded-lg p-6 shadow-md flex flex-col items-center space-y-4 hover:shadow-lg transition-shadow">
-              <div className="rounded-full bg-white p-4">
-                <Utensils className="h-10 w-10 text-catalog-softBrown" />
-              </div>
-              <h3 className="text-xl font-medium text-catalog-softBrown">Browse Bites</h3>
-              <p className="text-center text-gray-600">Explore your food favorites by cuisine, restaurant type, and more</p>
-              <Button 
-                size="lg" 
-                onClick={navigateToBites} 
-                className="bg-catalog-softBrown text-white hover:bg-catalog-softBrown/90 w-full"
-              >
-                <Utensils className="mr-2 h-5 w-5" />
-                Browse Bites
-              </Button>
-            </div>
-            
-            {/* Blockbusters Browse Card */}
-            <div className="bg-catalog-cream rounded-lg p-6 shadow-md flex flex-col items-center space-y-4 hover:shadow-lg transition-shadow">
-              <div className="rounded-full bg-white p-4">
-                <Film className="h-10 w-10 text-catalog-softBrown" />
-              </div>
-              <h3 className="text-xl font-medium text-catalog-softBrown">Browse Blockbusters</h3>
-              <p className="text-center text-gray-600">Discover movies, shows, books and other entertainment by category</p>
-              <Button 
-                size="lg" 
-                onClick={navigateToBlockbusters} 
-                className="bg-catalog-softBrown text-white hover:bg-catalog-softBrown/90 w-full"
-              >
-                <Film className="mr-2 h-5 w-5" />
-                Browse Blockbusters
-              </Button>
-            </div>
+          <div className="space-y-0">
+            {foodBrowseOptions.map((option, index) => (
+              <React.Fragment key={option.title}>
+                <Button
+                  variant="ghost"
+                  className="w-full flex justify-between items-center py-4 h-auto text-lg"
+                  onClick={() => navigate(option.route)}
+                >
+                  <span>{option.title}</span>
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+                {index < foodBrowseOptions.length - 1 && (
+                  <Separator className="my-1" />
+                )}
+              </React.Fragment>
+            ))}
           </div>
+        </div>
+        
+        {/* Browse By Section - Entertainment/Blockbusters */}
+        <div className="px-4 pb-8">
+          <h2 className="text-2xl font-bold mb-4">Browse Blockbusters by</h2>
           
-          {/* Type toggle - Alternative browsing method */}
-          <div className="pt-8 w-full">
-            <h3 className="text-lg text-center text-gray-500 mb-4">Or quickly switch between views:</h3>
-            <TypeToggle 
-              currentType={typeFilter} 
-              onTypeChange={handleTypeChange} 
-            />
-            
-            <BrowseTabs
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
-              typeFilter={typeFilter}
-              children={{
-                search: (
-                  <CatalogSearch
-                    items={filteredCards}
-                    onFilteredItemsChange={() => {}}
-                    type={typeFilter}
-                    onClose={() => {}}
-                  />
-                ),
-                byCategory: (
-                  <div className="space-y-8">
-                    <CategoryFilters
-                      categories={typeFilter === 'food' 
-                        ? foodCategories.map(cat => ({ name: cat, count: cardsByCategory[cat]?.length || 0, type: 'food' }))
-                        : entertainmentCategories.map(cat => ({ name: cat, count: cardsByCategory[cat]?.length || 0 }))
-                      }
-                      categoryFilter={categoryFilter}
-                      onCategoryFilterClick={handleCategoryFilterClick}
-                      getColorForCategory={typeFilter === 'food' ? colorForCategory : colorForEntertainmentCategory}
-                      filteredCards={filteredCards}
-                      type={typeFilter}
-                    />
-                    
-                    {typeFilter === 'food' ? (
-                      <FoodCategoryDisplay 
-                        foodCategories={foodCategories}
-                        cardsByCategory={cardsByCategory}
-                        colorForCategory={colorForCategory}
-                      />
-                    ) : (
-                      <EntertainmentCategoryDisplay
-                        entertainmentCategories={entertainmentCategories}
-                        cardsByCategory={cardsByCategory}
-                        colorForEntertainmentCategory={colorForEntertainmentCategory}
-                      />
-                    )}
-                  </div>
-                )
-              }}
-            />
+          <div className="space-y-0">
+            {entertainmentBrowseOptions.map((option, index) => (
+              <React.Fragment key={option.title}>
+                <Button
+                  variant="ghost"
+                  className="w-full flex justify-between items-center py-4 h-auto text-lg"
+                  onClick={() => navigate(option.route)}
+                >
+                  <span>{option.title}</span>
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+                {index < entertainmentBrowseOptions.length - 1 && (
+                  <Separator className="my-1" />
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+        
+        {/* App-specific Browse Options */}
+        <div className="px-4 pb-20">
+          <h2 className="text-2xl font-bold mb-4">Catalog Features</h2>
+          
+          <div className="space-y-0">
+            {appSpecificOptions.map((option, index) => (
+              <React.Fragment key={option.title}>
+                <Button
+                  variant="ghost"
+                  className="w-full flex justify-between items-center py-4 h-auto text-lg"
+                  onClick={() => navigate(option.route)}
+                >
+                  <span>{option.title}</span>
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+                {index < appSpecificOptions.length - 1 && (
+                  <Separator className="my-1" />
+                )}
+              </React.Fragment>
+            ))}
           </div>
         </div>
       </div>

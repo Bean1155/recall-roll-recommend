@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { FoodCard, CatalogCard } from "@/lib/types";
 
@@ -47,7 +48,7 @@ export const useFilteredCards = (props: UseFilteredCardsProps = {}) => {
     if (initialCards && initialCards.length > 0) {
       const locations = Array.from(new Set(
         initialCards
-          .filter(card => 'location' in card && card.location && card.location.trim() !== '')
+          .filter(card => 'location' in card && card.location && typeof card.location === 'string' && card.location.trim() !== '')
           .map(card => (card as any).location)
       )).sort();
       
@@ -233,19 +234,9 @@ export const useFilteredCards = (props: UseFilteredCardsProps = {}) => {
     showFilteredCards,
     proximitySearch,
     uniqueLocations,
-    handleFilterSelect: (filterType: string, value: string) => {
-      setSelectedFilter({ type: filterType, value });
-      setShowFilteredCards(true);
-    },
-    handleProximitySearch: (options: ProximitySearch) => {
-      setProximitySearch(options);
-      setShowFilteredCards(true);
-    },
-    closeFilteredCards: () => {
-      setShowFilteredCards(false);
-      setSelectedFilter(null);
-      setProximitySearch(null);
-    },
+    handleFilterSelect,
+    handleProximitySearch,
+    closeFilteredCards,
     setShowFilteredCards
   };
 };
