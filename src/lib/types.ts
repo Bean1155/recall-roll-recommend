@@ -53,6 +53,7 @@ export interface EntertainmentCard extends CatalogCard {
   genre: string;
   medium: string; // streaming platform
   entertainmentCategory: string; // movies, tv shows, etc.
+  entertainmentType: string; // This is the missing property needed for the BlockbustersPage
   status: EntertainmentStatus;
   url?: string;
   tags?: string[];
