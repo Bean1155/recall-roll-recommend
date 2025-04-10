@@ -8,16 +8,19 @@ interface DefaultStepProps {
 }
 
 const DefaultStep: React.FC<DefaultStepProps> = ({ image, title }) => {
-  // If this is the "HAPPY SHARER" slide, show the smile icon instead of image
+  // If this is the "HAPPY SHARER" slide, show the custom happy face image instead
   const isHappySharerSlide = title.includes("HAPPY SHARER");
   
   return (
     <div className="p-6 w-full flex justify-center bg-white">
       {isHappySharerSlide ? (
         <div className="flex items-center justify-center" style={{ width: "250px", height: "250px" }}>
-          <div className="rounded-full bg-[#FEF7CD] p-4 flex items-center justify-center" style={{ width: "180px", height: "180px" }}>
-            <Smile size={120} strokeWidth={3} className="text-black" />
-          </div>
+          <img 
+            src="/lovable-uploads/bc25fbcb-069d-4c14-989c-8b330ee064c2.png" 
+            alt="Happy Sharer" 
+            className="w-full h-full object-contain"
+            style={{ maxWidth: "220px" }}
+          />
         </div>
       ) : (
         <div 
