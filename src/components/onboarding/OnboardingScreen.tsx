@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -30,8 +31,8 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
   
   const onboardingSteps = [
     {
-      title: "Welcome to",
-      subtitle: "TOTAL RECALL CATALOG",
+      title: "WELCOME TO THE",
+      subtitle: "", // Removed "TOTAL RECALL CATALOG" from here
       description: "Your personal library for tracking and sharing your favorite bites and blockbusters.",
       image: "/lovable-uploads/8408dab2-58e0-488d-927d-f0930cf39585.png",
       backgroundColor: "#FFDEE2", // Light pink for Bites
