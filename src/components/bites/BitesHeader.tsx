@@ -26,7 +26,7 @@ const BitesHeader = ({
   const cardType = type || (isBlockbustersPage ? 'entertainment' : 'food');
   
   // Text to display based on card type
-  const addButtonText = cardType === 'entertainment' ? 'Add Blockbuster' : 'Add Bite';
+  const addButtonText = cardType === 'entertainment' ? 'Add' : 'Add';
   const browseButtonText = 'Browse';
 
   const handleBrowseClick = () => {
@@ -51,7 +51,7 @@ const BitesHeader = ({
         variant="outline" 
         size="sm" 
         onClick={handleBrowseClick} 
-        className={`flex items-center gap-1 ${isMobile ? 'flex-1 justify-center' : ''}`}
+        className="flex items-center gap-1 flex-1 justify-center"
       >
         <Search className="h-4 w-4" />
         <span>
@@ -62,13 +62,13 @@ const BitesHeader = ({
       <Button 
         variant="outline" 
         size="sm" 
-        className={`flex items-center gap-1 bg-teal-700 text-white hover:bg-teal-800 ${isMobile ? 'flex-1 justify-center' : ''}`}
+        className="flex items-center gap-1 bg-teal-700 text-white hover:bg-teal-800 flex-1 justify-center"
         asChild
       >
         <Link to={`/create/${cardType}`}>
           <PlusCircle className="h-4 w-4" />
-          <span className={isMobile ? 'inline' : 'inline'}>
-            {isMobile ? 'Add' : addButtonText}
+          <span>
+            {addButtonText}
           </span>
         </Link>
       </Button>

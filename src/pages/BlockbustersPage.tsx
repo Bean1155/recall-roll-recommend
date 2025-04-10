@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect, useRef } from "react";
-import { Film, Search, FilterX } from "lucide-react";
+import { Film } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
 import { EntertainmentCard } from "@/lib/types";
 import { getEntertainmentCards } from "@/lib/data";
@@ -12,8 +13,6 @@ import { getDefaultCategoryColors, getCategoryDisplayName, getAllEntertainmentCa
 import { toast } from "sonner";
 import { useUser } from "@/contexts/UserContext";
 import { addPointsForCardCreation, forceRewardsRefresh } from "@/utils/rewardUtils";
-import CatalogSearch from "@/components/CatalogSearch";
-import { Button } from "@/components/ui/button";
 
 const BlockbustersPage = () => {
   const location = useLocation();
@@ -164,49 +163,11 @@ const BlockbustersPage = () => {
       title="Blockbusters" 
       icon={<Film className="h-5 w-5" />}
       headerContent={
-        <>
-          <div className="flex items-center justify-center gap-2 w-full max-w-md mx-auto">
-            {hasActiveFilters && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={clearFilters}
-                className="flex items-center gap-1"
-              >
-                <FilterX className="h-4 w-4" />
-                <span className="hidden sm:inline">Clear Filters</span>
-              </Button>
-            )}
-            
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => navigate('/browse?type=entertainment')}
-              className="flex items-center gap-1 flex-1 justify-center"
-            >
-              <Search className="h-4 w-4" />
-              <span>Browse Categories</span>
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="flex items-center gap-1 bg-teal-700 text-white hover:bg-teal-800 flex-1 justify-center"
-              asChild
-              onClick={() => navigate('/create/entertainment')}
-            >
-              <span>Add Blockbuster</span>
-            </Button>
-          </div>
-          <div className="mt-4">
-            <CatalogSearch 
-              items={cards} 
-              onFilteredItemsChange={handleFilteredCardsChange}
-              type="entertainment"
-              compact={true}
-            />
-          </div>
-        </>
+        <BitesHeader 
+          onClearFilters={clearFilters}
+          hasActiveFilters={hasActiveFilters()}
+          type="entertainment"
+        />
       }
     >
       <div className="w-full flex justify-center">
