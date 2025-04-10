@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { FoodCard, CatalogCard } from '@/lib/types';
-import CatalogCard as CatalogCardComponent from '@/components/CatalogCard';
+import CatalogCardComponent from '@/components/CatalogCard';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { getCategoryDisplayName } from '@/utils/categoryUtils';
