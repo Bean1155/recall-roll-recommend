@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 
 interface LaunchScreenAnimationProps {
@@ -42,29 +41,21 @@ const LaunchScreenAnimation: React.FC<LaunchScreenAnimationProps> = ({
     >
       {/* Envelope container - Full width */}
       <div className="w-full">
-        {/* Envelope pocket - Now with rounded top corners only, larger padding and more emphasis */}
+        {/* Removing the amber background and "Catalog Companion" text, keeping only the logo */}
         <div 
-          className={`bg-amber-500 rounded-t-md p-3 sm:p-5 text-center border-3 border-amber-700 shadow-lg transition-all duration-500 ${stamped ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+          className={`rounded-t-md p-3 sm:p-5 text-center transition-all duration-500 ${stamped ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
           style={{
-            backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"100\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"none\" stroke=\"%23000000\" stroke-opacity=\"0.05\" stroke-width=\"0.5\" /><rect width=\"50\" height=\"50\" fill=\"none\" stroke=\"%23000000\" stroke-opacity=\"0.05\" stroke-width=\"0.3\" /><rect width=\"25\" height=\"25\" fill=\"none\" stroke=\"%23000000\" stroke-opacity=\"0.05\" stroke-width=\"0.2\" /></svg>')",
-            backgroundSize: "100px",
-            borderWidth: "3px",
             marginTop: "0", /* Reset margin to make envelope visible */
             position: "relative",
             zIndex: "10" /* Make envelope appear above the catalog card */
           }}
         >
-          <div className="font-bold text-amber-900 uppercase tracking-wider text-sm sm:text-base font-typewriter">
-            CATALOG COMPANION
-          </div>
-          
-          {/* Added Total Recall logo beneath the envelope text for consistency */}
-          <div className="mt-2 opacity-75">
+          {/* Kept only the Total Recall logo */}
+          <div>
             <img 
               src="/lovable-uploads/34a59979-7077-413b-a547-452796892364.png" 
               alt="Total Recall Catalog" 
               className="w-24 h-24 object-contain mx-auto"
-              style={{ filter: "brightness(0.8)" }}
             />
           </div>
         </div>
