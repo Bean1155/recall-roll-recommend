@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
@@ -123,6 +124,13 @@ const BrowsePage = () => {
 
   const handleCategoryClick = (option: BrowseOption) => {
     const categoryFromRoute = new URL(option.route, window.location.origin).searchParams.get('filter');
+    
+    // Handle Top Rated directly - navigate to filtered results page
+    if (categoryFromRoute === 'topRated') {
+      navigate(`/${activeType === 'food' ? 'bites' : 'blockbusters'}?filter=topRated`);
+      return;
+    }
+    
     if (selectedCategory === categoryFromRoute) {
       // If clicking the same category again, close it
       setSelectedCategory(null);
@@ -136,6 +144,11 @@ const BrowsePage = () => {
   
   const handleSubcategoryClick = (subcategory: string) => {
     setSelectedSubcategory(subcategory);
+    
+    // Directly navigate to filtered results page based on selected category and subcategory
+    if (selectedCategory) {
+      navigate(`/${activeType === 'food' ? 'bites' : 'blockbusters'}?filter=${selectedCategory}&value=${subcategory}`);
+    }
   };
   
   const handleSearch = (e: React.FormEvent) => {
@@ -158,6 +171,8 @@ const BrowsePage = () => {
           return foodCards.filter(card => card.location?.toLowerCase() === selectedSubcategory.toLowerCase());
         case 'status':
           return foodCards.filter(card => card.status?.toLowerCase() === selectedSubcategory.toLowerCase());
+        case 'topRated':
+          return foodCards.filter(card => card.rating && (card.rating >= 4));
         default:
           return [];
       }
@@ -169,6 +184,8 @@ const BrowsePage = () => {
           return entertainmentCards.filter(card => card.entertainmentCategory?.toLowerCase() === selectedSubcategory.toLowerCase());
         case 'status':
           return entertainmentCards.filter(card => card.status?.toLowerCase() === selectedSubcategory.toLowerCase());
+        case 'topRated':
+          return entertainmentCards.filter(card => card.rating && (card.rating >= 4));
         default:
           return [];
       }
@@ -265,6 +282,7 @@ const BrowsePage = () => {
           </div>
         </div>
         
+        {/* This section won't be visible anymore since we're redirecting instead */}
         {selectedSubcategory && filteredCards.length > 0 && (
           <div className="px-4 pb-20">
             <h3 className="text-xl font-bold mb-4 text-gray-700">

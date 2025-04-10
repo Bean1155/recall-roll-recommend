@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Film } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
@@ -18,6 +17,8 @@ const BlockbustersPage = () => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const categoryParam = searchParams.get('category');
+  const filterParam = searchParams.get('filter');
+  const filterValueParam = searchParams.get('value');
   
   const [cards, setCards] = useState<EntertainmentCard[]>([]);
   const [filteredCards, setFilteredCards] = useState<EntertainmentCard[]>([]);
@@ -50,8 +51,42 @@ const BlockbustersPage = () => {
       try {
         const entertainmentCards = getEntertainmentCards();
         setCards(entertainmentCards);
-        setFilteredCards(entertainmentCards);
-        console.log(`BlockbustersPage: Loaded ${entertainmentCards.length} cards`);
+        
+        // Handle filter parameters - particularly for Top Rated
+        if (filterParam === 'topRated') {
+          const topRatedCards = entertainmentCards.filter(card => card.rating && card.rating >= 4);
+          setFilteredCards(topRatedCards);
+          console.log(`BlockbustersPage: Filtered to ${topRatedCards.length} top rated cards`);
+        } 
+        // Handle category + value filter
+        else if (filterParam && filterValueParam) {
+          let filteredResults = [...entertainmentCards];
+          
+          switch (filterParam) {
+            case 'genre':
+              filteredResults = filteredResults.filter(card => 
+                card.genre?.toLowerCase() === filterValueParam.toLowerCase()
+              );
+              break;
+            case 'medium':
+              filteredResults = filteredResults.filter(card => 
+                card.entertainmentCategory?.toLowerCase() === filterValueParam.toLowerCase()
+              );
+              break;
+            case 'status':
+              filteredResults = filteredResults.filter(card => 
+                card.status?.toLowerCase() === filterValueParam.toLowerCase()
+              );
+              break;
+          }
+          
+          setFilteredCards(filteredResults);
+          console.log(`BlockbustersPage: Filtered to ${filteredResults.length} cards with ${filterParam}=${filterValueParam}`);
+        }
+        else {
+          setFilteredCards(entertainmentCards);
+          console.log(`BlockbustersPage: Loaded ${entertainmentCards.length} cards`);
+        }
         
         if (categoryParam) {
           console.log(`BlockbustersPage: Category param found in URL: ${categoryParam}`);
@@ -92,7 +127,7 @@ const BlockbustersPage = () => {
     
     renderCountRef.current += 1;
     console.log(`BlockbustersPage: Render count: ${renderCountRef.current}`);
-  }, [isInitialized, refreshTrigger, currentUser, categoryParam, openCategory]);
+  }, [isInitialized, refreshTrigger, currentUser, categoryParam, openCategory, filterParam, filterValueParam]);
   
   useEffect(() => {
     const fetchCards = () => {
@@ -137,10 +172,13 @@ const BlockbustersPage = () => {
       tags: []
     });
     setFilteredCards(cards);
+    
+    navigate('/blockbusters');
   };
   
   const hasActiveFilters = () => {
-    return filters.status.length > 0 || filters.rating.length > 0 || filters.tags.length > 0 || filteredCards.length !== cards.length;
+    return filters.status.length > 0 || filters.rating.length > 0 || filters.tags.length > 0 || 
+           filteredCards.length !== cards.length || filterParam !== null;
   };
 
   const categoryColors = getDefaultCategoryColors();
