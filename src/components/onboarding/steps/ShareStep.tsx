@@ -20,6 +20,12 @@ const ShareStep: React.FC<ShareStepProps> = ({ logoVisible }) => {
           className="w-64 h-64 object-contain"
         />
       </div>
+      
+      <div className="mt-4">
+        <p className="text-lg font-typewriter text-center text-gray-700">
+          Share your discoveries and recommendations with friends and family!
+        </p>
+      </div>
     </div>
   );
 };

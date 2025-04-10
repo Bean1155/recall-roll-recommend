@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import CatalogCard from "@/components/CatalogCard";
@@ -42,12 +41,10 @@ const RecommendPage = () => {
       if (foundCard) {
         setCard(foundCard);
         
-        // If user is part of recommendedTo, auto-select them for feedback
         if (foundCard.recommendedTo?.includes(currentUser.id)) {
           setSelectedUserId(currentUser.id);
           setSharingMode('internal');
           
-          // Pre-fill with existing data if available
           const userNote = foundCard.userNotes?.find(note => note.userId === currentUser.id);
           if (userNote) {
             setUserNotes(userNote.notes || "");
@@ -89,7 +86,6 @@ const RecommendPage = () => {
       return;
     }
     
-    // Convert tags from comma-separated string to array
     const tagsArray = userTags
       ? userTags.split(",").map(tag => tag.trim()).filter(tag => tag.length > 0)
       : undefined;
@@ -115,7 +111,6 @@ const RecommendPage = () => {
           : "Your feedback has been added",
       });
       
-      // Refresh the card data
       const updatedCard = getCardById(card.id);
       if (updatedCard) {
         setCard(updatedCard);
@@ -187,6 +182,12 @@ const RecommendPage = () => {
                 </Badge>
               </div>
             )}
+            
+            <div className="mt-8 pb-4">
+              <p className="text-lg font-typewriter text-center text-gray-700">
+                Recommend Bites &amp; Blockbusters to friends and track who follows your suggestions.
+              </p>
+            </div>
           </TabsContent>
           
           <TabsContent value="feedback" className="space-y-4">
@@ -327,6 +328,12 @@ const RecommendPage = () => {
                 </Button>
               </div>
             )}
+            
+            <div className="mt-8 pb-4">
+              <p className="text-lg font-typewriter text-center text-gray-700">
+                Collect points for adding and sharing! I told two friends, they told two friends and so on...
+              </p>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
