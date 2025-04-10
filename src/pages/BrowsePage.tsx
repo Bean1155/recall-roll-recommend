@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { CatalogCard } from "@/lib/types";
@@ -67,27 +66,10 @@ const BrowsePage = () => {
   }, [typeFilter, locationFilter, ratingFilter, categoryFilter, activeTab, setSearchParams]);
   
   // Get food categories with count
-  const foodCategories = getAllCategories(filteredCards)
-    .filter(cat => cat.type === 'food')
-    .map(cat => ({
-      ...cat,
-      count: filteredCards.filter(card => 
-        card.type === 'food' && 
-        card.category === cat.name
-      ).length
-    }));
+  const foodCategories = getAllCategories(filteredCards);
   
   // Get entertainment categories with count
   const entertainmentCategories = getAllEntertainmentCategories(filteredCards);
-  
-  // Calculate counts for entertainment categories
-  const entertainmentCategoriesWithCount = entertainmentCategories.map(cat => ({
-    ...cat,
-    count: filteredCards.filter(card => 
-      card.type === 'entertainment' && 
-      (card as any).entertainmentType === cat.name
-    ).length
-  }));
 
   // Handle category filter click
   const handleCategoryFilterClick = (categoryName: string) => {
@@ -130,11 +112,6 @@ const BrowsePage = () => {
       );
     });
   }
-  
-  // Get count of visible categories (with at least one card)
-  const visibleCategoryCount = Object.keys(cardsByCategory).filter(
-    key => cardsByCategory[key].length > 0
-  ).length;
   
   // Handle type change
   const handleTypeChange = (newType: 'food' | 'entertainment') => {
@@ -196,7 +173,7 @@ const BrowsePage = () => {
           <TabsContent value="search" className="space-y-4">
             <CatalogSearch
               items={filteredCards}
-              onFilteredItemsChange={(cards) => {}}
+              onFilteredItemsChange={() => {}}
               type={typeFilter}
               onClose={() => {}}
             />
@@ -208,7 +185,7 @@ const BrowsePage = () => {
               <div className="space-y-8">
                 <div className="flex flex-wrap gap-2 justify-center">
                   {foodCategories
-                    .filter(category => category.count > 0)
+                    .filter(category => category.type === 'food')
                     .map(category => (
                     <Badge
                       key={category.name}
@@ -223,18 +200,23 @@ const BrowsePage = () => {
                           : colorForCategory(category.name),
                         color: categoryFilter === category.name 
                           ? undefined 
-                          : colorForCategory(category.name)
+                          : '#ffffff'
                       }}
                       onClick={() => handleCategoryFilterClick(category.name)}
                     >
                       {categoryTypeIcons[category.name] || <Utensils className="h-4 w-4" />}
-                      {category.name} ({category.count})
+                      {category.name} ({
+                        filteredCards.filter(card => 
+                          card.type === 'food' && 
+                          card.category === category.name
+                        ).length
+                      })
                     </Badge>
                   ))}
                 </div>
                 
                 <CategoryCardsDisplay
-                  category={foodCategories}
+                  category={foodCategories.filter(category => category.type === 'food')}
                   cards={cardsByCategory}
                   colorForCategory={colorForCategory}
                   showEmptyCategories={false}
@@ -243,8 +225,7 @@ const BrowsePage = () => {
             ) : (
               <div className="space-y-8">
                 <div className="flex flex-wrap gap-2 justify-center">
-                  {entertainmentCategoriesWithCount
-                    .filter(category => category.count > 0) 
+                  {entertainmentCategories
                     .map(category => (
                     <Badge
                       key={category.name}
@@ -259,19 +240,24 @@ const BrowsePage = () => {
                           : colorForEntertainmentCategory(category.name),
                         color: categoryFilter === category.name 
                           ? undefined 
-                          : colorForEntertainmentCategory(category.name)
+                          : '#ffffff'
                       }}
                       onClick={() => handleEntertainmentCategoryFilterClick(category.name)}
                     >
                       {categoryTypeIcons[category.name] || <Film className="h-4 w-4" />}
-                      {category.name} ({category.count})
+                      {category.name} ({
+                        filteredCards.filter(card => 
+                          card.type === 'entertainment' && 
+                          (card as any).entertainmentType === category.name
+                        ).length
+                      })
                     </Badge>
                   ))}
                 </div>
                 
                 <EntertainmentCategoryDrawers
-                  entertainmentCategories={entertainmentCategoriesWithCount}
-                  cardsByCategory={cardsByCategory}
+                  categories={entertainmentCategories}
+                  cards={cardsByCategory}
                   colorForCategory={colorForEntertainmentCategory}
                   showEmptyCategories={false}
                 />
