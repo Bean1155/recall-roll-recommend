@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FoodCard, EntertainmentCard, FoodStatus, EntertainmentStatus, ServiceRating, CardType } from "@/lib/types";
@@ -12,7 +11,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { CalendarIcon, Star, PlusCircle } from "lucide-react";
+import { CalendarIcon, Star, PlusCircle, Film } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import AddCategoryDialog from "@/components/bites/AddCategoryDialog";
 import { getAllEntertainmentCategories, getAllCategories } from "@/utils/categoryUtils";
@@ -66,11 +65,10 @@ const CardForm = ({
             setStatus(foodCard.status || "");
           } else if (card.type === 'entertainment') {
             const entertainmentCard = card as EntertainmentCard;
-            setCategory(entertainmentCard.entertainmentCategory || "");
+            setCategory(entertainmentCard.entertainmentType || "");
             setGenre(entertainmentCard.genre || "");
             setMedium(entertainmentCard.medium || "");
             setStatus(entertainmentCard.status || "");
-            setEntertainmentType(entertainmentCard.entertainmentType || "");
           }
         } else {
           toast({
@@ -98,7 +96,6 @@ const CardForm = ({
   
   const [genre, setGenre] = useState("");
   const [medium, setMedium] = useState("");
-  const [entertainmentType, setEntertainmentType] = useState("");
   
   const [tags, setTags] = useState("");
   const [rating, setRating] = useState("");
@@ -110,7 +107,7 @@ const CardForm = ({
   
   const [entertainmentCategories, setEntertainmentCategories] = useState<string[]>([]);
   const [foodCategories, setFoodCategories] = useState<string[]>([]);
-  const [entertainmentTypes, setEntertainmentTypes] = useState<string[]>([
+  const [entertainmentTypes] = useState<string[]>([
     "movies", "tv shows", "books", "games", "music", "podcasts", "other"
   ]);
   
@@ -171,7 +168,7 @@ const CardForm = ({
       title,
       creator,
       entertainmentCategory: category,
-      entertainmentType: entertainmentType || category, // Use the category value as default if not set
+      entertainmentType: category, // Use the category value as the entertainment type
       genre,
       medium,
       tags: tags.split(",").map((tag) => tag.trim()).filter(tag => tag !== ""),
@@ -473,28 +470,6 @@ const CardForm = ({
           <Label htmlFor="category" className="text-gray-700 font-medium">Category*</Label>
           <Select value={category} onValueChange={handleCategoryChange} required>
             <SelectTrigger className="w-full mt-1">
-              <SelectValue placeholder="Select a category" />
-            </SelectTrigger>
-            <SelectContent>
-              {entertainmentCategories.map((cat) => (
-                <SelectItem key={cat} value={cat}>
-                  {cat.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                </SelectItem>
-              ))}
-              <SelectItem value="add_new" className="text-teal-700 font-medium">
-                <div className="flex items-center">
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Add New Category
-                </div>
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label htmlFor="entertainmentType" className="text-gray-700 font-medium">Type*</Label>
-          <Select value={entertainmentType} onValueChange={setEntertainmentType} required>
-            <SelectTrigger className="w-full mt-1">
               <SelectValue placeholder="Select entertainment type" />
             </SelectTrigger>
             <SelectContent>
@@ -503,6 +478,12 @@ const CardForm = ({
                   {type.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                 </SelectItem>
               ))}
+              <SelectItem value="add_new" className="text-teal-700 font-medium">
+                <div className="flex items-center">
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Add New Category
+                </div>
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
