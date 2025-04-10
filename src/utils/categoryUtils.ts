@@ -1,4 +1,3 @@
-
 import { FoodCategory } from "@/lib/types";
 
 export const defaultCategories: FoodCategory[] = [
@@ -11,7 +10,12 @@ export const defaultEntertainmentCategories: string[] = [
   "movies", "podcasts", "tv shows"
 ];
 
-export const getCategoryDisplayName = (category: string): string => {
+export const getCategoryDisplayName = (category: string | undefined): string => {
+  // Check if category is undefined or not a string
+  if (!category) {
+    return "Other";
+  }
+
   const customDisplayNames: Record<string, string> = {
     "cafe": "Cafés",
     "diner": "Diners",

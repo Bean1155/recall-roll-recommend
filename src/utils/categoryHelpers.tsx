@@ -7,14 +7,16 @@ export const groupCardsByCategory = (filteredCards: CatalogCard[], typeFilter: '
   
   if (typeFilter === 'food') {
     foodCategories.forEach(category => {
-      cardsByCategory[category.name] = filteredCards.filter(
-        card => card.type === 'food' && card.category === category.name
+      const categoryName = typeof category === 'string' ? category : category.name;
+      cardsByCategory[categoryName] = filteredCards.filter(
+        card => card.type === 'food' && (card as any).category === categoryName
       );
     });
   } else {
     entertainmentCategories.forEach(category => {
-      cardsByCategory[category.name] = filteredCards.filter(
-        card => card.type === 'entertainment' && (card as any).entertainmentType === category.name
+      const categoryName = typeof category === 'string' ? category : category.name;
+      cardsByCategory[categoryName] = filteredCards.filter(
+        card => card.type === 'entertainment' && (card as any).entertainmentType === categoryName
       );
     });
   }

@@ -3,7 +3,7 @@ import React from "react";
 import CategoryCardsDisplay from "@/components/bites/CategoryCardsDisplay";
 
 interface FoodCategoryDisplayProps {
-  foodCategories: { name: string; count: number; type?: string }[];
+  foodCategories: string[] | { name: string; count: number; type?: string }[];
   cardsByCategory: Record<string, any[]>;
   colorForCategory: (categoryName: string) => string;
 }
@@ -13,9 +13,16 @@ const FoodCategoryDisplay: React.FC<FoodCategoryDisplayProps> = ({
   cardsByCategory,
   colorForCategory
 }) => {
+  // Convert simple string array to object array if needed
+  const processedCategories = foodCategories.map(category => 
+    typeof category === 'string' 
+      ? { name: category, count: cardsByCategory[category]?.length || 0, type: 'food' }
+      : category
+  );
+
   return (
     <CategoryCardsDisplay
-      category={foodCategories.filter(category => category.type === 'food')}
+      category={processedCategories}
       cards={cardsByCategory}
       colorForCategory={colorForCategory}
       showEmptyCategories={false}

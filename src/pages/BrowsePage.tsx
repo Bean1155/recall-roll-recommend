@@ -28,11 +28,11 @@ const BrowsePage = () => {
   
   const { colorForCategory, colorForEntertainmentCategory } = useCategoryColors();
   
-  // Get food categories with count
-  const foodCategories = getAllCategories(filteredCards);
+  // Get food categories
+  const foodCategories = getAllCategories();
   
-  // Get entertainment categories with count
-  const entertainmentCategories = getAllEntertainmentCategories(filteredCards);
+  // Get entertainment categories
+  const entertainmentCategories = getAllEntertainmentCategories();
 
   // Group cards by category
   const cardsByCategory = groupCardsByCategory(
@@ -67,7 +67,10 @@ const BrowsePage = () => {
             byCategory: (
               <div className="space-y-8">
                 <CategoryFilters
-                  categories={typeFilter === 'food' ? foodCategories : entertainmentCategories}
+                  categories={typeFilter === 'food' 
+                    ? foodCategories.map(cat => ({ name: cat, count: cardsByCategory[cat]?.length || 0, type: 'food' }))
+                    : entertainmentCategories.map(cat => ({ name: cat, count: cardsByCategory[cat]?.length || 0 }))
+                  }
                   categoryFilter={categoryFilter}
                   onCategoryFilterClick={handleCategoryFilterClick}
                   getColorForCategory={typeFilter === 'food' ? colorForCategory : colorForEntertainmentCategory}
