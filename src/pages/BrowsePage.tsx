@@ -1,15 +1,15 @@
 
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { CatalogCard, CategoryWithCount, EntertainmentCategory } from "@/lib/types";
+import { CatalogCard } from "@/lib/types";
 import CatalogSearch from "@/components/CatalogSearch";
 import CategoryCardsDisplay from "@/components/bites/CategoryCardsDisplay";
 import { Badge } from "@/components/ui/badge";
 import GridLayout from "@/components/GridLayout";
 import { useFilteredCards } from "@/hooks/useFilteredCards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getCategories, getEntertainmentCategories } from "@/utils/categoryUtils";
-import { Utensils, Film, Music, VideoGame, Map, Book, Tv, ListFilter } from "lucide-react";
+import { getAllCategories, getAllEntertainmentCategories } from "@/utils/categoryUtils";
+import { Utensils, Film, Music, Gamepad, Map, Book, Tv, ListFilter } from "lucide-react";
 import { useCategoryColors } from "@/components/bites/useCategoryColors";
 import EntertainmentCategoryDrawers from "@/components/blockbusters/EntertainmentCategoryDrawers";
 import { Button } from "@/components/ui/button";
@@ -26,7 +26,7 @@ const categoryTypeIcons: Record<string, React.ReactNode> = {
   "Movie": <Film className="h-4 w-4" />,
   "TV Show": <Tv className="h-4 w-4" />,
   "Book": <Book className="h-4 w-4" />,
-  "Video Game": <VideoGame className="h-4 w-4" />,
+  "Video Game": <Gamepad className="h-4 w-4" />,
   "Music": <Music className="h-4 w-4" />,
   "Travel": <Map className="h-4 w-4" />,
 };
@@ -67,7 +67,7 @@ const BrowsePage = () => {
   }, [typeFilter, locationFilter, ratingFilter, categoryFilter, activeTab, setSearchParams]);
   
   // Get food categories with count
-  const foodCategories: CategoryWithCount[] = getCategories(filteredCards)
+  const foodCategories = getAllCategories(filteredCards)
     .filter(cat => cat.type === 'food')
     .map(cat => ({
       ...cat,
@@ -78,14 +78,14 @@ const BrowsePage = () => {
     }));
   
   // Get entertainment categories with count
-  const entertainmentCategories: EntertainmentCategory[] = getEntertainmentCategories(filteredCards);
+  const entertainmentCategories = getAllEntertainmentCategories(filteredCards);
   
   // Calculate counts for entertainment categories
   const entertainmentCategoriesWithCount = entertainmentCategories.map(cat => ({
     ...cat,
     count: filteredCards.filter(card => 
       card.type === 'entertainment' && 
-      card.entertainmentType === cat.name
+      (card as any).entertainmentType === cat.name
     ).length
   }));
 
@@ -126,7 +126,7 @@ const BrowsePage = () => {
   } else {
     entertainmentCategories.forEach(category => {
       cardsByCategory[category.name] = filteredCards.filter(
-        card => card.type === 'entertainment' && card.entertainmentType === category.name
+        card => card.type === 'entertainment' && (card as any).entertainmentType === category.name
       );
     });
   }
@@ -195,16 +195,10 @@ const BrowsePage = () => {
 
           <TabsContent value="search" className="space-y-4">
             <CatalogSearch
+              items={filteredCards}
+              onFilteredItemsChange={(cards) => {}}
               type={typeFilter}
-              cards={filteredCards}
-              onLocationFilter={setLocationFilter}
-              onRatingFilter={setRatingFilter}
-              onCategoryFilter={setCategoryFilter}
-              selectedCategory={categoryFilter}
-              clearFilters={clearFilters}
-              hasActiveFilters={!!(locationFilter || ratingFilter || categoryFilter)}
-              selectedLocation={locationFilter}
-              selectedRating={ratingFilter}
+              onClose={() => {}}
             />
           </TabsContent>
 
@@ -226,10 +220,10 @@ const BrowsePage = () => {
                       style={{
                         backgroundColor: categoryFilter === category.name 
                           ? undefined
-                          : colorForCategory(category.name, 0.15),
+                          : colorForCategory(category.name),
                         color: categoryFilter === category.name 
                           ? undefined 
-                          : colorForCategory(category.name, 1)
+                          : colorForCategory(category.name)
                       }}
                       onClick={() => handleCategoryFilterClick(category.name)}
                     >
@@ -240,8 +234,8 @@ const BrowsePage = () => {
                 </div>
                 
                 <CategoryCardsDisplay
-                  categories={foodCategories}
-                  cardsByCategory={cardsByCategory}
+                  category={foodCategories}
+                  cards={cardsByCategory}
                   colorForCategory={colorForCategory}
                   showEmptyCategories={false}
                 />
@@ -262,10 +256,10 @@ const BrowsePage = () => {
                       style={{
                         backgroundColor: categoryFilter === category.name 
                           ? undefined
-                          : colorForEntertainmentCategory(category.name, 0.15),
+                          : colorForEntertainmentCategory(category.name),
                         color: categoryFilter === category.name 
                           ? undefined 
-                          : colorForEntertainmentCategory(category.name, 1)
+                          : colorForEntertainmentCategory(category.name)
                       }}
                       onClick={() => handleEntertainmentCategoryFilterClick(category.name)}
                     >
@@ -276,7 +270,7 @@ const BrowsePage = () => {
                 </div>
                 
                 <EntertainmentCategoryDrawers
-                  categories={entertainmentCategoriesWithCount}
+                  entertainmentCategories={entertainmentCategoriesWithCount}
                   cardsByCategory={cardsByCategory}
                   colorForCategory={colorForEntertainmentCategory}
                   showEmptyCategories={false}
