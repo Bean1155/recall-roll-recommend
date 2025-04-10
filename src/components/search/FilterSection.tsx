@@ -11,6 +11,7 @@ interface FilterSectionProps {
   activeFilter: string;
   handleTabChange: (value: string) => void;
   filterDescriptions: Record<string, string>;
+  type?: 'food' | 'entertainment';
 }
 
 const FilterSection: React.FC<FilterSectionProps> = ({
@@ -18,7 +19,8 @@ const FilterSection: React.FC<FilterSectionProps> = ({
   setIsFiltersOpen,
   activeFilter,
   handleTabChange,
-  filterDescriptions
+  filterDescriptions,
+  type = 'food'
 }) => {
   return (
     <div className="mb-4 mt-4 border-t border-[#8B7D6B]/20 pt-4">
@@ -49,6 +51,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
             activeFilter={activeFilter}
             handleTabChange={handleTabChange}
             filterDescriptions={filterDescriptions}
+            type={type}
           />
         </CollapsibleContent>
       </Collapsible>

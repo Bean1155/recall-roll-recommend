@@ -1,21 +1,27 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { Film } from "lucide-react";
 import GridLayout from "@/components/GridLayout";
 import { EntertainmentCard } from "@/lib/types";
 import { getEntertainmentCards } from "@/lib/data";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import EntertainmentCategoryDrawers from "@/components/blockbusters/EntertainmentCategoryDrawers";
 import { useEntertainmentCardDetailHandling } from "@/components/blockbusters/useEntertainmentCardDetailHandling";
 import EntertainmentDetailDialog from "@/components/blockbusters/EntertainmentDetailDialog";
 import BitesHeader from "@/components/bites/BitesHeader";
-import { getDefaultCategoryColors, getCategoryDisplayName } from "@/utils/categoryUtils";
+import { getDefaultCategoryColors, getCategoryDisplayName, getAllEntertainmentCategories } from "@/utils/categoryUtils";
 import { toast } from "sonner";
 import { useUser } from "@/contexts/UserContext";
 import { addPointsForCardCreation, forceRewardsRefresh } from "@/utils/rewardUtils";
+import CatalogSearch from "@/components/CatalogSearch";
 
 const BlockbustersPage = () => {
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const categoryParam = searchParams.get('category');
+  
   const [cards, setCards] = useState<EntertainmentCard[]>([]);
+  const [filteredCards, setFilteredCards] = useState<EntertainmentCard[]>([]);
   const [filters, setFilters] = useState({
     status: [] as string[],
     rating: [] as number[],
@@ -35,7 +41,7 @@ const BlockbustersPage = () => {
   } = useEntertainmentCardDetailHandling(cards);
   
   // Track which category is currently open
-  const [openCategory, setOpenCategory] = useState<string | null>(null);
+  const [openCategory, setOpenCategory] = useState<string | null>(categoryParam);
   const [isInitialized, setIsInitialized] = useState(false);
   
   // Force component re-render
@@ -47,10 +53,16 @@ const BlockbustersPage = () => {
       try {
         const entertainmentCards = getEntertainmentCards();
         setCards(entertainmentCards);
+        setFilteredCards(entertainmentCards);
         console.log(`BlockbustersPage: Loaded ${entertainmentCards.length} cards`);
         
-        // Only set first category as open if we haven't initialized yet
-        if (!isInitialized && entertainmentCards.length > 0) {
+        // Handle URL category parameter
+        if (categoryParam) {
+          console.log(`BlockbustersPage: Category param found in URL: ${categoryParam}`);
+          setOpenCategory(categoryParam.toLowerCase());
+        }
+        // Only set first category as open if we haven't initialized yet and no category param
+        else if (!isInitialized && entertainmentCards.length > 0 && !openCategory) {
           const categories = [...new Set(entertainmentCards.map(card => 
             card.entertainmentCategory?.toLowerCase() || 'etc.'
           ))];
@@ -89,13 +101,14 @@ const BlockbustersPage = () => {
     // Increment render count to track component lifecycle
     renderCountRef.current += 1;
     console.log(`BlockbustersPage: Render count: ${renderCountRef.current}`);
-  }, [isInitialized, refreshTrigger, currentUser]);
+  }, [isInitialized, refreshTrigger, currentUser, categoryParam, openCategory]);
   
   // Listen for changes from other components
   useEffect(() => {
     const fetchCards = () => {
       const entertainmentCards = getEntertainmentCards();
       setCards(entertainmentCards);
+      setFilteredCards(entertainmentCards);
     };
     
     const handleCardAdded = (event: Event) => {
@@ -126,16 +139,21 @@ const BlockbustersPage = () => {
     };
   }, [currentUser]);
   
+  const handleFilteredCardsChange = (filtered: EntertainmentCard[]) => {
+    setFilteredCards(filtered as EntertainmentCard[]);
+  };
+  
   const clearFilters = () => {
     setFilters({
       status: [],
       rating: [],
       tags: []
     });
+    setFilteredCards(cards);
   };
   
   const hasActiveFilters = () => {
-    return filters.status.length > 0 || filters.rating.length > 0 || filters.tags.length > 0;
+    return filters.status.length > 0 || filters.rating.length > 0 || filters.tags.length > 0 || filteredCards.length !== cards.length;
   };
 
   // Get category colors from utility function
@@ -163,17 +181,27 @@ const BlockbustersPage = () => {
       title="Blockbusters" 
       icon={<Film className="h-5 w-5" />}
       headerContent={
-        <BitesHeader 
-          onClearFilters={clearFilters}
-          hasActiveFilters={hasActiveFilters()}
-          type="entertainment"
-        />
+        <>
+          <BitesHeader 
+            onClearFilters={clearFilters}
+            hasActiveFilters={hasActiveFilters()}
+            type="entertainment"
+          />
+          <div className="mt-4">
+            <CatalogSearch 
+              items={cards} 
+              onFilteredItemsChange={handleFilteredCardsChange}
+              type="entertainment"
+              compact={true}
+            />
+          </div>
+        </>
       }
     >
       <div className="w-full flex justify-center">
         <div className="w-full max-w-md">
           <EntertainmentCategoryDrawers 
-            cards={cards}
+            cards={filteredCards}
             categoryColors={categoryColors}
             onCardClick={handleCardClick}
             hideEmptyCategories={false}

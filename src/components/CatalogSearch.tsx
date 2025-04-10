@@ -252,6 +252,7 @@ const CatalogSearch: React.FC<CatalogSearchProps> = ({
           activeFilter={activeFilter}
           handleTabChange={handleTabChange}
           filterDescriptions={filterDescriptions}
+          type={type}
         />
 
         <FilterSummary 
