@@ -52,8 +52,8 @@ const BlockbustersStep: React.FC<BlockbustersStepProps> = ({ showDrawers }) => {
           </div>
         </div>
         
-        <h3 className="text-xl font-bold font-typewriter text-center mt-4 text-[#5D4037]">
-          RECOMMEND BITES AND BLOCKBUSTERS BY SHARING INDIVIDUAL CARDS
+        <h3 className="text-xl font-typewriter text-center mt-4 text-[#5D4037] font-bold">
+          CATALOG, CATEGORIZE AND COLLECT YOUR FAVORITES
         </h3>
       </div>
     </div>
