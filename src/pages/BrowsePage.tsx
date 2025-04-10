@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
@@ -114,12 +115,13 @@ const BrowsePage = () => {
     navigate('/search');
   };
   
-  const toggleType = () => {
-    const newType = activeType === 'food' ? 'entertainment' : 'food';
-    setActiveType(newType);
+  // Add the missing handleTypeChange function
+  const handleTypeChange = (newType: 'food' | 'entertainment') => {
+    const newTypeValue = newType === 'food' ? 'food' : 'entertainment';
+    setActiveType(newTypeValue);
     setSelectedCategory(null);
     setSelectedSubcategory(null);
-    navigate(`/browse?type=${newType}`);
+    navigate(`/browse?type=${newTypeValue}`);
   };
 
   const handleCategoryClick = (option: BrowseOption) => {
