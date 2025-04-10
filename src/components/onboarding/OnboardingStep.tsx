@@ -108,20 +108,35 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
           <div className="perspective-1000 w-64 h-64 relative">
             {/* Book cover */}
             <div 
-              className={`absolute inset-0 bg-[#D3E4FD] border-2 border-catalog-softBrown rounded-md shadow-lg transition-all duration-1000 ease-in-out ${
+              className={`absolute inset-0 rounded-md shadow-lg transition-all duration-1000 ease-in-out ${
                 bookOpen ? 'rotate-y-90 opacity-0' : 'rotate-y-0 opacity-100'
               }`}
               style={{
+                background: "linear-gradient(135deg, #1A1F2C 0%, #403E43 100%)",
+                borderLeft: "12px solid #8B5CF6",
                 transformStyle: "preserve-3d",
                 transform: bookOpen ? "rotateY(-90deg)" : "rotateY(0deg)",
                 transformOrigin: "left center",
-                boxShadow: "rgba(0, 0, 0, 0.2) 0px 5px 15px"
+                boxShadow: "rgba(0, 0, 0, 0.4) 0px 8px 20px"
               }}
             >
               {/* Book cover design */}
               <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
-                <BookOpen size={48} className="text-[#5D4037] mb-4" />
-                <div className="text-[#5D4037] font-typewriter text-lg font-bold tracking-wider">CATALOG</div>
+                <div className="w-full h-full flex flex-col items-center justify-center">
+                  <BookOpen size={48} className="text-white mb-6" />
+                  <div className="text-white font-typewriter text-lg font-bold tracking-wider">CATALOG</div>
+                  
+                  {/* Add decorative elements to the cover */}
+                  <div className="absolute top-4 left-4 w-20 h-1 bg-[#F97316]"></div>
+                  <div className="absolute bottom-4 right-4 w-20 h-1 bg-[#F97316]"></div>
+                  
+                  <div className="absolute top-8 right-8">
+                    <Sparkles 
+                      size={20}
+                      className="text-[#0EA5E9]"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             
@@ -130,7 +145,7 @@ const OnboardingStep: React.FC<OnboardingStepProps> = ({
               className="absolute inset-0 bg-white border border-gray-300 rounded-md"
               style={{
                 transformStyle: "preserve-3d",
-                boxShadow: "rgba(0, 0, 0, 0.1) -5px 0px 10px inset"
+                boxShadow: "rgba(0, 0, 0, 0.15) -5px 0px 15px inset"
               }}
             >
               {/* Book content (appears after book opens) */}
