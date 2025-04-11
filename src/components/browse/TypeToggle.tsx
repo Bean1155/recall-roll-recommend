@@ -3,13 +3,13 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { LucideIcon, Utensils, Film, CircleDot } from "lucide-react";
 
-interface ToggleOption {
+export interface ToggleOption {
   value: string;
   label: string;
   icon: LucideIcon;
 }
 
-interface TypeToggleProps {
+export interface TypeToggleProps {
   currentType: string;
   onTypeChange: (type: string) => void;
   options: ToggleOption[];
@@ -55,7 +55,8 @@ const TypeToggle: React.FC<TypeToggleProps> = ({
 export const FoodEntertainmentToggle: React.FC<{
   currentType: 'food' | 'entertainment';
   onTypeChange: (type: 'food' | 'entertainment') => void;
-}> = ({ currentType, onTypeChange }) => {
+  className?: string;
+}> = ({ currentType, onTypeChange, className }) => {
   const options = [
     { value: 'food', label: 'Bites', icon: Utensils },
     { value: 'entertainment', label: 'Blockbusters', icon: Film }
@@ -65,7 +66,8 @@ export const FoodEntertainmentToggle: React.FC<{
     <TypeToggle 
       currentType={currentType} 
       onTypeChange={onTypeChange} 
-      options={options} 
+      options={options}
+      className={className}
     />
   );
 };

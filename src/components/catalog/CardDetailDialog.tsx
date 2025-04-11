@@ -1,7 +1,7 @@
 
 import { X } from "lucide-react";
-import { CatalogCard } from "@/lib/types";
-import CatalogCard from "@/components/CatalogCard";
+import { CatalogCard as CatalogCardType } from "@/lib/types";
+import CatalogCardComponent from "@/components/CatalogCard";
 import Envelope from "@/components/Envelope";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 interface CardDetailDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  card: CatalogCard | null;
+  card: CatalogCardType | null;
   categoryColors: Record<string, string>;
 }
 
@@ -77,7 +77,7 @@ const CardDetailDialog = ({
             
             <div className="p-6 animate-fade-in overflow-y-auto pb-16" style={{ height: "100%" }}>
               <Envelope label={card.title} backgroundColor={categoryColors[categoryKey]}>
-                <CatalogCard card={card} />
+                <CatalogCardComponent card={card} />
               </Envelope>
             </div>
           </div>
@@ -111,7 +111,7 @@ const CardDetailDialog = ({
           
           <div className="p-6 animate-fade-in">
             <Envelope label={card.title} backgroundColor={categoryColors[categoryKey]}>
-              <CatalogCard card={card} />
+              <CatalogCardComponent card={card} />
             </Envelope>
           </div>
         </div>

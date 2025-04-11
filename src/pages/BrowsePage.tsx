@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
@@ -17,7 +16,7 @@ import { FoodCard, EntertainmentCard, CatalogCard } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Accordion, AccordionItem, AccordionContent, AccordionTrigger } from "@/components/ui/accordion";
 import CatalogCardCompact from "@/components/CatalogCardCompact";
-import TypeToggle from "@/components/browse/TypeToggle";
+import { FoodEntertainmentToggle } from "@/components/browse/TypeToggle";
 
 interface BrowseOption {
   title: string;
@@ -229,7 +228,7 @@ const BrowsePage = () => {
         </div>
         
         <div className="px-4 mb-6 flex justify-center">
-          <TypeToggle currentType={activeType} onTypeChange={handleTypeChange} />
+          <FoodEntertainmentToggle currentType={activeType} onTypeChange={handleTypeChange} />
         </div>
         
         <div className="px-4 pb-8">
