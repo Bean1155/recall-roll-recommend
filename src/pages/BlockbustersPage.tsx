@@ -6,7 +6,7 @@ import { getEntertainmentCards } from "@/lib/data";
 import { useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import EntertainmentCategoryDrawers from "@/components/blockbusters/EntertainmentCategoryDrawers";
 import { useEntertainmentCardDetailHandling } from "@/components/blockbusters/useEntertainmentCardDetailHandling";
-import EntertainmentDetailDialog from "@/components/blockbusters/EntertainmentDetailDialog";
+import CardDetailDialog from "@/components/catalog/CardDetailDialog";
 import BitesHeader from "@/components/bites/BitesHeader";
 import { getDefaultCategoryColors, getCategoryDisplayName, getAllEntertainmentCategories } from "@/utils/categoryUtils";
 import { toast } from "sonner";
@@ -230,7 +230,7 @@ const BlockbustersPage = () => {
       </div>
       
       {selectedCard && (
-        <EntertainmentDetailDialog
+        <CardDetailDialog
           isOpen={isCardDetailOpen}
           onOpenChange={setIsCardDetailOpen}
           card={selectedCard}

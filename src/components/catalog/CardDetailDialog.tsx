@@ -40,6 +40,9 @@ const CardDetailDialog = ({
     ? (card as any).category 
     : (card as any).entertainmentType;
   
+  // Get background color
+  const backgroundColor = categoryColors[categoryKey] || '#d2b48c';
+  
   const handleClose = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -54,7 +57,7 @@ const CardDetailDialog = ({
         <DrawerContent 
           className="p-0 border-t-2 border-catalog-softBrown rounded-t-xl overflow-y-auto animate-in slide-in-from-bottom duration-300"
           style={{ 
-            backgroundColor: categoryColors[categoryKey],
+            backgroundColor,
             height: "85vh", // Set fixed height for mobile
             maxHeight: "85vh" // Cap max height at 85% of viewport
           }}
@@ -76,7 +79,7 @@ const CardDetailDialog = ({
             </div>
             
             <div className="p-6 animate-fade-in overflow-y-auto pb-16" style={{ height: "100%" }}>
-              <Envelope label={card.title} backgroundColor={categoryColors[categoryKey]}>
+              <Envelope label={card.title} backgroundColor={backgroundColor}>
                 <CatalogCardComponent card={card} />
               </Envelope>
             </div>
@@ -91,7 +94,7 @@ const CardDetailDialog = ({
       <DialogOverlay className="bg-black/80 backdrop-blur-sm" />
       <DialogContent 
         className="sm:max-w-[600px] p-0 border-2 border-catalog-softBrown rounded-xl overflow-hidden max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200"
-        style={{ backgroundColor: categoryColors[categoryKey] }}
+        style={{ backgroundColor }}
       >
         <DialogTitle className="sr-only">Card Details</DialogTitle>
         <div className="relative">
@@ -110,7 +113,7 @@ const CardDetailDialog = ({
           </div>
           
           <div className="p-6 animate-fade-in">
-            <Envelope label={card.title} backgroundColor={categoryColors[categoryKey]}>
+            <Envelope label={card.title} backgroundColor={backgroundColor}>
               <CatalogCardComponent card={card} />
             </Envelope>
           </div>

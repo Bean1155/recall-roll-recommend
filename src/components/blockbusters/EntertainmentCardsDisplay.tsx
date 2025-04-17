@@ -12,6 +12,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { getCategoryDisplayName } from "@/utils/categoryUtils";
+import CatalogCardDisplay from "@/components/catalog/CatalogCardDisplay";
 
 interface EntertainmentCardsDisplayProps {
   category?: string;
@@ -32,69 +34,28 @@ interface EntertainmentCardsDisplayProps {
 const EntertainmentCardsDisplay = ({
   category,
   cards,
-  categoryColor,
+  categoryColor = "#e0c6a3",
   categoryDisplayName,
-  textColor,
+  textColor = "#603913",
   onCardClick,
   filters,
   categoryColors,
   onOpenFilters,
 }: EntertainmentCardsDisplayProps) => {
   const hasCards = cards.length > 0;
-  const navigate = useNavigate();
-
-  const handleCardClick = (card: EntertainmentCard) => {
-    navigate(`/edit/${card.id}`);
-  };
-
+  const displayName = categoryDisplayName || (category ? getCategoryDisplayName(category) : "Entertainment");
+  
   return (
-    <>
-      {hasCards ? (
-        <Carousel className="w-full">
-          <CarouselContent>
-            {cards.map((card) => (
-              <CarouselItem key={card.id} className="basis-full">
-                <div 
-                  className="p-1" 
-                  id={`card-${card.id}`}
-                  onClick={() => handleCardClick(card)}
-                >
-                  <Envelope 
-                    label={card.title}
-                    backgroundColor={categoryColor}
-                  >
-                    <CatalogCard card={card} />
-                  </Envelope>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <div className="flex justify-end gap-2 mt-4">
-            <CarouselPrevious 
-              className="relative static translate-y-0 h-6 w-6 sm:h-8 sm:w-8" 
-              style={{ backgroundColor: categoryColor, color: textColor }}
-            />
-            <CarouselNext 
-              className="relative static translate-y-0 h-6 w-6 sm:h-8 sm:w-8" 
-              style={{ backgroundColor: categoryColor, color: textColor }}
-            />
-          </div>
-        </Carousel>
-      ) : (
-        <div className="text-center py-4 sm:py-8">
-          <p className="text-catalog-softBrown mb-4 text-sm sm:text-base">No entries in this category yet.</p>
-          <Button asChild 
-            className="text-xs sm:text-sm py-1 px-2 sm:py-2 sm:px-4 h-auto" 
-            style={{ backgroundColor: categoryColor, color: textColor }}
-          >
-            <Link to={`/create/entertainment?category=${category}`}>
-              <PlusCircle size={12} className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="truncate">Add {categoryDisplayName}</span>
-            </Link>
-          </Button>
-        </div>
-      )}
-    </>
+    <CatalogCardDisplay 
+      cards={cards}
+      categoryName={category || "entertainment"}
+      categoryDisplayName={displayName}
+      categoryColor={categoryColor}
+      textColor={textColor}
+      type="entertainment"
+      onCardClick={onCardClick}
+      createPath={category ? `/create/entertainment?category=${category}` : "/create/entertainment"}
+    />
   );
 };
 

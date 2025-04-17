@@ -3,19 +3,10 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
-import CatalogCard from "@/components/CatalogCard";
-import CatalogCardCompact from "@/components/CatalogCardCompact";
-import Envelope from "@/components/Envelope";
 import { EntertainmentCard, CatalogCard as CatalogCardType } from "@/lib/types";
 import { CatalogCollapsible } from "@/components/ui/collapsible";
 import { getCategoryDisplayName, getTextColor } from "@/utils/categoryUtils";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import CatalogCardDisplay from "@/components/catalog/CatalogCardDisplay";
 
 interface Category {
   name: string;
@@ -79,40 +70,6 @@ const EntertainmentCategoryDrawers = ({
       onCategoryToggle(cat, isOpen);
     }
   };
-   
-  const renderCards = (cat: string, catCards: CatalogCardType[], color: string, textColor: string) => {
-    if (catCards.length === 0) {
-      return (
-        <div className="text-center py-4">
-          <p className="text-catalog-softBrown mb-4">No entries in this category yet.</p>
-          <Button asChild 
-            className="text-sm py-2 px-4 h-auto" 
-            style={{ backgroundColor: color, color: textColor }}
-          >
-            <Link to={`/create/entertainment?category=${cat}`}>
-              <PlusCircle size={16} className="mr-2" />
-              <span>Add {getCategoryDisplayName(cat)}</span>
-            </Link>
-          </Button>
-        </div>
-      );
-    }
-    
-    return (
-      <div className="grid grid-cols-3 gap-2">
-        {catCards.map(card => (
-          <div 
-            key={card.id}
-            className="cursor-pointer"
-            onClick={() => onCardClick?.(card as EntertainmentCard)}
-            id={`card-${card.id}`}
-          >
-            <CatalogCardCompact card={card} compact={true} />
-          </div>
-        ))}
-      </div>
-    );
-  };
 
   return (
     <div className="space-y-6 pb-20">
@@ -149,7 +106,17 @@ const EntertainmentCategoryDrawers = ({
               onOpenChange={(isOpen) => onCategoryToggle?.(cat, isOpen)}
               className="hover:brightness-95 transition-all duration-200"
             >
-              {renderCards(cat, catCards, color, textColor)}
+              <CatalogCardDisplay 
+                cards={catCards}
+                categoryName={cat}
+                categoryDisplayName={displayName}
+                categoryColor={color}
+                textColor={textColor}
+                type="entertainment"
+                onCardClick={onCardClick}
+                compact={true}
+                createPath={`/create/entertainment?category=${cat}`}
+              />
             </CatalogCollapsible>
           </div>
         );
