@@ -1,15 +1,14 @@
-
 import React, { useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import GridLayout from "@/components/GridLayout";
-import { defaultCategories, defaultEntertainmentCategories } from "@/utils/categoryUtils";
-import { useBrowseState } from "@/hooks/useBrowseState";
-import { useCategoryColors } from "@/components/bites/useCategoryColors";
-import { getFoodCards, getEntertainmentCards } from "@/lib/data";
+import { Button } from "@/components/ui/button";
 import { foodBrowseOptions, entertainmentBrowseOptions } from "@/utils/browseOptions";
 import BrowseFilters from "@/components/browse/BrowseFilters";
 import BrowseCategorySection from "@/components/browse/BrowseCategorySection";
 import BrowseResults from "@/components/browse/BrowseResults";
+import { CatalogCard } from "@/lib/types";
+import { useBrowseState } from "@/hooks/useBrowseState";
+import { useCategoryColors } from "@/components/bites/useCategoryColors";
 
 const BrowsePage = () => {
   const navigate = useNavigate();
@@ -69,6 +68,10 @@ const BrowsePage = () => {
   const handleCardClick = (card: CatalogCard) => {
     const targetPath = card.type === 'food' ? '/bites' : '/blockbusters';
     navigate(`${targetPath}?highlight=${card.id}`);
+  };
+
+  const getFilteredCards = () => {
+    return [];
   };
 
   return (

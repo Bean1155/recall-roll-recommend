@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
@@ -36,7 +35,7 @@ const BrowseCategorySection: React.FC<BrowseCategorySectionProps> = ({
   colorForCategory,
 }) => {
   const useDropdownForCategory = (title: string) => {
-    return ["By Cuisine", "By Category", "Top Rated"].includes(title);
+    return title === "By Cuisine";
   };
 
   const renderCategory = (option: BrowseOption) => {
@@ -73,19 +72,6 @@ const BrowseCategorySection: React.FC<BrowseCategorySectionProps> = ({
                   {subcat}
                 </DropdownMenuItem>
               ))}
-              {option.title === "Top Rated" && (
-                <>
-                  <DropdownMenuItem onClick={() => onSubcategoryClick("5 Stars")}>
-                    5 Stars
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onSubcategoryClick("4+ Stars")}>
-                    4+ Stars
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onSubcategoryClick("3+ Stars")}>
-                    3+ Stars
-                  </DropdownMenuItem>
-                </>
-              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
